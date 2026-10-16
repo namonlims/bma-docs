@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เงื่อนไขการแสดงแบบฟอร์มความยินยอม · PHCIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scrollbar-gutter: stable; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-600, 24px);
+    padding: var(--dim-space-600, 24px);
+    padding-bottom: var(--dim-space-1200, 48px);
+  }
+  h1, h2, .group-title {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+  }
+  h1 { font-size: var(--type-size-xl, 20px); line-height: 1.5; }
+  h2 { font-size: var(--type-size-base, 16px); line-height: 1.5; }
+  .lede {
+    margin: var(--dim-space-100, 4px) 0 0;
+    max-width: 920px;
+    color: var(--text-content-secondary, #636B72);
+    font-size: var(--type-size-sm, 14px);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--dim-space-400, 16px);
+  }
+  .stat, .card {
+    background: var(--surface-card-100, #FFFFFF);
+    border-radius: var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-card);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-100, 4px);
+    padding: var(--dim-space-400, 16px);
+  }
+  .stat b {
+    color: var(--text-brandPrimary-default, #007549);
+    font-size: var(--type-size-2xl, 24px);
+    font-weight: var(--type-weight-bold, 700);
+    line-height: 1.5;
+  }
+  .stat span {
+    color: var(--text-content-secondary, #636B72);
+    font-size: var(--type-size-xs, 12px);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-400, 16px);
+    padding: var(--dim-space-600, 24px);
+  }
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-300, 12px);
+    padding-top: var(--dim-space-400, 16px);
+    border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+  }
+  .group-title {
+    font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500);
+    color: var(--text-content-tertiary, #858C92);
+  }
+  ul { margin: 0; padding-left: var(--dim-space-500, 20px); }
+  li + li { margin-top: var(--dim-space-200, 8px); }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dim-space-300, 12px);
+    align-items: center;
+  }
+  .search {
+    flex: 1 1 240px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: var(--dim-size-1200, 56px);
+    min-height: var(--dim-size-1200, 56px);
+    padding: var(--dim-space-400, 16px) var(--dim-size-500, 24px);
+    gap: var(--dim-space-600, 24px);
+    background: var(--surface-search-default, #FFFFFF);
+    border: var(--dim-stroke-200, 2px) solid var(--border-primarysearch-default, #08A768);
+    border-radius: var(--dim-radius-full, 9999px);
+    box-shadow: var(--shadow-primarysearch);
+    --primarysearch-input-color: var(--text-primarysearch-default, #ADB2B7);
+    transition: border-color 200ms ease-out;
+  }
+  .search[data-state="hover"] {
+    border-color: var(--border-primarysearch-hover, #007549);
+    --primarysearch-input-color: var(--text-primarysearch-hover, #4D5358);
+  }
+  .search[data-state="focus"] {
+    border-color: var(--border-primarysearch-focus, #08A768);
+    --primarysearch-input-color: var(--text-primarysearch-focus, #ADB2B7);
+  }
+  .search[data-state="typing"] {
+    border-color: var(--border-primarysearch-typing, #007549);
+    --primarysearch-input-color: var(--text-primarysearch-typing, #4D5358);
+  }
+  .search[data-state="filled"] {
+    border-color: var(--border-primarysearch-filled, #08A768);
+    --primarysearch-input-color: var(--text-primarysearch-filled, #4D5358);
+  }
+  .search-lead {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--dim-space-400, 16px);
+    min-width: 0;
+  }
+  .search-icon {
+    width: var(--dim-size-400, 20px);
+    height: var(--dim-size-400, 20px);
+    font-size: 20px;
+    color: var(--icon-primarysearch-default, #08A768);
+  }
+  .search[data-state="hover"] .search-icon,
+  .search[data-state="typing"] .search-icon { color: var(--icon-primarysearch-hover, #007549); }
+  .search[data-state="focus"] .search-icon,
+  .search[data-state="filled"] .search-icon { color: var(--icon-primarysearch-focus, #08A768); }
+  .mih-primarysearch-input,
+  .mih-primarysearch-input:focus,
+  .mih-primarysearch-input:focus-visible {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    font-family: inherit;
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+    color: var(--primarysearch-input-color, #4D5358);
+    caret-color: var(--text-primarysearch-typing, #4D5358);
+  }
+  .mih-primarysearch-input::placeholder {
+    color: var(--primarysearch-input-color, #ADB2B7);
+    opacity: 1;
+  }
+  .mih-primarysearch-input::-webkit-search-cancel-button,
+  .mih-primarysearch-input::-webkit-search-decoration,
+  .mih-primarysearch-input::-webkit-search-results-button,
+  .mih-primarysearch-input::-webkit-search-results-decoration {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: none !important;
+  }
+  .search-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--dim-space-600, 24px);
+    flex: 0 0 auto;
+  }
+  .search-actions[hidden] { display: none; }
+  .search-x, .search-go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: var(--dim-size-800, 40px);
+    height: var(--dim-size-800, 40px);
+    min-height: var(--dim-size-800, 40px);
+    padding: 0;
+    border: none;
+    border-radius: var(--dim-radius-full, 9999px);
+    box-shadow: none;
+  }
+  .search-x {
+    background: var(--surface-brandPrimary-quaternary, #F4FBF8);
+    color: var(--text-brandPrimary-default, #007549);
+  }
+  .search-x:hover { background: var(--surface-brandPrimary-quaternary-hover, #E2F3EB); }
+  .search-go {
+    background: var(--surface-brandPrimaryButton-default, #007549);
+    color: var(--icon-brandPrimaryButton-on-brand, #FFFFFF);
+  }
+  .search-go:hover { background: var(--surface-brandPrimaryButton-hover, #004C31); }
+  .search-x .material-symbols-outlined { font-size: 16px; }
+  .search-go .material-symbols-outlined { font-size: 20px; }
+  button {
+    font-family: inherit;
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-medium, 500);
+    line-height: 1.5;
+    border-radius: var(--dim-radius-200, 8px);
+    min-height: var(--dim-size-700, 36px);
+    padding: var(--dim-space-150, 6px) var(--dim-space-300, 12px);
+    cursor: pointer;
+  }
+  .fdivider {
+    width: var(--dim-stroke-100, 1px);
+    height: var(--dim-size-600, 32px);
+    background: var(--border-neutral-tertiary, #E2E4E6);
+    flex: 0 0 auto;
+  }
+  .fdrop { position: relative; flex: 0 0 auto; }
+  .ftag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--dim-space-150, 6px);
+    height: var(--dim-size-800, 40px);
+    min-height: var(--dim-size-800, 40px);
+    padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px);
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-brandtag-default, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-brandtag-default, #E2E4E6);
+    transition: background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out;
+  }
+  .ftag-prefix {
+    color: var(--text-brandtag-title, #858C92);
+    font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+  }
+  .ftag-value {
+    color: var(--text-brandtag-default, #4D5358);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+  }
+  .ftag:hover {
+    background: var(--surface-brandtag-hover, #F4FBF8);
+    border-color: var(--border-brandtag-hover, #C5EDDA);
+  }
+  .ftag:hover .ftag-value { color: var(--text-brandtag-hover, #007549); }
+  .ftag.on, .ftag[aria-expanded="true"] {
+    background: var(--surface-brandtag-selected, #F4FBF8);
+    border-color: var(--border-brandtag-selected, #C5EDDA);
+  }
+  .ftag.on .ftag-value, .ftag[aria-expanded="true"] .ftag-value { color: var(--text-brandtag-selected, #007549); }
+  .ftag.on:hover, .ftag[aria-expanded="true"]:hover {
+    background: var(--surface-brandtag-selected-hover, #E2F3EB);
+  }
+  .clear-tag {
+    background: var(--surface-neutraltag-default, #FFFFFF);
+    border-color: var(--border-neutraltag-default, #E2E4E6);
+  }
+  .clear-tag .ftag-value,
+  .clear-tag .clear-icon { color: var(--text-neutraltag-default, #4D5358); }
+  .clear-tag:hover,
+  .clear-tag:hover .ftag-value {
+    background: var(--surface-neutraltag-hover, #F9FBFB);
+    border-color: var(--border-neutraltag-hover, #E2E4E6);
+    color: var(--text-neutraltag-hover, #4D5358);
+  }
+  .clear-tag[hidden] { display: none; }
+  .fopt.multi {
+    justify-content: flex-start;
+    color: var(--text-content-default, #363B3F);
+  }
+  .fbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: var(--dim-radius-100, 4px);
+    background: var(--surface-switch-default, #FFFFFF);
+    border: var(--dim-stroke-150, 1.5px) solid var(--border-switch-default, #C9CDD0);
+    transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1), border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .fbox svg {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .fopt:hover .fbox {
+    background: var(--surface-switch-checkbox-default-hover, #54CF97);
+    border-color: transparent;
+  }
+  .fopt:hover .fbox svg { opacity: 1; transform: scale(1); }
+  .fopt[aria-selected="true"] .fbox {
+    background: var(--surface-switch-checkbox, #08A768);
+    border-color: transparent;
+  }
+  .fopt[aria-selected="true"]:hover .fbox {
+    background: var(--surface-switch-checkbox-hover, #007549);
+  }
+  .fopt[aria-selected="true"] .fbox svg { opacity: 1; transform: scale(1); }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 16px;
+    line-height: 1;
+    user-select: none;
+  }
+  .ftag-chevron {
+    color: var(--icon-brandtag-tailing, #C9CDD0);
+    transition: transform 200ms ease-out;
+  }
+  .ftag[aria-expanded="true"] .ftag-chevron { transform: rotate(180deg); }
+  .fmenu {
+    position: absolute;
+    top: calc(100% + var(--dim-space-100, 4px));
+    left: 0;
+    z-index: 20;
+    width: max-content;
+    max-width: calc(100vw - var(--dim-space-1200, 48px));
+    max-height: min(60vh, var(--dim-size-2600, 384px));
+    overflow: auto;
+    padding: var(--dim-space-100, 4px);
+    background: var(--surface-dropdown-default, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-dropdown-default, #EBEBEB);
+    border-radius: var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-dropdown);
+  }
+  .fmenu[hidden] { display: none; }
+  .fopt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dim-space-200, 8px);
+    width: 100%;
+    min-height: var(--dim-size-1000, 48px);
+    padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    border: none;
+    border-radius: var(--dim-radius-100, 4px);
+    background: var(--surface-list-default, #FFFFFF);
+    color: var(--text-list-default, #4D5358);
+    font-weight: var(--type-weight-regular, 400);
+    text-align: left;
+  }
+  .fopt:hover { background: var(--surface-list-hover, #F4FBF8); }
+  .fopt-check {
+    font-size: 20px;
+    color: var(--icon-brandtag-selected, #007549);
+  }
+  button.primary {
+    background: var(--surface-brandPrimaryButton-default, #007549);
+    color: var(--text-brandprimarybutton-on-brand, #FFFFFF);
+    border: none;
+    box-shadow: var(--shadow-brandPrimaryButton-default);
+  }
+  button.primary:hover { background: var(--surface-brandPrimaryButton-hover, #005C38); }
+  .meta {
+    color: var(--text-content-secondary, #636B72);
+    font-size: var(--type-size-xs, 12px);
+    margin-left: auto;
+  }
+  .ds-scroll {
+    overflow: auto;
+    border: var(--dim-stroke-100, 1px) solid var(--border-table-default, #E2F3EB);
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-table-default, #FFFFFF);
+  }
+  .ds-table {
+    width: 100%;
+    min-width: 960px;
+    border-collapse: collapse;
+  }
+  .ds-table th, .ds-table td {
+    text-align: left;
+    box-sizing: border-box;
+  }
+  .ds-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    min-height: var(--dim-size-900, 44px);
+    padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px);
+    background: var(--surface-table-header, #F4FBF8);
+    color: var(--text-table-title, #004C31);
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-table-title, 12px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+    white-space: nowrap;
+    vertical-align: middle;
+    border-bottom: var(--dim-stroke-200, 2px) solid var(--border-table-default, #E2F3EB);
+  }
+  .ds-table td {
+    height: var(--dim-size-1400, 64px);
+    padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px);
+    background: var(--surface-table-default, #FFFFFF);
+    color: var(--text-content-default, #363B3F);
+    font-size: var(--type-size-sm, 14px);
+    line-height: 1.5;
+    vertical-align: top;
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-table-line, #F4FBF8);
+  }
+  .ds-table tbody tr:hover td { background: var(--surface-table-hover, #F4FBF8); }
+  .tip {
+    position: fixed;
+    z-index: 30;
+    width: max-content;
+    max-width: 280px;
+    padding: var(--dim-space-200, 8px);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-popover-grey, #E2E4E6);
+    border-radius: var(--dim-radius-200, 8px);
+    box-shadow: var(--shadow-dropdown);
+    text-align: left;
+    pointer-events: none;
+  }
+  .tip[hidden] { display: none; }
+  .tip-title {
+    margin: 0;
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-medium, 500);
+    color: var(--text-content-default, #363B3F);
+  }
+  .tip-sum {
+    margin: var(--dim-space-100, 4px) 0 0;
+    font-size: var(--type-size-xs, 12px);
+    color: var(--text-content-secondary, #636B72);
+  }
+  .tip-rule {
+    height: var(--dim-stroke-100, 1px);
+    margin: var(--dim-space-200, 8px) 0;
+    background: var(--border-neutral-quaternary, #F4F5F5);
+  }
+  .tip-label {
+    margin: 0 0 var(--dim-space-100, 4px);
+    font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500);
+    color: var(--text-content-tertiary, #858C92);
+  }
+  .tip-line {
+    margin: 0;
+    font-size: var(--type-size-xs, 12px);
+    color: var(--text-content-default, #363B3F);
+  }
+  .ds-table td.fit, .ds-table th.yn, .ds-table td.yn { white-space: nowrap; }
+  .ds-table th.yn,
+  .ds-table td.yn {
+    text-align: center;
+    vertical-align: middle;
+    border-left: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+  }
+  .ds-table th.yn + th:not(.yn),
+  .ds-table td.yn + td:not(.yn) {
+    border-left: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+  }
+  .yn-mark {
+    font-size: 20px;
+    line-height: 1;
+    color: var(--icon-brandPrimary-default, #007549);
+    vertical-align: middle;
+  }
+  .ds-table th.cond,
+  .ds-table td.cond { width: 1%; }
+  .ds-table td.text { min-width: 220px; max-width: 320px; }
+  .pager {
+    display: flex;
+    align-items: center;
+    gap: var(--dim-space-200, 8px);
+    padding-top: var(--dim-space-200, 8px);
+    border-top: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-quaternary, #E2F3EB);
+  }
+  .pager[hidden] { display: none; }
+  .pager-label {
+    color: var(--text-content-secondary, #636B72);
+    font-size: var(--type-size-sm, 14px);
+  }
+  .pager-pages { display: flex; align-items: center; gap: var(--dim-space-100, 4px); margin-left: auto; }
+  .pager button {
+    min-width: var(--dim-size-700, 36px);
+    height: var(--dim-size-700, 36px);
+    min-height: var(--dim-size-700, 36px);
+    padding: 0 var(--dim-space-200, 8px);
+    border: none;
+    box-shadow: none;
+    border-radius: var(--dim-radius-200, 8px);
+    background: var(--surface-pagination-default, #FFFFFF);
+    color: var(--text-pagination-default, #4D5358);
+    font-weight: var(--type-weight-regular, 400);
+  }
+  .pager button:hover {
+    background: var(--surface-pagination-hover, #F4FBF8);
+    color: var(--text-pagination-hover, #007549);
+  }
+  .pager button[aria-current="page"] {
+    background: var(--surface-pagination-selected, #E2F3EB);
+    color: var(--text-pagination-selected, #007549);
+  }
+  .pager button:disabled { opacity: 0.4; cursor: default; }
+  .tags { display: flex; flex-wrap: nowrap; gap: var(--dim-space-100, 4px); width: max-content; }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: var(--dim-size-500, 24px);
+    padding: 0 var(--dim-space-200, 8px);
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-colorfulbadge-green, #E2F3EB);
+    color: var(--text-colorfulbadge-green, #007549);
+    font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500);
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .tag.purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .tag.teal { background: var(--surface-colorfulbadge-teal, #D1F6EE); color: var(--text-colorfulbadge-teal, #196C65); }
+  .tag.orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .tag.indigo { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+  .tag.grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .tag.red { background: var(--surface-colorfulbadge-red, #FEE2E2); color: var(--text-colorfulbadge-red, #B91C1C); }
+  .tag.magenta { background: var(--surface-colorfulbadge-magenta, #FAE8FF); color: var(--text-colorfulbadge-magenta, #A21CAF); }
+  .small { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .map { width: 100%; border-collapse: collapse; min-width: 0; }
+  .map th, .map td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px);
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-table-line, #F4FBF8);
+  }
+  .map th {
+    position: static;
+    background: var(--surface-table-header, #F4FBF8);
+    color: var(--text-table-title, #004C31);
+    font-size: var(--type-size-table-title, 12px);
+    font-weight: var(--type-weight-regular, 400);
+    white-space: normal;
+    border-bottom: var(--dim-stroke-200, 2px) solid var(--border-table-default, #E2F3EB);
+  }
+  .map td:first-child {
+    width: 220px;
+    color: var(--text-content-tertiary, #858C92);
+    font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500);
+  }
+  .source {
+    margin: 0;
+    color: var(--text-content-tertiary, #858C92);
+    font-size: var(--type-size-xs, 12px);
+  }
+  @media (max-width: 1279px) {
+    .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px); }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: var(--dim-space-400, 16px); }
+    button, .search, .ftag, .fopt { min-height: var(--dim-size-900, 44px); }
+    .ftag { height: var(--dim-size-900, 44px); }
+    .pager button { min-height: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); }
+    .meta { margin-left: 0; width: 100%; }
+    .map, .map thead, .map tbody, .map tr, .map th, .map td { display: block; width: auto; }
+    .map tr { padding: var(--dim-space-300, 12px) 0; border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+    .map th, .map td { border-bottom: 0; padding: 0; }
+    .map td { margin-top: var(--dim-space-100, 4px); }
+  }
+  @media (max-width: 401px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>เงื่อนไขการแสดงแบบฟอร์มความยินยอม</h1>
+    <p class="lede">รวบรวมจากกฎและพฤติกรรมในระบบ PHCIS ณ 16 ตุลาคม 2569 สำหรับให้น้อง BA จัดกลุ่มเงื่อนไข หนึ่งใบมีได้มากกว่าหนึ่งเงื่อนไข ทะเบียนเทมเพลต PH ในหน้าจัดการความยินยอมยังตั้งค่าเป็น “ไม่บังคับ” ทั้งหมด จึงไม่ได้นับเป็นเงื่อนไขการแสดง</p>
+  </header>
+  <div class="grid" id="stats"></div>
+
+  <section class="card">
+    <h2>คำที่ BA ใช้ ตรงกับพฤติกรรมในระบบอย่างไร</h2>
+    <table class="map">
+      <thead>
+        <tr><th>เงื่อนไข</th><th>ความหมายที่ใช้ในตารางนี้</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ทุกคนต้องทำ</td><td>ใบบังคับของทางเข้านั้น ลงไม่ครบแล้วไปขั้นถัดไปไม่ได้ ผู้รับบริการใหม่ทุกคนต้องทำ 3 ใบตอนขึ้นทะเบียน ใบบังคับของคลินิกต้องทำให้ครบในครั้งแรกของงานนั้น</td></tr>
+        <tr><td>เฉพาะตอนทำหัตถการ</td><td>ขึ้นเมื่อกำลังทำหัตถการหรือสั่งหัตถการ ใบที่แค่ติดป้ายหมวด “หัตถการ” แต่ยังโชว์คู่ใบหลักของคลินิก จะมีหมายเหตุไว้</td></tr>
+        <tr><td>เฉพาะครั้งแรก</td><td>ลงนามแล้วครั้งต่อไปไม่ขึ้นขั้นอีก เปิดดูหรือลงเพิ่มได้จากเมนู ⋮</td></tr>
+        <tr><td>ขอทุกครั้งที่มีบริการนี้</td><td>บริการเกิดเมื่อไร ต้องขอใบนั้นเมื่อนั้น ลายเซ็นครั้งก่อนใช้แทนไม่ได้</td></tr>
+        <tr><td>ใช้ได้ตลอดไป</td><td>ระบบไม่ใส่วันหมดอายุ และใช้ลายเซ็นเดิมข้ามครั้ง จนกว่าจะถอนความยินยอมหรือแบบฟอร์มออกเวอร์ชันใหม่</td></tr>
+        <tr><td>ขอบเขต</td><td>คำสั้นสำหรับจัดกลุ่มในชีต แยก “ผู้รับบริการใหม่ทุกคน” ออกจาก “ครั้งแรกของงานนี้” แม้ทั้งคู่จะติดป้ายทุกคนต้องทำ</td></tr>
+      </tbody>
+    </table>
+    <div class="group">
+    <p class="group-title">กฎที่ใช้ร่วมทุกใบ</p>
+    <ul>
+      <li>ผู้เยาว์ลงนามโดยผู้ปกครองหรือผู้แทน ใบของขั้นลงทะเบียนสลับเป็นฉบับผู้ปกครองเมื่ออายุยังไม่บรรลุนิติภาวะ</li>
+      <li>แบบฟอร์มออกเวอร์ชันใหม่หลังลงนามแล้ว สถานะเป็น “มีเวอร์ชันใหม่” และต้องส่งเซ็นฉบับใหม่ ฉบับเดิมยังอยู่ในประวัติ</li>
+      <li>ถอนหรือเพิกถอนไม่ลบประวัติ</li>
+      <li>คัดกรองกลางไม่มีขั้นความยินยอม เปิดใบของเวชระเบียนได้จาก ⋮ ที่แถวแพ้ยา</li>
+      <li>พยาบาลคัดกรองให้ลงใบบังคับของคลินิกแล้ว เมื่อแพทย์หรือพยาบาลหลังตรวจเปิดแฟ้ม ใบนั้นขึ้นเป็น “ยินยอมแล้ว · จุดคัดกรอง” ใบไม่บังคับยังรอลงนาม</li>
+      <li>ผู้รับบริการใหม่ยังไม่มีใบใดในระบบ ใบที่เซ็นเองใน Mobile App ขึ้นเป็น “ยินยอมแล้ว · Mobile App” เฉพาะใบนั้น</li>
+      <li>ผู้ป่วยเก่าที่เคยลงนามใบลงทะเบียนแล้ว การ์ดเป็นแบบดูอย่างเดียว ไม่ขอซ้ำในขั้นลงทะเบียน</li>
+    </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>รายการแบบฟอร์ม</h2>
+    <div class="toolbar" id="filters">
+      <div class="fdrop" id="work-drop">
+        <button type="button" class="ftag" id="work-tag" aria-haspopup="listbox" aria-expanded="false">
+          <span class="ftag-prefix">งาน:</span>
+          <span class="ftag-value" id="work-label">ทุกงาน</span>
+          <span class="material-symbols-outlined ftag-chevron" aria-hidden="true">expand_more</span>
+        </button>
+        <div class="fmenu" id="work-menu" hidden role="listbox" aria-label="งาน"></div>
+      </div>
+      <div class="fdrop" id="cond-drop">
+        <button type="button" class="ftag" id="cond-tag" aria-haspopup="listbox" aria-expanded="false">
+          <span class="ftag-prefix">เงื่อนไข:</span>
+          <span class="ftag-value" id="cond-label">ทุกเงื่อนไข</span>
+          <span class="material-symbols-outlined ftag-chevron" aria-hidden="true">expand_more</span>
+        </button>
+        <div class="fmenu" id="cond-menu" hidden role="listbox" aria-label="เงื่อนไข"></div>
+      </div>
+      <button type="button" class="ftag clear-tag" id="clear" hidden>
+        <span class="material-symbols-outlined clear-icon" aria-hidden="true">close</span>
+        <span class="ftag-value">ล้างตัวกรอง</span>
+      </button>
+    </div>
+    <div class="toolbar">
+      <label class="search" id="search" data-state="default">
+        <span class="search-lead">
+          <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+          <input id="q" class="mih-primarysearch-input" type="search" placeholder="ค้นหาชื่อแบบฟอร์ม งาน หรือคำในหมายเหตุ" aria-label="ค้นหาชื่อแบบฟอร์ม งาน หรือคำในหมายเหตุ" />
+        </span>
+        <span class="search-actions" hidden>
+          <button type="button" class="search-x" id="search-clear" aria-label="ล้างคำค้น"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+          <button type="button" class="search-go" id="search-go" aria-label="ค้นหา"><span class="material-symbols-outlined" aria-hidden="true">arrow_upward</span></button>
+        </span>
+      </label>
+      <button class="primary" id="csv" type="button">ดาวน์โหลด Excel</button>
+      <span class="meta" id="count"></span>
+    </div>
+    <div class="ds-scroll">
+      <table class="ds-table">
+        <thead>
+          <tr>
+            <th>แบบฟอร์ม</th>
+            <th>งาน</th>
+            <th class="cond">เงื่อนไข</th>
+            <th>เมื่อไหร่ขึ้น</th>
+            <th>ความถี่และอายุ</th>
+            <th>ถ้าไม่ยินยอม</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="pager" hidden></div>
+    <div class="tip" id="code-tip" hidden role="tooltip">
+      <p class="tip-title">รหัส</p>
+      <p class="tip-sum">รหัสที่ทำใน Demo เผื่อใช้ตรวจสอบ</p>
+      <div class="tip-rule"></div>
+      <p class="tip-label">ข้อควรรู้</p>
+      <p class="tip-line">ไม่ใช่รหัสฟอร์มจริง</p>
+    </div>
+    <p class="source">แหล่งหลัก: src/data/registrationConsentForms.js · src/data/clinicConsentForms.js · src/data/lastExamDate.js · src/templates/ClinicRecordPage.jsx · src/components/pharmacy/DeliveryConsentPopup.jsx · src/data/telemedConsent.js · .claude/rules/consent-forms.md · docs/flow-spec-draft.md</p>
+  </section>
+
+  <section class="card">
+    <h2>ช่องที่ระบบให้ตั้งตอนสร้างแบบฟอร์มใหม่</h2>
+    <p class="lede">ขั้น “เงื่อนไขการบังคับใช้งาน” ในตัวช่วยสร้างแบบฟอร์มมี 3 โหมด โหมด “เฉพาะบางกรณี” ผูกกับประเภทบริการ ไม่มีช่องแยก “ครั้งแรก / ทุกครั้ง / ตลอดไป” ความถี่พวกนั้นอยู่ในกฎของแต่ละใบด้านบน</p>
+    <ul>
+      <li>ไม่บังคับ</li>
+      <li>บังคับกรอกสำหรับผู้รับบริการทุกคน</li>
+      <li>บังคับกรอกเฉพาะบางกรณี — ตรวจรักษา (เลือกคลินิก) · หัตถการ (ทั่วไป / ผ่าตัดเล็ก / ทันตกรรม / สูตินรีเวชและวางแผนครอบครัว / เวชศาสตร์ฟื้นฟูและกายภาพ) · ตรวจทางห้องปฏิบัติการ (เลือกกลุ่ม) · รับวัคซีน (เลือกชนิด) · รับยา (เลือกกลุ่มยา)</li>
+    </ul>
+    <p class="small">แถวเทมเพลตในทะเบียนแบบฟอร์มตอนนี้ตั้ง requiredMode เป็น “ไม่บังคับ” รวมใบยินยอมรับการทำหัตถการที่เพิ่มเป็นตัวอย่าง จึงยังไม่ถูกเรียกขึ้นอัตโนมัติตามเงื่อนไข</p>
+  </section>
+</main>
+<script>
+const TAG = {
+  all: "ทุกคนต้องทำ",
+  proc: "เฉพาะตอนทำหัตถการ",
+  first: "เฉพาะครั้งแรก",
+  every: "ขอทุกครั้งที่มีบริการนี้",
+  forever: "ใช้ได้ตลอดไป",
+  year: "มีอายุ 365 วัน",
+  opt: "ไม่บังคับ",
+  refer: "เฉพาะตอนส่งต่อ",
+};
+const tagClass = {
+  [TAG.all]: "green",
+  [TAG.proc]: "purple",
+  [TAG.first]: "teal",
+  [TAG.every]: "orange",
+  [TAG.forever]: "indigo",
+  [TAG.year]: "red",
+  [TAG.opt]: "grey",
+  [TAG.refer]: "magenta",
+};
+
+const rows = [
+  { code: "EHC-1011", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "เวชระเบียน · เยี่ยมบ้าน", tags: [TAG.all, TAG.first, TAG.year], when: "ขั้นที่ 1 ของการขึ้นทะเบียนผู้รับบริการใหม่ และขั้นความยินยอมของเยี่ยมบ้าน", freq: "ครั้งเดียวตอนขึ้นทะเบียน · อายุ 365 วันนับจากวันลงนาม", decline: "ยังรักษาได้ หากต้องส่งข้อมูลข้ามสถานพยาบาลต้องขออนุญาตรายครั้ง", note: "ใบบังคับใบหลักของเวชระเบียน ผู้ป่วยเก่าที่ลงนามแล้วเห็นเป็นการ์ดดูอย่างเดียว ข้อที่เลือกยินยอม/ไม่ยินยอมคือข้อเปิดเผยเพื่อการศึกษา วิจัย และการรักษา" },
+  { code: "INS-1012", name: "ใบยินยอมเปิดเผยข้อมูลเพื่อประกันภัย", work: "เวชระเบียน · เยี่ยมบ้าน", tags: [TAG.all, TAG.first, TAG.year], when: "ขั้นลงทะเบียนคู่กับ EHC-1011", freq: "ครั้งเดียวตอนขึ้นทะเบียน · อายุ 365 วัน", decline: "ไม่ตัดสิทธิการรักษา กระทบการเปิดเผยให้บริษัทประกัน", note: "ย้ายเข้าชุดบังคับเมื่อ 21 ก.ย. 2569" },
+  { code: "GCT-1013", name: "ใบยินยอมรับการรักษาทั่วไป (General Consent for Treatment)", work: "เวชระเบียน · เยี่ยมบ้าน", tags: [TAG.all, TAG.first, TAG.year], when: "ขั้นลงทะเบียนคู่กับ EHC-1011", freq: "ครั้งเดียวตอนขึ้นทะเบียน · อายุ 365 วัน", decline: "ยังไม่มีประตูที่ห้ามตรวจหากไม่ลงใบนี้ในหน้าคลินิก", note: "คนละใบกับใบเปิดเผยข้อมูลการรักษา TX-1011 เพิ่มเป็นใบบังคับเมื่อ 25 ก.ย. 2569" },
+  { code: "PD-1011", name: "ใบยินยอมเปิดเผยข้อมูลส่วนบุคคล", work: "เวชระเบียน (ใบเดิม)", tags: [TAG.opt, TAG.year], when: "แบบฟอร์มอื่นๆ ของขั้นลงทะเบียน และรายการเก่าในทะเบียนความยินยอม", freq: "ไม่ขออัตโนมัติ · ข้อความในใบระบุอายุ 365 วัน", decline: "ไม่กระทบการลงทะเบียน", note: "ถอดจากชุดบังคับเมื่อ 17 ก.ย. 2569 ยังเปิดดูได้" },
+  { code: "TX-1011", name: "ใบยินยอมเปิดเผยข้อมูลการรักษา", work: "เวชระเบียน (ใบเดิม)", tags: [TAG.opt, TAG.year], when: "แบบฟอร์มอื่นๆ และรายการเก่า", freq: "ไม่ขออัตโนมัติ · อายุ 365 วัน", decline: "ไม่กระทบการรักษา", note: "ถอดจากชุดบังคับเมื่อ 17 ก.ย. 2569" },
+  { code: "CL-1011", name: "ใบยินยอมเปิดเผยข้อมูลเพื่อการเบิกจ่าย", work: "เวชระเบียน (ใบเดิม)", tags: [TAG.opt, TAG.year], when: "แบบฟอร์มอื่นๆ และรายการเก่า", freq: "ไม่ขออัตโนมัติ · อายุ 365 วัน", decline: "การถอนอาจกระทบการเบิกสิทธิ์บางประเภท", note: "ถอดจากชุดบังคับเมื่อ 17 ก.ย. 2569" },
+
+  { code: "ANC-C1", name: "ใบยินยอมรับการฝากครรภ์และตรวจติดตามครรภ์", work: "ฝากครรภ์", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นแบบฟอร์มความยินยอมก่อนแบบประเมิน ของผู้ที่ยังไม่เคยลงนามใบนี้", freq: "ครั้งแรกของงานฝากครรภ์ แล้วซ่อนขั้นเข้า ⋮ · ข้อความในใบครอบคลุมตลอดการตั้งครรภ์และการตรวจทุกครั้งที่มา · ไม่มีวันหมดอายุในระบบ", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับของคลินิก" },
+  { code: "ANC-C2", name: "ใบยินยอมตรวจคัดกรองและเจาะเลือดระหว่างตั้งครรภ์", work: "ฝากครรภ์", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานฝากครรภ์ ครั้งแรกที่ยังไม่เคยลงนาม", freq: "ครั้งแรกของงานนี้ แล้วใช้ต่อใน ⋮", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ คู่กับ ANC-C1" },
+
+  { code: "DEN-C1", name: "ใบยินยอมรับการรักษาทางทันตกรรม", work: "ทันตกรรม", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานทันตกรรม ครั้งแรกที่ยังไม่เคยลงนาม", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ครอบคลุมตรวจ วินิจฉัย X-ray และความเสี่ยงของหัตถการทั่วไปในใบเดียวกัน" },
+  { code: "DEN-C2", name: "ใบยินยอมถอนฟัน/ผ่าตัดในช่องปาก", work: "ทันตกรรม", tags: [TAG.all, TAG.proc, TAG.first, TAG.forever], when: "อยู่ในขั้นความยินยอมของงานทันตกรรมพร้อม DEN-C1 ไม่ได้โผล่ตอนกดถอนฟัน", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ เพราะตอนนี้ยังเป็นใบบังคับของขั้น", note: "หมวดในระบบคือหัตถการ แต่ยังไม่ผูกเงื่อนไข “กำลังถอนฟัน” ถ้าต้องการให้ขึ้นเฉพาะตอนทำหัตถการ ต้องแยกออกจากชุดบังคับของขั้น" },
+
+  { code: "MH-C1", name: "ใบยินยอมรับการบำบัดและรักษาทางจิตเวช", work: "สุขภาพจิต", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานสุขภาพจิต ครั้งแรก", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ" },
+  { code: "MH-C2", name: "ใบยินยอมเปิดเผยข้อมูลสุขภาพจิตแก่ผู้ดูแล/ญาติ", work: "สุขภาพจิต", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานสุขภาพจิต ครั้งแรก", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ข้อมูลสุขภาพจิตเป็นข้อมูลอ่อนไหว ข้อแรกเลือกยินยอมหรือไม่ยินยอมให้เปิดเผยแก่ญาติ" },
+
+  { code: "ADD-C1", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพทางอิเล็กทรอนิกส์และยินยอมรับการบำบัด", work: "บำบัดสารเสพติด", tags: [TAG.all, TAG.first, TAG.forever], when: "ผู้รับบริการใหม่ของงานบำบัดเห็นขั้นความยินยอมเสมอ ใช้ร่วมทุกคลินิกย่อย (ก้าวใหม่ · เมทาโดน/BNX · บุหรี่ · แอลกอฮอล์ · ฟื้นฟู)", freq: "ครั้งแรกของงานบำบัด มุมมองแพทย์ไม่มีขั้นนี้ เพราะพยาบาลคัดกรองให้ลงแล้ว", decline: "ขั้นของพยาบาลยังไม่ครบ", note: "ข้อ 5 เป็นช่องติ๊กคลินิกย่อย ไม่ใช่ปุ่มยินยอม/ไม่ยินยอมทั้งข้อ ข้อ 6–7 คือการติดตาม 1 ปี" },
+  { code: "ADD-C2", name: "ใบยินยอมตรวจปัสสาวะ/สารเสพติดในร่างกาย", work: "บำบัดสารเสพติด", tags: [TAG.opt, TAG.first, TAG.forever], when: "ส่วนแบบฟอร์มอื่นๆ ของขั้นความยินยอม ไม่ได้อยู่ในกลุ่มใบหลัก", freq: "ไม่บังคับ และไม่ทำซ้ำถ้าเคยลงนาม", decline: "บำบัดต่อได้ ADD-C1 ข้อ 5 ครอบคลุมการตรวจหาสารเสพติดอยู่แล้ว", note: "ไม่นับในธงลงนามครบ" },
+  { code: "ADD-C4", name: "ใบยินยอมเข้าถึงประวัติการรักษาระหว่างศูนย์บริการ (Multi-center)", work: "ทุกงานที่มีข้อมูลข้ามศูนย์ · บังคับขอในงานบำบัด", tags: [TAG.opt, TAG.first, TAG.forever], when: "จะเปิดดูข้อมูลจากศูนย์อื่น งานที่เกี่ยวกับสารเสพติดต้องขอใบนี้ก่อน งานทั่วไปขึ้นแถบแจ้งว่ามีข้อมูลถูกซ่อนแล้วให้แพทย์ใส่เหตุผลก่อนดู", freq: "ครั้งเดียวต่อ HN เก็บที่ประวัติของคนนั้น ครั้งต่อไปแสดงข้อมูลพร้อมข้อความเล็กๆ", decline: "บำบัดต่อได้ แต่ประวัติศูนย์อื่นถูกซ่อน", note: "ไม่ขึ้นอัตโนมัติในขั้นสั่งการรักษา แถวประวัติจากศูนย์ที่ยังไม่มีสิทธิ์แสดงเป็น ******* ไม่ใส่ชื่อคลินิกหรือชื่อศูนย์จริงลงหน้าจอ" },
+
+  { code: "HIV-C1", name: "ใบยินยอมตรวจหาเชื้อเอชไอวี (VCT)", work: "รักปลอดภัย (HIV/STI)", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานรักปลอดภัย ครั้งแรก", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "คนละใบกับ CHK-C3 ของงานตรวจสุขภาพ" },
+  { code: "HIV-C2", name: "ใบยินยอมรับการรักษาโรคติดต่อทางเพศสัมพันธ์และรักษาความลับ", work: "รักปลอดภัย (HIV/STI)", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานรักปลอดภัย ครั้งแรก", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับคู่กับ HIV-C1" },
+
+  { code: "FP-C1", name: "ใบยินยอมรับบริการคุมกำเนิด", work: "วางแผนครอบครัว", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานวางแผนครอบครัว ครั้งแรก", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับของงาน ไม่ใช่ใบหัตถการรายครั้ง" },
+  { code: "FP-C2", name: "ใบยินยอมใส่ห่วงอนามัย/ฝังยาคุมกำเนิด", work: "วางแผนครอบครัว", tags: [TAG.all, TAG.proc, TAG.first, TAG.forever], when: "อยู่ในขั้นความยินยอมพร้อม FP-C1 ไม่ได้โผล่ตอนเลือกวิธีห่วงหรือยาฝัง", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "หมวดหัตถการ แต่ยังไม่ผูกกับปุ่มทำหัตถการ ใบที่ผูกกับหัตถการรายครั้งคือ FP-C3" },
+  { code: "FP-C3", name: "คำรับรองและความยินยอมทำหัตถการคุมกำเนิด", work: "วางแผนครอบครัว", tags: [TAG.proc, TAG.every], when: "ป๊อปอัปท้ายแบบบันทึกยาเม็ด ยาฉีด หรือยาฝัง เมื่อให้บริการคุมกำเนิดครั้งนั้น", freq: "ใช้สำหรับการรับบริการคุมกำเนิดครั้งนี้ ครั้งถัดไปขอใหม่", decline: "ไม่บันทึกว่ายินยอมทำหัตถการครั้งนี้", note: "ยินยอมหรือไม่ยินยอมครั้งเดียวทั้งใบ ลงชื่อผู้รับบริการและพยาบาลผู้ทำหัตถการ ไม่อยู่ในขั้นความยินยอมต้นทาง" },
+
+  { code: "IMM-C1", name: "ใบยินยอมรับวัคซีน", work: "สุขภาพเด็กดี", tags: [TAG.all, TAG.first, TAG.forever], when: "ผู้ป่วยใหม่ของคลินิกสุขภาพเด็กดี ขั้นแรกคือแบบฟอร์มความยินยอม เด็กรายเก่าไม่มีขั้นนี้", freq: "ครั้งแรกที่มารับบริการเด็กดี วันลงนามอ้างวันลงทะเบียนหรือครั้งแรกที่ชั่งวัด", decline: "ขั้นของเด็กใหม่ยังไม่ครบ", note: "แพทย์ไม่มีขั้นความยินยอมของคลินิกนี้ เปิดดูได้จาก ⋮" },
+  { code: "IMM-C2", name: "ใบยินยอมให้เจาะเลือดคัดกรองภาวะซีด", work: "สุขภาพเด็กดี", tags: [TAG.all, TAG.first, TAG.forever], when: "คู่กับ IMM-C1 ในเด็กใหม่", freq: "ลงครั้งแรก ครอบคลุมการตรวจ 2 ช่วงอายุ (6–12 เดือน และ 3–5 ปี)", decline: "ขั้นของเด็กใหม่ยังไม่ครบ", note: "ใบบังคับของเด็กใหม่ ไม่ได้ขอใหม่ทุกช่วงอายุ" },
+  { code: "IMM-C3", name: "ใบยินยอมบันทึกผลตรวจเลือดของมารดา (ข้อมูลอ่อนไหว)", work: "สุขภาพเด็กดี", tags: [TAG.opt, TAG.first, TAG.forever], when: "อยู่ในชุดใบของคลินิก แต่ไม่นับในธงลงนามครบ", freq: "ครั้งเดียวถ้ามารดาลงนาม ใช้ต่อในทะเบียนเด็ก", decline: "ลงทะเบียนเด็กต่อได้ ช่องผลตรวจเว้นว่างหรือเลือกไม่ทราบผล", note: "VDRL · Anti-HIV · HBsAg ของมารดา เปิดดูได้เฉพาะแพทย์และพยาบาลผู้ดูแล" },
+
+  { code: "REH-C1", name: "ใบยินยอมรับการฟื้นฟูสมรรถภาพทางการแพทย์", work: "เวชศาสตร์ฟื้นฟู", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมครั้งแรกของงานนี้", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับใบเดียวของงาน" },
+  { code: "PHY-C1", name: "ใบยินยอมรับการทำกายภาพบำบัด", work: "กายภาพบำบัด", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นแรกของหน้าบันทึกกายภาพบำบัด เมื่อยังไม่เคยลงนาม", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ครอบคลุมคอร์สที่แพทย์สั่ง ไม่ได้ขอใหม่ทุกครั้งที่มาทำ" },
+  { code: "TTM-C1", name: "ใบยินยอมรับบริการแพทย์แผนไทย", work: "แพทย์แผนไทย", tags: [TAG.all, TAG.proc, TAG.first, TAG.forever], when: "ขั้นแรกของหน้าบันทึกแพทย์แผนไทย", freq: "ครั้งแรก ข้อความในใบครอบคลุมคอร์ส 5 หรือ 10 ครั้งภายใน 3 เดือน", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบนี้คือความยินยอมหัตถการแผนไทย (นวด ประคบ อบ) ไม่มีใบแยกตอนกดทำแต่ละครั้ง พยาบาลหลังตรวจของแพทย์แผนไทยไม่มีขั้นความยินยอม" },
+
+  { code: "EHD-OPD", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "ตรวจโรคทั่วไป", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกตรวจโรคทั่วไป", freq: "ครั้งแรกของคลินิกนี้ แล้วซ่อนเข้า ⋮", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ข้อ 1–4 ของหนังสือบำบัดชุดเดียวกับ ADD-C1 ข้อ 5–7 ไม่ใส่ในคลินิกนี้" },
+  { code: "EHD-DM", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "เบาหวาน", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกเบาหวาน", freq: "ครั้งแรกของคลินิกนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบ Health Link ของเบาหวานไม่ได้อยู่ในขั้นนี้ ไปอยู่ตอนส่งต่อ" },
+  { code: "EHD-HT", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "ความดันโลหิตสูง", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกความดัน", freq: "ครั้งแรกของคลินิกนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบ Health Link ของความดันไม่ได้อยู่ในขั้นนี้" },
+  { code: "EHD-EYE", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "จักษุ", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกจักษุ คู่กับ EYE-C1", freq: "ครั้งแรกของคลินิกนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ" },
+  { code: "EYE-C1", name: "ใบยินยอมรับการตรวจตาและขยายม่านตา", work: "จักษุ", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกจักษุ ไม่ได้โผล่ตอนหยอดยาขยายม่านตา", freq: "ครั้งแรกของคลินิกนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "รวมการตรวจจอตาและการขยายม่านตาไว้ในใบเดียว" },
+  { code: "EHD-AC", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "หอบหืด/COPD", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกนี้ คู่กับใบ Health Link", freq: "ครั้งแรกของคลินิกนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ต่างจากเบาหวานและความดัน ใบ Health Link ของหอบหืดยังอยู่ในขั้น" },
+  { code: "HL-AC", name: "ใบยินยอมส่งข้อมูลสุขภาพผ่าน Health Link เพื่อการส่งต่อ", work: "หอบหืด/COPD", tags: [TAG.all, TAG.first, TAG.forever, TAG.refer], when: "อยู่ในขั้นความยินยอมของคลินิกหอบหืด/COPD", freq: "ข้อความท้ายใบ: มีผลตลอดการรักษาต่อเนื่องจนกว่าจะถอน", decline: "ขั้นความยินยอมยังไม่ครบ", note: "คนละจังหวะกับหนังสือ Health Link ที่ขอทุกครั้งตอนกดส่งต่อภายนอก" },
+  { code: "HL-DM", name: "ใบยินยอมส่งข้อมูลสุขภาพผ่าน Health Link เพื่อการส่งต่อ", work: "เบาหวาน", tags: [TAG.refer, TAG.forever], when: "ไม่ขึ้นในขั้นความยินยอม ระบบยังหาใบนี้เจอเมื่อจะส่งต่อ", freq: "ข้อความท้ายใบ: มีผลตลอดการรักษาจนกว่าจะถอน", decline: "ไม่บล็อกขั้นตรวจของคลินิก", note: "ถอดออกจากขั้นเมื่อ 3 ต.ค. 2569" },
+  { code: "HL-HT", name: "ใบยินยอมส่งข้อมูลสุขภาพผ่าน Health Link เพื่อการส่งต่อ", work: "ความดันโลหิตสูง", tags: [TAG.refer, TAG.forever], when: "ไม่ขึ้นในขั้นความยินยอม ใช้ตอนส่งต่อ", freq: "มีผลตลอดการรักษาจนกว่าจะถอน", decline: "ไม่บล็อกขั้นตรวจของคลินิก", note: "ถอดออกจากขั้นเมื่อ 3 ต.ค. 2569" },
+  { code: "EHD-TB", name: "หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพของบุคคลทางอิเล็กทรอนิกส์", work: "วัณโรค", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานวัณโรค คู่กับ TB-C1 และ TB-C2", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ" },
+  { code: "TB-C1", name: "ใบยินยอมรับการรักษาวัณโรคและกำกับการกินยา (DOT)", work: "วัณโรค", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานวัณโรค", freq: "ครั้งแรกของงานนี้ ครอบคลุมการกินยาต่อเนื่อง", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ" },
+  { code: "TB-C2", name: "ใบรับทราบการรายงานโรคติดต่อที่ต้องเฝ้าระวังตามกฎหมาย", work: "วัณโรค", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานวัณโรค", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบในระบบ แม้เนื้อหาเป็นการรับทราบหน้าที่ตาม พ.ร.บ. โรคติดต่อ", note: "ยังไม่ได้แยกเป็นใบแจ้งทราบที่ไม่ต้องเลือกยินยอม" },
+
+  { code: "SW-C1", name: "ใบยินยอมรับความช่วยเหลือและให้ข้อมูลทางสังคมสงเคราะห์", work: "สังคมสงเคราะห์", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานสังคมสงเคราะห์", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับใบเดียว" },
+  { code: "CHK-C1", name: "ใบยินยอมรับการตรวจสุขภาพและตรวจทางห้องปฏิบัติการ", work: "ตรวจสุขภาพ", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมก่อนแบบประเมินคัดกรองสุขภาพ", freq: "ครั้งแรกที่ยังไม่เคยลงนามใบบังคับของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบบังคับ" },
+  { code: "CHK-C2", name: "ใบยินยอมเก็บ ใช้ และเปิดเผยข้อมูลสุขภาพผ่าน BMA Portal", work: "ตรวจสุขภาพ", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของงานตรวจสุขภาพ", freq: "ครั้งแรกของงานนี้", decline: "ขั้นความยินยอมยังไม่ครบ", note: "รวมการแสดงผลบางรายการในแอปหมอ กทม." },
+  { code: "CHK-C3", name: "ใบยินยอมตรวจหาเชื้อเอชไอวีโดยสมัครใจ", work: "ตรวจสุขภาพ", tags: [TAG.opt, TAG.every], when: "ผู้รับบริการตอบว่าต้องการตรวจเอชไอวีในแบบประเมิน ถ้ายังไม่ลงนาม ระบบพาไปลงที่ขั้นความยินยอมก่อนกลับมาซักประวัติ", freq: "เฉพาะครั้งที่เลือกตรวจเอชไอวี ยังไม่ลงนามก็สั่งรายการนี้ไม่ได้", decline: "ไม่เพิ่มรายการตรวจเอชไอวี งานตรวจสุขภาพอย่างอื่นทำต่อได้", note: "ไม่นับในธงลงนามครบ" },
+
+  { code: "CLN-C1", name: "ใบยินยอมรับการตรวจรักษาเฉพาะทาง", work: "คลินิกที่ยังไม่มีชุดใบของตัวเอง", tags: [TAG.all, TAG.first, TAG.forever], when: "ขั้นความยินยอมของคลินิกจากทะเบียนที่ไม่มีรายการในชุดเฉพาะ", freq: "ครั้งแรกของคลินิกนั้น", decline: "ขั้นความยินยอมยังไม่ครบ", note: "ใบค่าเริ่มต้น หัวข้อแทรกชื่อคลินิกจริง" },
+
+  { code: "DMR", name: "แบบฟอร์มยินยอมเข้าร่วมโครงการเบาหวานระยะสงบ", work: "เบาหวาน", tags: [TAG.every], when: "แพทย์ติ๊กเข้าโครงการ DM Remission ในแผนการดูแล ขึ้นแถบเตือนและปุ่มขอความยินยอม ไม่เด้งป๊อปอัปทันที", freq: "ทุกครั้งที่ติ๊กเข้าโครงการ ถอนตัวได้ตลอดโดยแจ้งเจ้าหน้าที่", decline: "ระบบเอาเครื่องหมายเข้าโครงการออก", note: "ไม่อยู่ในขั้นความยินยอมต้นทาง ลงนามแล้วครั้งใดถือว่าอยู่ในโครงการ" },
+  { code: "REF", name: "หนังสือขอความยินยอมเชื่อมโยงข้อมูลสุขภาพ (Health Link) เพื่อการส่งต่อ", work: "ทุกงาน ตอนส่งต่อภายนอกสำนักอนามัย", tags: [TAG.refer, TAG.every], when: "ก่อนส่งต่อไปสถานพยาบาลนอกสำนักอนามัย รวมส่งต่อต่างประเทศ คลินิกที่มีใบ Health Link ของตัวเองใช้ใบนั้นได้", freq: "ขอทุกครั้งก่อนส่งต่อภายนอก", decline: "ส่งต่อไปสถานพยาบาลภายนอกสำนักอนามัยไม่ได้", note: "ยินยอมครั้งเดียวทั้งใบ ไม่ขึ้นในขั้นความยินยอมของคลินิก การส่งต่อในศูนย์หรือไปศบส.อีกแห่งไม่ใช้ใบนี้" },
+
+  { code: "RX-DLV-PH", name: "หนังสือยินยอมรับยาที่ร้านยาในสังกัด", work: "ห้องยา", tags: [TAG.first, TAG.forever], when: "เลือกวิธีรับยาเองที่ร้านยาเครือข่าย และคนนี้ยังไม่เคยให้ความยินยอมวิธีนี้", freq: "ครั้งแรกต่อ HN ต่อวิธี ครั้งต่อไปไม่ถาม", decline: "ยังเปลี่ยนไปรับยาวิธีนั้นไม่ได้", note: "รับยาที่ศูนย์ หรือให้ อสส. รับแทน ไม่ต้องใช้ใบนี้ ไปรษณีย์ต้องมีเลขติดตามพัสดุ" },
+  { code: "RX-DLV-ML", name: "หนังสือยินยอมจัดส่งยาทางไปรษณีย์", work: "ห้องยา", tags: [TAG.first, TAG.forever], when: "เลือกจัดส่งไปรษณีย์ครั้งแรกของ HN นี้", freq: "ครั้งแรกต่อวิธี", decline: "จัดส่งวิธีนี้ไม่ได้จนกว่าจะยินยอม", note: "เปิดเผยชื่อ เบอร์ และที่อยู่ให้ผู้ให้บริการไปรษณีย์" },
+  { code: "RX-DLV-RD", name: "หนังสือยินยอมจัดส่งยาผ่านไรเดอร์", work: "ห้องยา", tags: [TAG.first, TAG.forever], when: "เลือกจัดส่งผ่านไรเดอร์ครั้งแรกของ HN นี้", freq: "ครั้งแรกต่อวิธี", decline: "จัดส่งวิธีนี้ไม่ได้จนกว่าจะยินยอม", note: "ยาบรรจุซองปิดผนึกไม่แสดงชื่อยา" },
+
+  { code: "F-1021", name: "หนังสือยินยอมรับบริการปรึกษาทางไกล และการบันทึกภาพ-เสียง (PDPA)", work: "Telemedicine", tags: [TAG.every, TAG.year], when: "ก่อนเริ่มการปรึกษาทางไกลแต่ละครั้ง", freq: "ข้อความฟอร์มกำหนดให้ใช้ทุกครั้ง แถวทะเบียนมีวันหมดอายุราว 12 เดือน และไฟล์บันทึกเก็บไม่เกิน 12 เดือน", decline: "บันทึกสายไม่ได้หากไม่ยินยอมบันทึกภาพ-เสียง ปฏิเสธเฉพาะการบันทึกยังรับบริการต่อได้ในตัวอย่างข้อมูล", note: "แยกเรื่องในใบเดียวกัน: รับบริการทางไกล · บันทึกภาพ-เสียง · ให้หน่วยบริการอื่นเข้าร่วมสาย" },
+
+  { code: "SCH-DEN", name: "ใบขออนุญาตผู้ปกครอง ตรวจฟันและบริการทันตกรรมในโรงเรียน", work: "ทันตกรรมโรงเรียน", tags: [TAG.every], when: "พิมพ์แจกก่อนออกหน่วยทันตกรรมโรงเรียน ให้ผู้ปกครองกรอกเอง", freq: "กระดาษต่อครั้งที่ออกหน่วย ไม่ได้เก็บเป็นลายเซ็นในทะเบียนความยินยอม", decline: "ผู้ปกครองเลือกไม่อนุญาตเป็นรายบริการ", note: "อนุญาตแยก 4 ข้อ: ตรวจฟัน · เคลือบฟลูออไรด์ · เคลือบหลุมร่องฟัน · ทันตกรรมรักษา ไม่พิมพ์เลขบัตรลงกระดาษที่ส่งกลับบ้าน" },
+
+  { code: "CPOE-SX", name: "ประตูก่อนสั่งหัตถการประเภทผ่าตัด", work: "สั่งการรักษา", tags: [TAG.proc], when: "สั่งรายการชนิดผ่าตัด", freq: "ตรวจว่ามีใบประเภทผ่าตัดสถานะยินยอมแล้วหรือยัง ไม่ได้เปิดใบเฉพาะ", decline: "สั่งหัตถการนั้นไม่ได้ จนกว่าจะมีใบประเภทผ่าตัดที่ยินยอมแล้ว", note: "เป็นกฎตรวจสิทธิ์ ยังไม่ชี้ไปที่รหัสใบใดใบหนึ่ง" },
+  { code: "CPOE-RS", name: "ประตูก่อนสั่งการรักษาที่เป็นการวิจัย", work: "สั่งการรักษา", tags: [TAG.every], when: "สั่งรายการชนิดการวิจัย", freq: "ต้องมีใบประเภทการวิจัยสถานะยินยอมแล้ว", decline: "สั่งรายการวิจัยไม่ได้", note: "เป็นกฎตรวจสิทธิ์ ไม่ได้ผูกแบบฟอร์มวิจัยรายโครงการ" },
+  { code: "CPOE-RX", name: "ประตูก่อนส่งใบสั่งยา", work: "สั่งการรักษา", tags: [], when: "ส่งใบสั่งยา", freq: "ต้องมีใบประเภท PDPA หรือการรักษาที่ยังยินยอมอยู่ ไม่ได้เปิดใบใหม่", decline: "ส่งใบสั่งยาไม่ได้ตามกฎนี้", note: "คนที่ลงทะเบียนครบใช้ EHC-1011 หรือ GCT-1013 ที่ลงไว้แล้ว ไม่ใช่ใบที่ทุกคนต้องกรอกเพิ่มตอนรับยา" },
+  { code: "HV-PHOTO", name: "ความยินยอมก่อนถ่ายรูประหว่างเยี่ยมบ้าน", work: "เยี่ยมบ้าน", tags: [TAG.every], when: "ก่อนถ่ายรูปในบ้านแต่ละครั้ง", freq: "ทุกครั้งที่ถ่าย ไม่มีแบบฟอร์มแยก ขั้นความยินยอมของเยี่ยมบ้านใช้ชุดใบเวชระเบียน", decline: "ไม่ถ่าย", note: "ไม่ถ่ายใบหน้าคนอื่นในบ้านที่ไม่ใช่ผู้รับบริการ" },
+];
+
+const filterOrder = [TAG.all, TAG.proc, TAG.first, TAG.every, TAG.forever, TAG.year, TAG.opt, TAG.refer];
+const NEW_PATIENT = new Set(["EHC-1011", "INS-1012", "GCT-1013"]);
+
+function scopeOf(r) {
+  if (NEW_PATIENT.has(r.code)) return "ผู้รับบริการใหม่ทุกคน";
+  if (r.code === "CPOE-RX") return "ใช้ใบที่ลงไว้แล้ว";
+  if (r.code === "ADD-C4") return "ครั้งเดียวเมื่อจะดูข้อมูลข้ามศูนย์";
+  if (r.tags.includes(TAG.refer) && !r.tags.includes(TAG.all)) return "เฉพาะตอนส่งต่อภายนอก";
+  if (r.tags.includes(TAG.refer) && r.tags.includes(TAG.every)) return "เฉพาะตอนส่งต่อภายนอก";
+  if ((r.tags.includes(TAG.proc) && r.tags.includes(TAG.every)) || r.code === "CPOE-SX") return "เฉพาะตอนทำหัตถการครั้งนั้น";
+  if (r.work === "ห้องยา" && r.tags.includes(TAG.first)) return "ครั้งแรกต่อวิธีรับยา";
+  if (r.tags.includes(TAG.every)) return "ทุกครั้งที่มีบริการนี้";
+  if (r.tags.includes(TAG.first)) return "ครั้งแรกของงานนี้";
+  return "ไม่ขออัตโนมัติ";
+}
+const selected = new Set();
+const PAGE_SIZE = 20;
+let page = 1;
+let workFilter = "";
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const tagsHtml = (tags) => `<div class="tags">${tags.map((t) => `<span class="tag ${tagClass[t] || ""}">${esc(t)}</span>`).join("")}</div>`;
+
+function visible() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  return rows.filter((r) => {
+    if (workFilter && r.work !== workFilter) return false;
+    if (selected.size && ![...selected].every((t) => r.tags.includes(t))) return false;
+    if (!q) return true;
+    return [r.code, r.name, r.work, scopeOf(r), r.when, r.freq, r.decline, r.note, r.tags.join(" ")].join(" ").toLowerCase().includes(q);
+  });
+}
+
+function pageOf(list) {
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (page > totalPages) page = totalPages;
+  if (page < 1) page = 1;
+  if (total <= PAGE_SIZE) return { rows: list, total, totalPages: 1, start: total ? 1 : 0, end: total };
+  const startIndex = (page - 1) * PAGE_SIZE;
+  return {
+    rows: list.slice(startIndex, startIndex + PAGE_SIZE),
+    total,
+    totalPages,
+    start: startIndex + 1,
+    end: Math.min(startIndex + PAGE_SIZE, total),
+  };
+}
+
+function renderPager(slice) {
+  const el = document.getElementById("pager");
+  if (slice.total <= PAGE_SIZE) {
+    el.hidden = true;
+    el.innerHTML = "";
+    return;
+  }
+  const pages = Array.from({ length: slice.totalPages }, (_, i) => i + 1);
+  el.hidden = false;
+  el.innerHTML = `<span class="pager-label">แสดง ${slice.start}–${slice.end} จาก ${slice.total} รายการ</span>
+    <div class="pager-pages">
+      <button type="button" data-page="${page - 1}" ${page === 1 ? "disabled" : ""} aria-label="หน้าก่อน">‹</button>
+      ${pages.map((n) => `<button type="button" data-page="${n}" ${n === page ? 'aria-current="page"' : ""}>${n}</button>`).join("")}
+      <button type="button" data-page="${page + 1}" ${page === slice.totalPages ? "disabled" : ""} aria-label="หน้าถัดไป">›</button>
+    </div>`;
+}
+
+function renderHead() {
+  const yn = filterOrder.map((tag) => `<th class="yn">${esc(tag)}</th>`).join("");
+  document.querySelector(".ds-table thead tr").innerHTML = `<th class="demo" tabindex="0" aria-describedby="code-tip">รหัส</th><th>แบบฟอร์ม</th><th>งาน</th><th>ขอบเขต</th><th class="cond">เงื่อนไข</th>${yn}<th>เมื่อไหร่ขึ้น</th><th>ความถี่และอายุ</th><th>ถ้าไม่ยินยอม</th><th>หมายเหตุ</th>`;
+}
+
+function render() {
+  const list = visible();
+  const slice = pageOf(list);
+  const colCount = document.querySelectorAll(".ds-table thead th").length;
+  document.getElementById("rows").innerHTML = slice.rows.map((r) => `<tr>
+    <td class="demo fit">${esc(r.code)}</td>
+    <td class="text">${esc(r.name)}</td>
+    <td class="fit">${esc(r.work)}</td>
+    <td class="fit">${esc(scopeOf(r))}</td>
+    <td class="cond fit">${tagsHtml(r.tags)}</td>
+    ${filterOrder.map((tag) => r.tags.includes(tag)
+      ? `<td class="yn" aria-label="ใช่"><span class="yn-mark material-symbols-outlined" aria-hidden="true">check</span></td>`
+      : `<td class="yn" aria-label="ไม่ใช่"></td>`).join("")}
+    <td class="text">${esc(r.when)}</td>
+    <td class="text">${esc(r.freq)}</td>
+    <td class="text">${esc(r.decline)}</td>
+    <td class="text small">${esc(r.note)}</td>
+  </tr>`).join("") || `<tr><td colspan="${colCount}">ไม่พบรายการที่ตรงตัวกรอง</td></tr>`;
+  document.getElementById("count").textContent = `${list.length} รายการ`;
+  renderPager(slice);
+  const picked = filterOrder.filter((t) => selected.has(t));
+  document.getElementById("cond-label").textContent = !picked.length ? "ทุกเงื่อนไข" : (picked.length === 1 ? picked[0] : `${picked[0]} +${picked.length - 1}`);
+  document.getElementById("cond-tag").classList.toggle("on", picked.length > 0);
+  document.getElementById("work-label").textContent = workFilter || "ทุกงาน";
+  document.getElementById("work-tag").classList.toggle("on", !!workFilter);
+  document.getElementById("clear").hidden = !(selected.size || workFilter || document.getElementById("q").value.trim());
+  renderWorkMenu();
+  renderCondMenu();
+}
+
+function renderStats() {
+  const boxes = filterOrder.slice(0, 5).map((tag) => {
+    const n = rows.filter((r) => r.tags.includes(tag)).length;
+    return `<div class="stat"><b>${n}</b><span>${esc(tag)}</span></div>`;
+  });
+  document.getElementById("stats").innerHTML = boxes.join("");
+}
+
+function workChoices() {
+  const seen = [];
+  rows.forEach((r) => { if (!seen.includes(r.work)) seen.push(r.work); });
+  return seen;
+}
+
+function closeMenu(menuId, tagId) {
+  document.getElementById(menuId).hidden = true;
+  document.getElementById(tagId).setAttribute("aria-expanded", "false");
+}
+function closeWork() { closeMenu("work-menu", "work-tag"); }
+function closeCond() { closeMenu("cond-menu", "cond-tag"); }
+
+function renderWorkMenu() {
+  const opts = [{ value: "", label: "ทุกงาน" }, ...workChoices().map((w) => ({ value: w, label: w }))];
+  document.getElementById("work-menu").innerHTML = opts.map((o) => `<button type="button" class="fopt" role="option" aria-selected="${o.value === workFilter}" data-work="${esc(o.value)}"><span>${esc(o.label)}</span>${o.value === workFilter ? '<span class="material-symbols-outlined fopt-check">check</span>' : ""}</button>`).join("");
+}
+
+const CHECK_BOX = `<span class="fbox" aria-hidden="true"><svg width="8" height="6.3" viewBox="0 0 8 6.3" fill="none"><path d="M1 3.3 L3 5.3 L7 1" stroke="var(--icon-switch-checkbox-tick, #FFFFFF)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+
+function renderCondMenu() {
+  const allOn = selected.size === 0;
+  const rowsHtml = [`<button type="button" class="fopt multi" role="option" aria-selected="${allOn}" data-tag="">${CHECK_BOX}<span>ทุกเงื่อนไข</span></button>`];
+  filterOrder.forEach((tag) => {
+    const on = selected.has(tag);
+    rowsHtml.push(`<button type="button" class="fopt multi" role="option" aria-selected="${on}" data-tag="${esc(tag)}">${CHECK_BOX}<span>${esc(tag)}</span></button>`);
+  });
+  document.getElementById("cond-menu").innerHTML = rowsHtml.join("");
+}
+
+function openMenu(menuId, tagId) {
+  const menu = document.getElementById(menuId);
+  const open = menu.hidden;
+  if (menuId === "work-menu") closeCond();
+  else closeWork();
+  menu.hidden = !open;
+  document.getElementById(tagId).setAttribute("aria-expanded", String(open));
+  if (open) menu.style.minWidth = `${Math.round(document.getElementById(tagId).getBoundingClientRect().width)}px`;
+}
+
+function renderFilters() {
+  document.getElementById("clear").addEventListener("click", () => {
+    selected.clear();
+    workFilter = "";
+    document.getElementById("q").value = "";
+    closeWork();
+    closeCond();
+    page = 1;
+    render();
+    syncSearch();
+  });
+  document.getElementById("work-tag").addEventListener("click", () => openMenu("work-menu", "work-tag"));
+  document.getElementById("cond-tag").addEventListener("click", () => openMenu("cond-menu", "cond-tag"));
+  document.getElementById("work-menu").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const opt = e.target.closest(".fopt");
+    if (!opt) return;
+    workFilter = opt.dataset.work;
+    closeWork();
+    page = 1;
+    render();
+  });
+  document.getElementById("cond-menu").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const opt = e.target.closest(".fopt");
+    if (!opt) return;
+    const tag = opt.dataset.tag;
+    if (!tag) selected.clear();
+    else if (selected.has(tag)) selected.delete(tag);
+    else selected.add(tag);
+    page = 1;
+    render();
+  });
+  document.addEventListener("click", (e) => {
+    if (!document.getElementById("work-drop").contains(e.target)) closeWork();
+    if (!document.getElementById("cond-drop").contains(e.target)) closeCond();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closeWork(); closeCond(); }
+  });
+}
+
+function cellText(td) {
+  if (td.classList.contains("yn")) return td.querySelector(".yn-mark") ? "✓" : "";
+  const tags = [...td.querySelectorAll(".tag")];
+  if (tags.length) return tags.map((tag) => tag.textContent.trim()).join(" | ");
+  return td.innerText.replace(/\s+/g, " ").trim();
+}
+
+const CODE_NOTE = "ไม่ใช่รหัสฟอร์มจริง\nเป็นรหัสที่ทำใน Demo เผื่อใช้ตรวจสอบ";
+const xml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[c]));
+
+function downloadExcel() {
+  const header = [...document.querySelectorAll(".ds-table thead th")].map((th) => th.textContent.trim());
+  const body = [...document.querySelectorAll(".ds-table tbody tr")].flatMap((tr) => {
+    const cells = [...tr.querySelectorAll("td")];
+    if (cells.length !== header.length) return [];
+    return [cells.map(cellText)];
+  });
+  const cell = (value, style, comment) => `<Cell${style ? ` ss:StyleID="${style}"` : ""}>${comment ? `<Comment ss:Author="PHCIS"><Data>${xml(comment)}</Data></Comment>` : ""}<Data ss:Type="String">${xml(value)}</Data></Cell>`;
+  const head = header.map((name, i) => cell(name, i === 0 ? "demoHead" : "head", i === 0 ? CODE_NOTE : "")).join("");
+  const rowsXml = body.map((line) => `<Row>${line.map((value, i) => cell(value, i === 0 ? "demo" : "")).join("")}</Row>`).join("");
+  const book = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+<Styles>
+<Style ss:ID="head"><Font ss:Bold="1" ss:Color="#004C31"/><Interior ss:Color="#F4FBF8" ss:Pattern="Solid"/></Style>
+<Style ss:ID="demoHead"><Font ss:Bold="1" ss:Color="#004C31"/><Interior ss:Color="#FFEDD5" ss:Pattern="Solid"/></Style>
+<Style ss:ID="demo"><Interior ss:Color="#FFEDD5" ss:Pattern="Solid"/></Style>
+</Styles>
+<Worksheet ss:Name="เงื่อนไขการแสดง"><Table>
+<Row>${head}</Row>
+${rowsXml}
+</Table></Worksheet>
+</Workbook>`;
+  const blob = new Blob([book], { type: "application/vnd.ms-excel" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "consent-display-conditions.xls";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function placeCodeTip(cell) {
+  const tip = document.getElementById("code-tip");
+  tip.hidden = false;
+  const box = cell.getBoundingClientRect();
+  const width = tip.offsetWidth;
+  const height = tip.offsetHeight;
+  let left = box.left;
+  let top = box.bottom + 8;
+  if (left + width > window.innerWidth - 16) left = window.innerWidth - 16 - width;
+  if (left < 8) left = 8;
+  if (top + height > window.innerHeight - 8) top = Math.max(8, box.top - 8 - height);
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+
+document.querySelector(".ds-scroll").addEventListener("mouseover", (e) => {
+  const cell = e.target.closest(".demo");
+  if (!cell || !e.currentTarget.contains(cell)) return;
+  placeCodeTip(cell);
+});
+document.querySelector(".ds-scroll").addEventListener("mouseout", (e) => {
+  const cell = e.target.closest(".demo");
+  if (!cell || cell.contains(e.relatedTarget)) return;
+  document.getElementById("code-tip").hidden = true;
+});
+document.querySelector(".ds-scroll").addEventListener("focusin", (e) => {
+  if (e.target.classList.contains("demo")) placeCodeTip(e.target);
+});
+document.querySelector(".ds-scroll").addEventListener("focusout", () => {
+  document.getElementById("code-tip").hidden = true;
+});
+
+renderStats();
+renderHead();
+renderFilters();
+function syncSearch() {
+  const shell = document.getElementById("search");
+  const input = document.getElementById("q");
+  const filled = input.value.length > 0;
+  const focused = document.activeElement === input;
+  const state = focused ? (filled ? "typing" : "focus") : (shell.matches(":hover") ? "hover" : (filled ? "filled" : "default"));
+  shell.dataset.state = state;
+  document.querySelector(".search-actions").hidden = state !== "typing";
+}
+const searchInput = document.getElementById("q");
+const searchShell = document.getElementById("search");
+searchInput.addEventListener("input", () => { page = 1; render(); syncSearch(); });
+searchInput.addEventListener("focus", syncSearch);
+searchInput.addEventListener("blur", syncSearch);
+searchShell.addEventListener("mouseenter", syncSearch);
+searchShell.addEventListener("mouseleave", syncSearch);
+document.getElementById("search-clear").addEventListener("mousedown", (e) => e.preventDefault());
+document.getElementById("search-go").addEventListener("mousedown", (e) => e.preventDefault());
+document.getElementById("search-clear").addEventListener("click", () => {
+  searchInput.value = "";
+  searchInput.dispatchEvent(new Event("input"));
+  searchInput.focus();
+});
+document.getElementById("search-go").addEventListener("click", () => { searchInput.blur(); });
+document.getElementById("pager").addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn || btn.disabled) return;
+  page = Number(btn.dataset.page);
+  render();
+});
+document.getElementById("csv").addEventListener("click", downloadExcel);
+render();
+</script>
+</body>
+</html>
