@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>PHCIS — Userflow Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #F4F5F5;
+      --surface: #FFFFFF;
+      --surface-2: #FAFAFA;
+      --border: #E2E4E6;
+      --text: #171A1F;
+      --muted: #6E757C;
+      --brand: #6366F1;
+      --brand-soft: #EEF0FF;
+      --success: #08A768;
+      --warn: #E0973C;
+      --danger: #D04949;
+      --shadow: 0 1px 3px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.04);
+      --shadow-strong: 0 16px 32px rgba(15,23,42,.10), 0 4px 4px rgba(15,23,42,.06);
+      --radius: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F1115; --surface: #181B22; --surface-2: #20242C;
+        --border: #2A2F38; --text: #E8EAEC; --muted: #9098A1;
+        --brand-soft: #1F2240; --shadow: 0 1px 3px rgba(0,0,0,.4);
+        --shadow-strong: 0 16px 32px rgba(0,0,0,.5);
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    body {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: 60px 1fr;
+      grid-template-areas: "header header" "sidebar content";
+      height: 100vh;
+    }
+    header {
+      grid-area: header;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+    header .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    header .spacer { flex: 1; }
+    header .legend {
+      display: flex; gap: 14px;
+      font-size: 12px; color: var(--muted);
+      align-items: center;
+    }
+    header .legend .swatch {
+      display: inline-block; width: 12px; height: 12px;
+      border-radius: 3px; margin-right: 4px; vertical-align: middle;
+    }
+    aside {
+      grid-area: sidebar;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 16px 12px;
+    }
+    aside .search {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 14px;
+      outline: none;
+    }
+    aside .search:focus { border-color: var(--brand); }
+    aside nav { display: flex; flex-direction: column; gap: 2px; }
+    aside nav a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      transition: background .15s ease, color .15s ease;
+    }
+    aside nav a:hover { background: var(--surface-2); }
+    aside nav a.active {
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-weight: 600;
+    }
+    aside nav a .ic { font-size: 14px; opacity: .65; }
+    aside nav .group-label {
+      padding: 14px 12px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    main {
+      grid-area: content;
+      overflow-y: auto;
+      padding: 24px 36px 80px;
+    }
+    section.flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 80px;
+    }
+    section.flow h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    section.flow .lead {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 13px;
+    }
+    .diagram-wrap {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      overflow: auto;
+      position: relative;
+      min-height: 200px;
+    }
+    .diagram-wrap .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: max-content;
+    }
+    .diagram-wrap .mermaid svg {
+      max-width: none !important;
+      height: auto !important;
+    }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .meta-row .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+    }
+    .meta-row .chip.brand { background: var(--brand-soft); color: var(--brand); border-color: var(--brand-soft); }
+    .meta-row .chip.success { background: #E7F8F0; color: var(--success); border-color: #C8EEDA; }
+    .meta-row .chip.warn { background: #FDF1E0; color: var(--warn); border-color: #F7DEB5; }
+    .meta-row .chip.danger { background: #FBE8E8; color: var(--danger); border-color: #F2C7C7; }
+
+    table.modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    table.modal-table th, table.modal-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.modal-table th {
+      background: var(--surface-2);
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    table.modal-table tr:hover td { background: var(--surface-2); }
+
+    .logic-block {
+      margin-top: 18px;
+      padding: 14px 18px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--brand);
+      border-radius: 10px;
+    }
+    .logic-block h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--brand);
+    }
+    .logic-block h4 {
+      margin: 14px 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .logic-block ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .logic-block ul li + li { margin-top: 4px; }
+    .logic-block ul ul { margin-top: 4px; }
+    .logic-block p { margin: 6px 0; font-size: 13px; line-height: 1.6; }
+    .logic-block table.modal-table { margin-top: 10px; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+      font-size: 12px;
+      background: var(--surface-2);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .toolbar {
+      display: flex; gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .toolbar button {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .toolbar button:hover {
+      background: var(--surface-2);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    /* Detail flyout */
+    #detail-flyout {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      max-height: 60vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-strong);
+      padding: 18px 20px;
+      transform: translateY(120%);
+      transition: transform .25s cubic-bezier(.32,.72,0,1);
+      z-index: 50;
+    }
+    #detail-flyout.open { transform: translateY(0); }
+    #detail-flyout h3 {
+      margin: 0 0 4px;
+      font-size: 15px;
+    }
+    #detail-flyout .closer {
+      position: absolute;
+      top: 10px; right: 12px;
+      background: transparent;
+      border: 0; cursor: pointer;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    #detail-flyout dl {
+      margin: 12px 0 0;
+      font-size: 13px;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 6px 12px;
+    }
+    #detail-flyout dt { color: var(--muted); }
+    #detail-flyout dd { margin: 0; }
+    #detail-flyout p { margin: 8px 0 0; color: var(--text); font-size: 13px; line-height: 1.5; }
+
+    /* Print styles */
+    @media print {
+      body { display: block; }
+      aside, header { display: none; }
+      main { padding: 0; }
+      section.flow { box-shadow: none; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PHCIS · Userflow Map</h1>
+    <span class="subtitle">interactive · click any node for details</span>
+    <span class="spacer"></span>
+    <div class="legend">
+      <span><span class="swatch" style="background:#6366F1"></span>Page</span>
+      <span><span class="swatch" style="background:#08A768"></span>Modal</span>
+      <span><span class="swatch" style="background:#E0973C"></span>Step</span>
+      <span><span class="swatch" style="background:#D04949"></span>Stub</span>
+    </div>
+  </header>
+
+  <aside>
+    <input class="search" id="navSearch" type="search" placeholder="ค้นหา flow / page…" />
+    <nav id="nav">
+      <div class="group-label">Overview</div>
+      <a href="#overview" data-target="overview"><span class="ic">🗺️</span>App map</a>
+
+      <div class="group-label">Business flows</div>
+      <a href="#dashboard" data-target="dashboard"><span class="ic">📊</span>Dashboard</a>
+      <a href="#registration" data-target="registration"><span class="ic">📋</span>Registration</a>
+      <a href="#opd" data-target="opd"><span class="ic">🩺</span>OPD Screening</a>
+      <a href="#treatment" data-target="treatment"><span class="ic">⚕️</span>Treatment Record ★</a>
+      <a href="#forms" data-target="forms"><span class="ic">📁</span>Forms Library</a>
+      <a href="#users" data-target="users"><span class="ic">👥</span>Users &amp; Access</a>
+
+      <div class="group-label">Reference</div>
+      <a href="#modals" data-target="modals"><span class="ic">🪟</span>Modal catalog</a>
+      <a href="#stubs" data-target="stubs"><span class="ic">⛔</span>Unwired stubs</a>
+      <a href="#preview-routes" data-target="preview-routes"><span class="ic">🧪</span>Preview routes</a>
+    </nav>
+  </aside>
+
+  <main id="main">
+
+    <!-- 0 · OVERVIEW -->
+    <section class="flow" id="overview">
+      <h2>0 · App map</h2>
+      <p class="lead">Top-level navigation surface — the sidebar maps menu items to routes. Items with <span style="color:var(--danger);font-weight:600">red dashed</span> outline are stubs (UI present, route missing).</p>
+      <div class="meta-row">
+        <span class="chip">src/components/layout/Sidebar.jsx</span>
+        <span class="chip">src/routes/Routes.jsx</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  classDef stub fill:#FBE8E8,stroke:#D04949,color:#7A2424,stroke-dasharray:4 3,rx:8,ry:8
+  classDef shell fill:#FAFAFA,stroke:#9098A1,color:#171A1F,rx:8,ry:8
+
+  SB([Sidebar])
+  SB --> DASH[/dashboard/]:::page
+  SB --> FORMS[/forms/]:::page
+  SB --> REG[/"registration/queue"/]:::page
+  SB --> OPD[/"opd/queue"/]:::page
+  SB --> TRT[/"treat/queue"/]:::page
+  SB --> USR[/users/]:::page
+  SB --> RAD[Radiology ✕]:::stub
+  SB --> LAB[Lab ✕]:::stub
+  SB --> PHARM[Pharmacy ✕]:::stub
+  SB --> FIN[Finance ✕]:::stub
+  SB --> APPT[Appointments ✕]:::stub
+  SB --> LOG[Activity Log ✕]:::stub
+  SB -.profile.-> PP[(Profile popover)]:::shell
+  PP -.theme.-> SM[(SettingsModal)]:::shell
+
+  click DASH call openDetail("dashboard","/dashboard","DashboardPage.jsx","Read-only KPI dashboard with 6 cards + 13 charts")
+  click REG call openDetail("regQ","/registration/queue","RegistrationQueuePage.jsx","Patient registration queue — 130 rows, 20/page")
+  click OPD call openDetail("opdQ","/opd/queue","QueuePage.jsx","OPD screening queue — 130 rows, 20/page")
+  click TRT call openDetail("trtQ","/treat/queue","TreatmentQueuePage.jsx","Treatment record queue — 248 rows, 20/page")
+  click FORMS call openDetail("formsLib","/forms","FormsLibraryPage.jsx","Form catalog with category filtering")
+  click USR call openDetail("usrList","/users","UsersAccessPage.jsx","Admin: users + roles + features")
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 · DASHBOARD -->
+    <section class="flow" id="dashboard">
+      <h2>1 · Dashboard</h2>
+      <p class="lead">Read-only analytics. No drill-down navigation.</p>
+      <div class="meta-row">
+        <span class="chip brand">/dashboard</span>
+        <span class="chip">DashboardPage.jsx</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  D[/dashboard/]:::page
+  D --> K[6 KPI cards · year filter]
+  D --> C[13 chart cards]
+  D --> T[Recent patients table]
+  click D call openDetail("dashboard","/dashboard","DashboardPage.jsx","Year-filtered KPIs and charts — terminal screen")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Entry:</strong> Sidebar item <code>dashboard</code> → <code>/dashboard</code>. Also the default landing when the app opens with no path (router index redirect).</li>
+          <li><strong>State scope:</strong> all charts/KPIs derive from in-memory mock arrays (<code>dashboardMock.js</code>). No draft/dirty state — refresh is free.</li>
+          <li><strong>No queue → form pattern:</strong> unlike Registration / OPD / Treatment, no row click navigates anywhere. The "Recent patients" table is informational only.</li>
+          <li><strong>No leave guard:</strong> nothing is editable, so <code>UnsavedChangesPopup</code> is never wired into this route.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2 · REGISTRATION -->
+    <section class="flow" id="registration">
+      <h2>2 · ระบบงานเวชระเบียน · Registration</h2>
+      <p class="lead">Queue → 5-step form → save. Form state owned by <code>RegistrationFormPage</code> via <code>FormShell</code>.</p>
+      <div class="meta-row">
+        <span class="chip brand">/registration/queue</span>
+        <span class="chip brand">/registration/register</span>
+        <span class="chip warn">UnsavedChangesPopup</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  classDef step fill:#FDF1E0,stroke:#E0973C,color:#5C3D14,rx:6,ry:6
+  classDef modal fill:#E7F8F0,stroke:#08A768,color:#0B5435,rx:18,ry:18
+
+  Q[/"registration/queue"/]:::page
+  F[/"registration/register"/]:::page
+  S1[Step 1<br/>Personal]:::step
+  S2[Step 2<br/>Address]:::step
+  S3[Step 3<br/>Contact]:::step
+  S4[Step 4<br/>Rights]:::step
+  S5[Step 5<br/>Flags]:::step
+  USP((UnsavedChanges<br/>Popup)):::modal
+  Save{Save}
+
+  Q -->|"row click<br/>state:{hn}"| F
+  F --> S1 --> S2 --> S3 --> S4 --> S5 --> Save
+  Save -.->|return| Q
+  F -. nav away dirty .-> USP
+
+  click Q call openDetail("regQ","/registration/queue","RegistrationQueuePage.jsx","Filtered queue · search · smart-card / appointment actions")
+  click F call openDetail("regF","/registration/register","RegistrationFormPage.jsx","Owns 5-step state · prefills from MR_PATIENTS via state.hn")
+  click USP call openDetail("usp","modal","UnsavedChangesPopup.jsx","Triggered on route change when form is dirty · Save/Discard/Cancel")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Entry:</strong> queue row click → <code>history.push('/registration/register', { state: { hn } })</code>. Direct visit (no state) → <code>BLANK_REGISTRATION</code> seeds the form (defensive).</li>
+          <li><strong>State ownership:</strong> <code>RegistrationFormPage</code> owns the full 5-step form; step bodies receive <code>{form, setForm}</code>. Switching patients requires a fresh push to <code>/registration/register</code> (re-mount).</li>
+          <li><strong>Smart-card chip-read:</strong> "อ่านบัตร" pulls Thai ID data into Step 1 + Step 2. <code>NON_CHIP_FIELDS = ['education', 'occupation', 'marital']</code> are preserved (chip doesn't carry them).</li>
+          <li><strong>Step 2 address mirror:</strong> "ที่อยู่ปัจจุบันเหมือนทะเบียนบ้าน" checkbox mirrors <code>registeredAddress</code> → <code>currentAddress</code>; unchecking restores the previous typed value (not a hard reset).</li>
+          <li><strong>Step 4 rights state machine:</strong> rights group radio (SSO / Gold / CSMBS / Other) gates which sub-fields render. Switching group clears the previous group's sub-state.</li>
+          <li><strong>Step 5 mobility "อื่นๆ" branch:</strong> picking <code>other</code> requires <code>mobilityOther</code> non-empty for the step to count complete.</li>
+          <li><strong>Step ✓ aggregation:</strong> <code>getRegistrationCompletedSteps(form)</code> returns 5 booleans → passed to <code>StepProgress</code>.</li>
+          <li><strong>Leave guard:</strong> currently <strong>not wired</strong> to <code>UnsavedChangesPopup</code> on this page (gap vs OPD / Treatment — to be added).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3 · OPD SCREENING -->
+    <section class="flow" id="opd">
+      <h2>3 · ระบบงานผู้รับบริการนอก · OPD Screening</h2>
+      <p class="lead">Queue → 5-step screening with 3 modal touchpoints (vitals graph · bed picker · confirm).</p>
+      <div class="meta-row">
+        <span class="chip brand">/opd/queue</span>
+        <span class="chip brand">/opd/screening</span>
+        <span class="chip success">VitalsSignGraphDialog</span>
+        <span class="chip success">BedSelectionPopup</span>
+        <span class="chip success">ScreeningConfirmPopup</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  classDef step fill:#FDF1E0,stroke:#E0973C,color:#5C3D14,rx:6,ry:6
+  classDef modal fill:#E7F8F0,stroke:#08A768,color:#0B5435,rx:18,ry:18
+
+  Q[/"opd/queue"/]:::page
+  S[/"opd/screening"/]:::page
+  S1[Step 1<br/>Vitals]:::step
+  S2[Step 2<br/>Chief Complaint<br/>+ pain + triage]:::step
+  S3[Step 3<br/>Allergies]:::step
+  S4[Step 4<br/>Chronic Hx]:::step
+  S5[Step 5<br/>Forms picker]:::step
+  VG((VitalsSignGraph<br/>Dialog)):::modal
+  BED((BedSelection<br/>Popup)):::modal
+  SC((ScreeningConfirm<br/>Popup)):::modal
+
+  Q -->|row click| S
+  S --> S1 --> S2 --> S3 --> S4 --> S5
+  S1 -. vitals header .-> VG
+  S4 -. pick bed .-> BED
+  S5 -->|Save| SC
+  SC -->|confirm| Q
+
+  click Q call openDetail("opdQ","/opd/queue","QueuePage.jsx","Vitals visible inline · type · telemedicine icon · room · doctor")
+  click S call openDetail("opdS","/opd/screening","ScreeningPage.jsx","Owns 5-step state · breadcrumb back to queue")
+  click VG call openDetail("vg","modal","VitalsSignGraphDialog.jsx","Historical line chart for BP / PR / O2 over time")
+  click BED call openDetail("bed","modal","BedSelectionPopup.jsx","Bed/room assignment selector")
+  click SC call openDetail("sc","modal","ScreeningConfirmPopup.jsx","Final confirmation before persisting screening record")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Entry:</strong> queue row click → <code>/opd/screening</code>, <code>state:{ hn, queue, name }</code>. Page reads <code>state.hn</code> to look up the patient in <code>MR_PATIENTS</code>; missing HN falls back to a draft from <code>sessionStorage</code> (<code>mih:opd-screening-drafts</code> keyed by <code>queue|hn|name</code>).</li>
+          <li><strong>Per-step state model:</strong> each step body owns its own slice; the parent stitches <code>stepValidities[idx]</code> (boolean per step) into StepProgress check-marks.</li>
+          <li><strong><code>markDirty</code> event-source filter:</strong> listens on <code>keydown</code> + <code>pointerdown</code> only, requires <code>event.isTrusted</code>, and for pointers requires <code>[aria-pressed]</code> or <code>[aria-label="decrement|increment"]</code>. Stops autofill / synthetic <code>dispatchEvent</code> from prematurely unlocking the Next button.</li>
+          <li><strong>Save Draft:</strong> explicit footer button → writes form snapshot to <code>sessionStorage</code>. Survives the tab session only (not browser restart).</li>
+          <li><strong>Leave guard:</strong> any dirty step + route change → <code>UnsavedChangesPopup</code> (Save / Discard / Cancel). Cancel keeps user on the current step.</li>
+          <li><strong>Bed selection branch:</strong> Step 4 "Bed" trigger opens <code>BedSelectionPopup</code>; picking a bed flips the IPD admission branch on for that visit.</li>
+          <li><strong>Voice / AI gating:</strong> Voice + AI inputs (Chief Complaint, AISearch in Step 5) require HTTPS — without it, <code>getUserMedia(audio)</code> is denied and the voice button silently disables.</li>
+          <li><strong>Final save:</strong> <code>ScreeningConfirmPopup</code> → confirm pushes the visit to the treatment queue and returns to <code>/opd/queue</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4 · TREATMENT (the big one) -->
+    <section class="flow" id="treatment">
+      <h2>4 · ระบบบันทึกการรักษา · Treatment Record ★</h2>
+      <p class="lead">Queue → 7-step record. <strong>Step 3 (Physical Exam)</strong> nests the BodyRecordPopup → DrawingCanvasPopup → BodyDrawingCanvas modal chain.</p>
+      <div class="meta-row">
+        <span class="chip brand">/treat/queue</span>
+        <span class="chip brand">/treat/record</span>
+        <span class="chip success">BodyRecordPopup</span>
+        <span class="chip success">VitalsSignGraphDialog</span>
+        <span class="chip warn">UnsavedChangesPopup</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart TB
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  classDef step fill:#FDF1E0,stroke:#E0973C,color:#5C3D14,rx:6,ry:6
+  classDef substep fill:#FFF7E8,stroke:#E0973C,color:#5C3D14,stroke-dasharray:3 2,rx:6,ry:6
+  classDef modal fill:#E7F8F0,stroke:#08A768,color:#0B5435,rx:18,ry:18
+  classDef shell fill:#FAFAFA,stroke:#9098A1,color:#171A1F,rx:8,ry:8
+
+  Q[treat-queue]:::page
+  R[treat-record]:::page
+  H[Header + PatientCard]:::shell
+
+  S1[Step 1<br/>ประวัติการรักษา]:::step
+  S2[Step 2<br/>คัดกรอง ซักประวัติ]:::step
+  S3[Step 3<br/>ผลการตรวจร่างกาย]:::step
+  S4[Step 4<br/>บันทึกแพทย์]:::step
+  S5[Step 5<br/>สั่งยา สั่งตรวจ]:::step
+  S6[Step 6<br/>การนัดหมาย]:::step
+  S7[Step 7<br/>ใบรับรอง]:::step
+
+  ET[EXAM_SYSTEM_TABS<br/>HEENT Heart Lungs]:::substep
+  BP[BodyDiagramPanel]:::substep
+  EN[ExamNotesPanel]:::substep
+  ES[ExamSupportList]:::substep
+
+  BR((BodyRecord<br/>Popup)):::modal
+  BC[BodyDrawingCanvas<br/>tools colors markers]:::shell
+
+  VG((VitalsSignGraph<br/>Dialog)):::modal
+  USP((UnsavedChanges<br/>Popup)):::modal
+
+  Q -->|row click| R
+  R --> H
+  R --> S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
+  S3 --> ET
+  S3 --> BP
+  S3 --> EN
+  S3 --> ES
+  BP -. open canvas .-> BR
+  BR --> BC
+  BR -->|save| S3
+  S2 -. vitals header .-> VG
+  R -. nav dirty .-> USP
+
+  click Q call openDetail("trtQ","/treat/queue","TreatmentQueuePage.jsx","248 patient rows, sticky pagination, Link from name")
+  click R call openDetail("trtR","/treat/record","TreatmentFormPage.jsx","Uses TreatmentFormShell, 7 steps, header PatientCard")
+  click S3 call openDetail("step3","Step 3","Step3Examination in TreatmentSteps.jsx","Tabs per system, view toggle, diagram and notes and support")
+  click BP call openDetail("bp","component","BodyDiagramPanel.jsx","Body figure with markers, opens BodyRecordPopup")
+  click BR call openDetail("br","modal","BodyRecordPopup / DrawingCanvasPopup","Title resolved from systemKey, dirty-gated Save")
+  click BC call openDetail("bc","component","BodyDrawingCanvas.jsx","Drawing tools, color palette, marker placement, region-aware suggestions")
+  click VG call openDetail("vg2","modal","VitalsSignGraphDialog.jsx","Same chart shared with Screening Step 1")
+  click USP call openDetail("usp2","modal","UnsavedChangesPopup.jsx","Save, Discard, Cancel before route change")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Entry:</strong> <code>/treat/record</code>, <code>state:{ hn, queue, name }</code>. Page resolves <strong>two</strong> patient shapes — <code>patient</code> via <code>findMrPatientByHn</code> (full MR) and <code>cardPatient</code> via <code>getPatientByHN</code> (display). Both fall back to defaults so direct visits don't crash.</li>
+          <li><strong>State ownership:</strong> <code>form</code> lives on the page; <code>buildInitialForm(patient)</code> runs once on mount. Switching patients via <code>QueueSubMenu.onPickPatient</code> re-mounts the page via <code>history.push('/treat/record', ...)</code>.</li>
+          <li><strong>Read-only steps (1, 2):</strong> ประวัติ / หน้าจอคัดกรอง are summaries only — ✓ flips when <code>stepIndex &gt; N</code> (advance-past).</li>
+          <li><strong>Cross-step linking:</strong>
+            <ul>
+              <li>Step 4 empty-state CTA "ตรวจร่างกาย" → <code>onStepChange(STEP_EXAM_INDEX)</code> jumps to Step 3.</li>
+              <li>Step 7 cert reads <code>form.diagnoses[0] + form.diagnosisNote</code> live from Step 4; missing → CTA back to Step 4.</li>
+            </ul>
+          </li>
+          <li><strong>Step 5 order category tabs:</strong> <code>form.orderCategory</code> switches active tab. Each category owns its own array (<code>medications</code> / <code>labs</code> / <code>xrayOrders</code> / <code>procedureOrders</code> / <code>consultOrders</code>); switching the tab does NOT reset.</li>
+          <li><strong>Step 6 appointment state machine:</strong> <code>appointment.mode === 'skip'</code> collapses body (✓); <code>'schedule'</code> expands and requires <code>{ clinic, type, doctor, reason, preparation }</code>. <code>ApptCollapse</code> keeps body mounted but height-collapsed so toggling glides.</li>
+          <li><strong>Step 7 cert state machine:</strong> <code>certIssue === 'no'</code> ⇒ ✓; <code>'yes'</code> requires <code>certSignature</code> (base64 PNG from canvas). <code>certSignedAt</code> only flips on explicit "ยืนยันลายเซ็น" — never on every stroke.</li>
+          <li><strong>Sticky PatientCard:</strong> ABOVE TreatmentFormShell with <code>sticky</code> prop. Uses an internal IntersectionObserver + sentinel; collapses to mini variant as the form column scrolls under Header. Requires <code>&lt;main&gt;</code> to be scrollable.</li>
+          <li><strong>Step ✓ aggregation:</strong> <code>getTreatmentCompletedSteps(form, stepIndex)</code> returns 7 booleans → <code>&lt;TreatmentFormShell completedSteps={...} /&gt;</code> → <code>&lt;StepProgress&gt;</code>.</li>
+          <li><strong>Leave guard:</strong> dirty + route change → <code>UnsavedChangesPopup</code>. The page also intercepts the browser back gesture.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5 · FORMS LIBRARY -->
+    <section class="flow" id="forms">
+      <h2>5 · คลังแบบฟอร์ม · Forms Library</h2>
+      <p class="lead">4-level drill-down: Library → Category → Detail → Fill. Also reused inline in OPD Screening Step 5.</p>
+      <div class="meta-row">
+        <span class="chip brand">/forms</span>
+        <span class="chip brand">/forms/category/:key</span>
+        <span class="chip brand">/forms/:slug</span>
+        <span class="chip brand">/forms/:slug/fill</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  L[/forms/]:::page
+  C[/"forms/category/:key"/]:::page
+  D[/"forms/:slug"/]:::page
+  Fi[/"forms/:slug/fill"/]:::page
+  L -->|click card| C
+  C -->|click card| D
+  D -->|Fill| Fi
+  Fi -->|save| L
+
+  click L call openDetail("formsLib2","/forms","FormsLibraryPage.jsx","Search · chip filters · grid of form cards")
+  click C call openDetail("formsCat","/forms/category/:key","FormsCategoryPage.jsx","Filtered grid for the selected category")
+  click D call openDetail("formsDet","/forms/:slug","FormDetailPage.jsx","Metadata · QR share · preview · edit action")
+  click Fi call openDetail("formsFill","/forms/:slug/fill","FormFillPage.jsx","Dynamic field renderer with save / cancel")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Navigation flow:</strong> <code>/forms</code> (hub) → <code>/forms/category/:key</code> (drill-down) → <code>/forms/:slug</code> (detail + QR) → <code>/forms/:slug/fill</code> (live fill).</li>
+          <li><strong><code>?role=patient</code> chrome strip:</strong> FormFillPage reads <code>useLocation().search</code>. When <code>role === 'patient'</code>, hides back-to-catalog button, hides "เจ้าหน้าที่กรอกแทน" banner, collapses sidebar to drawer. Same schema renders; only chrome differs — the QR-landed phone view feels patient-owned.</li>
+          <li><strong>Field renderer dispatch:</strong> <code>type</code> ∈ <code>{text, textarea, date, datetime, signature, checkbox, select, radio-4, radio-5, slider-0-10}</code> → one renderer per type. <code>radio-4</code> = PHQ-9 / GAD-7 scale, <code>radio-5</code> = น้อยที่สุด…มากที่สุด. Unknown types fall through to text input (defensive default).</li>
+          <li><strong>Filter facets (catalog):</strong> <code>catalogFiltersForForm(slug)</code> uses a deterministic hash → mock policy / usage / department / creator / formStatus. Stable across reloads; NOT real metadata.</li>
+          <li><strong>Persistence:</strong> <strong>none</strong> — <code>useState</code> on FormFillPage owns the values map. Refresh loses everything. Production needs draft autosave.</li>
+          <li><strong>Inline reuse from OPD Step 5:</strong> the FormsLibrary surface renders inline (no route change) inside ScreeningPage Step 5; selection writes into the screening form's <code>forms[]</code> slice.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6 · USERS -->
+    <section class="flow" id="users">
+      <h2>6 · ผู้ใช้และสิทธิ์การเข้าถึง · Users &amp; Access</h2>
+      <p class="lead">Admin-only. List → Edit/Create, plus delete confirmation popup.</p>
+      <div class="meta-row">
+        <span class="chip brand">/users</span>
+        <span class="chip brand">/users/new</span>
+        <span class="chip brand">/users/:id</span>
+        <span class="chip success">DeleteQueueConfirmPopup</span>
+      </div>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+flowchart LR
+  classDef page fill:#EEF0FF,stroke:#6366F1,color:#1F2240,rx:8,ry:8
+  classDef modal fill:#E7F8F0,stroke:#08A768,color:#0B5435,rx:18,ry:18
+
+  L[/users/]:::page
+  N[/"users/new"/]:::page
+  E[/"users/:id"/]:::page
+  Del((DeleteQueueConfirm<br/>Popup)):::modal
+
+  L -->|add| N
+  L -->|edit row| E
+  L -.delete row.-> Del
+  Del -->|confirm| L
+  N -->|save| L
+  E -->|save| L
+
+  click L call openDetail("usrList2","/users","UsersAccessPage.jsx","Filter by role/dept · table · per-row edit + delete")
+  click N call openDetail("usrNew","/users/new","UserEditPage.jsx","Create user form")
+  click E call openDetail("usrEdit","/users/:id","UserEditPage.jsx","Edit existing user")
+  click Del call openDetail("del","modal","DeleteQueueConfirmPopup.jsx","Generic destructive confirmation")
+        </div>
+      </div>
+      <div class="logic-block">
+        <h3>Logic — flow notes</h3>
+        <ul>
+          <li><strong>Role → SubRole cascade:</strong> changing <code>user.role</code> clears <code>user.subRole</code> automatically (sub-role catalog is keyed by role). E.g. doctor → nurse invalidates <code>subRole='gp'</code>. If <code>SUB_ROLES[role]</code> is empty, the SubRole picker hides.</li>
+          <li><strong>Feature access matrix:</strong> each feature in <code>FEATURE_GROUPS</code> declares <code>supportedLevels: Array&lt;'none' | 'view' | 'edit'&gt;</code>. The row renders only the supported levels (e.g. binary "ส่ง QR" shows only <code>none | edit</code>). <code>user.features[key]</code> defaults to undefined → "ไม่มีสิทธิ์" (<code>none</code>).</li>
+          <li><strong><code>countAccess(user)</code> helper:</strong> returns <code>{ none, view, edit }</code> counts across the catalog. Used in the table for "X features · Y view · Z edit" per-row summary.</li>
+          <li><strong>Create vs Edit branch:</strong> <code>/users/new</code> → <code>getUserById('new')</code> returns undefined → <code>BLANK_USER</code> seeds the form. <code>/users/:id</code> → real user or BLANK_USER fallback. Save / Apply is a stub — no persistence wiring.</li>
+          <li><strong>Status toggle:</strong> <code>user.status ∈ {'active', 'inactive'}</code>. Inactive renders greyed; filtered out of role-based permission resolution at runtime (intended; not yet enforced in mocks).</li>
+          <li><strong>Delete:</strong> trash icon → <code>DeleteQueueConfirmPopup</code> → confirm removes the row (in-memory only in mocks).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7 · MODAL CATALOG -->
+    <section class="flow" id="modals">
+      <h2>7 · Modal &amp; popup catalog</h2>
+      <p class="lead">Every popup with its trigger and lifecycle.</p>
+      <table class="modal-table">
+        <thead>
+          <tr><th>Popup</th><th>Trigger</th><th>Lifecycle</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>BodyRecordPopup</strong><br/><code>= DrawingCanvasPopup</code></td>
+            <td>"บันทึกร่างกาย" in Treatment Step 3</td>
+            <td>Save gated by dirty flag (any mark/draw/note/erase enables it) → bubbles <code>onSave(markers)</code> then close</td>
+          </tr>
+          <tr>
+            <td><strong>VitalsSignGraphDialog</strong></td>
+            <td>Vitals header in OPD Step 1 / Treatment Step 2</td>
+            <td>View-only chart → close</td>
+          </tr>
+          <tr>
+            <td><strong>ScreeningConfirmPopup</strong></td>
+            <td>Final save in <code>/opd/screening</code></td>
+            <td>Confirm → return to <code>/opd/queue</code></td>
+          </tr>
+          <tr>
+            <td><strong>BedSelectionPopup</strong></td>
+            <td>Bed selector in Screening Step 4</td>
+            <td>Pick → return value, close</td>
+          </tr>
+          <tr>
+            <td><strong>UnsavedChangesPopup</strong></td>
+            <td>Navigate away from a dirty multi-step form</td>
+            <td>Save · Discard · Cancel</td>
+          </tr>
+          <tr>
+            <td><strong>DeleteQueueConfirmPopup</strong></td>
+            <td>Trash icon on any queue row</td>
+            <td>Confirm → row removed</td>
+          </tr>
+          <tr>
+            <td><strong>AlertDialog</strong></td>
+            <td>Generic confirmation / error</td>
+            <td>OK · Cancel</td>
+          </tr>
+          <tr>
+            <td><strong>ProfilePopover</strong></td>
+            <td>User card in sidebar</td>
+            <td>Opens SettingsModal</td>
+          </tr>
+          <tr>
+            <td><strong>SettingsModal</strong></td>
+            <td>"Theme" in ProfilePopover</td>
+            <td>Light / dark / system + 10 brand colors</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8 · STUBS -->
+    <section class="flow" id="stubs">
+      <h2>8 · Unwired sidebar items (intended logic)</h2>
+      <p class="lead">The Sidebar (<code>src/components/layout/Sidebar.jsx</code>) lists <strong>12 primary menus</strong>. <strong>6 are wired</strong> (covered in §1–§6 above). <strong>6 are stubs</strong> — clickable but the click handler ignores items without <code>path</code>. Intended logic for each stub is documented below so future implementation work has a single reference.</p>
+
+      <div class="logic-block">
+        <h3>8.1 <code>radiology</code> — แผนกรังสีวินิจฉัย</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>radiology</code>, icon <code>radiology</code>. <strong>Status:</strong> stub — no route.</li>
+          <li><strong>Intended flow:</strong> queue (pending / in-progress / reported) → per-study viewer card → sign-off → "ตรวจเสร็จ" status flips → write back to TreatmentVisit.</li>
+          <li><strong>Cross-system:</strong> receives Treatment Step 5 <code>xrayOrders[]</code>; reports back to <code>TreatmentVisit.history</code>.</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.2 <code>lab</code> — ห้องปฏิบัติการ</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>lab</code>, icon <code>biotech</code>.</li>
+          <li><strong>Intended flow:</strong> sample collection (collected → analysing → reported), critical-value alerts (red flag → doctor), historical trend view. Pre-set panels already exist in <code>treatmentVisits.js</code> (e.g. <code>'CBC + BUN/Cr + electrolyte panel'</code>).</li>
+          <li><strong>Cross-system:</strong> receives Treatment Step 5 <code>labs[]</code>; reports back to TreatmentVisit + Dashboard "top-tests-ordered" chart.</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.3 <code>pharmacy</code> — ระบบงานเภสัชกรรม</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>pharmacy</code>, icon <code>pill</code>.</li>
+          <li><strong>Intended flow:</strong> queue of dispensable prescriptions (from Treatment Step 5 <code>medications[]</code>) → counter call (เรียกคิว) → label printing → allergy double-check (re-validated against patient <code>drugAllergies</code>) → inventory deduction.</li>
+          <li><strong>Cross-system:</strong> receives Treatment Step 5 <code>medications[]</code>; reports <code>dispensed</code> status back; consults MR <code>drugAllergies</code>. Catalog already lives in <code>medicationCatalog.js</code> (~50 drugs).</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.4 <code>finance</code> — งานการเงิน</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>finance</code>, icon <code>baht</code>.</li>
+          <li><strong>Intended flow:</strong> charge calculation per visit (services + medications + labs + imaging) → claim eligibility per <code>rightsGroup</code> (set in Registration Step 4) → payment receipt printing → sign-off.</li>
+          <li><strong>Cross-system:</strong> consumes completed Treatment records + Registration rights; emits Dashboard "ค่าบริการสะสม" feed.</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.5 <code>appoint</code> — ระบบนัดหมาย</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>appoint</code>, icon <code>calendar_clock</code>.</li>
+          <li><strong>Intended flow:</strong> weekly calendar grid → slot reservation → conflict detection → reminder notifications (SMS / LINE) → Telemedicine link generation.</li>
+          <li><strong>Cross-system:</strong> writes TreatmentVisit Step 6 <code>appointment</code> slice when the doctor confirms; emits "นัดหมายวันนี้" count for Dashboard; surfaces as the OPD queue "นัดหมาย" tab.</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.6 <code>log</code> — ประวัติการใช้งาน</h3>
+        <ul>
+          <li><strong>Sidebar:</strong> key <code>log</code>, icon <code>history</code>.</li>
+          <li><strong>Intended flow:</strong> filterable table (user / date range / entity type / action) → per-row diff view → export to CSV / PDF → retention policy (rolling N days).</li>
+          <li><strong>Cross-system:</strong> read-only consumer of every other subsystem's audit trail. The Registration <code>RegistrationEditHistoryPanel</code> is the per-patient prototype; this menu is the system-wide equivalent. Required for compliance review.</li>
+        </ul>
+      </div>
+
+      <div class="logic-block">
+        <h3>8.7 Treatment sub-menus (9 sub-departments)</h3>
+        <p>The <code>treat</code> primary menu has 10 sub-items (<code>Sidebar.jsx:43-56</code>). Only the <strong>first</strong> is wired:</p>
+        <ul>
+          <li>✅ <code>opd-treat</code> — ตรวจรักษาทั่วไป (OPD) → <code>/treat/queue</code></li>
+        </ul>
+        <p>The other 9 are stubs:</p>
+        <table class="modal-table">
+          <thead><tr><th>sub-key</th><th>Label</th><th>Intended scope</th></tr></thead>
+          <tbody>
+            <tr><td><code>family</code></td><td>แผนกส่งเสริมสุขภาพ (วางแผนครอบครัว)</td><td>Family planning + contraceptive dispensing.</td></tr>
+            <tr><td><code>std</code></td><td>แผนกโรคติดต่อทางเพศสัมพันธ์และโรคเอดส์</td><td>STI screening + HIV care; restricted-access ward.</td></tr>
+            <tr><td><code>drug</code></td><td>แผนกบำบัดและรักษาผู้ป่วยติดสารเสพติด</td><td>Substance-abuse program; methadone clinic.</td></tr>
+            <tr><td><code>anc</code></td><td>แผนกฝากครรภ์</td><td>Antenatal care; OB/GYN + ultrasound coordination.</td></tr>
+            <tr><td><code>wellness</code></td><td>แผนกส่งเสริมสุขภาพเฉพาะกลุ่มที่สำคัญ</td><td>Wellness (DM / HT / NCD high-risk) — visit cadence + lifestyle counseling.</td></tr>
+            <tr><td><code>vaccine</code></td><td>แผนกสร้างเสริมภูมิคุ้มกันโรค</td><td>Vaccination clinic + schedule tracking.</td></tr>
+            <tr><td><code>dental</code></td><td>แผนกทันตกรรม</td><td>Dental visits + procedures.</td></tr>
+            <tr><td><code>tb</code></td><td>แผนกวัณโรค</td><td>TB DOTS program — DOT visit logs + treatment milestones.</td></tr>
+            <tr><td><code>mental</code></td><td>แผนกสุขภาพจิตและคลินิกสุขภาพจิต</td><td>Mental health + PHQ-9 / GAD-7 (forms exist in Forms Library).</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Shared logic sketch:</strong> each sub-department reuses the same <code>TreatmentFormShell</code> + 7-step scaffold with a per-domain schema (e.g. ANC adds gestational age + fundus height; TB adds DOT cadence). Sub-menu click ⇒ same Treatment route filtered to that department.</p>
+      </div>
+    </section>
+
+    <!-- 9 · PREVIEW ROUTES -->
+    <section class="flow" id="preview-routes">
+      <h2>9 · Standalone / preview routes</h2>
+      <p class="lead">No sidebar chrome — used for design review and legacy sandboxes.</p>
+      <table class="modal-table">
+        <thead><tr><th>Route</th><th>Component</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>/components</code><br/><code>/components/:slug</code></td><td>ComponentsLibraryPage.jsx</td><td>Design-system component showcase</td></tr>
+          <tr><td><code>/preview/tabs</code></td><td>TabsPreviewPage.jsx</td><td>Legacy tab sandbox</td></tr>
+          <tr><td><code>/preview/cards</code></td><td>CardsPreviewPage.jsx</td><td>Legacy card sandbox</td></tr>
+          <tr><td><code>/preview/body-record</code></td><td>BodyRecordPreviewPage.jsx</td><td>Standalone BodyRecordPopup preview</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- Detail flyout -->
+  <div id="detail-flyout" role="dialog" aria-label="Node detail">
+    <button class="closer" onclick="closeDetail()" aria-label="close">×</button>
+    <h3 id="dfTitle">—</h3>
+    <p id="dfBody">Click a node in any diagram to see details.</p>
+    <dl>
+      <dt>Route</dt><dd id="dfRoute">—</dd>
+      <dt>File</dt><dd id="dfFile">—</dd>
+    </dl>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    // ---- Mermaid init (auto theme) ----
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: isDark ? 'dark' : 'default',
+      themeVariables: {
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Noto Sans Thai", sans-serif',
+        fontSize: '13px',
+      },
+      flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' },
+      securityLevel: 'loose', // allow click handlers
+    });
+
+    // ---- Detail flyout API ----
+    const fly = document.getElementById('detail-flyout');
+    function openDetail(id, route, file, body) {
+      document.getElementById('dfTitle').textContent = id;
+      document.getElementById('dfRoute').textContent = route || '—';
+      document.getElementById('dfFile').textContent = file || '—';
+      document.getElementById('dfBody').textContent = body || '';
+      fly.classList.add('open');
+    }
+    function closeDetail() { fly.classList.remove('open'); }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+    // expose for Mermaid click directive
+    window.openDetail = openDetail;
+    window.closeDetail = closeDetail;
+
+    // ---- Sidebar active tracking + search ----
+    const nav = document.getElementById('nav');
+    const links = nav.querySelectorAll('a');
+    const sections = document.querySelectorAll('section.flow');
+
+    function setActive(id) {
+      links.forEach((a) => a.classList.toggle('active', a.dataset.target === id));
+    }
+    const io = new IntersectionObserver((entries) => {
+      const visible = entries.filter((e) => e.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio);
+      if (visible[0]) setActive(visible[0].target.id);
+    }, { rootMargin: '-30% 0px -50% 0px', threshold: [0, .25, .5, .75, 1] });
+    sections.forEach((s) => io.observe(s));
+
+    // search
+    document.getElementById('navSearch').addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      links.forEach((a) => {
+        const match = !q || a.textContent.toLowerCase().includes(q);
+        a.style.display = match ? '' : 'none';
+      });
+    });
+
+    // smooth-scroll for sidebar links
+    links.forEach((a) => a.addEventListener('click', (e) => {
+      const id = a.dataset.target;
+      const el = document.getElementById(id);
+      if (!el) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, '', '#' + id);
+    }));
+  </script>
+</body>
+</html>

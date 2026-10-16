@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>PHCIS · Kiosk Userflow & UX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #F4F5F5;
+      --surface: #FFFFFF;
+      --surface-2: #FAFAFA;
+      --surface-3: #F4F5F5;
+      --border: #E2E4E6;
+      --text: #171A1F;
+      --muted: #6E757C;
+      --brand: #007549;
+      --brand-soft: #F4FBF8;
+      --brand-mid: #C5EDDA;
+      --gradient: linear-gradient(90deg, #54AA8C 0%, #4CC6AE 100%);
+      --success: #08A768;
+      --warn: #E0973C;
+      --warn-soft: #FDF1E0;
+      --danger: #D04949;
+      --danger-soft: #FBE8E8;
+      --info: #1D4ED8;
+      --info-soft: #DBEAFE;
+      --shadow: 0 1px 3px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.04);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    body {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: 60px 1fr;
+      grid-template-areas: "header header" "sidebar content";
+      height: 100vh;
+    }
+    header {
+      grid-area: header;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 12px;
+    }
+    header .title { font-weight: 700; font-size: 15px; }
+    header .subtitle { color: var(--muted); font-size: 12px; }
+    header .badge {
+      margin-left: auto;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      border: 1px solid var(--brand-mid);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    aside {
+      grid-area: sidebar;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+    aside .group-label {
+      font-size: 11px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 12px 6px;
+    }
+    aside a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    aside a:hover { background: var(--surface-2); }
+    aside a.active { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+    aside a .ic { width: 18px; text-align: center; }
+    aside a .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 999px;
+      background: var(--brand);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    main {
+      grid-area: content;
+      overflow-y: auto;
+      padding: 24px 36px 80px;
+    }
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 80px;
+    }
+    section h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    section .lead {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: 13px;
+    }
+    h3 {
+      margin: 18px 0 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Screen mockup */
+    .screen {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", system-ui, sans-serif;
+    }
+    .screen .top-bar {
+      background: var(--gradient);
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .screen .body {
+      padding: 20px;
+      min-height: 240px;
+      background: #FAFCFA;
+    }
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+    @media (max-width: 1100px) { .screen-grid { grid-template-columns: 1fr; } }
+
+    /* Card grid inside screen */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .card-grid .card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .card-grid .card.selected {
+      background: var(--brand-soft);
+      border-color: var(--brand-mid);
+      color: var(--brand);
+      box-shadow: 0 4px 12px rgba(8,167,104,0.10);
+    }
+    .card-grid .card .ic {
+      display: block;
+      width: 28px; height: 28px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      margin: 0 auto 6px;
+      line-height: 28px;
+    }
+    .card-grid .card.selected .ic { background: var(--brand); color: white; }
+
+    .step-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      border: 1px solid var(--brand-mid);
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    /* Flow ASCII */
+    pre.ascii {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      overflow-x: auto;
+      color: var(--text);
+    }
+
+    /* Use case table */
+    table.cases {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    table.cases th, table.cases td {
+      text-align: left;
+      padding: 12px 14px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+    }
+    table.cases th {
+      background: var(--surface-2);
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    table.cases td .uc-name { font-weight: 700; }
+    table.cases td .uc-flow { color: var(--muted); margin-top: 4px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .pill.happy   { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+    .pill.fail    { background: var(--danger-soft); color: var(--danger); border-color: #F2C7C7; }
+    .pill.edge    { background: var(--warn-soft); color: var(--warn); border-color: #F7DEB5; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", monospace;
+      font-size: 12px;
+      background: var(--surface-3);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .mobile-frame {
+      width: 240px;
+      margin: 0 auto;
+      border: 8px solid #171A1F;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    }
+    .mobile-frame .body { padding: 14px; font-size: 11px; min-height: 380px; }
+    .mobile-frame .queue-num {
+      font-family: Inter, sans-serif;
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 1;
+      text-align: center;
+      color: var(--text);
+      margin: 16px 0;
+    }
+    .mobile-frame .top-bar { padding: 10px 14px; font-size: 11px; }
+    .mobile-frame .btn {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--brand);
+      color: white;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    @media print {
+      body { display: block; }
+      aside, header { display: none; }
+      main { padding: 0; }
+      section { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="title">PHCIS · Kiosk Userflow & UX</span>
+    <span class="subtitle">/kiosk · self-service entry · 1440×1462 touchscreen</span>
+    <span class="badge">v2 · 6-step flow</span>
+  </header>
+
+  <aside>
+    <div class="group-label">Overview</div>
+    <a href="#flow"><span class="ic">🗺️</span>Full flow</a>
+    <a href="#use-cases"><span class="ic">📋</span>Use cases</a>
+
+    <div class="group-label">Screens</div>
+    <a href="#screen-0"><span class="step-num">0</span>Welcome</a>
+    <a href="#screen-1"><span class="step-num">1</span>Service</a>
+    <a href="#screen-1b"><span class="step-num">1b</span>Sub-service</a>
+    <a href="#screen-2"><span class="step-num">2</span>Appointment</a>
+    <a href="#screen-3"><span class="step-num">3</span>Verify ID</a>
+    <a href="#screen-4"><span class="step-num">4</span>Confirm</a>
+    <a href="#screen-5"><span class="step-num">5</span>Ticket</a>
+    <a href="#screen-qr"><span class="ic">📱</span>QR + Mobile</a>
+
+    <div class="group-label">Design</div>
+    <a href="#ux"><span class="ic">🎨</span>UX principles</a>
+    <a href="#data"><span class="ic">💾</span>Mock data</a>
+  </aside>
+
+  <main>
+
+    <!-- FLOW -->
+    <section id="flow">
+      <h2>🗺️ Full userflow</h2>
+      <p class="lead">6-step state machine. ทุกหน้าจอมี <strong>Back</strong> และ <strong>Reset (กลับสู่หน้าแรก)</strong>. Idle timeout 60s → auto-reset เพื่อกัน ticket ค้าง.</p>
+
+<pre class="ascii">
+                          ┌─────────────────────────┐
+                          │ 0 · WELCOME             │
+                          │  "เริ่มใช้บริการ"        │
+                          └────────────┬────────────┘
+                                       │  tap
+                                       ▼
+                          ┌─────────────────────────┐
+                          │ 1 · SERVICE             │
+                          │  6 cards (3×2):         │
+                          │  ซักประวัติ · ห้องตรวจ   │
+                          │  การเงิน · รับยา         │
+                          │  เจาะเลือด · อื่นๆ       │
+                          └────────────┬────────────┘
+                                       │
+                ┌──────────────────────┼──────────────────────┐
+       (consult / other)            (rest)                    │
+                │                      │                      │
+                ▼                      │                      │
+   ┌─────────────────────────┐         │                      │
+   │ 1b · SUB-SERVICE        │         │                      │
+   │  drill-down (4×2):       │         │                      │
+   │  OPD · ANC · Dental     │         │                      │
+   │  Vaccine · Mental · TB  │         │                      │
+   │  Pediatrics · Wellness   │         │                      │
+   └────────────┬────────────┘         │                      │
+                │                      │                      │
+                └──────────┬───────────┘                      │
+                           ▼                                  │
+                ┌─────────────────────────┐                   │
+                │ 2 · APPOINTMENT?        │                   │
+                │  📅 มีนัด    👤 ไม่มีนัด │                   │
+                └─────┬──────────────┬────┘                   │
+                      │              │                        │
+                      ▼              ▼                        │
+            (appointment)         (walk-in)                   │
+                      │              │                        │
+                      └──────┬───────┘                        │
+                             ▼                                │
+                ┌─────────────────────────┐                   │
+                │ 3 · VERIFY THAI ID      │                   │
+                │  • Chip read (3s sim)   │                   │
+                │  • Manual entry         │                   │
+                │  • Demo (testing)        │                   │
+                └────────────┬────────────┘                   │
+                             │                                │
+                  ┌──────────┴──────────┐                     │
+                (success)            (fail)                   │
+                  │                      │                    │
+                  ▼                      ▼                    │
+        ┌──────────────────┐   ┌──────────────────┐          │
+        │ 4 · CONFIRM      │   │  "ไม่พบข้อมูล      │          │
+        │  patient card    │   │   ติดต่อเจ้าหน้าที่"│          │
+        │  appointment (if)│   │   → Reset         │          │
+        │  [ยืนยัน] [ยกเลิก]│   └──────────────────┘          │
+        └────────┬─────────┘                                  │
+                 │ confirm                                    │
+                 ▼                                            │
+        ┌──────────────────┐                                  │
+        │ 5 · TICKET       │                                  │
+        │  A-042 (big)     │                                  │
+        │  calling now     │                                  │
+        │  ETA · zone      │                                  │
+        │  [พิมพ์] [QR]    │                                  │
+        └────┬────────┬────┘                                  │
+             │        │                                       │
+        (print)    (QR)                                       │
+             │        │                                       │
+             │        ▼                                       │
+             │   ┌─────────────────┐                          │
+             │   │ QR modal        │                          │
+             │   │  scan → mobile  │                          │
+             │   │  ticket page    │                          │
+             │   └─────────────────┘                          │
+             │                                                │
+             ▼                                                │
+        ┌──────────────────┐                                  │
+        │ "เสร็จสิ้น"       │ ──────────────► back to start ◄──┘
+        └──────────────────┘
+</pre>
+
+      <h3>State machine (KioskPage)</h3>
+<pre class="ascii">
+const STEPS = [
+  'welcome',     // tap to start
+  'service',     // 6-card picker
+  'sub-service', // 8-card drill-down (consult / other only)
+  'appointment', // มีนัด / ไม่มีนัด
+  'verify',      // Thai ID chip read / manual
+  'confirm',     // patient + appt confirmation
+  'ticket',      // queue ticket + print + QR
+];
+
+const [step, setStep] = useState('welcome');
+const [flow, setFlow] = useState({
+  service: null, subService: null,
+  hasAppointment: null,
+  nationalId: '', patient: null, appointment: null,
+  queueNumber: null,
+});
+</pre>
+    </section>
+
+    <!-- USE CASES -->
+    <section id="use-cases">
+      <h2>📋 Use cases (5 scenarios)</h2>
+      <p class="lead">Real situations the kiosk must handle. Each lists the screens visited, key decisions, and the expected outcome.</p>
+
+      <table class="cases">
+        <thead>
+          <tr><th style="width:40px">#</th><th>Scenario</th><th>Flow</th><th>Outcome</th><th>Type</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="uc-name">นัดล่วงหน้า — ผู้สูงอายุนัดตรวจเบาหวาน</div>
+              <div class="uc-flow">คุณยายสมศรี อายุ 68 ปี · นัดมาตรวจที่คลินิกเรื้อรัง · พกบัตรประชาชน</div>
+            </td>
+            <td>
+              <code>welcome → service:consultation → sub:chronic → appt:yes → verify(chip) → confirm → ticket → print</code>
+            </td>
+            <td>ได้คิว <strong>C-021</strong> สำหรับคลินิกโรคเรื้อรัง · พิมพ์บัตรคิวออกมา</td>
+            <td><span class="pill happy">Happy path</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="uc-name">Walk-in — ไข้ + ปวดหัว</div>
+              <div class="uc-flow">หนุ่มอายุ 28 ปี · ไม่ได้นัด · ต้องการพบแพทย์ OPD ทั่วไป</div>
+            </td>
+            <td>
+              <code>welcome → service:consultation → sub:opd-general → appt:no → verify(chip) → confirm → ticket → QR</code>
+            </td>
+            <td>ได้คิว <strong>A-042</strong> · สแกน QR เปิดบัตรคิวบนมือถือ · กด "บันทึกภาพ" → PNG ลง Photos</td>
+            <td><span class="pill happy">Happy path</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              <div class="uc-name">ตรวจครรภ์ครั้งแรก (ANC)</div>
+              <div class="uc-flow">หญิงตั้งครรภ์ 12 สัปดาห์ · ยังไม่เคยฝากครรภ์ที่ศูนย์นี้</div>
+            </td>
+            <td>
+              <code>welcome → service:consultation → sub:anc → appt:no → verify(chip) → confirm (new patient) → ticket</code>
+            </td>
+            <td>ระบบสร้าง HN ใหม่อัตโนมัติ · ส่งไปคลินิก ANC · ส่งซักประวัติเพิ่มเติมต่อ</td>
+            <td><span class="pill happy">Happy path</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>
+              <div class="uc-name">ลืมบัตรประชาชน</div>
+              <div class="uc-flow">คนไข้เก่า · จำ HN ได้ · ไม่มีบัตรติดตัว</div>
+            </td>
+            <td>
+              <code>welcome → service:opd → appt:no → verify(manual: 13 digits) → confirm → ticket</code>
+            </td>
+            <td>กดปุ่ม "กรอกเลขด้วยตนเอง" · ใส่เลขบัตร 13 หลัก · ระบบ verify ผ่าน MR_PATIENTS</td>
+            <td><span class="pill edge">Edge case</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>
+              <div class="uc-name">ID ไม่พบในระบบ</div>
+              <div class="uc-flow">นักท่องเที่ยวต่างจังหวัด · บัตรอ่านสำเร็จ · แต่ไม่มีในฐานข้อมูลศูนย์นี้</div>
+            </td>
+            <td>
+              <code>welcome → service:opd → appt:no → verify(chip) → "ไม่พบข้อมูล" → ติดต่อเจ้าหน้าที่</code>
+            </td>
+            <td>แสดง warning + suggestion ให้ติดต่อเคาน์เตอร์ลงทะเบียน · auto-reset 30s</td>
+            <td><span class="pill fail">Failure path</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>
+              <div class="uc-name">รับยาตามใบสั่ง (ไม่ต้องพบแพทย์)</div>
+              <div class="uc-flow">ผู้ป่วยมาแค่รับยาที่ตรวจวันก่อน</div>
+            </td>
+            <td>
+              <code>welcome → service:pharmacy → appt:no → verify(chip) → confirm → ticket</code>
+            </td>
+            <td>ได้คิวรับยา <strong>P-015</strong> · ไม่ผ่าน sub-service screen (pharmacy ไม่มี drill-down)</td>
+            <td><span class="pill happy">Happy path</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>
+              <div class="uc-name">Idle timeout</div>
+              <div class="uc-flow">ผู้ป่วยเดินจากไประหว่างทำรายการ · เครื่องค้างที่ Step 3</div>
+            </td>
+            <td>
+              <code>... verify (idle 60s) → auto-reset → welcome</code>
+            </td>
+            <td>เครื่อง countdown 60s ไม่มี touch → กลับสู่ welcome · ข้อมูล clear ทั้งหมด</td>
+            <td><span class="pill edge">Edge case</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SCREEN 0 — WELCOME -->
+    <section id="screen-0">
+      <h2><span class="step-pill">0</span>WELCOME</h2>
+      <p class="lead">Tap-anywhere entry. Idle screen ที่ดึงดูดให้คนเข้ามาเริ่มใช้งาน.</p>
+
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup</h3>
+          <div class="screen">
+            <div class="top-bar">
+              <span>🏥 สำนักอนามัย · ศูนย์ 4 ดินแดง</span>
+              <span>15 พ.ค. 2567 · 09:45 น. · ไทย | EN</span>
+            </div>
+            <div class="body" style="text-align:center;padding:60px 20px;">
+              <div style="font-size:80px;">🏥</div>
+              <h3 style="margin:12px 0 4px;font-size:24px;">ยินดีต้อนรับ</h3>
+              <p style="color:var(--muted);font-size:14px;margin:0 0 24px;">ระบบบัตรคิวอัตโนมัติ ศูนย์ 4 ดินแดง</p>
+              <div style="display:inline-block;background:var(--brand);color:white;padding:16px 48px;border-radius:14px;font-weight:700;font-size:18px;box-shadow:0 4px 12px rgba(8,167,104,0.20);">
+                สัมผัสที่ใดก็ได้เพื่อเริ่มใช้บริการ →
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>UX notes</h3>
+          <ul>
+            <li><strong>Tap target:</strong> ทั้งหน้าจอเป็น tap area เพื่อ accessibility ขั้นสูงสุด.</li>
+            <li><strong>Visual cue:</strong> CTA button มี subtle pulse animation ดึงสายตา (ทุก 2 วินาที).</li>
+            <li><strong>Brand presence:</strong> ใช้ gradient header เต็มที่ + facility identity ชัดเจน.</li>
+            <li><strong>Language toggle:</strong> ติดมุมขวาบน — เลือกได้ก่อนเริ่ม.</li>
+            <li><strong>Idle state:</strong> ถ้าไม่มี touch ใน 5 นาที → screensaver hidden (พื้นหลังเข้มลงเพื่อประหยัดพลังงาน).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 1 — SERVICE -->
+    <section id="screen-1">
+      <h2><span class="step-pill">1</span>SERVICE PICKER</h2>
+      <p class="lead">6 บริการหลัก. หน้าเดียวเลือกครบทุกหมวด.</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 1/5</span></div>
+            <div class="body">
+              <p style="font-size:14px;margin:0 0 4px;color:var(--text);font-weight:600;">①  เลือกบริการที่ต้องการ</p>
+              <p style="font-size:12px;color:var(--muted);margin:0 0 14px;">สัมผัสที่ปุ่มเพื่อดำเนินการต่อ</p>
+              <div class="card-grid">
+                <div class="card"><span class="ic">📋</span>ซักประวัติ</div>
+                <div class="card selected"><span class="ic">🩺</span>ห้องตรวจ</div>
+                <div class="card"><span class="ic">💳</span>การเงิน</div>
+                <div class="card"><span class="ic">💊</span>รับยา</div>
+                <div class="card"><span class="ic">💉</span>เจาะเลือด<br/>ฉีดยา</div>
+                <div class="card"><span class="ic">⋯</span>แผนกอื่นๆ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Branching logic</h3>
+          <p>เลือก <code>ห้องตรวจ</code> หรือ <code>แผนกอื่นๆ</code> → step <strong>1b</strong> (drill-down).</p>
+          <p>เลือก <code>ซักประวัติ / การเงิน / รับยา / เจาะเลือด</code> → ข้ามไป step <strong>2</strong> (appointment) ทันที.</p>
+          <h3>Why no queue-ticket preview here</h3>
+          <p>เดิม Figma มี queue ticket panel ขวามือ. v2 ย้ายไปอยู่ที่ step 5 เพราะคิวจริงจะ generate หลัง verify ID เสร็จเท่านั้น (กัน ticket ลอย).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 1b — SUB-SERVICE -->
+    <section id="screen-1b">
+      <h2><span class="step-pill">1b</span>SUB-SERVICE (drill-down)</h2>
+      <p class="lead">เฉพาะเมื่อเลือก "ห้องตรวจ" หรือ "แผนกอื่นๆ" จาก step 1.</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup — ห้องตรวจ (consultation)</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 1b/5</span></div>
+            <div class="body">
+              <p style="font-size:14px;margin:0 0 14px;color:var(--text);font-weight:600;">เลือกประเภทการตรวจ</p>
+              <div class="card-grid cols-4">
+                <div class="card">🩺<br/>OPD ทั่วไป</div>
+                <div class="card selected">🤰<br/>ตรวจครรภ์</div>
+                <div class="card">👶<br/>กุมารเวช</div>
+                <div class="card">👵<br/>ผู้สูงอายุ</div>
+                <div class="card">📈<br/>โรคเรื้อรัง</div>
+                <div class="card">🧠<br/>สุขภาพจิต</div>
+                <div class="card">🦷<br/>ทันตกรรม</div>
+                <div class="card">😷<br/>วัณโรค</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Mockup — แผนกอื่นๆ</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 1b/5</span></div>
+            <div class="body">
+              <p style="font-size:14px;margin:0 0 14px;color:var(--text);font-weight:600;">เลือกบริการเพิ่มเติม</p>
+              <div class="card-grid cols-4">
+                <div class="card">💉<br/>วัคซีน</div>
+                <div class="card">❤️<br/>วางแผน<br/>ครอบครัว</div>
+                <div class="card">🩻<br/>เอกซเรย์</div>
+                <div class="card">🩹<br/>กายภาพ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2 — APPOINTMENT -->
+    <section id="screen-2">
+      <h2><span class="step-pill">2</span>APPOINTMENT?</h2>
+      <p class="lead">2 ทางเลือกเดียว: มีนัด vs Walk-in. ส่งผลต่อ confirm step (step 4).</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 2/5</span></div>
+            <div class="body" style="display:flex;gap:16px;align-items:stretch;padding:32px 24px;">
+              <div style="flex:1;border:3px solid var(--brand-mid);background:var(--brand-soft);border-radius:14px;padding:36px 16px;text-align:center;">
+                <div style="font-size:48px;">📅</div>
+                <h3 style="margin:8px 0 4px;color:var(--brand);">มีนัดหมาย</h3>
+                <p style="margin:0;font-size:11px;color:var(--muted);">ฉันมาตามนัดที่จองไว้</p>
+              </div>
+              <div style="flex:1;border:3px solid var(--border);background:white;border-radius:14px;padding:36px 16px;text-align:center;">
+                <div style="font-size:48px;">👤</div>
+                <h3 style="margin:8px 0 4px;">ไม่มีนัด (Walk-in)</h3>
+                <p style="margin:0;font-size:11px;color:var(--muted);">รับบริการครั้งแรกหรือไม่ได้นัด</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Branching logic</h3>
+          <ul>
+            <li><strong>มีนัด:</strong> หลัง verify ID → ระบบดึง appointment ของวันนี้ (filtered) มาแสดงในขั้น confirm.</li>
+            <li><strong>Walk-in:</strong> หลัง verify ID → ดึงข้อมูลผู้ป่วยพื้นฐาน (ชื่อ, HN, สิทธิ) มาแสดง → ระบบจะออกคิวใหม่.</li>
+          </ul>
+          <h3>Default</h3>
+          <p>ทั้งสองปุ่มขนาดเท่ากัน · ไม่มี default selection (กันการกดผิด).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3 — VERIFY ID -->
+    <section id="screen-3">
+      <h2><span class="step-pill">3</span>VERIFY THAI ID</h2>
+      <p class="lead">3 ทางเลือกในการ verify: chip read · manual entry · demo (testing).</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup — Default (chip)</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 3/5</span></div>
+            <div class="body" style="text-align:center;padding:40px 20px;">
+              <div style="font-size:80px;animation:none;">💳</div>
+              <h3 style="margin:12px 0 4px;">เสียบบัตรประชาชน</h3>
+              <p style="color:var(--muted);margin:0 0 24px;font-size:13px;">วางบัตรในช่องที่ด้านล่างเครื่อง พร้อมหันชิปขึ้น</p>
+              <p style="font-size:12px;color:var(--muted);">หรือ</p>
+              <button style="background:white;border:2px solid var(--brand);color:var(--brand);padding:12px 24px;border-radius:14px;font-weight:600;margin-top:8px;">⌨️ กรอกเลขด้วยตนเอง</button>
+              <p style="font-size:10px;color:var(--muted);margin-top:18px;font-style:italic;">[Demo: ใช้ข้อมูลตัวอย่าง]</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Mockup — Manual entry</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 3/5</span></div>
+            <div class="body" style="padding:24px;">
+              <p style="font-weight:600;margin:0 0 4px;">กรอกเลขบัตรประชาชน 13 หลัก</p>
+              <div style="background:white;border:2px solid var(--border);border-radius:10px;padding:14px;font-family:Inter,monospace;font-size:24px;letter-spacing:4px;text-align:center;margin:12px 0;">1-2345-67890-12-3</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">1</div>
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">2</div>
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">3</div>
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">4</div>
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">5</div>
+                <div style="padding:14px;background:white;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:18px;font-weight:600;">6</div>
+              </div>
+              <button style="background:var(--brand);color:white;width:100%;padding:14px;border-radius:14px;font-weight:700;margin-top:14px;border:0;">ตรวจสอบข้อมูล</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>Accessibility</h3>
+      <ul>
+        <li><strong>Chip animation:</strong> ภาพบัตรเลื่อนเข้าช่องอ่านบัตร loop 3s · ทำให้คนที่ไม่เคยใช้รู้ทันทีว่าต้องทำอะไร.</li>
+        <li><strong>Demo button:</strong> ขนาดเล็ก · มุมล่าง · ตัวอักษร italic → แสดงชัดว่าเป็นข้อมูล mock สำหรับ testing เท่านั้น.</li>
+        <li><strong>Number pad:</strong> ตัวเลขขนาดใหญ่ 18px · target 56×56 → กดง่ายผ่านนิ้วชี้.</li>
+      </ul>
+    </section>
+
+    <!-- SCREEN 4 — CONFIRM -->
+    <section id="screen-4">
+      <h2><span class="step-pill">4</span>CONFIRM</h2>
+      <p class="lead">แสดงข้อมูลที่ดึงมา ให้ผู้รับบริการยืนยันก่อนออกคิว.</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup — Has appointment</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 4/5</span></div>
+            <div class="body" style="padding:20px;">
+              <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
+                <p style="font-size:11px;color:var(--muted);margin:0;">ผู้ป่วย</p>
+                <p style="font-weight:700;font-size:16px;margin:2px 0;">นางสมศรี แสนดี</p>
+                <p style="font-size:11px;color:var(--muted);margin:0;">HN: 00012345 · 68 ปี · O+ · บัตรทอง</p>
+              </div>
+              <div style="background:var(--brand-soft);border:1px solid var(--brand-mid);border-radius:10px;padding:14px;">
+                <p style="font-size:11px;color:var(--brand);font-weight:700;margin:0;">📅 นัดวันนี้</p>
+                <p style="font-weight:700;font-size:14px;margin:4px 0 2px;">คลินิกโรคเรื้อรัง · 09:30 น.</p>
+                <p style="font-size:11px;color:var(--muted);margin:0;">นพ.อนันต์ พงศ์ภักดี · ห้องตรวจ B-3</p>
+              </div>
+              <button style="background:var(--brand);color:white;width:100%;padding:14px;border-radius:14px;font-weight:700;margin-top:14px;border:0;font-size:14px;">✓ ยืนยันและรับคิว</button>
+              <button style="background:white;color:var(--text);width:100%;padding:10px;border-radius:14px;border:1px solid var(--border);font-size:12px;margin-top:6px;">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Mockup — Walk-in</h3>
+          <div class="screen">
+            <div class="top-bar"><span>← ย้อนกลับ</span><span>ขั้นตอนที่ 4/5</span></div>
+            <div class="body" style="padding:20px;">
+              <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
+                <p style="font-size:11px;color:var(--muted);margin:0;">ผู้ป่วย</p>
+                <p style="font-weight:700;font-size:16px;margin:2px 0;">นายสมชาย ใจดี</p>
+                <p style="font-size:11px;color:var(--muted);margin:0;">HN: 00098765 · 28 ปี · ชาย · ประกันสังคม</p>
+              </div>
+              <div style="background:var(--warn-soft);border:1px solid #F7DEB5;border-radius:10px;padding:12px;">
+                <p style="font-size:11px;color:var(--warn);font-weight:700;margin:0;">⚠ Walk-in</p>
+                <p style="font-size:11px;color:var(--muted);margin:4px 0 0;">บริการที่เลือก: <strong style="color:var(--text);">ห้องตรวจ — OPD ทั่วไป</strong></p>
+              </div>
+              <button style="background:var(--brand);color:white;width:100%;padding:14px;border-radius:14px;font-weight:700;margin-top:14px;border:0;font-size:14px;">✓ ยืนยันและรับคิว</button>
+              <button style="background:white;color:var(--text);width:100%;padding:10px;border-radius:14px;border:1px solid var(--border);font-size:12px;margin-top:6px;">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 5 — TICKET -->
+    <section id="screen-5">
+      <h2><span class="step-pill">5</span>QUEUE TICKET</h2>
+      <p class="lead">หน้าจอเดียวจบ: queue number + เวลารอ + 2 actions (print / QR). หลัง print/scan เสร็จ → "เสร็จสิ้น" → reset to welcome.</p>
+      <div class="screen-grid">
+        <div>
+          <h3>Mockup — On-screen</h3>
+          <div class="screen">
+            <div class="top-bar"><span>เสร็จสิ้น ✓</span><span>ขั้นตอนที่ 5/5</span></div>
+            <div class="body" style="padding:20px;text-align:center;">
+              <p style="font-size:13px;color:var(--muted);margin:0;">บัตรคิวของคุณ</p>
+              <p style="font-size:18px;font-weight:700;color:var(--brand);margin:2px 0 12px;">แผนก: คลินิกโรคเรื้อรัง (ตึก B)</p>
+              <div style="background:#FAFAFB;border-radius:14px;padding:24px 12px;margin:0 0 12px;">
+                <div style="font-family:Inter,sans-serif;font-weight:800;font-size:64px;line-height:1;letter-spacing:-2px;">C-021</div>
+              </div>
+              <div style="background:rgba(243,244,246,0.5);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;">
+                <span style="color:var(--muted);">คิวกำลังเรียก:</span>
+                <strong>C-015</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:0 4px;margin-bottom:12px;">
+                <span>เวลารอ:</span><strong>~ 18 นาที</strong>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button style="flex:1;background:var(--brand);color:white;padding:14px;border-radius:14px;font-weight:700;border:0;">🖨 พิมพ์</button>
+                <button style="flex:1;background:white;color:var(--brand);padding:12px;border-radius:14px;font-weight:700;border:3px solid var(--brand);">📱 QR</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Action behaviors</h3>
+          <ul>
+            <li><strong>พิมพ์บัตรคิว:</strong> POST → printer SDK. ติด feedback toast "กำลังพิมพ์…" 2s → "พิมพ์สำเร็จ ✓" 3s → auto-reset to welcome.</li>
+            <li><strong>รับผ่าน QR:</strong> เปิด modal QR แบบ full-screen (ต่อด้านล่าง). กดที่ใดในมือถือเพื่อปิด.</li>
+            <li><strong>Idle on this screen:</strong> 30s ไม่มี touch → auto-reset.</li>
+          </ul>
+          <h3>Queue number generation</h3>
+          <ul>
+            <li>Prefix per dept: <code>A</code> = OPD, <code>B</code> = ANC, <code>C</code> = Chronic, <code>D</code> = Dental, <code>F</code> = Finance, <code>P</code> = Pharmacy, <code>L</code> = Lab</li>
+            <li>3-digit number, padded with zeros, increments per day · per dept.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN QR + MOBILE -->
+    <section id="screen-qr">
+      <h2>📱 QR Modal + Mobile Ticket Page</h2>
+      <p class="lead">QR ที่ kiosk → ผู้ใช้สแกนด้วยกล้องโทรศัพท์ → เปิด <code>/kiosk/ticket/:queueId</code> ในมือถือ → กด "บันทึกภาพ" เพื่อ save PNG ลง Photos.</p>
+      <div class="screen-grid">
+        <div>
+          <h3>QR modal (บน kiosk)</h3>
+          <div class="screen">
+            <div class="top-bar"><span>กลับ</span><span>QR สำหรับบัตรคิว C-021</span></div>
+            <div class="body" style="text-align:center;padding:24px;">
+              <div style="width:200px;height:200px;background:white;border:2px solid var(--border);margin:0 auto 12px;padding:8px;display:flex;align-items:center;justify-content:center;font-family:monospace;color:var(--muted);">
+                ▓▓░▓░▓▓<br/>░▓▓▓▓░░<br/>▓░▓░▓▓▓<br/>▓▓▓░░▓░<br/>░▓░▓▓▓░<br/>░▓░▓░▓▓
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin:0;">สแกนด้วยกล้องโทรศัพท์</p>
+              <code style="font-size:10px;display:block;margin-top:8px;word-break:break-all;">https://phcis.local/kiosk/ticket/C-021</code>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3>Mobile ticket (เปิดในโทรศัพท์)</h3>
+          <div class="mobile-frame">
+            <div class="top-bar" style="background:var(--gradient);color:white;">PHCIS · ศูนย์ 4 ดินแดง</div>
+            <div class="body">
+              <p style="font-size:10px;color:var(--muted);margin:0;text-align:center;">บัตรคิวของคุณ</p>
+              <p style="font-size:13px;font-weight:700;color:var(--brand);margin:2px 0;text-align:center;">คลินิกโรคเรื้อรัง</p>
+              <div class="queue-num">C-021</div>
+              <div style="background:#FAFAFB;border-radius:10px;padding:8px 10px;font-size:10px;display:flex;justify-content:space-between;">
+                <span style="color:var(--muted);">กำลังเรียก:</span><strong>C-015</strong>
+              </div>
+              <div style="font-size:10px;padding:6px 0;display:flex;justify-content:space-between;">
+                <span>เวลารอ:</span><strong>~ 18 นาที</strong>
+              </div>
+              <div style="font-size:10px;padding:6px 0;color:var(--muted);text-align:center;">
+                โซน B ชั้น 2 หน้าห้อง 3
+              </div>
+              <div class="btn">📥 บันทึกภาพบัตรคิว</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>Image save behavior (mobile)</h3>
+      <ul>
+        <li>กด "บันทึกภาพ" → JS render ticket เป็น Canvas (800×1000px) → <code>canvas.toBlob()</code> → <code>URL.createObjectURL</code> → trigger download.</li>
+        <li>iOS Safari: ไฟล์ลง Files app · ต้อง long-press image กลางหน้าเพื่อ "Save to Photos".</li>
+        <li>Android Chrome: ไฟล์ลง Downloads · auto-show ใน Photos app.</li>
+        <li>Filename: <code>queue-C-021-2025-05-25.png</code></li>
+      </ul>
+    </section>
+
+    <!-- UX -->
+    <section id="ux">
+      <h2>🎨 UX principles</h2>
+      <div class="screen-grid">
+        <div>
+          <h3>Touch targets</h3>
+          <ul>
+            <li>Min 64×64 px (Material recommendation 48 — but kiosk = larger).</li>
+            <li>Hit area expands 8 px beyond visual bounds.</li>
+            <li>Active state: scale(0.98) + ripple 200 ms.</li>
+          </ul>
+          <h3>Typography ladder</h3>
+          <ul>
+            <li>Page title: 36 px Bold</li>
+            <li>Sub-title: 24 px Medium</li>
+            <li>Card title: 30 px Bold</li>
+            <li>Card desc: 18 px Regular</li>
+            <li>Queue number: 100 px ExtraBold (Inter)</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Color semantics</h3>
+          <ul>
+            <li><strong>Brand green</strong> = selectable / primary action</li>
+            <li><strong>Brand gradient</strong> = global header / branding accents</li>
+            <li><strong>Warning amber</strong> = walk-in (no appointment)</li>
+            <li><strong>Danger red</strong> = ID not found / failure</li>
+            <li><strong>Neutral grey</strong> = secondary info / unfilled fields</li>
+          </ul>
+          <h3>Reset & timeouts</h3>
+          <ul>
+            <li>Step 0–2: 5-min idle → screensaver dim</li>
+            <li>Step 3–4: 60s idle → auto-reset (privacy)</li>
+            <li>Step 5: 30s post-print → auto-reset</li>
+            <li>"กลับสู่หน้าแรก" button visible bottom-right of all in-flow screens</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section id="data">
+      <h2>💾 Mock data shape</h2>
+      <p class="lead">ทุก mock อยู่ใน <code>src/data/kioskMock.js</code> — services, sub-services, patients, appointments.</p>
+<pre class="ascii">
+// Services (Step 1)
+const SERVICES = [
+  { key: 'screening',    label: 'ซักประวัติ',     icon: 'assignment',  drill: false },
+  { key: 'consultation', label: 'ห้องตรวจ',       icon: 'stethoscope', drill: true  },
+  { key: 'finance',      label: 'การเงิน',        icon: 'credit_card', drill: false },
+  { key: 'pharmacy',     label: 'รับยา',          icon: 'medication',  drill: false, queuePrefix: 'P' },
+  { key: 'lab',          label: 'เจาะเลือด/ฉีดยา', icon: 'vaccines',    drill: false, queuePrefix: 'L' },
+  { key: 'other',        label: 'แผนกอื่นๆ',      icon: 'more_horiz',  drill: true  },
+];
+
+// Sub-services (Step 1b)
+const SUB_SERVICES = {
+  consultation: [
+    { key: 'opd-general', label: 'OPD ทั่วไป',  icon: 'stethoscope',     queuePrefix: 'A' },
+    { key: 'anc',         label: 'ตรวจครรภ์',   icon: 'pregnant_woman',  queuePrefix: 'B' },
+    { key: 'pediatrics',  label: 'กุมารเวช',     icon: 'child_care',     queuePrefix: 'K' },
+    { key: 'elderly',     label: 'ผู้สูงอายุ',    icon: 'elderly',        queuePrefix: 'E' },
+    { key: 'chronic',     label: 'โรคเรื้อรัง',   icon: 'monitor_heart',  queuePrefix: 'C' },
+    { key: 'mental',      label: 'สุขภาพจิต',    icon: 'psychology',     queuePrefix: 'M' },
+    { key: 'dental',      label: 'ทันตกรรม',     icon: 'dentistry',      queuePrefix: 'D' },
+    { key: 'tb',          label: 'วัณโรค',        icon: 'masks',          queuePrefix: 'T' },
+  ],
+  other: [
+    { key: 'vaccine',  label: 'วัคซีน',         icon: 'vaccines',       queuePrefix: 'V' },
+    { key: 'family',   label: 'วางแผนครอบครัว', icon: 'family_restroom',queuePrefix: 'F' },
+    { key: 'xray',     label: 'เอกซเรย์',       icon: 'radiology',      queuePrefix: 'X' },
+    { key: 'physio',   label: 'กายภาพ',         icon: 'self_improvement', queuePrefix: 'Y' },
+  ],
+};
+
+// Patients (mock for verify ID lookup)
+const PATIENTS = [
+  {
+    nationalId: '1100400123456',
+    hn: '00012345',
+    fullName: 'นางสมศรี แสนดี',
+    age: 68, gender: 'หญิง', bloodType: 'O+',
+    rightsGroup: 'บัตรทอง',
+    appointments: [
+      { date: '2025-05-25', time: '09:30', sub: 'chronic',
+        doctor: 'นพ.อนันต์ พงศ์ภักดี', room: 'B-3' }
+    ],
+  },
+  // ... 5 more patients
+];
+</pre>
+    </section>
+
+    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:36px;">
+      End of kiosk design · 2026-05-25 · Implementation: <code>src/pages/kiosk/KioskPage.jsx</code> + <code>src/pages/kiosk/MobileTicketPage.jsx</code>
+    </p>
+  </main>
+
+  <script>
+    const links = document.querySelectorAll('aside a');
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          links.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    sections.forEach((s) => observer.observe(s));
+  </script>
+</body>
+</html>

@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PHCIS · User Flow สำหรับ Dev — เข้าสู่ระบบ · จัดการระบบ · ความยินยอม</title>
+<!-- ใช้ token จาก mirror ของ @mih/design-tokens · เปิดผ่าน file:// ได้ (path relative) -->
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  :root {
+    --c-text: var(--text-content-default, #363B3F);
+    --c-text-2: var(--text-content-secondary, #636B72);
+    --c-text-3: var(--text-content-tertiary, #858C92);
+    --c-bg: var(--surface-neutral-quaternary, #F9FBFB);
+    --c-card: var(--surface-neutralButton-quinary, #FFFFFF);
+    --c-line: var(--border-neutral-tertiary, #E2E4E6);
+    --c-line-2: var(--border-neutralButton-quaternary, #F4F5F5);
+    --c-brand: var(--brand-p700, #007549);
+    --c-brand-soft: var(--brand-p50, #F4FBF8);
+    --c-brand-mid: var(--brand-p100, #E2F3EB);
+    --c-danger: var(--text-danger-default, #B91C1C);
+    --c-danger-soft: var(--surface-danger-tertiary, #FEE2E2);
+    --c-info: var(--text-info-default, #1D4ED8);
+    --c-info-soft: var(--surface-info-tertiary, #DBEAFE);
+    --c-warn: var(--text-warning-default, #C2410C);
+    --c-neutral-soft: var(--surface-neutral-tertiary, #F4F5F5);
+    --sp-1: var(--dim-space-100, 4px);
+    --sp-2: var(--dim-space-200, 8px);
+    --sp-3: var(--dim-space-300, 12px);
+    --sp-4: var(--dim-space-400, 16px);
+    --sp-5: var(--dim-space-500, 20px);
+    --sp-6: var(--dim-space-600, 24px);
+    --sp-8: var(--dim-space-800, 32px);
+    --r-2: var(--dim-radius-200, 8px);
+    --r-4: var(--dim-radius-400, 12px);
+    --r-5: var(--dim-radius-500, 16px);
+    --r-full: var(--dim-radius-full, 9999px);
+    --fs-xxs: var(--type-size-xxs, 10px);
+    --fs-xs: var(--type-size-xs, 12px);
+    --fs-sm: var(--type-size-sm, 14px);
+    --fs-base: var(--type-size-base, 16px);
+    --fs-lg: var(--type-size-lg, 18px);
+    --fs-xl: var(--type-size-xl, 20px);
+    --fs-2xl: var(--type-size-2xl, 24px);
+    --fw-r: var(--type-weight-regular, 400);
+    --fw-m: var(--type-weight-medium, 500);
+    --fw-b: var(--type-weight-bold, 700);
+    --sh: var(--shadow-dropdown, 0 4px 16px rgba(15, 23, 42, .12));
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--c-bg); color: var(--c-text); }
+  body {
+    font-family: "IBM Plex Sans Thai", "Sarabun", "Noto Sans Thai", -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: var(--fs-sm); line-height: 1.55;
+  }
+  button { font: inherit; color: inherit; }
+  a { color: var(--c-brand); }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--fs-xs); }
+
+  /* ── header ── */
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--c-card); border-bottom: 1px solid var(--c-line);
+    padding: var(--sp-4) var(--sp-6) 0;
+  }
+  .top h1 { margin: 0; font-size: var(--fs-xl); font-weight: var(--fw-b); color: var(--c-brand); }
+  .top .sub { margin: var(--sp-1) 0 var(--sp-3); color: var(--c-text-2); font-size: var(--fs-xs); }
+  .tabs { display: flex; gap: var(--sp-1); overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto; min-height: 44px; padding: 0 var(--sp-4);
+    border: 0; background: none; cursor: pointer; color: var(--c-text-2);
+    border-bottom: 2px solid transparent; font-weight: var(--fw-m);
+  }
+  .tab[aria-selected="true"] { color: var(--c-brand); border-bottom-color: var(--c-brand); }
+  .tab .n { margin-left: var(--sp-1); font-size: var(--fs-xs); color: var(--c-text-3); }
+
+  main { max-width: 1600px; margin: 0 auto; padding: var(--sp-6); }
+  .intro {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-4); align-items: start;
+    background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r-4);
+    padding: var(--sp-4) var(--sp-5); margin-bottom: var(--sp-6);
+  }
+  .intro h2 { margin: 0 0 var(--sp-1); font-size: var(--fs-base); font-weight: var(--fw-b); }
+  .intro p { margin: 0; color: var(--c-text-2); font-size: var(--fs-xs); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); color: var(--c-text-2); }
+  .legend span { display: inline-flex; align-items: center; gap: var(--sp-1); }
+  .dot { width: 10px; height: 10px; border-radius: var(--r-full); display: inline-block; }
+
+  /* ── flow ── */
+  .flow { display: flex; flex-direction: column; gap: var(--sp-6); }
+  .lane { background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r-4); padding: var(--sp-4); }
+  .lane-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+  .lane-h h3 { margin: 0; font-size: var(--fs-base); font-weight: var(--fw-b); }
+  .lane-h .who { font-size: var(--fs-xs); color: var(--c-text-2); }
+  .phases { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: var(--sp-2); }
+  .phase { flex: 0 0 236px; display: flex; flex-direction: column; gap: var(--sp-3); }
+  .phase-h { font-size: var(--fs-xs); font-weight: var(--fw-m); color: var(--c-text-3); min-height: 20px; }
+  .arrow { flex: 0 0 32px; display: flex; align-items: center; justify-content: center; color: var(--c-text-3); font-size: var(--fs-lg); padding-top: 20px; }
+
+  .node {
+    position: relative; display: block; width: 100%; text-align: left; cursor: pointer;
+    background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r-4);
+    padding: 0; overflow: hidden; transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .node:hover, .node:focus-visible { border-color: var(--c-brand); box-shadow: var(--sh); outline: none; transform: translateY(-1px); }
+  .node.active { border-color: var(--c-brand); box-shadow: 0 0 0 2px var(--c-brand-mid); }
+  .node .thumb { aspect-ratio: 16 / 10; background: var(--c-neutral-soft); border-bottom: 1px solid var(--c-line); overflow: hidden; }
+  .node .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .node .thumb.none { display: flex; align-items: center; justify-content: center; color: var(--c-text-3); font-size: var(--fs-xs); }
+  .node .body { padding: var(--sp-2) var(--sp-3) var(--sp-3); }
+  .node .no { font-size: var(--fs-xxs); font-weight: var(--fw-b); color: var(--c-brand); letter-spacing: .3px; }
+  .node .t { font-weight: var(--fw-m); font-size: var(--fs-sm); line-height: 1.35; margin: 2px 0; }
+  .node .r { font-size: var(--fs-xxs); color: var(--c-text-3); font-family: ui-monospace, Menlo, monospace; word-break: break-all; }
+  .node .badges { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-2); }
+  .node.alt { border-style: dashed; }
+  .b { display: inline-flex; align-items: center; gap: 2px; padding: 0 var(--sp-2); border-radius: var(--r-full); font-size: var(--fs-xxs); font-weight: var(--fw-m); line-height: 18px; white-space: nowrap; }
+  .b.cond { background: var(--c-info-soft); color: var(--c-info); }
+  .b.gap { background: var(--c-danger-soft); color: var(--c-danger); }
+  .b.shots { background: var(--c-brand-mid); color: var(--c-brand); }
+  .b.alt { background: var(--c-neutral-soft); color: var(--c-text-2); }
+
+  /* ── hover preview (desktop pointer only) ── */
+  .peek {
+    position: fixed; z-index: 40; width: 440px; max-width: calc(100vw - 24px); pointer-events: none;
+    background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r-4); box-shadow: var(--sh);
+    padding: var(--sp-3); opacity: 0; transition: opacity .12s;
+  }
+  .peek.on { opacity: 1; }
+  .peek img { width: 100%; border-radius: var(--r-2); border: 1px solid var(--c-line); display: block; }
+  .peek .pt { margin-top: var(--sp-2); font-size: var(--fs-sm); font-weight: var(--fw-m); }
+  .peek .ps { font-size: var(--fs-xs); color: var(--c-text-2); }
+  .peek hr { border: 0; border-top: 1px solid var(--border-neutral-quaternary, #F4F5F5); margin: var(--sp-2) 0; }
+  .peek .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px var(--sp-3); font-size: var(--fs-xs); }
+  .peek .kv dt { color: var(--c-text-3); }
+  .peek .kv dd { margin: 0; color: var(--c-text); }
+  .peek .hint { margin-top: var(--sp-2); font-size: var(--fs-xxs); color: var(--c-text-3); }
+
+  /* ── drawer ── */
+  .scrim { position: fixed; inset: 0; background: rgba(23, 26, 31, .32); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 60; width: min(880px, 100vw);
+    background: var(--c-card); box-shadow: var(--sh); transform: translateX(100%); transition: transform .22s ease;
+    display: flex; flex-direction: column;
+  }
+  .drawer.on { transform: none; }
+  .d-head { display: flex; align-items: flex-start; gap: var(--sp-3); padding: var(--sp-4) var(--sp-5); border-bottom: 1px solid var(--c-line); }
+  .d-head .ttl { flex: 1; min-width: 0; }
+  .d-head .no { font-size: var(--fs-xs); font-weight: var(--fw-b); color: var(--c-brand); }
+  .d-head h2 { margin: 2px 0 var(--sp-1); font-size: var(--fs-lg); font-weight: var(--fw-b); color: var(--c-text); }
+  .d-head .sum { font-size: var(--fs-xs); color: var(--c-text-2); }
+  .iconbtn { flex: 0 0 auto; width: 44px; height: 44px; border-radius: var(--r-full); border: 1px solid var(--c-line); background: var(--c-card); cursor: pointer; font-size: var(--fs-lg); line-height: 1; }
+  .iconbtn:hover { background: var(--c-neutral-soft); }
+  .d-nav { display: flex; gap: var(--sp-2); padding: var(--sp-2) var(--sp-5); border-bottom: 1px solid var(--c-line); flex-wrap: wrap; }
+  .pill { min-height: 36px; padding: 0 var(--sp-3); border-radius: var(--r-full); border: 1px solid var(--c-line); background: var(--c-card); cursor: pointer; font-size: var(--fs-xs); }
+  .pill:hover { border-color: var(--c-brand); color: var(--c-brand); }
+  .pill[disabled] { opacity: .4; cursor: default; }
+  .d-body { flex: 1; overflow-y: auto; padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-6); }
+  .meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); }
+  .meta dt { color: var(--c-text-3); }
+  .meta dd { margin: 0; word-break: break-word; }
+
+  .gallery .main { position: relative; border: 1px solid var(--c-line); border-radius: var(--r-4); overflow: hidden; background: var(--c-neutral-soft); cursor: zoom-in; }
+  .gallery .main img { width: 100%; display: block; }
+  .gallery .cap { margin-top: var(--sp-2); font-size: var(--fs-xs); color: var(--c-text-2); }
+  .variants { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+  .variants .pill[aria-pressed="true"] { background: var(--c-brand); border-color: var(--c-brand); color: var(--surface-neutralButton-quinary, #FFFFFF); }
+
+  .sec h4 { margin: 0 0 var(--sp-1); font-size: var(--fs-sm); font-weight: var(--fw-b); color: var(--c-text); }
+  .sec .hint { margin: 0 0 var(--sp-3); font-size: var(--fs-xs); color: var(--c-text-3); }
+  .sec ul { margin: 0; padding-left: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-1); }
+  .sec li { font-size: var(--fs-sm); }
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--c-line); border-radius: var(--r-2); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--fs-xs); }
+  th, td { text-align: left; vertical-align: top; padding: var(--sp-2) var(--sp-3); border-bottom: 1px solid var(--c-line-2); }
+  th { background: var(--c-neutral-soft); font-weight: var(--fw-m); color: var(--c-text-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td .go { display: inline-flex; align-items: center; min-height: 28px; padding: 0 var(--sp-2); border-radius: var(--r-full); border: 1px solid var(--c-brand-mid); background: var(--c-brand-soft); color: var(--c-brand); cursor: pointer; font-size: var(--fs-xxs); font-weight: var(--fw-m); white-space: nowrap; }
+  .gaps { background: var(--c-danger-soft); border-radius: var(--r-2); padding: var(--sp-3) var(--sp-4); }
+  .gaps h4 { color: var(--c-danger); }
+  .q { color: var(--c-brand); }
+
+  /* ── lightbox ── */
+  .lb { position: fixed; inset: 0; z-index: 80; background: rgba(23, 26, 31, .86); display: none; align-items: center; justify-content: center; padding: var(--sp-6); cursor: zoom-out; }
+  .lb.on { display: flex; }
+  .lb img { max-width: 100%; max-height: 100%; border-radius: var(--r-2); }
+
+  /* ── responsive ── */
+  @media (max-width: 1023px) {
+    main { padding: var(--sp-4); }
+    .phase { flex-basis: 210px; }
+  }
+  @media (max-width: 767px) {
+    .top { padding: var(--sp-3) var(--sp-4) 0; }
+    .top h1 { font-size: var(--fs-base); }
+    .intro { grid-template-columns: 1fr; }
+    .phases { flex-direction: column; overflow: visible; }
+    .phase { flex: 0 0 auto; }
+    .phase .nodes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+    .arrow { padding: 0; transform: rotate(90deg); flex-basis: 28px; }
+    .d-head, .d-body { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+    .meta { grid-template-columns: 1fr; gap: 0; }
+    .meta dt { margin-top: var(--sp-2); }
+  }
+  @media (max-width: 767px) {
+    .ct thead { display: none; }
+    .ct tr { display: grid; grid-template-columns: 1fr; padding: var(--sp-2) 0; border-bottom: 1px solid var(--c-line-2); }
+    .ct td { border: 0; padding: 2px var(--sp-3); }
+    .ct td:first-child { font-weight: var(--fw-m); }
+    .ct td:last-child:empty, .ct td:last-child:not(:has(button)) { display: none; }
+  }
+  @media (max-width: 420px) {
+    .phase .nodes { grid-template-columns: 1fr; }
+  }
+  .phase .nodes { display: flex; flex-direction: column; gap: var(--sp-3); }
+  @media (max-width: 767px) { .phase .nodes { display: grid; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>User Flow สำหรับ Dev · เข้าสู่ระบบ · จัดการระบบ · ความยินยอม</h1>
+  <p class="sub">ถอดจากโค้ดจริงใน bma.health (Kae-Branch · 13 ต.ค. 69) · ภาพหน้าจอจากแอปที่รันอยู่ · ชี้ที่ขั้นเพื่อดูตัวอย่างหน้าจอ · กดเพื่อดูรายละเอียดและเงื่อนไขทั้งหมด</p>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+</header>
+<main>
+  <section class="intro" id="intro"></section>
+  <div class="flow" id="flow"></div>
+</main>
+
+<div class="peek" id="peek" aria-hidden="true"></div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title">
+  <div class="d-head">
+    <div class="ttl"><div class="no" id="d-no"></div><h2 id="d-title"></h2><div class="sum" id="d-sum"></div></div>
+    <button class="iconbtn" id="d-close" aria-label="ปิด">×</button>
+  </div>
+  <div class="d-nav"><button class="pill" id="d-prev">← ขั้นก่อนหน้า</button><button class="pill" id="d-next">ขั้นถัดไป →</button></div>
+  <div class="d-body" id="d-body"></div>
+</aside>
+<div class="lb" id="lb"><img alt="" id="lb-img" /></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════════
+   DATA — แต่ละขั้น: route · ใครใช้ · ไฟล์ · ภาพ (หลายสถานะ) · องค์ประกอบหน้าจอ ·
+   การกระทำ → ผลลัพธ์ · เงื่อนไข (if → then → ไปขั้นไหน) · ข้อความ validation ·
+   ที่เก็บข้อมูล · ข้อสังเกตจากโค้ด (gap/bug ที่ dev ต้องรู้)
+   ════════════════════════════════════════════════════════════════════════ */
+const S = (f) => 'flow-shots/' + f + '.jpg';
+
+const MODULES = [
+/* ───────────────────────────── 1. เข้าสู่ระบบ ───────────────────────────── */
+{
+  key: 'login', label: 'เข้าสู่ระบบ',
+  title: 'การเข้าสู่ระบบ (Login)',
+  summary: 'เจ้าหน้าที่ทุกบทบาท · ล็อกอิน → ยืนยันตัวตน 2 ชั้น → (ตั้งรหัสผ่าน) → เลือกศูนย์ → หน้าหลักตามบทบาท',
+  lanes: [{
+    title: 'เส้นทางหลักของเจ้าหน้าที่', who: 'ทุกบทบาท · ไฟล์หลัก src/pages/auth/*',
+    phases: [
+      { h: '1 · ลงชื่อเข้าใช้', nodes: ['L1', 'L1S'] },
+      { h: '2 · ยืนยันตัวตน 2 ชั้น', nodes: ['L2'] },
+      { h: '3 · ตั้งรหัสผ่าน (บางกรณี)', nodes: ['L3'] },
+      { h: '4 · เลือกศูนย์บริการ', nodes: ['L4'] },
+      { h: '5 · เข้าหน้าหลัก', nodes: ['L5', 'L6'] },
+    ],
+  }],
+},
+/* ───────────────────────────── 2. จัดการระบบ ───────────────────────────── */
+{
+  key: 'admin', label: 'การจัดการระบบ',
+  title: 'การจัดการระบบ (ตั้งค่าองค์กร · ผู้ใช้ · สิทธิ์)',
+  summary: 'ผู้ดูแลระบบส่วนกลาง / ศูนย์ · ลำดับตั้งค่าจริง: หน่วยงาน → คลินิก/แผนก → ตำแหน่ง → บทบาท → แม่แบบสิทธิ์ → บุคลากร → อนุมัติ',
+  lanes: [{
+    title: 'ตั้งค่าโครงสร้างและสิทธิ์', who: 'admin_super (ส่วนกลาง) · center_admin (ศูนย์)',
+    phases: [
+      { h: '0 · เข้าระบบจัดการระบบ', nodes: ['A0', 'A1'] },
+      { h: '1 · หน่วยงาน/พื้นที่', nodes: ['A2', 'A3', 'A8'] },
+      { h: '2 · ตำแหน่ง · บทบาท', nodes: ['A4', 'A5'] },
+      { h: '3 · สิทธิ์การเข้าถึง', nodes: ['A6', 'A9'] },
+      { h: '4 · บุคลากร', nodes: ['A7', 'A7N', 'A7D'] },
+      { h: '5 · อนุมัติ', nodes: ['A10'] },
+    ],
+  }],
+},
+/* ───────────────────────────── 3. ความยินยอม ───────────────────────────── */
+{
+  key: 'consent', label: 'ระบบการจัดการความยินยอม',
+  title: 'ระบบการจัดการความยินยอม (Consent Management)',
+  summary: '3 กลุ่มผู้ใช้: ผู้ดูแล (ตั้งแบบฟอร์ม/อนุมัติ) · เจ้าหน้าที่ (ขอ/บันทึก/เพิกถอน) · ผู้ขอสิทธิ์ · และจุดที่ความยินยอมถูกเก็บระหว่างเส้นทางผู้ป่วย',
+  lanes: [
+    {
+      title: 'ผู้ดูแลระบบ — ตั้งแบบฟอร์มและกำกับสิทธิ์', who: 'admin_super เท่านั้นที่เข้า /consent/* ได้',
+      phases: [
+        { h: '1 · ภาพรวม', nodes: ['C1'] },
+        { h: '2 · ทะเบียนแบบฟอร์ม', nodes: ['C2', 'C4'] },
+        { h: '3 · สร้าง/เวอร์ชันใหม่', nodes: ['C3'] },
+        { h: '4 · สิทธิ์เข้าถึง', nodes: ['C5', 'C6'] },
+        { h: '5 · นำออก · รายงาน', nodes: ['C7', 'C8'] },
+      ],
+    },
+    {
+      title: 'เจ้าหน้าที่ — ขอ/บันทึก/เพิกถอนความยินยอมของผู้รับบริการ', who: 'เวชระเบียน · พยาบาล · แพทย์ (Editor) · Viewer ดูได้อย่างเดียว',
+      phases: [
+        { h: '1 · worklist', nodes: ['S1'] },
+        { h: '2 · กรอกแบบฟอร์ม', nodes: ['S3'] },
+        { h: '3 · ส่งใหม่/เพิกถอน', nodes: ['S2'] },
+        { h: '4 · ประวัติ', nodes: ['S4'] },
+      ],
+    },
+    {
+      title: 'ผู้ขอสิทธิ์เข้าถึงข้อมูล', who: 'เจ้าหน้าที่ที่ต้องดูข้อมูลความยินยอมนอกสิทธิ์ปกติ',
+      phases: [
+        { h: '1 · ส่งคำขอ', nodes: ['R1'] },
+        { h: '2 · ติดตามคำขอ', nodes: ['R2'] },
+        { h: '3 · ผู้ดูแลอนุมัติ', nodes: ['C6'] },
+      ],
+    },
+    {
+      title: 'เส้นทางผู้ป่วย — จุดที่ความยินยอมถูกเก็บ/บังคับใช้', who: 'เวชระเบียน → คลินิก → ห้องตรวจ',
+      phases: [
+        { h: '1 · ลงทะเบียน', nodes: ['P1'] },
+        { h: '2 · คลินิก/ห้องตรวจ', nodes: ['P2'] },
+        { h: '3 · ข้ามศูนย์/ส่งต่อ', nodes: ['P3'] },
+      ],
+    },
+  ],
+},
+];
+
+const STEPS = {
+/* ══════════════════ LOGIN ══════════════════ */
+L1: {
+  title: 'ลงชื่อเข้าใช้งานระบบ', route: '/login (และ /signin · / redirect มาที่นี่)', who: 'เจ้าหน้าที่ทุกบทบาท',
+  file: 'src/pages/auth/LoginPage.jsx',
+  summary: 'เลือก SSO / Thai ID / อีเมล+รหัสผ่าน · ครั้งแรกระบบส่งรหัสชั่วคราวทางอีเมล',
+  shots: [['l1-login', 'หน้าเริ่มต้น'], ['l1-wrongpw', 'รหัสผ่านผิด'], ['l1-firstmail', 'เข้าครั้งแรก — ส่งรหัสชั่วคราว'], ['l1-thaid', 'Thai ID (QR)'], ['l1-it', 'ติดต่อฝ่ายไอที']],
+  screen: [
+    'ปุ่ม <b>“เข้าสู่ระบบด้วยบัญชีหน่วยงาน (SSO)”</b> → /login/sso',
+    'ปุ่ม <b>“ดำเนินการต่อด้วย Thai ID”</b> → แสดงการ์ด QR (นับถอยหลัง 59 วิ วนสร้างใหม่อัตโนมัติ)',
+    'ช่อง “อีเมล หรือ Username” · “รหัสผ่าน” (ปุ่มแสดง/ซ่อน) · ☐ “จำข้อมูลนี้ในการเข้าใช้ครั้งถัดไป”',
+    'ปุ่ม <b>“เข้าสู่ระบบ”</b> · ลิงก์ “ลืมรหัสผ่าน?” · “ติดต่อฝ่ายไอทีโรงพยาบาล” (ป๊อปอัปแจ้งเรื่อง)',
+  ],
+  conds: [
+    ['บัญชีไม่พบ หรือสถานะไม่ active', 'แสดงข้อความใต้ช่อง · ปุ่ม “เข้าสู่ระบบ” disabled', null],
+    ['บัญชียังไม่มีรหัสผ่าน (เข้าครั้งแรก)', 'สร้างรหัสชั่วคราว Bma####! → ป๊อปอัป “ส่งรหัสผ่านชั่วคราวไปที่อีเมลแล้ว” → กด “ใช้รหัสนี้เข้าสู่ระบบ” เติมรหัสให้', null],
+    ['รหัสผ่านผิด', '“รหัสผ่านไม่ถูกต้อง” (รหัสชั่วคราวผิด: “รหัสผ่านชั่วคราวไม่ถูกต้อง ใช้รหัสที่ส่งไปทางอีเมล”)', null],
+    ['รหัสถูก + ใช้รหัสชั่วคราว (mustChangePassword)', 'ไปยืนยันตัวตนแบบบังคับสแกนใบหน้า 360° (state mandatoryFace)', 'L2'],
+    ['รหัสถูก (ปกติ)', 'ไปเลือกวิธียืนยันตัวตน 2 ชั้น', 'L2'],
+    ['บัญชี demo.&lt;role&gt;@phcis.bma.go.th', 'ตั้ง role ตามบัญชี · session = บัญชีหลัก somying', 'L2'],
+    ['กด SSO', 'ไปหน้า Directory', 'L1S'],
+    ['กด “ลืมรหัสผ่าน?”', 'ไป /login/verify ขั้นเลือกวิธี (ไม่ส่งบัญชีไปด้วย)', 'L2'],
+    ['กด QR ของ Thai ID', 'ทำงานเหมือนกด “เข้าสู่ระบบ” (ใช้ค่าที่กรอกไว้)', 'L2'],
+  ],
+  errors: ['กรุณากรอกอีเมล หรือ Username ที่มีสิทธิ์เข้าใช้งานระบบ', 'รหัสผ่านไม่ถูกต้อง', 'รหัสผ่านชั่วคราวไม่ถูกต้อง ใช้รหัสที่ส่งไปทางอีเมล', 'ป๊อปอัปไอที: ปุ่ม “ส่งเรื่อง” disabled จนเลือก “เรื่องที่ต้องการแจ้ง” · เลือก “อื่นๆ” ต้องระบุ'],
+  store: ['mih:phcis-session-email · mih:phcis-session-login-at', 'mih:first-login-credentials {email,password,mustChangePassword}', 'mih:staff-role-view (บัญชี demo)', 'sessionStorage mih:demo-role-landing'],
+  gaps: ['ไม่มีการจำกัดจำนวนครั้งรหัสผ่านผิด / ไม่มี lockout', 'Thai ID: ถ้ายังไม่กรอกบัญชี+รหัส การกด QR จะไม่ทำอะไร', '“จำข้อมูลนี้…” ไม่ถูกบันทึกจริง', '“ลืมรหัสผ่าน?” ไม่ส่งบัญชี → รหัสใหม่ถูกเขียนลงบัญชีใน session ปัจจุบัน (ค่าเริ่มต้น somying)'],
+  next: ['L2', 'L1S'],
+},
+L1S: {
+  alt: true,
+  title: 'เข้าสู่ระบบด้วยบัญชีหน่วยงาน (SSO)', route: '/login/sso', who: 'เจ้าหน้าที่ที่มีบัญชี Directory @bangkok.go.th',
+  file: 'src/pages/auth/LoginSsoPage.jsx',
+  summary: 'การ์ดเดียว 4 สถานะ: บัญชี → กำลังเชื่อมต่อ → สแกน QR / OTP 6 หลัก',
+  shots: [['l2-sso', 'กรอกบัญชี Directory'], ['l2-sso-qr', 'สแกน QR ยืนยันอุปกรณ์'], ['l2-sso-otp', 'กรอก OTP 6 หลักแทน']],
+  screen: [
+    'ไทล์ “Directory สำนักอนามัย กทม.” · “Active Directory · @bangkok.go.th” · สถานะ “เชื่อมต่อแล้ว”',
+    'ช่อง “บัญชีผู้ใช้ Directory” * · ☑ “จำอุปกรณ์นี้ไว้ 30 วัน” · ปุ่ม <b>“เชื่อมต่อ Directory”</b>',
+    'สถานะกำลังเชื่อมต่อ: เช็กลิสต์ 3 ข้อ ติ๊กทีละ 500ms · ไปขั้น QR อัตโนมัติหลัง 2 วิ',
+    'QR อายุ 2 นาที (“QR จะหมดอายุภายใน mm:ss”) · ปุ่ม “กรอกรหัส OTP 6 หลักแทน”',
+    'OTP 6 ช่อง ตรวจอัตโนมัติเมื่อครบ · อายุ 5 นาที · “ส่งรหัสใหม่อีกครั้ง”',
+  ],
+  conds: [
+    ['ชื่อ (ก่อน @) ไม่ตรงกับผู้ใช้ active', '“ไม่พบบัญชีนี้ใน Directory หรือบัญชียังไม่ได้รับสิทธิ์เข้าใช้ PHCIS” · ปุ่มเชื่อมต่อ disabled', null],
+    ['QR หมดอายุ', 'overlay “QR หมดอายุแล้ว” + ปุ่ม “สร้าง QR ใหม่”', null],
+    ['OTP ไม่ครบ 6 หลัก', '“กรุณากรอกรหัสยืนยันให้ครบ 6 หลัก”', null],
+    ['OTP หมดเวลา 5 นาที', '“รหัสหมดอายุแล้ว กรุณาส่งรหัสใหม่อีกครั้ง”', null],
+    ['OTP = 000000 (mock รหัสผิด)', '“รหัสยืนยันไม่ถูกต้อง กรุณาตรวจสอบและลองอีกครั้ง”', null],
+    ['สแกน QR/OTP ผ่าน + บัญชีต้องเปลี่ยนรหัส', 'ไปตั้งรหัสผ่านครั้งแรก', 'L3'],
+    ['สแกน QR/OTP ผ่าน (ปกติ)', 'ข้าม /login/verify ไปเลือกศูนย์ทันที', 'L4'],
+    ['“เข้าสู่ระบบด้วยวิธีอื่น” / “ย้อนกลับไปหน้าเข้าสู่ระบบ”', 'กลับหน้า Login', 'L1'],
+  ],
+  errors: ['ไม่พบบัญชีนี้ใน Directory หรือบัญชียังไม่ได้รับสิทธิ์เข้าใช้ PHCIS', 'กรุณากรอกรหัสยืนยันให้ครบ 6 หลัก', 'รหัสหมดอายุแล้ว กรุณาส่งรหัสใหม่อีกครั้ง', 'รหัสยืนยันไม่ถูกต้อง กรุณาตรวจสอบและลองอีกครั้ง'],
+  store: ['mih:phcis-session-email (เมื่อสำเร็จ)'],
+  gaps: ['SSO ไม่ตั้ง role (mih:staff-role-view) และไม่ผ่าน 2FA ขั้นอื่นนอกจาก QR/OTP', '“จำอุปกรณ์นี้ไว้ 30 วัน” ไม่ถูกบันทึก', 'บัญชี demo / assess-users ใช้ SSO ไม่ได้ (match เฉพาะ USERS)'],
+  next: ['L4', 'L3'],
+},
+L2: {
+  title: 'ยืนยันตัวตนอีกขั้นเพื่อความปลอดภัย (2FA)', route: '/login/verify', who: 'เจ้าหน้าที่ที่ผ่านรหัสผ่านแล้ว',
+  file: 'src/pages/auth/LoginVerifyPage.jsx',
+  summary: 'เลือก 1 ใน 4 วิธี: OTP · ใบหน้า · ลายนิ้วมือ · Smart Card',
+  shots: [['l3-method', 'เลือกวิธียืนยัน'], ['l3-code', 'กรอกรหัส OTP'], ['l3-finger', 'สแกนลายนิ้วมือ'], ['l3-card', 'เสียบบัตร Smart Card'], ['l3-logout', 'ยืนยันออกจากระบบ']],
+  screen: [
+    'การ์ด 2×2: <b>รหัส OTP</b> · <b>สแกนใบหน้า</b> · <b>สแกนลายนิ้วมือ</b> · <b>เสียบบัตร Smart Card</b>',
+    'ปุ่ม “ออกจากระบบ” (มี confirm)',
+    'OTP: 6 ช่อง ตรวจอัตโนมัติ · อายุ 5 นาที · “ส่งรหัสใหม่อีกครั้ง” · “ใช้วิธีการยืนยันอื่น”',
+    'ช่องทางรับรหัส (เฉพาะมาจากการเปิดดูข้อมูลลับ): อีเมล (หลัก) / SMS',
+  ],
+  conds: [
+    ['state.mandatoryFace (ใช้รหัสชั่วคราวเข้าครั้งแรก)', 'เปิดสแกนใบหน้า 360° ทันที ไม่มีปุ่มย้อนกลับ · ปิดกล้อง = ถามออกจากระบบ', null],
+    ['state.from = privacy-reveal', 'เริ่มที่ “เลือกช่องทางในการรับรหัสยืนยัน” (อีเมล/SMS)', null],
+    ['อื่น ๆ (รวมลืมรหัสผ่าน)', 'เริ่มที่หน้าเลือกวิธี', null],
+    ['เลือก “รหัส OTP”', 'ไปหน้ากรอกรหัสทันที (ข้ามเลือกช่องทาง)', null],
+    ['ใบหน้า: ปิดป๊อปอัปโดยยังไม่ถ่าย', 'กลับหน้าเลือกวิธี', null],
+    ['ลายนิ้วมือ / Smart Card', 'จำลองอ่าน 1.4 วิ → สำเร็จ → ไปต่อหลัง 0.7 วิ', null],
+    ['ยืนยันสำเร็จ + บัญชีทั่วไป / demo', 'ไปเลือกศูนย์บริการ', 'L4'],
+    ['ยืนยันสำเร็จ + (ครั้งแรก / ลืมรหัส / บัญชี somying / มาจาก privacy-reveal)', 'ไปตั้งรหัสผ่านใหม่ (afterVerify)', 'L3'],
+    ['กด “ออกจากระบบ” → ยืนยัน', 'ล้าง session email → /login', 'L1'],
+  ],
+  errors: ['กรุณากรอกรหัสยืนยันให้ครบ 6 หลัก', 'รหัสหมดอายุแล้ว กรุณาส่งรหัสใหม่อีกครั้ง', 'ออกจากระบบ? — ต้องเข้าสู่ระบบใหม่เพื่อใช้งานต่อ', '(บังคับใบหน้า) ออกจากระบบ? — ยังยืนยันตัวตนไม่สำเร็จ ต้องเข้าสู่ระบบใหม่และสแกนใบหน้าอีกครั้ง'],
+  store: ['อ่าน mih:phcis-session-email · mih:first-login-credentials', 'ต้องใช้กล้อง (getUserMedia) สำหรับใบหน้า — ไม่มีกล้องจะจำลองความคืบหน้า'],
+  gaps: ['OTP ในหน้านี้รับเลข 6 หลักใดก็ได้ (ไม่มีกรณีรหัสผิด)', 'ไม่มีการจำกัดจำนวนครั้งกรอก OTP'],
+  next: ['L4', 'L3'],
+},
+L3: {
+  title: 'ตั้ง / เปลี่ยนรหัสผ่าน', route: '/login/set-password', who: 'ผู้เข้าครั้งแรก · ผู้ลืมรหัส · บัญชีที่ระบบบังคับ',
+  file: 'src/pages/auth/LoginSetPasswordPage.jsx · src/components/layout/FirstLoginGate.jsx',
+  summary: 'รหัสใหม่ต้องผ่าน 4 เกณฑ์และพิมพ์ซ้ำตรงกัน จึงกดได้',
+  shots: [['l4-setpw-first', 'เปลี่ยนรหัสผ่านครั้งแรก'], ['l4-setpw', 'รหัสไม่ตรงกัน / มาตรวัดความปลอดภัย']],
+  screen: [
+    'หัวเรื่องตามสถานะ: “เปลี่ยนรหัสผ่านครั้งแรก” · “เปลี่ยนรหัสผ่าน” (+ชิป “ยืนยันตัวตนสำเร็จแล้ว”) · “สร้างรหัสผ่านของคุณ”',
+    'ช่อง “รหัสผ่านใหม่” * · “ยืนยันรหัสผ่านใหม่” *',
+    'กล่อง “ความปลอดภัยของรหัสผ่าน”: มาตรวัด 4 ขั้น + เช็กลิสต์ 4 ข้อ',
+  ],
+  conds: [
+    ['ความยาว ≥ 8 · มี A-Z และ a-z · มีตัวเลข · มีอักขระพิเศษ', 'ครบทั้ง 4 → ติ๊กเขียว', null],
+    ['ช่องยืนยันไม่ตรง', '“รหัสผ่านไม่ตรงกัน” · ปุ่ม disabled', null],
+    ['ผ่านเกณฑ์ + ตรงกัน → กดปุ่ม', 'บันทึกรหัส · mustChangePassword = false', 'L4'],
+    ['ผู้ใช้ที่ยังต้องเปลี่ยนรหัสเปิด route อื่น (ยกเว้น /login* /signin /apply /m)', 'FirstLoginGate บังคับกลับมาหน้านี้', null],
+  ],
+  errors: ['รหัสผ่านไม่ตรงกัน'],
+  store: ['mih:first-login-credentials[email].password / mustChangePassword'],
+  gaps: [],
+  next: ['L4'],
+},
+L4: {
+  title: 'เลือกศูนย์บริการ', route: '/login/select-center', who: 'เจ้าหน้าที่ทุกบทบาท (ยกเว้นผู้บริหาร/กองสถิติ)',
+  file: 'src/pages/auth/SelectCenterPage.jsx',
+  summary: 'แสดงเฉพาะศูนย์ที่บัญชีมีสิทธิ์ · ศูนย์หลักอยู่บนสุด · กดการ์ดเพื่อเข้า',
+  shots: [['l5-center', 'หลายศูนย์'], ['l5-center-admin', 'ผู้ดูแลส่วนกลาง (มีการ์ดสำนักอนามัย)'], ['l5-center-one', 'มีสิทธิ์ศูนย์เดียว']],
+  screen: [
+    'ชิป “เข้าสู่ระบบเมื่อ HH:MM น. · วันที่” · ช่องค้นหา “ค้นหาศูนย์บริการ”',
+    '“ศูนย์บริการที่มีสิทธิ์ใช้งาน · N แห่ง” · การ์ดศูนย์ (ป้าย “(ศูนย์หลัก)” · “ใช้งานล่าสุด”)',
+  ],
+  conds: [
+    ['role = admin_super', 'เพิ่มการ์ดแรก “สำนักอนามัย (ส่วนกลาง)” ค่า all', null],
+    ['role = office_exec / stats_division', 'ไม่แสดงหน้า · ตั้งศูนย์ = all แล้ว redirect ไปแดชบอร์ดผู้บริหาร / รายงานผู้รับบริการ', 'L5'],
+    ['ค้นหาไม่เจอ', 'ไม่พบศูนย์บริการที่ตรงกับคำค้น "…"', null],
+    ['บัญชีไม่มีศูนย์', '“บัญชีนี้ยังไม่มีสิทธิ์ใช้งานศูนย์บริการใด — กรุณาติดต่อผู้ดูแลระบบ”', null],
+    ['มีศูนย์เดียว', 'ยังต้องกดการ์ดเอง (ไม่เลือกให้อัตโนมัติ)', null],
+    ['กดการ์ดศูนย์', 'บันทึกศูนย์ที่ใช้งาน → /hub (หรือหน้าหลักของ role ที่ข้าม hub)', 'L5'],
+  ],
+  errors: [],
+  store: ['mih:active-center · mih:selected-clinic (ป้ายใช้งานล่าสุด · ค่าเริ่มต้น hc-4)'],
+  gaps: ['เปิดจากเมนูเปลี่ยนศูนย์ (returnTo) แต่หน้านี้ไม่ใช้ → กลับ /hub เสมอ'],
+  next: ['L5'],
+},
+L5: {
+  title: 'หน้าหลัก / เลือกระบบ (Hub) และหน้าแรกตามบทบาท', route: '/hub', who: 'ทุกบทบาท',
+  file: 'src/routes/Routes.jsx (CentralAdminSystemGuard) · src/data/systemCatalog.js · src/data/staffRoleViews.js',
+  summary: 'การ์ดระบบตามสิทธิ์ของบทบาท · บางบทบาทข้าม Hub ไปหน้างานตรง',
+  shots: [['l6-hub', 'Hub ของผู้ดูแลระบบส่วนกลาง']],
+  screen: ['การ์ดระบบ เช่น PHCIS · ระบบรายงาน · จัดการระบบ · ระบบจัดการความยินยอม · คลังเอกสาร e-document · ประวัติการใช้งาน (เห็นเฉพาะที่ role มีสิทธิ์)'],
+  table: { h: ['บทบาท', 'หน้าแรก'], rows: [
+    ['admin_super · center_admin', '/admin'], ['admin_center (ผอ.ศูนย์)', '/dashboard (ข้าม Hub)'], ['office_exec', '/dashboard/executive'], ['stats_division', '/dashboard/reports/visitors'],
+    ['mr (เวชระเบียน)', '/registration/queue'], ['triage', '/opd/queue'], ['doctor', '/treat/queue'], ['doctor_anc', '/treat/anc/queue'], ['pharmacist', '/pharmacy/queue'], ['lab', '/lab/queue'], ['radtech', '/xray/queue'], ['finance', '/finance'], ['head_nurse', '/schedule'], ['vhv', '/vhv/activity'], ['intern', '/intern/logbook'],
+  ] },
+  conds: [
+    ['เปิด path ที่ role ไม่มีสิทธิ์ (staffRoleCanEnterPath = false)', 'redirect: ผู้บริหาร→หน้าภาพรวม · vhv→/vhv/activity · intern→/intern/logbook · /consent*→/consent-forms · อื่น ๆ→/hub', null],
+    ['กดการ์ด “จัดการระบบ”', 'ไปแดชบอร์ดจัดการระบบ', 'A1'],
+    ['กดการ์ด “ระบบจัดการความยินยอม” (admin_super)', 'ไปแดชบอร์ดความยินยอม', 'C1'],
+  ],
+  errors: [], store: ['อ่าน mih:staff-role-view'], gaps: ['ไม่มี auth guard จริง — เปิด URL ไหนก็ได้ถ้า role อนุญาต (session ตกไปที่บัญชี somying)'],
+  next: ['L6'],
+},
+L6: {
+  alt: true,
+  title: 'ระหว่างใช้งาน: ล็อกหน้าจอด้วย PIN · ออกจากระบบ', route: '(ทุกหน้า ยกเว้น /login* /signin /apply /m*)', who: 'ทุกบทบาท',
+  file: 'src/components/layout/PinLockGate.jsx · src/lib/pinLock.js · src/components/layout/SidebarProfileMenu.jsx',
+  summary: 'ไม่ใช้งาน 1 ชม. → ล็อก ต้องกรอก PIN 6 หลัก · ผิด 5 ครั้งออกจากระบบ',
+  shots: [],
+  screen: ['หน้าจอ “หน้าจอถูกล็อก”: ชื่อผู้ใช้ · ช่อง PIN 6 หลัก · ปุ่ม “ปลดล็อก” · ลิงก์ “ลืม PIN? ออกจากระบบแล้วเข้าสู่ระบบใหม่”', 'เมนูโปรไฟล์ → “ออกจากระบบ” (confirm)'],
+  conds: [
+    ['ยังไม่ได้ตั้ง PIN (ตั้งค่า → รหัสผ่านและ PIN)', 'ไม่มีการล็อก', null],
+    ['ไม่มีการใช้งานเกิน 1 ชั่วโมง', 'ล็อกหน้าจอ (ตรวจทุก 15 วิ และเมื่อสลับแท็บกลับมา)', null],
+    ['PIN ผิด', '“PIN ไม่ถูกต้อง (เหลืออีก N ครั้ง)” + สั่น', null],
+    ['PIN ผิดครบ 5 ครั้ง', '“กรอก PIN ผิดครบ 5 ครั้ง ระบบจะออกจากระบบเพื่อความปลอดภัย” → /login หลัง 1.2 วิ', 'L1'],
+    ['ออกจากระบบจากเมนูโปรไฟล์ → ยืนยัน', '“งานที่ยังไม่ได้บันทึกจะหายไป” → ล้าง PIN session + session email → /login', 'L1'],
+  ],
+  errors: [], store: ['phcis.pin.hash · phcis.pin.lastActive · phcis.pin.locked · phcis.pin.idleMs (override สำหรับ QA)'],
+  gaps: ['ออกจากระบบจากการล็อก PIN ไม่ล้าง session email', 'ออกจากระบบไม่ล้าง role และศูนย์ที่ใช้งาน'],
+  next: ['L1'],
+},
+
+/* ══════════════════ ADMIN ══════════════════ */
+A0: {
+  title: 'เข้าระบบจัดการระบบ (สิทธิ์และเมนู)', route: '/hub → การ์ด “จัดการระบบ” → /admin', who: 'admin_super · center_admin',
+  file: 'src/data/systemCatalog.js (staffRoleCanEnterPath) · src/data/staffRoleViews.js · src/pages/system/systemNav.js',
+  summary: 'เฉพาะผู้ดูแลระบบ 2 บทบาทที่เข้า /admin/* ได้ · เมนูที่เห็นต่างกัน',
+  shots: [['l6-hub', 'Hub ของ admin_super']],
+  screen: ['การ์ด “จัดการระบบ” ใน Hub (ซ่อนสำหรับบทบาทอื่น)', 'เมนูข้าง: แดชบอร์ด · โครงสร้างองค์กรและสิทธิ์ (5 แท็บ) · ขอบเขตพื้นที่ดูแล · บุคลากร · ตั้งค่าอื่น ๆ · นโยบายการเข้าถึงข้อมูล (ABAC)'],
+  table: { h: ['', 'admin_super (ส่วนกลาง)', 'center_admin (ศูนย์)'], rows: [
+    ['เข้า /admin/*', 'ได้', 'ได้'],
+    ['เมนูที่เห็น', 'ทั้งหมด', 'แดชบอร์ด · บุคลากร · ส่งคำสั่งยา · รังสี · แคมเปญตรวจสุขภาพ · แบบฟอร์มยินยอม · e-document'],
+    ['path อื่นนอกระบบจัดการ', 'จำกัดเฉพาะ /hub /admin /assess /audit /forms /consent /edocument …', 'ไม่จำกัด'],
+    ['เลือก “ทุกศูนย์” ที่ header', 'ได้', 'ได้'],
+  ] },
+  conds: [
+    ['role อื่นเปิด /admin/*', 'ถูก redirect ไป /hub', 'L5'],
+    ['admin_center (ผอ.ศูนย์) เปิด /admin/*', 'ถูกบล็อก (ไม่ใช่ผู้ดูแลระบบ)', null],
+    ['center_admin พิมพ์ URL หน้าที่ไม่อยู่ในเมนู', 'เปิดได้ (ไม่มีการบล็อก)', null],
+  ],
+  errors: [], store: ['mih:staff-role-view · mih:selected-clinic'],
+  gaps: ['/assess/* ไม่ถูกบล็อกด้วยเงื่อนไขผู้ดูแลระบบ', 'center_admin เปิดหน้าโครงสร้างองค์กร / ABAC ได้ทาง URL ทั้งที่ไม่มีในเมนู'],
+  next: ['A1'],
+},
+A1: {
+  title: 'แดชบอร์ดจัดการระบบ', route: '/admin', who: 'admin_super · center_admin',
+  file: 'src/pages/system/SystemOverviewPage.jsx · src/data/systemDashboardTemplates.js',
+  summary: 'ค่าเริ่มต้นเป็นตารางงานรออนุมัติ — ส่วนกลางอนุมัติคนเข้าระบบ · ศูนย์อนุมัติบุคลากรต่างศูนย์',
+  shots: [['a1-dash', 'admin_super: คำขอเข้าใช้ระบบรออนุมัติ'], ['a1-dash-center', 'center_admin: รายการที่ต้องดำเนินการ']],
+  screen: ['ตัวกรองวันที่ (ปีนี้) · เลือกเทมเพลต · ชิป “ศูนย์บริการ:” · ปุ่ม “นำส่งออกรายงาน”', 'ตาราง: รหัสพนักงาน · สิ่งที่ต้องทำ (“พิจารณาอนุมัติให้ {ชื่อ} เข้าใช้ระบบ N ศูนย์”) · ผู้ดำเนินการ · การดำเนินการ (👁 / ✓ / ✗)', 'สรุปทะเบียน: ศูนย์บริการ · ตำแหน่ง · บทบาท · แผนก · สิทธิ์การเข้าถึงระบบ · บุคลากร … แต่ละแถวมีลิงก์ “จัดการ”'],
+  conds: [
+    ['admin_super กด ✓', 'confirm “อนุมัติให้คนนี้เข้าระบบ?” → pending-super เป็น approved · active=true · แจ้ง center_admin “บุคลากรใหม่เข้าศูนย์ได้ — {ชื่อ}”', null],
+    ['admin_super กด ✗', 'confirm “ไม่อนุมัติให้คนนี้เข้าระบบ?” + เหตุผล (ไม่บังคับ) → rejected · active=false', null],
+    ['center_admin: บุคลากรจากต่างศูนย์รออนุมัติ', 'confirm “อนุมัติบุคลากรต่างศูนย์?” · ใครอนุมัติก่อน (center_admin หรือ ผอ.) ปิดรายการ', null],
+    ['ไม่มีรายการ (center_admin)', '“ไม่มีบุคลากรจากต่างศูนย์รออนุมัติ”', null],
+    ['กด “จัดการ” ในสรุปทะเบียน', 'ไปหน้าทะเบียนนั้น', 'A2'],
+  ],
+  errors: [], store: ['mih:assess-users · mih:central-join-decided · mih:staff-notifications'],
+  gaps: [],
+  next: ['A2'],
+},
+A2: {
+  title: 'โครงสร้างองค์กรและสิทธิ์ › หน่วยงาน', route: '/admin/centers (แท็บ 1 จาก 5)', who: 'admin_super',
+  file: 'src/pages/system/SystemCentersPage.jsx · CenterEditPopup.jsx · centerForm.jsx',
+  summary: 'ทะเบียนศูนย์บริการหลัก/ย่อย · เพิ่ม/แก้ไขเป็นป๊อปอัป 6 ขั้น',
+  shots: [['a2-centers', 'รายการหน่วยงาน'], ['a2-center-new', 'ป๊อปอัปเพิ่มหน่วยบริการ']],
+  screen: [
+    'แท็บ: <b>หน่วยงาน</b> · คลินิก/แผนก · ตำแหน่ง · บทบาท · สิทธิ์การเข้าถึงระบบ · ปุ่ม “ประวัติการแก้ไข” ทุกแท็บ',
+    'การ์ดสรุป · pill “ทั้งหมด / บันทึกร่าง” · ค้นหา “รหัสศูนย์ / รหัสหน่วยบริการ / ชื่อศูนย์บริการ”',
+    'ปุ่ม “เพิ่มหน่วยบริการ” ▾ (หลัก / ย่อย) · คอลัมน์สถานะเป็น Switch',
+    'ป๊อปอัป 6 ขั้น: ข้อมูลศูนย์ → ที่ตั้ง → ข้อมูลการติดต่อ → เวลาทำการ → คลินิกที่เปิดให้บริการ → รีวิว',
+  ],
+  conds: [
+    ['รหัสหน่วยบริการไม่ใช่ 2 ตัวอักษร + 7 ตัวเลข', '“รูปแบบไม่ถูกต้อง — ต้องเป็นตัวอักษร 2 ตัวตามด้วยตัวเลข 7 หลัก เช่น GA0012460”', null],
+    ['รหัส/ชื่อซ้ำกับศูนย์ที่ไม่ใช่ร่าง', '“รหัสศูนย์นี้ถูกใช้แล้วโดย …” / “ชื่อนี้ถูกใช้แล้ว…” (ตรวจสด)', null],
+    ['กด “ถัดไป” แต่ข้อมูลไม่ครบ', 'ปุ่มไม่ disabled — เปิด dialog “กรอกข้อมูลไม่ครบ” พร้อมรายการ', null],
+    ['บันทึกร่าง โดยไม่มีรหัส 9 หลักและชื่อ', 'alert “กรุณาระบุรหัสหน่วยบริการ 9 หลัก หรือชื่อศูนย์บริการก่อนบันทึกร่าง”', null],
+    ['หน่วยบริการย่อย', 'ต้องเลือกศูนย์หลัก · รหัส = {รหัสศูนย์หลัก}-{n}', null],
+    ['ปิด Switch สถานะ', 'confirm “ปิดใช้งานศูนย์บริการ?” (เปิดไม่ต้องยืนยัน) · แถวร่างปิด Switch ไม่ได้', null],
+    ['ลบ', 'confirm “ลบศูนย์บริการ?” — ลบสาขาย่อยทั้งหมดด้วย', null],
+    ['แก้ไขศูนย์ที่มีสาขา', 'ถามก่อนว่าจะแก้ศูนย์หลักหรือสาขาใด', null],
+  ],
+  errors: ['ขั้นข้อมูลศูนย์: รหัส 9 หลัก * · ชื่อ * · รูปอย่างน้อย 1 รูป (ศูนย์หลัก)', 'ขั้นที่ตั้ง: รหัสไปรษณีย์ · เขต · ปักหมุด (จังหวัดล็อกเป็นกรุงเทพมหานคร)', 'ขั้นติดต่อ: เบอร์โทรอย่างน้อย 1 · อีเมล (ถ้ากรอก) ต้องถูกรูปแบบ'],
+  store: ['mih:service-centers · mih:center-custom-options · mih:center-structures · mih:org-structure-log'],
+  gaps: [],
+  next: ['A3'],
+},
+A3: {
+  title: 'โครงสร้างองค์กรและสิทธิ์ › คลินิก/แผนก', route: '/admin/clinics (แท็บ 2)', who: 'admin_super',
+  file: 'src/pages/system/SystemClinicsPage.jsx · src/data/clinicRegistry.js',
+  summary: 'ทะเบียนหลักของคลินิกและแผนก · ศูนย์เลือกเปิดใช้จากที่นี่',
+  shots: [['a3-clinics', 'รายการคลินิก/แผนก'], ['a3-clinic-new', 'ป๊อปอัปเพิ่มคลินิก']],
+  screen: ['pill เผยแพร่ / ปิดการใช้งาน · ตัวกรอง “ประเภท:” · “การเปิดใช้งาน:”', 'คอลัมน์: คลินิก/แผนก · รหัสคลินิก · ประเภท · ใช้งานกับศูนย์ · เปิดใช้ · การดำเนินการ'],
+  conds: [
+    ['รหัสไม่ตรงรูปแบบ (a–z 0–9 -, 2–32 ตัว ขึ้นต้นด้วยตัวอักษร)', '“รหัสไม่ถูกต้อง” · ปุ่ม “สร้างคลินิก” disabled', null],
+    ['รหัสซ้ำ', '“รหัส {c} ถูกใช้แล้ว”', null],
+    ['แก้ไข', 'รหัสล็อกแก้ไม่ได้', null],
+    ['ลบคลินิกตั้งต้นของระบบ', 'ซ่อน (removed) ไม่ลบจริง · คลินิกที่ผู้ดูแลสร้างเองลบจริง', null],
+    ['กดแถวคลินิก', 'ไปหน้าแก้ไขคลินิก /admin/clinics/:code', null],
+  ],
+  errors: ['เปิด/ปิด: “เปิดใช้ "{ชื่อ}"?” / “ปิดการใช้งาน "{ชื่อ}"?”', 'ลบ: “ลบคลินิกนี้?” / “ลบแผนกนี้?”'],
+  store: ['mih:clinic-registry · mih:clinic-registry-log'],
+  gaps: [],
+  next: ['A4'],
+},
+A8: {
+  alt: true,
+  title: 'ขอบเขตพื้นที่ดูแล', route: '/admin/care-areas', who: 'admin_super (center_admin เปิดทาง URL ได้)',
+  file: 'src/pages/system/CareAreaScopePage.jsx · src/data/careAreaScope.js',
+  summary: 'กลุ่มเขต → โซน → เขต → ศบส. ที่ดูแล',
+  shots: [['a8-care', 'ตารางขอบเขตพื้นที่']],
+  screen: ['ปุ่ม “คืนค่าตั้งต้น” · “เพิ่มกลุ่มเขต” · “เพิ่มโซน” · “เพิ่มเขต”', 'ตัวกรอง กลุ่มเขต / โซน / เขต · คอลัมน์ กลุ่มเขต · โซน · เขต · จำนวน ศบส. · ศูนย์บริการสาธารณสุข · แก้ไขล่าสุด'],
+  conds: [
+    ['ชื่อว่าง / ซ้ำ', '“ระบุชื่อกลุ่มเขต” · “มีกลุ่มเขตชื่อนี้แล้ว” · “ระบุชื่อโซน” · “มีโซนชื่อนี้แล้ว”', null],
+    ['โซนไม่มีเขต', '“เลือกเขตอย่างน้อย 1 เขต”', null],
+    ['ย้ายเขต/ศูนย์ข้ามโซน', 'แสดง “(ย้ายจาก…)”', null],
+    ['ลบโซน/กลุ่มเขต', 'confirm · รายการลูกกลายเป็นยังไม่จัดกลุ่ม', null],
+  ],
+  errors: [], store: ['mih:care-area-scope:v2'], gaps: [], next: ['A4'],
+},
+A4: {
+  title: 'โครงสร้างองค์กรและสิทธิ์ › ตำแหน่ง', route: '/assess/positions (แท็บ 3)', who: 'admin_super',
+  file: 'src/pages/assess/PositionPage.jsx · src/data/positionStore.js',
+  summary: 'ทะเบียนตำแหน่งงาน · เพิ่ม/แก้ชื่อ/เปิด-ปิด/ลบ',
+  shots: [['a4-positions', 'รายการตำแหน่ง'], ['a4-position-new', 'ป๊อปอัปเพิ่มตำแหน่ง']],
+  screen: ['การ์ดสรุป ทั้งหมด / เปิด / ปิด · ค้นหา “ค้นหาชื่อตำแหน่ง”', 'คอลัมน์: ลำดับ · ชื่อตำแหน่ง · สถานะการใช้งาน (Switch) · การดำเนินการ (ดู / แก้ชื่อในแถว / ⋮ ลบ)'],
+  conds: [
+    ['ชื่อว่าง', '“กรุณาระบุชื่อตำแหน่ง”', null],
+    ['ชื่อซ้ำ', '“ชื่อตำแหน่งซ้ำกับที่มีอยู่ กรุณาเปลี่ยนชื่อตำแหน่งใหม่”', null],
+    ['แก้ชื่อในแถว', 'confirm “บันทึกชื่อตำแหน่งใหม่?” (เปลี่ยนจาก "a" เป็น "b")', null],
+    ['ปิดการใช้งาน', 'confirm “ปิดการใช้งานตำแหน่ง?” (เปิดไม่ต้องยืนยัน)', null],
+    ['ลบ', 'confirm “ลบตำแหน่ง?”', null],
+  ],
+  errors: [], store: ['mih:assess-positions'],
+  gaps: ['ลบตำแหน่งที่มีบุคลากรใช้อยู่ได้ (ไม่มีการตรวจ)', 'โหมดลากจัดลำดับมีโค้ดแต่เปิดใช้ไม่ได้'],
+  next: ['A5'],
+},
+A5: {
+  title: 'โครงสร้างองค์กรและสิทธิ์ › บทบาท', route: '/assess/activities (แท็บ 4)', who: 'admin_super',
+  file: 'src/pages/assess/ActivityPage.jsx · src/data/activityStore.js',
+  summary: 'ลำดับชั้น Group Policy → บทบาท · ชื่อบทบาทห้ามซ้ำใน GP เดียวกัน',
+  shots: [['a5-roles', 'การ์ด Group Policy และบทบาท'], ['a5-role-new', 'ป๊อปอัปเพิ่มบทบาท']],
+  screen: ['ปุ่ม “เพิ่ม” ▾ (เพิ่ม Group Policy / เพิ่มบทบาท)', 'การ์ดละ 1 Group Policy (⋮ แก้ไขชื่อ / ลบ) · ตารางบทบาท: ลำดับ · ชื่อบทบาท · สถานะ · การดำเนินการ'],
+  conds: [
+    ['ชื่อ GP ซ้ำ', '“ชื่อ Group Policy ซ้ำกับที่มีอยู่ กรุณาเปลี่ยนชื่อใหม่”', null],
+    ['ชื่อบทบาทซ้ำใน GP เดียวกัน', '“มีบทบาทชื่อนี้อยู่แล้วใน "{GP}"” · ปุ่ม “ตกลง” disabled', null],
+    ['เพิ่มบทบาทจากปุ่มบน', 'ต้องเลือก Group Policy ก่อน', null],
+    ['ลบ GP', 'confirm “ลบ Group Policy?” — ลบบทบาทในกลุ่มทั้งหมด', null],
+  ],
+  errors: ['ปิดการใช้งานบทบาท? · ลบบทบาท? · บันทึกชื่อบทบาทใหม่?'],
+  store: ['mih:activities-v5'],
+  gaps: ['ลบบทบาท/GP ที่บุคลากรหรือแม่แบบใช้อยู่ได้ (ไม่มีการตรวจ)', '/admin/roles เป็นหน้าเก่า ไม่บันทึกจริง (ไม่อยู่ในเมนู)'],
+  next: ['A6'],
+},
+A6: {
+  title: 'โครงสร้างองค์กรและสิทธิ์ › สิทธิ์การเข้าถึงระบบ (แม่แบบสิทธิ)', route: '/assess/access-control (แท็บ 5) · /new · /:id/edit', who: 'admin_super',
+  file: 'src/pages/assess/AccessControlPage.jsx · AccessControlCreatePage.jsx · src/data/accessControlStore.js · accessLevelCatalog.js',
+  summary: 'แม่แบบสิทธิ 4 ขั้น: ชื่อ → ขอบเขต/ช่วงเวลา → ระดับการเข้าถึง → รีวิว · บันทึกแล้วมีผลทันที',
+  shots: [['a6-access', 'รายการแม่แบบสิทธิ'], ['a6-access-s1', 'สร้างแม่แบบ (หน้าเต็ม)'], ['a6-access-edit', 'แก้ไข — ตารางระดับการเข้าถึง']],
+  screen: [
+    'คอลัมน์: แม่แบบ · ขอบเขตข้อมูล (ป้าย “ปิดบังข้อมูลระบุตัวตน”) · ช่วงเวลาที่มีผล · บุคลากรที่ใช้แม่แบบนี้ (ลิงก์จำนวน) · สถานะ · การดำเนินการ (ดูสิทธิ์ / แก้ไข / ทำสำเนา / ⋮ ลบ)',
+    'ขั้น 1 “ชื่อแม่แบบ” * · ขั้น 2 “ขอบเขตข้อมูลที่มองเห็น” * (เคสที่ได้รับมอบหมาย / ศูนย์ของตนเอง / ทุกศูนย์ในกลุ่มเขต / ทุกศูนย์) · “ข้อมูลระบุตัวตน (PII)” * (เห็น / ปิดบัง) · วันเริ่ม * · วันสิ้นสุด (หรือ ☐ ยังไม่กำหนด)',
+    'ขั้น 3 เลือก Level 0–17 (0 สูงสุด) แล้วติ๊กชุดข้อมูล 13 ชุด × ดู/บันทึก/แก้ไข/ยกเลิก',
+  ],
+  conds: [
+    ['ชื่อซ้ำ (ไม่สนตัวพิมพ์ เว้นวรรคหน้า/หลัง)', '“ชื่อแม่แบบนี้มีอยู่แล้ว กรุณาตั้งชื่อใหม่” · “ถัดไป” disabled', null],
+    ['วันสิ้นสุด ≤ วันเริ่ม', '“วันเวลาสิ้นสุดต้องอยู่หลังวันเวลาที่เริ่มมีผล”', null],
+    ['เปลี่ยน Level', 'ล้างการติ๊กชุดข้อมูลที่ปรับเองทั้งหมด', null],
+    ['กดบันทึก (สร้าง/แก้ไข)', 'confirm “เพิ่มแม่แบบสิทธิ?” / “บันทึกแม่แบบสิทธิเวอร์ชันใหม่?” → approved ทันที · แก้ไข = เวอร์ชัน +1 และเก็บสิทธิ์เดิมใน versionHistory', null],
+    ['บันทึกร่าง', 'approvalStatus = draft (ปุ่ม disabled ถ้าข้อมูลไม่ผ่าน หรือแก้ไขแล้วไม่มีอะไรเปลี่ยน)', null],
+    ['แม่แบบสถานะ “รออนุมัติ” (เฉพาะข้อมูลตัวอย่าง)', 'ในป๊อปอัปดูสิทธิ์มีปุ่ม “อนุมัติสิทธิ์” / “ไม่อนุมัติ”', null],
+    ['แม่แบบมีผลจริงเมื่อ', 'active ≠ false และ approved และวันนี้อยู่ในช่วงวันเริ่ม–วันสิ้นสุด', null],
+    ['ทำสำเนา', 'ชื่อ “{ชื่อ} (สำเนา)” เริ่ม v1', null],
+    ['ลบ', 'confirm “ลบแม่แบบสิทธิ์นี้?” — บุคลากรที่ถือแม่แบบนี้จะไม่มีสิทธิ์ตามแม่แบบอีก', null],
+  ],
+  errors: [], store: ['mih:assess-access-control'],
+  gaps: ['ไม่มีคิวอนุมัติจริง — สร้าง/แก้แล้ว approved ทันที', 'สำเนาเก็บ approvalStatus เดิม (ข้อความบอกว่าเป็นร่าง)', 'ลบแม่แบบที่มีคนใช้อยู่ได้ → assignment ชี้ id ที่ไม่มี', 'ธงข้อมูลอ่อนไหว / ข้ามศูนย์ ถูกเอาออกจาก UI แต่ยังบันทึกค่าอยู่'],
+  next: ['A7'],
+},
+A9: {
+  alt: true,
+  title: 'นโยบายการเข้าถึงข้อมูล (ABAC)', route: '/admin/access-policy', who: 'admin_super',
+  file: 'src/pages/treat/AccessPolicyPage.jsx · src/data/treatmentAccess.js',
+  summary: 'กฎ บทบาท × คลินิก × หมวดข้อมูล → ระดับ ซ่อน / อ่าน / บันทึก / เต็ม',
+  shots: [['a9-abac', 'แท็บกฎการเข้าถึง']],
+  screen: ['แท็บ: กฎการเข้าถึง · ทดลองมุมมองตามบทบาท · ข้อมูลลับโดยค่าเริ่มต้น · ประวัติการแก้นโยบาย', 'การ์ดสรุป: กฎทั้งหมด / เปิด / ปิด / ระดับ “ซ่อน” / จุดที่กฎชนกัน · ปุ่ม “เพิ่มกฎใหม่”'],
+  conds: [
+    ['หลายกฎชนกัน', 'ใช้กฎที่เข้มที่สุด', null],
+    ['ไม่มีกฎที่ตรง', 'ปฏิเสธโดยค่าเริ่มต้น (deny)', null],
+    ['เพิ่มกฎ: ขาด บทบาท / หมวดข้อมูล / ระดับ', 'บันทึกไม่ได้', null],
+    ['ปิดใช้กฎ', 'confirm “ปิดใช้กฎการเข้าถึง” · ไม่ใส่เหตุผล = “ไม่ได้ระบุเหตุผล”', null],
+    ['ผู้ใช้ไม่มีสิทธิ์แก้', 'แบนเนอร์ “โหมดดูอย่างเดียว”', null],
+  ],
+  errors: [], store: ['อยู่ในหน่วยความจำ (POLICIES) — รีโหลดแล้วหาย · mih:treatment-demo-permission'],
+  gaps: ['กฎไม่ถูกบันทึกถาวร'],
+  next: ['A7'],
+},
+A7: {
+  title: 'บุคลากร — รายการ', route: '/assess/users', who: 'admin_super · center_admin',
+  file: 'src/pages/assess/AssessUserPage.jsx · src/data/assessUserStore.js',
+  summary: 'รายชื่อตามศูนย์ที่เลือกบน header · เปิด/ปิด · ลาออก · กู้คืน · อนุมัติ',
+  shots: [['a7-users', 'รายการบุคลากร']],
+  screen: ['แท็บ ทั้งหมด / บันทึกร่าง / บัญชีที่ถูกลบ (เมื่อมี) · ตัวกรอง ตำแหน่ง / บทบาท / แผนก', 'ชื่อมีป้ายส้ม “รอ ผอ.ศูนย์อนุมัติ” / “รอ Super Admin อนุมัติ”', 'ปุ่ม “เพิ่มบุคลากร” · “ดูประวัติการแก้ไข”'],
+  conds: [
+    ['header = ทุกศูนย์', 'ใช้ hc-4 · บุคลากรหน่วยงานภายนอก (ไม่มีศูนย์) แสดงทุกศูนย์', null],
+    ['admin_super + แถว pending-super', 'มีปุ่ม “อนุมัติ” → ศูนย์ที่ pending-super เป็น approved (pending-director คงเดิม) + แจ้ง center_admin', null],
+    ['Switch เปิด/ปิด', 'confirm “เปิดใช้งานบุคลากร?” / “ปิดใช้งานบุคลากร?”', null],
+    ['“ลาออก”', 'ป๊อปอัป “บันทึกการลาออก”: เหตุผล * · วันที่มีผล (วันนี้) · ไฟล์แนบ → resigned · active=false ทันที', null],
+    ['กู้คืนบัญชีที่ถูกลบ', 'confirm → กลับมาเป็น suspended · active=false', null],
+    ['กด “เพิ่มบุคลากร”', 'เปิดป๊อปอัปสร้างบุคลากร', 'A7N'],
+    ['กด 👁 / ชื่อ', 'ดูข้อมูลบุคลากร', 'A7D'],
+  ],
+  errors: [], store: ['mih:assess-users · mih:staff-change-log'], gaps: [], next: ['A7N'],
+},
+A7N: {
+  title: 'บุคลากร — เพิ่ม/แก้ไข (3 ขั้น) และสายอนุมัติ', route: 'ป๊อปอัปจาก /assess/users · /assess/users/new · /:id/edit', who: 'admin_super · center_admin',
+  file: 'src/pages/assess/AssessUserCreatePage.jsx · src/data/directorApprovals.js',
+  summary: 'ข้อมูลส่วนตัว → หน่วยงานและตำแหน่ง → รีวิว · ผู้สร้างกำหนดว่าใครต้องอนุมัติ',
+  shots: [['a7-user-new', 'ขั้น 1 ข้อมูลส่วนตัว'], ['a7-user-new2', 'กด ถัดไป ขณะข้อมูลไม่ครบ']],
+  screen: [
+    'ขั้น 1 บังคับ: รหัสพนักงาน (ห้ามซ้ำ · แนะนำ EMP-xxxxx ถัดไป) · ชื่อ · นามสกุล · เลขบัตรประชาชน · อีเมลที่ใช้เข้าสู่ระบบ · Username (สร้างจาก Name+Surname)',
+    'ขั้น 1 อื่น: รูป (อัปโหลด/กล้อง) · ลายเซ็นดิจิทัล · “เสียบบัตรประชาชน” · สแกนลายนิ้วมือ (อย่างน้อย 2 นิ้ว)',
+    'ขั้น 2 การ์ด “หน่วยงานที่ N”: ชื่อหน่วยงาน · แผนก (หลายค่า) · ตำแหน่ง · Group Policy → บทบาท · แม่แบบสิทธิ์ · วันเริ่ม/สิ้นสุด · ☐ ตั้งเป็นหน่วยบริการหลัก',
+  ],
+  conds: [
+    ['ข้อมูลไม่ครบแล้วกด ถัดไป', 'ปุ่มไม่ disabled — dialog “กรอกข้อมูลไม่ครบ”', null],
+    ['รหัสพนักงาน / Username ซ้ำ', '“รหัสพนักงานนี้ถูกใช้แล้ว” · Username ใช้ได้เฉพาะ a–z 0–9 . _ -', null],
+    ['ยังไม่เลือก Group Policy', 'ช่องบทบาท disabled “เลือก Group Policy ก่อน” · เลือก GP แล้วแนะนำ Level ให้', null],
+    ['หน่วยบริการหลัก ≠ 1 แห่ง', 'บันทึกไม่ได้ (ต้องมี 1 แห่งพอดี)', null],
+    ['การ์ดซ้ำ (ศูนย์+GP+บทบาท+แผนก+ตำแหน่ง เหมือนกัน)', 'Alert “มีรายการที่ซ้ำกัน” — ไปต่อไม่ได้', null],
+    ['admin_super เป็นผู้สร้าง', 'ทุกศูนย์ = pending-super → ไปรอในแดชบอร์ดส่วนกลาง', 'A1'],
+    ['center_admin สร้าง · ศูนย์ตรงกับ header', 'pending-super (รอ Super Admin)', 'A1'],
+    ['center_admin สร้าง · ศูนย์อื่น', 'pending-director → แจ้งเตือนด่วน ผอ.ศูนย์ + Admin ศูนย์นั้น · สร้างรายการอนุมัติ', 'A10'],
+    ['center_admin ตั้ง header = ทุกศูนย์', 'ทุกศูนย์กลายเป็น pending-director', 'A10'],
+  ],
+  errors: ['ยืนยันการสร้างบุคลากร? — {ชื่อ} N หน่วยงาน …', 'สร้างบุคลากรใหม่แล้ว — รอ Super Admin ส่วนกลางอนุมัติ', '…แจ้ง Admin ศูนย์และผอ.ศูนย์… รอผอ.ศูนย์อนุมัติ'],
+  store: ['mih:assess-users (centerAccessByCenter ต่อศูนย์) · mih:director-approvals · mih:staff-notifications'],
+  gaps: ['เลือกแม่แบบสิทธิ์ที่ “รออนุมัติ / ไม่อนุมัติ” ได้ (กรองเฉพาะ draft ออก)', 'โหมดเลือกผู้ใช้เดิมมีโค้ดแต่เปิดไม่ได้'],
+  next: ['A10'],
+},
+A7D: {
+  alt: true,
+  title: 'บุคลากรและการเข้าถึง (รายละเอียด)', route: '/assess/users/:id', who: 'admin_super · center_admin',
+  file: 'src/pages/assess/AssessUserDetailPage.jsx',
+  summary: 'ข้อมูลส่วนตัว + สิทธิ์ที่มีผลจริง · พักบัญชี / เปิดใช้ / ลบ',
+  shots: [['a7-user-detail', 'หน้ารายละเอียดบุคลากร']],
+  screen: ['ปุ่ม “แก้ไข” · “พักบัญชี” หรือ “เปิดใช้งานบัญชี” · “ลบบัญชี”', 'แท็บ ข้อมูลส่วนตัว (ตารางหน่วยงาน) · สิทธิ์การเข้าถึงระบบ (ขอบเขต · PII · สถานะเข้าใช้ ณ ตอนนี้ · ต้นไม้สิทธิ์แบบอ่านอย่างเดียว)'],
+  conds: [
+    ['พักบัญชี / ลบบัญชี', 'ต้องกรอกเหตุผล · ลบ = accountStatus deleted (soft) แล้วกลับรายการ', null],
+    ['เปิดใช้งานบัญชี', 'confirm “เปิดใช้งานบัญชีอีกครั้ง?” → active', null],
+    ['สิทธิ์ที่มีผล', 'รวมจากแม่แบบที่ approved + อยู่ในช่วงเวลา ของทุก assignment', null],
+    ['ไม่พบ id', '“ไม่พบบุคลากร”', null],
+  ],
+  errors: [], store: ['mih:assess-users'], gaps: ['ต้นไม้สิทธิ์แสดง permissions ไม่ใช่ Level ที่เลือกในแม่แบบ'], next: ['A10'],
+},
+A10: {
+  title: 'รายการที่ต้องอนุมัติ (ผอ.ศูนย์ / ผู้ดูแล)', route: '/admin/approvals · และตารางในแดชบอร์ด /admin', who: 'admin_super · center_admin (ผอ.ศูนย์ ถูกบล็อกจาก /admin/*)',
+  file: 'src/pages/admin/DirectorApprovalsPage.jsx · src/data/directorApprovals.js',
+  summary: 'แท็บ รอพิจารณา / อนุมัติแล้ว / ไม่อนุมัติ',
+  shots: [['a10-approvals', 'รายการที่ต้องอนุมัติ']],
+  screen: ['แท็บ รอพิจารณา · อนุมัติแล้ว · ไม่อนุมัติ · กรองตามศูนย์ที่เลือกบน header'],
+  conds: [
+    ['อนุมัติ', 'confirm “อนุมัติรายการนี้?” → ศูนย์นั้นของบุคลากรเป็น approved', null],
+    ['ไม่อนุมัติ', 'confirm “ไม่อนุมัติรายการนี้?” · เหตุผลไม่บังคับ (ว่าง = “ไม่ระบุเหตุผล”)', null],
+    ['ทุกศูนย์ของบุคลากร approved', 'บุคลากรเข้าสู่ระบบและเห็นศูนย์นั้นในหน้าเลือกศูนย์', 'L4'],
+  ],
+  errors: [], store: ['mih:director-approvals'], gaps: ['หน้านี้ตั้งใจให้ ผอ.ศูนย์ แต่ guard บล็อก /admin/* สำหรับ admin_center'], next: [],
+},
+
+/* ══════════════════ CONSENT ══════════════════ */
+C1: {
+  title: 'แดชบอร์ดความยินยอม', route: '/consent/dashboard', who: 'admin_super',
+  file: 'src/pages/consent/ConsentDashboardPage.jsx · src/data/consentTodo.js',
+  summary: 'ค่าเริ่มต้น “รายการที่ต้องดำเนินการ” — แต่ละแถวพาไป worklist ที่กรองแล้ว',
+  shots: [['c1-dash', 'รายการที่ต้องดำเนินการ']],
+  screen: ['ตัวกรองวันที่ (เดือนนี้) · เลือกเทมเพลต + “สร้าง / จัดการเทมเพลต” · ปุ่มนำส่งออก', 'ตาราง เลขที่ · สิ่งที่ต้องทำ'],
+  table: { h: ['แถวงาน', 'พาไป'], rows: [
+    ['ใบยินยอมหมดอายุแล้ว', '/consent?tab=expiredOnly'], ['ใบยินยอมใกล้หมดอายุ (≤ 30 วัน)', '/consent?tab=expiring'], ['แบบฟอร์มอัปเดตเวอร์ชันแล้ว', '/consent?tab=all&status=ถูกแทนที่ด้วยเวอร์ชันใหม่'], ['รอผู้รับบริการลงนาม', '/consent?tab=sent'], ['แบบฟอร์มรอตรวจสอบ', '/consent/forms'], ['คำขอเข้าถึงแบบฟอร์ม', '/consent/access'], ['คำขอนำออกข้อมูลส่วนบุคคล', '/consent/pii-export'],
+  ] },
+  conds: [
+    ['role ≠ admin_super เปิด /consent/*', 'redirect ไป /consent-forms (ดูแบบฟอร์มที่เผยแพร่อย่างเดียว)', 'C2'],
+    ['สร้างเทมเพลตแดชบอร์ด', 'ป๊อปอัป 3 ขั้น: ตั้งชื่อ → ระบุตำแหน่ง (2/3/4 โซน) → ตรวจสอบและบันทึก', null],
+    ['ลบเทมเพลตที่ล็อก', 'ลบไม่ได้ · ลบเทมเพลตเริ่มต้นแล้วกลับไปใช้ std', null],
+  ],
+  errors: [], store: ['เทมเพลตอยู่ในหน่วยความจำ'], gaps: [], next: ['C2'],
+},
+C2: {
+  title: 'ทะเบียนแบบฟอร์มความยินยอม', route: '/consent/forms · มุมมองผู้ใช้ /consent-forms', who: 'admin_super (จัดการ) · บทบาทอื่น (ดูอย่างเดียว)',
+  file: 'src/pages/consent/ConsentFormsPage.jsx · src/data/consentFormRecords.js',
+  summary: 'สถานะแบบฟอร์ม: รอตรวจสอบ → เผยแพร่ ⇄ ไม่เผยแพร่ · ร่าง',
+  shots: [['c2-forms', 'แท็บรอตรวจสอบ'], ['c2-forms-pub', 'แท็บเผยแพร่'], ['p0-userview', 'มุมมองผู้ใช้ทั่วไป /consent-forms']],
+  screen: ['การ์ดสรุป ทั้งหมด / รอตรวจสอบ / เผยแพร่ / ไม่เผยแพร่ / ที่ร่างไว้ · ปุ่ม “สร้างแบบฟอร์มใหม่”', 'คอลัมน์: วันที่อัปเดตล่าสุด · รหัส · ชื่อ · เวอร์ชั่น · ประเภท · ขอบเขต · ผู้ที่อัปเดตล่าสุด · สถานะ (+Switch) · การดำเนินการ', 'การดำเนินการ: ดูแบบฟอร์ม · ประวัติเวอร์ชัน · ดาวน์โหลด PDF (เก็บ log) · พิมพ์ · แก้ไข · ✓ (เฉพาะรอตรวจสอบ)'],
+  conds: [
+    ['รอตรวจสอบ → กด ✓', 'confirm “อนุมัติแบบฟอร์มนี้?” → เผยแพร่ทันที', null],
+    ['Switch เปิด', 'confirm “ยืนยันการเผยแพร่แบบฟอร์ม” → เผยแพร่', null],
+    ['Switch ปิด', 'confirm “ยืนยันการยกเลิกเผยแพร่” → ไม่เผยแพร่ (ใช้กับรายการใหม่ไม่ได้ ประวัติเดิมอยู่)', null],
+    ['แถวรอตรวจสอบ', 'ไม่มี Switch', null],
+    ['แก้ไขแบบฟอร์มที่เผยแพร่แล้ว', 'dialog “แบบฟอร์มนี้เผยแพร่แล้ว — แก้ทับไม่ได้” → “สร้างเวอร์ชันใหม่”', 'C3'],
+    ['แก้ไขร่าง / รอตรวจสอบ', 'แก้ในที่เดิม (ร่างของตัวเองเปิด /consent/forms/new?draftId=)', 'C3'],
+    ['มุมมองผู้ใช้ /consent-forms', 'เห็นเฉพาะที่เผยแพร่ · ทำได้แค่ ดู / ดาวน์โหลด / พิมพ์', null],
+  ],
+  errors: [], store: ['phcis.consentFormAuditLog.v1 · mih:consent-form-drafts'],
+  gaps: ['การเปลี่ยนสถานะเก็บใน state ของหน้า ไม่บันทึกถาวร', 'ไม่มีการลบแบบฟอร์ม'],
+  next: ['C3'],
+},
+C4: {
+  alt: true,
+  title: 'ดูแบบฟอร์ม / กรอกแทนผู้รับบริการ', route: '/consent/forms/:id/view', who: 'admin_super · ผู้ใช้ที่มีสิทธิ์ดูแบบฟอร์ม',
+  file: 'src/pages/consent/ConsentFormViewPage.jsx · ConsentFormViewPopup.jsx',
+  summary: 'ดูเอกสาร · พิมพ์ · ดาวน์โหลด · แสดง QR ให้ผู้รับบริการ · กรอกแบบฟอร์ม',
+  shots: [['c3-view', 'หน้าดูแบบฟอร์ม + QR']],
+  screen: ['ปุ่ม ประวัติเวอร์ชัน · แก้ไข · พิมพ์ · ดาวน์โหลด PDF · บันทึกผ่านคอมพิวเตอร์ · แสดง QR Code', 'ป๊อปอัปท้าย: พิมพ์ · ปิด · “กรอกแบบฟอร์ม”'],
+  conds: [
+    ['กด “กรอกแบบฟอร์ม”', 'ขั้นยืนยันตัวตน “ยืนยันตัวตนผู้รับบริการ” (ปุ่ม ต่อไป disabled จนยืนยัน) → กรอก → บันทึก', 'S3'],
+    ['id ไม่มีอยู่', 'แสดงแบบฟอร์มแรกแทน', null],
+  ],
+  errors: ['บันทึกความยินยอม {แบบฟอร์ม} ของ {ชื่อ} แล้ว — ดูได้ที่เมนูจัดการความยินยอม'],
+  store: ['mih:consent-workflow'], gaps: ['ยืนยันตัวตนเติมผู้ป่วยตัวอย่างอัตโนมัติ (mock)'], next: ['S3'],
+},
+C3: {
+  title: 'สร้าง / แก้ไข / เวอร์ชันใหม่ของแบบฟอร์ม (5 ขั้น)', route: '/consent/forms/new · ป๊อปอัปจากทะเบียน', who: 'admin_super',
+  file: 'src/pages/consent/CreateConsentFormPage.jsx · consentFormWizardContent.js · consentVersionHistory.jsx',
+  summary: 'ข้อมูลพื้นฐาน → ผู้มีสิทธิ → เงื่อนไขบังคับ → เนื้อหา → ตรวจสอบและเผยแพร่',
+  shots: [['c4-wiz-new', 'ป๊อปอัปสร้างแบบฟอร์ม'], ['c4-wiz1', 'หน้าเต็ม ขั้น 1']],
+  screen: [
+    'ขั้น 1: เลือกแม่แบบ (หน้าเปล่า / เปิดเผยข้อมูลสุขภาพ / ประกันภัย) · หน้าปก · ชื่อ * · รหัส * (เช่น PH-001) · เวอร์ชั่น * · อายุการใช้งาน * (1 วัน – 1 ปี / ไม่จำกัด = ค่าเริ่มต้น)',
+    'ขั้น 2: ประเภทแบบฟอร์ม (การรักษา / หัตถการ / ส่งเคลม) · ตำแหน่งที่มีสิทธิ * · บทบาทที่มีสิทธิ',
+    'ขั้น 3: ไม่บังคับ / บังคับทุกคน / บังคับเฉพาะบางกรณี (ตรวจรักษา · หัตถการ · Lab · วัคซีน · รับยา + รายละเอียด)',
+    'ขั้น 4: ข้อมูลผู้ป่วยบนเอกสาร · ข้อความยินยอม (ข้อ ลากจัดลำดับได้) · รูปแบบคำตอบ (ยินยอม/ไม่ยินยอม · ข้อความ · Checkbox รับทราบ · Text · Date …) · ลายมือชื่อ (ผู้ป่วย/ผู้ปกครอง · แพทย์ · พยาน · พยาบาล · ผู้ให้คำปรึกษา)',
+    'ขั้น 5: ตัวอย่างเอกสาร + มุมมองบนมือถือ · สรุปการเปลี่ยนแปลง · ผลกระทบต่อความยินยอมที่ลงนามแล้ว',
+  ],
+  conds: [
+    ['ขั้น 1 ขาด ชื่อ/รหัส/เวอร์ชั่น/อายุ', '“กรอกให้ครบเพื่อไปต่อ: …”', null],
+    ['ขั้น 2 ไม่มีขอบเขต/ตำแหน่ง', '“เลือกตำแหน่งและขอบเขตผู้มีสิทธิ์เข้าถึงเพื่อไปต่อ”', null],
+    ['ขั้น 4 ไม่มีเนื้อหา', '“เพิ่มเนื้อหาอย่างน้อย 1 Section เพื่อไปต่อ” · ลบข้อสุดท้ายไม่ได้', null],
+    ['กดสเต็ปเปอร์', 'ไปได้เฉพาะขั้นที่ผ่านแล้ว', null],
+    ['ยกเลิก (ขั้นแรก)', 'confirm “ยกเลิกการสร้างแบบฟอร์ม?” — ออกจากหน้านี้ / ทำต่อ', null],
+    ['บันทึกร่าง', 'เก็บร่าง · toast “บันทึกแบบร่างแล้ว… แท็บบันทึกร่าง”', null],
+    ['เผยแพร่เวอร์ชันใหม่', 'dialog “ยืนยันเผยแพร่เวอร์ชันใหม่” + “เวอร์ชั่นใหม่” * → major +1', null],
+    ['แก้ไข (ไม่ใช่เวอร์ชันใหม่)', '“ยืนยันบันทึกการเปลี่ยนแปลง” → minor +1', null],
+    ['เผยแพร่เวอร์ชันใหม่ ขณะมีผู้ลงนามแล้ว', 'ความยินยอมเดิม → “ถูกแทนที่ด้วยเวอร์ชันใหม่” (ยังมีผลจนลงนามใหม่) + สร้างคำขอ “รอลงนาม” อัตโนมัติไปเวชระเบียน (ข้ามคนที่มีคำขอค้าง)', 'S1'],
+    ['กู้คืนเวอร์ชันจากประวัติ', 'สร้างเป็นร่างเวอร์ชันใหม่ ไม่ทับฉบับที่เผยแพร่', null],
+  ],
+  errors: [], store: ['mih:consent-form-drafts · mih:consent-workflow (markTypeSuperseded)'],
+  gaps: ['เงื่อนไขบังคับในขั้น 3 ถูกเก็บไว้ แต่ยังไม่มีจุดใดใน flow ผู้ป่วยบังคับใช้', 'requireGuardian ไม่มีตัวเปิดใน UI'],
+  next: ['C5'],
+},
+C5: {
+  title: 'สิทธิเข้าถึงตามความยินยอม (Matrix)', route: '/assess/consent-access-rights', who: 'admin_super (Viewer ดูอย่างเดียว)',
+  file: 'src/pages/consent/ConsentAccessRightsPage.jsx · src/data/consentAccessLevels.js',
+  summary: 'ค้นหาผู้ป่วย → ระดับความยินยอมที่ลงนาม → ตารางว่าใครเข้าถึงข้อมูลหมวดไหนได้',
+  shots: [['c5-matrix', 'Matrix ของผู้ป่วย 1 ราย']],
+  screen: ['ค้นหา “HN / เลขบัตร / Passport / ชื่อ-สกุล / โทรศัพท์”', '“ระดับความยินยอมที่ลงนาม:” · ปุ่ม “เพิ่มสิทธิ”', 'Matrix แถว: ประวัติการรักษา · ผลตรวจ Lab · ภาพรังสี · ใบสั่งยา · ข้อมูลสิทธิ × คอลัมน์ Admin / Editor / Viewer · “ยกเลิกสิทธิ”'],
+  table: { h: ['ความยินยอมที่ยังมีผล', 'ระดับ'], rows: [['ไม่มีเลย', 'ยังไม่มีความยินยอม — ทุกหมวดเข้าถึงไม่ได้'], ['PDPA', 'เต็มรูปแบบ'], ['ผ่าตัด / การรักษา / เลือด', 'เฉพาะการรักษา'], ['การวิจัย', 'วิจัย'], ['อื่น ๆ', 'บางส่วน']] },
+  conds: [
+    ['ไม่พบผู้ป่วย', '“ไม่พบผู้ป่วยที่ค้นหา”', null],
+    ['เพิ่มสิทธิ', 'ยืนยันตัวตนก่อน → หมวดข้อมูล * · บทบาท * · ช่วงเวลา * · อ้างอิงเอกสารที่ลงนาม *', null],
+    ['วันสิ้นสุดก่อนวันเริ่ม', '“วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น”', null],
+    ['ยกเลิกสิทธิ', 'ยืนยันตัวตน → เลือกบทบาท → “ยืนยันการยกเลิกสิทธิ?” (มีผลทันที)', null],
+    ['ผู้ใช้เป็น Viewer', 'แบนเนอร์ดูอย่างเดียว · ปุ่มจัดการถูกปิด', null],
+  ],
+  errors: [], store: ['override และประวัติอยู่ใน state ของหน้า'], gaps: ['การเพิ่ม/ยกเลิกสิทธิไม่บันทึกถาวร'], next: ['C6'],
+},
+C6: {
+  title: 'จัดการสิทธิ์การขอเข้าถึงแบบฟอร์ม (อนุมัติคำขอ)', route: '/consent/access · ?tab=rights', who: 'admin_super',
+  file: 'src/pages/consent/AccessManagementPage.jsx · src/components/consent/accessPopups.jsx · src/data/accessRecords.js',
+  summary: 'อนุมัติพร้อมกำหนดช่วงเวลาสิทธิ · หมดช่วงแล้ว Inactive อัตโนมัติ',
+  shots: [['c6-access', 'คำขอรออนุมัติ'], ['c6-access-rights', 'แท็บสิทธิรายบุคลากร']],
+  screen: ['แท็บ รออนุมัติ · อนุมัติแล้ว · ปฏิเสธ · หมดอายุ · ทั้งหมด · สิทธิการเข้าถึงแบบฟอร์มความยินยอมทั้งหมด', 'คอลัมน์: เลขที่คำขอ · ผู้ขอ · … · ขอเข้าถึงของผู้รับบริการ · แบบฟอร์ม · เหตุผล · ช่วงเวลาสิทธิ · หลักฐาน · สถานะ · Active · ✓/✗'],
+  table: { h: ['สถานะ', '✓ อนุมัติ', '✗ ปฏิเสธ'], rows: [['รออนุมัติ', 'ได้', 'ได้'], ['อนุมัติแล้ว', '—', '—'], ['ปฏิเสธ', 'ได้', '—'], ['หมดอายุ', '—', '—']] },
+  conds: [
+    ['กด ✓', 'ป๊อปอัป “ตรวจรายละเอียดคำขอ” · เลือกระยะเวลา (1/3/7/14 วัน · 1/3/6 เดือน · กำหนดเอง) · ปุ่ม “อนุมัติ” disabled จนช่วงเวลาถูกต้อง', null],
+    ['กด ✗', 'confirm “ยืนยันการปฏิเสธคำขอเข้าถึงข้อมูล” → ปฏิเสธ · inactive', null],
+    ['ยังไม่อนุมัติ', 'ช่องช่วงเวลา “รอ Admin กำหนดช่วงสิทธิ · ผู้ขอเสนอ: …”', null],
+    ['เลยวันสิ้นสุด', 'หมดอายุ · Inactive อัตโนมัติ · Switch Active ถูกปิด', null],
+    ['แก้ช่วงเวลาให้ครอบคลุมวันนี้', 'กลับเป็นอนุมัติแล้วอีกครั้ง', null],
+    ['Switch Active', 'confirm “ปิดการให้สิทธิ (Inactive)?” / “เปิดการให้สิทธิ (Active)?”', null],
+    ['ผู้ขอได้รับอนุมัติ', 'เห็นแบนเนอร์ “แบบฟอร์มที่คุณขอเข้าถึงของ … ระหว่าง …” ที่คิวเวชระเบียน', 'R2'],
+  ],
+  errors: [], store: ['คำขออยู่ใน state/คิวในหน่วยความจำ (หายเมื่อรีโหลด)'], gaps: ['คำขอไม่ถูกบันทึกถาวร'], next: ['C7'],
+},
+C7: {
+  title: 'จัดการคำขอนำออกข้อมูลส่วนบุคคล (PII Export)', route: '/consent/pii-export', who: 'admin_super · ผอ.ศูนย์ · ผอ.สำนัก (ผู้อนุมัติ)',
+  file: 'src/pages/consent/PiiExportRequestsPage.jsx · src/data/piiExportRequests.js · consentExportPopup.jsx',
+  summary: 'คำขอเกิดเมื่อผู้ใช้ติ๊ก “ขอข้อมูลส่วนบุคคล (PII)” ตอนนำส่งออก · ต้องอนุมัติครบจึงดาวน์โหลดได้',
+  shots: [['c7-pii', 'รายการคำขอ PII']],
+  screen: ['แท็บ รออนุมัติ · อนุมัติแล้ว · ปฏิเสธ · คำขอทั้งหมด', 'คอลัมน์: วันที่ขอ · รายการ · เลขที่ (PX-YYYY-NNNN) · ผู้ขอ · เหตุผล · ขอบเขตข้อมูล · ผู้อนุมัติ (“อนุมัติแล้ว x/y คน”) · สถานะ'],
+  table: { h: ['ขอบเขต', 'ผู้ต้องอนุมัติ'], rows: [['ข้อมูลศูนย์', 'ผอ.ศูนย์ คนเดียว'], ['ข้อมูลกลาง', 'ผู้ดูแลระบบส่วนกลาง และ ผอ.สำนัก (คู่ขนาน ไม่เรียงลำดับ)']] },
+  conds: [
+    ['ฝั่งผู้ขอ: ติ๊ก PII ในป๊อปอัปนำส่งออก', 'ต้องเลือกเหตุผล (9 ข้อ · “อื่น ๆ” ≥ 5 ตัวอักษร) + รับทราบ PDPA → ปุ่ม “ยืนยันและขออนุมัตินำออก”', null],
+    ['ผู้อนุมัติทุกคนอนุมัติ', 'pending → approved · ปุ่ม “ดาวน์โหลดไฟล์” ใช้ได้', null],
+    ['มีผู้อนุมัติคนใดปฏิเสธ', 'rejected', null],
+    ['ดาวน์โหลดแล้ว', 'downloaded', null],
+  ],
+  errors: ['ส่งคำขอนำออกข้อมูลส่วนบุคคลแล้ว'], store: ['phcis.piiExportRequests.v4 (ไฟล์อยู่ในหน่วยความจำ)'], gaps: ['รีเฟรชแล้วไฟล์หาย ต้องขอใหม่', 'การนำออกจาก worklist ความยินยอมปิดตัวเลือก PII ไว้'], next: ['C8'],
+},
+C8: {
+  title: 'รายงานความยินยอม', route: '/consent/report', who: 'admin_super',
+  file: 'src/pages/consent/ConsentReportPage.jsx · src/data/consentReports.js',
+  summary: '8 การ์ดรายงาน · เลือกช่วงรายวัน–ปีงบประมาณ · นำส่งออก PDF/CSV/XLSX',
+  shots: [['c8-report', 'การ์ดรายงาน']],
+  screen: ['การ์ด: สัดส่วนตามสถานะ · ยินยอม/ไม่ยินยอม · ส่งออกนอกหน่วยงาน · ผู้มีสิทธิ์เข้าถึง · สถานะแบบฟอร์ม · ใกล้หมดอายุ/หมดอายุ · ช่องทางลงนาม · ตามศูนย์บริการ'],
+  conds: [['นำส่งออก', 'ต้องมีช่วงวันที่และหัวข้ออย่างน้อย 1 · ทุกการนำออกเก็บ log (การพิมพ์ไม่เก็บ)', null]],
+  errors: ['นำส่งออกรายงานความยินยอมแล้ว'], store: ['mih:consent-workflow (export log)'], gaps: [], next: [],
+},
+S1: {
+  title: 'จัดการความยินยอม (worklist)', route: '/consent', who: 'admin_super · Editor (แพทย์/ผู้ดูแล) · Viewer ดูอย่างเดียว',
+  file: 'src/pages/consent/ConsentManagementPage.jsx · src/data/consentRecords.js · consentWorkflowStore.js',
+  summary: 'สถานะของใบยินยอมแต่ละใบกำหนดปุ่มที่ทำได้',
+  shots: [['s1-worklist', 'แท็บรอลงนาม'], ['s1-consented', 'แท็บยินยอมแล้ว'], ['s1-all', 'แท็บผู้รับบริการทั้งหมด'], ['s1-paper', 'อัปโหลดแบบฟอร์มกระดาษ']],
+  screen: ['การ์ดสรุปเดือนนี้: ทั้งหมด · ยินยอมแล้ว · รอลงนาม · ปฏิเสธ/ถอน · รอการอัปเดต', 'แท็บ: รอลงนาม · ยินยอมแล้ว · ปฏิเสธ/เพิกถอน · รอการอัปเดต · ใกล้หมดอายุ · หมดอายุแล้ว | ผู้รับบริการทั้งหมด', 'ปุ่ม “อัปโหลดแบบฟอร์มกระดาษ” · “นำส่งออกรายงาน” (ไม่แสดงให้ Viewer)'],
+  table: { h: ['สถานะ', 'แท็บ', 'ปุ่มที่ทำได้'], rows: [
+    ['รอลงนาม / อยู่ระหว่างลงนาม', 'รอลงนาม', 'ยกเลิกคำขอ'],
+    ['ยินยอมแล้ว', 'ยินยอมแล้ว', 'เพิกถอน · แก้ไข 5.1/5.2'],
+    ['ถูกแทนที่ด้วยเวอร์ชันใหม่', 'ยินยอมแล้ว (ยังมีผล)', 'เพิกถอน'],
+    ['ปฏิเสธ · ถอนความยินยอม · ยกเลิกคำขอ', 'ปฏิเสธ/เพิกถอน', 'ขอความยินยอมใหม่ (Re-Consent)'],
+    ['ใกล้หมดอายุ (≤ 30 วัน)', 'ใกล้หมดอายุ', 'Re-Consent'],
+    ['หมดอายุ', 'หมดอายุแล้ว', 'Re-Consent'],
+  ] },
+  conds: [
+    ['ยกเลิกคำขอ', '“ยืนยันการยกเลิกคำขอ” → ยกเลิกคำขอ · QR/ลิงก์ลงนามใช้ไม่ได้ · ประวัติยังอยู่', null],
+    ['เพิกถอน', 'แจ้งผลเสียประโยชน์รายหัวข้อ → ยืนยันตัวตนผู้รับบริการ → ถอนความยินยอม (มีผลทันที)', 'S2'],
+    ['Re-Consent', 'ป๊อปอัป “ส่งคำขอความยินยอมใหม่” · วันครบกำหนดลงนาม * (≥ วันนี้) → รอลงนาม ผ่าน Mobile App', 'S2'],
+    ['อัปโหลดกระดาษ', 'เลือกประเภท * · ไฟล์ PDF/JPG/PNG ≤ 10 MB · วันที่ให้ความยินยอม * → ยินยอมแล้ว ช่องทาง “เอกสารกระดาษ”', null],
+    ['แท็บผู้รับบริการทั้งหมด: ยังขาดแบบฟอร์มบังคับ', 'แสดงปุ่ม “กรอกแบบฟอร์ม”', 'S3'],
+    ['ผู้ใช้เป็น Viewer', 'ซ่อน อัปโหลด / กรอก / เพิกถอน / นำส่งออก', null],
+  ],
+  errors: ['ไฟล์: “รองรับเฉพาะไฟล์ PDF, JPG หรือ PNG” · “ไฟล์ต้องไม่เกิน 10 MB”'],
+  store: ['mih:consent-workflow (SEED_VERSION 15)'],
+  gaps: ['สถานะใกล้หมดอายุ/หมดอายุมาจากข้อมูลตัวอย่าง — ไม่มีโค้ดเปลี่ยนสถานะตามเวลา', 'แก้ไข 5.1/5.2 เป็น mock ไม่เปลี่ยนข้อมูล'],
+  next: ['S3'],
+},
+S3: {
+  title: 'กรอก/บันทึกความยินยอมให้ผู้รับบริการ', route: 'ป๊อปอัป “กรอกแบบฟอร์ม” (ConsentRequestFormsPopup)', who: 'เวชระเบียน · เจ้าหน้าที่ Editor',
+  file: 'src/components/consent/ConsentRequestFormsPopup.jsx · ConsentIdentityVerifyPanel.jsx · ConsentFormFillBody.jsx · EhcConsentFormBody.jsx',
+  summary: 'เลือกแบบฟอร์ม → ยืนยันตัวตน → กรอกและลงนาม → บันทึก (ยินยอม / ไม่ยินยอม)',
+  shots: [['s3-fill', 'เลือกแบบฟอร์มบังคับ 3 ใบ']],
+  screen: ['แบบฟอร์มบังคับ: EHC-1011 เปิดเผยข้อมูลสุขภาพทางอิเล็กทรอนิกส์ · INS-1012 ประกันภัย · GCT-1013 รับการรักษาทั่วไป', 'ยืนยันตัวตน: ผู้ให้ความยินยอม (ตนเอง / ผู้ปกครองแทนบุตร) × วิธี (นำบัตรมา · ไม่ได้นำบัตรมา · บุคคลต่างด้าว)', 'ฟอร์ม: ข้อมูลผู้ป่วย · คำตอบรายข้อ · ลายเซ็นตามบทบาท · โหมดอัปโหลดกระดาษ · เอกสารแนบ'],
+  conds: [
+    ['นำบัตรมา', 'เสียบบัตร → “อ่านบัตร” (1.4 วิ)', null],
+    ['ไม่ได้นำบัตรมา', 'เลือกเอกสารแทน (ใบขับขี่ / Passport) * + อัปโหลด/ถ่ายภาพ * → “ยืนยันว่าเป็นคนเดียวกัน”', null],
+    ['บุคคลต่างด้าว', 'สแกนลายนิ้วมือ (1.6 วิ)', null],
+    ['เปลี่ยนผู้ให้ความยินยอม หรือวิธี', 'ล้างผลการยืนยันตัวตน', null],
+    ['อายุ < 20 ปี', 'แบนเนอร์สลับเป็นฟอร์มผู้ปกครอง · บังคับ ชื่อผู้ปกครอง * · ความเกี่ยวข้อง * (บิดา/มารดา/ผู้ปกครองตามกฎหมาย/ผู้อนุบาล)', null],
+    ['EHC-1011 “ในฐานะ” = ผู้มีอำนาจกระทำแทน', 'ต้องระบุความเกี่ยวข้อง + ชื่อผู้ป่วย', null],
+    ['ปุ่ม “บันทึก” ใช้ได้เมื่อ', 'กรอกข้อมูลบังคับ · ตอบครบทุกข้อ · ลงนามครบทุกบทบาทที่กำหนด · (โหมดกระดาษ) แนบไฟล์แล้ว', null],
+    ['มีข้อใดตอบ “ไม่ยินยอม”', 'บันทึกเป็น ปฏิเสธ · “บันทึกการไม่ยินยอม … สำเร็จ”', 'S1'],
+    ['ตอบยินยอมทุกข้อ', 'บันทึกเป็น ยินยอมแล้ว · ป๊อปอัปยังเปิดให้เลือกใบถัดไป', 'S1'],
+    ['มีคำขอรอลงนามค้างของ HN+ประเภทเดียวกัน', 'อัปเดตใบเดิม ไม่สร้างใหม่', null],
+  ],
+  errors: ['ปิดโดยไม่บันทึก? / ย้อนกลับไปเลือกแบบฟอร์ม? — กรอกต่อ'], store: ['mih:consent-workflow (recordMrConsentSigning)'], gaps: ['ไม่มีทางแยก “ลงนามไม่ได้” โดยเฉพาะ (ใช้ผู้แทน / กระดาษ / ลายนิ้วมือแทน)'], next: ['S2'],
+},
+S2: {
+  title: 'Re-Consent · เพิกถอน · แฟ้มความยินยอมรายบุคคล', route: '/consent (ป๊อปอัป) · ถอนที่เคาน์เตอร์ (ลงทะเบียน)', who: 'Editor · เวชระเบียน · ผู้ป่วยถอนเองผ่าน /m/consent',
+  file: 'consentWorkflowPopups.jsx · ConsentRevokeConfirmBody.jsx · ConsentConsentedFormsPopup.jsx · ConsentWithdrawRequestPopup.jsx',
+  summary: 'เพิกถอนมีผลทันที ไม่ต้องอนุมัติ · ย้อนกลับได้ทาง Re-Consent เท่านั้น',
+  shots: [['s1-revoke', 'ยืนยันการเพิกถอน (แจ้งผลเสียประโยชน์)'], ['s1-reconsent', 'ส่งคำขอความยินยอมใหม่']],
+  screen: ['แฟ้มรายบุคคล: แท็บ แบบฟอร์มทั้งหมด · เปรียบเทียบการให้ความยินยอม · Timeline', 'ถอนที่เคาน์เตอร์: เลือกแบบฟอร์ม + เหตุผล → “ถอนความยินยอม”'],
+  conds: [
+    ['ถอนได้เฉพาะ', 'ยินยอมแล้ว / ใกล้หมดอายุ — อื่น ๆ “ยังไม่มีใบยินยอมที่ถอนได้”', null],
+    ['ยืนยันถอนที่เคาน์เตอร์', '“ยืนยันการถอนความยินยอม — มีผลเฉพาะครั้งนี้และในอนาคต ไม่กระทบข้อมูลเบิกจ่ายในอดีต”', null],
+    ['เพิกถอนสำเร็จ', 'ถอนความยินยอม · บันทึกวันที่ถอน + วิธียืนยันตัวตน · ประวัติเดิมอ่านได้อย่างเดียว', 'S4'],
+    ['สร้าง Re-Consent', 'ใบเดิมกลายเป็น รอลงนาม · ช่องทาง Mobile App · ไปแท็บรอลงนาม', 'S1'],
+    ['ปิดป๊อปอัป Re-Consent ขณะแก้ค้าง', 'confirm “ยืนยันการละทิ้งการแก้ไข”', null],
+  ],
+  errors: ['เพิกถอนความยินยอมแล้ว', 'สร้างคำขอ ReConsent แล้ว'], store: ['mih:consent-workflow'], gaps: [], next: ['S4'],
+},
+S4: {
+  title: 'ประวัติความยินยอม (Timeline)', route: '/consent/history · /consent/history/:hn', who: 'admin_super',
+  file: 'src/pages/consent/ConsentHistoryPage.jsx',
+  summary: 'เหตุการณ์เรียงตามเดือน: สร้างคำขอ · ให้/ไม่ให้ · ถอน · แก้ไข · มีเวอร์ชันใหม่',
+  shots: [['s4-history', 'Timeline ของผู้ป่วย'], ['s4-history0', 'หน้าค้นหา']],
+  screen: ['ค้นหา “พิมพ์ชื่อหรือ HN เพื่อค้นหา”', 'การ์ดเหตุการณ์: “การเปลี่ยนแปลง: …” · “ช่องทาง: …” · ตัวกรองวันที่'],
+  conds: [['ไม่พบ HN', '“ไม่พบประวัติความยินยอมของ HN …”', null], ['ตัวกรองไม่มีผล', '“ไม่พบเหตุการณ์ตามตัวกรองที่เลือก”', null]],
+  errors: [], store: ['mih:consent-workflow (history)'], gaps: ['ไม่อยู่ในเมนูแล้ว (route ยังเปิดได้)'], next: [],
+},
+R1: {
+  title: 'ขอสิทธิ์การเข้าถึงแบบฟอร์ม', route: '/consent/forms/request-access · ปุ่ม header “คำขอเข้าถึงข้อมูล ▾”', who: 'เจ้าหน้าที่ Editor ในหน้างาน (ลงทะเบียน · ห้องยา · ห้องตรวจ · คลินิก · การเงิน)',
+  file: 'src/pages/consent/RequestFormAccessPage.jsx · AccessRequestForm.jsx · CreateConsentRequestHeaderAction.jsx',
+  summary: 'เลือกแบบฟอร์ม + ผู้รับบริการ + เหตุผล + ช่วงวันที่ → รออนุมัติ',
+  shots: [['r1-request', 'แบบฟอร์มขอสิทธิ์']],
+  screen: ['“แบบฟอร์มที่ต้องการเข้าถึง” * (เลือกได้หลายใบ / ทุกใบ) · “เลือกผู้รับบริการ” *', '“วัตถุประสงค์/เหตุผลที่ขอเข้าถึง” * · “ช่วงวันที่ต้องการเริ่มใช้สิทธิ” * · หลักฐาน (OCR) · บันทึกเพิ่มเติม'],
+  conds: [
+    ['เหตุผล “อื่นๆ ตามที่หน่วยงานกำหนด”', 'ต้องระบุ ≥ 3 ตัวอักษร', null],
+    ['วันสิ้นสุดก่อนวันเริ่ม', '“วันสิ้นสุดต้องไม่ก่อนวันเริ่มต้น”', null],
+    ['ส่งคำขอ', 'สถานะ รออนุมัติ (REQ-2569-xxxx) → “ส่งคำขอสิทธิ์เข้าถึงแบบฟอร์มสำเร็จ”', 'R2'],
+    ['ผู้ใช้เป็น Viewer / อยู่ในแดชบอร์ด / อยู่ใน /consent', 'ไม่แสดงปุ่ม header', null],
+  ],
+  errors: [], store: ['คิวในหน่วยความจำ (enqueueAccessImport)'], gaps: ['หน้าเต็มเข้าได้เฉพาะ admin_super — ผู้ใช้ทั่วไปขอผ่านปุ่ม header'], next: ['R2'],
+},
+R2: {
+  title: 'รายการคำขอของฉัน', route: '/consent/access/my-requests', who: 'ผู้ขอ',
+  file: 'src/pages/consent/AccessManagementPage.jsx (mineOnly)',
+  summary: 'แท็บเดียวกับหน้าอนุมัติ แต่เฉพาะคำขอของตนเอง',
+  shots: [['r2-mine', 'คำขอของฉัน']],
+  screen: ['แท็บ รออนุมัติ · อนุมัติแล้ว · ปฏิเสธ · หมดอายุ · ทั้งหมด'],
+  conds: [['คำขอได้รับอนุมัติ', 'แบนเนอร์ที่คิวเวชระเบียน + ปุ่ม “ดูแบบฟอร์ม X” ภายในช่วงเวลาสิทธิ', null], ['ผู้ดูแลพิจารณา', 'ดูขั้นอนุมัติ', 'C6']],
+  errors: [], store: [], gaps: [], next: ['C6'],
+},
+P1: {
+  title: 'ลงทะเบียน: ขั้น “แบบฟอร์มยินยอม”', route: '/registration/register (ขั้น 1)', who: 'เวชระเบียน (mr)',
+  file: 'src/components/forms/RegistrationSteps.jsx · src/data/registrationForm.js · registrationConsentForms.js',
+  summary: 'ต้องกรอก 3 แบบฟอร์มบังคับก่อนบันทึกการลงทะเบียน',
+  shots: [['p1-registration', 'ขั้นแบบฟอร์มยินยอม']],
+  screen: ['“แบบฟอร์มที่ยังไม่ขอความยินยอม” (EHC-1011 · INS-1012 · GCT-1013) · “แบบฟอร์มที่ให้ความยินยอมแล้ว” (ป้าย ยินยอมแล้ว / · Mobile App) · “แบบฟอร์มอื่นๆ” · ปุ่ม “ขอถอนความยินยอม”'],
+  conds: [
+    ['ยังกรอกไม่ครบ 3 ใบ', 'บันทึกไม่ได้ · popup ข้อมูลไม่ครบแสดง “แบบฟอร์มยินยอมที่ยังไม่ได้กรอก”', null],
+    ['ผู้ป่วยเก่ามีครบแล้ว', 'ซ่อนขั้นนี้', null],
+    ['ผู้เยาว์', 'แสดงคำเตือน · ใช้ฟอร์มผู้ปกครอง', 'S3'],
+    ['กด “ขอถอนความยินยอม”', 'ป๊อปอัปถอนที่เคาน์เตอร์', 'S2'],
+  ],
+  errors: ['ลงนาม “X” สำเร็จ'], store: ['consentCompletedIds ในฟอร์มลงทะเบียน + mih:consent-workflow'],
+  gaps: ['ใบที่ “ไม่ยินยอม” ก็นับว่ากรอกครบ (markCompleted ไม่ดูผล)'], next: ['P2'],
+},
+P2: {
+  title: 'คลินิก / ห้องตรวจ: ความยินยอมเฉพาะครั้ง และด่านสั่งการรักษา', route: 'ClinicRecordPage · TreatmentFormPage · /opd/queue', who: 'พยาบาลคัดกรอง · แพทย์',
+  file: 'src/components/clinic/ClinicConsentFormsStep.jsx · src/data/clinicConsentForms.js · consentWorkflowStore.js (gateCpoeOrder)',
+  summary: 'แต่ละคลินิกมีแบบฟอร์มของตัวเอง “เฉพาะการมาตรวจครั้งนี้”',
+  shots: [],
+  screen: ['ขั้นแบบฟอร์มยินยอมในบันทึกคลินิก (ANC · ทันตกรรม · สุขภาพจิต · ยาเสพติด · STI · FP · วัคซีน · ตา · TB …)', 'คิวคัดกรอง OPD คอลัมน์ “ความยินยอม”: ปฏิเสธ/ถอน · รอลงนาม N · ยินยอม N · ยังไม่มี'],
+  conds: [
+    ['ทุกแบบฟอร์มที่ไม่ใช่ optional มีบันทึกแล้ว (รวมไม่ยินยอม)', 'ขั้นนี้ถือว่าเสร็จ', null],
+    ['แพทย์/พยาบาลหลังตรวจเปิดดู', 'แสดง “ยินยอมแล้ว · จุดคัดกรอง” / “ยินยอมแล้ว · ครั้งก่อน” / “ไม่ยินยอม”', null],
+    ['สั่งยา (ออกแบบไว้)', 'ต้องมี PDPA หรือการรักษาที่มีผล · วิจัยต้องมีการวิจัย · ผ่าตัดต้องมีผ่าตัด', null],
+    ['รับยาทางไปรษณีย์ / จุดรับ ครั้งแรก', 'ขอความยินยอมต่อ HN ต่อวิธี · ไม่ยินยอม = ใช้วิธีนี้ไม่ได้', null],
+  ],
+  errors: [], store: ['form.clinicConsent[formId] ในฟอร์มของ visit — ไม่อยู่ใน store กลาง'],
+  gaps: ['ด่านสั่งยา (gateCpoeOrder) ยังไม่ผูกกับปุ่มใด จึงยังไม่ทำงาน', 'ความยินยอมระดับคลินิกไม่ขึ้นใน /consent'], next: ['P3'],
+},
+P3: {
+  title: 'ข้อมูลข้ามศูนย์ (ADD-C4) และการส่งต่อภายนอก', route: 'ห้องตรวจ · ผลแล็บ/รังสี · ป๊อปอัปส่งต่อ', who: 'แพทย์ · พยาบาล',
+  file: 'src/data/crossCenterConsent.js · InternalReferPopup.jsx',
+  summary: 'ไม่มีความยินยอม = ข้อมูลศูนย์อื่นถูกซ่อน / ส่งต่อออกนอกสำนักอนามัยไม่ได้',
+  shots: [],
+  screen: ['แถบ “มีข้อมูลจากศูนย์อื่นที่ยังซ่อนอยู่” · ปุ่ม “ระบุเหตุผลเพื่อดู” / “ขอความยินยอม (ADD-C4)”', 'ป๊อปอัปส่งต่อ: Health Link consent ก่อน “ยืนยันส่งต่อ”'],
+  conds: [
+    ['ลงนาม ADD-C4 แล้ว', 'แสดงข้อมูลข้ามศูนย์ + “ผู้รับบริการยินยอม ADD-C4 แล้ว…”', null],
+    ['ยังไม่ลงนาม · ข้อมูลทั่วไป', 'กด “ระบุเหตุผลเพื่อดู” → “ขอดูข้อมูลจากศูนย์อื่น” → “ยืนยันและเปิดดู”', null],
+    ['ยังไม่ลงนาม · ข้อมูลยาเสพติด', 'ต้อง “ขอความยินยอม (ADD-C4)” ก่อน', null],
+    ['ส่งต่อภายนอก + ไม่ยินยอม Health Link', '“ไม่ยินยอม = ส่งต่อไปสถานพยาบาลภายนอกสำนักอนามัยไม่ได้”', null],
+  ],
+  errors: [], store: ['mih:add-c4-consent:v1'], gaps: [], next: [],
+},
+};
+
+/* ════════════════════════════ RENDER ════════════════════════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s);
+let current = MODULES[0].key;
+let order = [];           // ลำดับขั้นของโมดูลปัจจุบัน (สำหรับ ก่อนหน้า/ถัดไป)
+let openId = null;
+
+function stepNo(id) { const i = order.indexOf(id); return i < 0 ? id : `ขั้น ${i + 1} · ${id}`; }
+
+function renderTabs() {
+  $('#tabs').innerHTML = MODULES.map((m) => {
+    const n = new Set(m.lanes.flatMap((l) => l.phases.flatMap((p) => p.nodes))).size;
+    return `<button class="tab" role="tab" aria-selected="${m.key === current}" data-k="${m.key}">${m.label}<span class="n">${n} ขั้น</span></button>`;
+  }).join('');
+  $('#tabs').querySelectorAll('.tab').forEach((b) => b.onclick = () => { closeDrawer(); current = b.dataset.k; location.hash = current; render(); });
+}
+
+function nodeHtml(id) {
+  const s = STEPS[id];
+  const shot = s.shots[0];
+  const nCond = s.conds.length;
+  const nGap = s.gaps.length;
+  return `<button class="node${s.alt ? ' alt' : ''}" data-id="${id}" aria-label="${s.title}">
+    <div class="thumb${shot ? '' : ' none'}">${shot ? `<img loading="lazy" src="${S(shot[0])}" alt="">` : 'ไม่มีภาพหน้าจอ (ทำงานเบื้องหลัง)'}</div>
+    <div class="body">
+      <div class="no">${stepNo(id)}</div>
+      <div class="t">${s.title}</div>
+      <div class="r">${s.route}</div>
+      <div class="badges">
+        ${s.shots.length > 1 ? `<span class="b shots">${s.shots.length} ภาพ</span>` : ''}
+        ${nCond ? `<span class="b cond">${nCond} เงื่อนไข</span>` : ''}
+        ${nGap ? `<span class="b gap">${nGap} ข้อสังเกต</span>` : ''}
+        ${s.alt ? '<span class="b alt">ทางเลือก</span>' : ''}
+      </div>
+    </div>
+  </button>`;
+}
+
+function render() {
+  const m = MODULES.find((x) => x.key === current);
+  order = [...new Set(m.lanes.flatMap((l) => l.phases.flatMap((p) => p.nodes)))];
+  renderTabs();
+  $('#intro').innerHTML = `<div><h2>${m.title}</h2><p>${m.summary}</p></div>
+    <div class="legend"><span><i class="dot" style="background:var(--c-info)"></i>มีเงื่อนไขแยกทาง</span><span><i class="dot" style="background:var(--c-danger)"></i>ข้อสังเกตจากโค้ด</span><span>กรอบเส้นประ = ทางเลือก/หน้ารอง</span></div>`;
+  $('#flow').innerHTML = m.lanes.map((l) => `
+    <section class="lane">
+      <div class="lane-h"><h3>${l.title}</h3><span class="who">${l.who}</span></div>
+      <div class="phases">${l.phases.map((p, i) => `
+        ${i ? '<div class="arrow" aria-hidden="true">→</div>' : ''}
+        <div class="phase"><div class="phase-h">${p.h}</div><div class="nodes">${p.nodes.map(nodeHtml).join('')}</div></div>`).join('')}
+      </div>
+    </section>`).join('');
+  $('#flow').querySelectorAll('.node').forEach(bindNode);
+}
+
+/* ── hover preview: เฉพาะอุปกรณ์ที่มีเมาส์ ── */
+const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const peek = $('#peek');
+function bindNode(el) {
+  el.onclick = () => openDrawer(el.dataset.id);
+  if (!canHover) return;
+  el.onmouseenter = () => showPeek(el);
+  el.onmouseleave = () => peek.classList.remove('on');
+  el.onfocus = () => showPeek(el);
+  el.onblur = () => peek.classList.remove('on');
+}
+function showPeek(el) {
+  const s = STEPS[el.dataset.id];
+  const shot = s.shots[0];
+  const branches = s.conds.filter((c) => c[2]).length;
+  peek.innerHTML = `${shot ? `<img src="${S(shot[0])}" alt="">` : ''}
+    <div class="pt">${s.title}</div><div class="ps">${s.summary}</div><hr>
+    <dl class="kv"><dt>Route</dt><dd class="mono">${s.route}</dd><dt>ผู้ใช้</dt><dd>${s.who}</dd>
+    <dt>เงื่อนไข</dt><dd>${s.conds.length} ข้อ · แยกไปขั้นอื่น ${branches}</dd>${s.shots.length > 1 ? `<dt>ภาพ</dt><dd>${s.shots.map((x) => x[1]).join(' · ')}</dd>` : ''}</dl>
+    <div class="hint">คลิกเพื่อดูรายละเอียดทั้งหมด</div>`;
+  const r = el.getBoundingClientRect();
+  const w = Math.min(440, innerWidth - 24);
+  let x = r.right + 12; if (x + w > innerWidth - 12) x = r.left - w - 12; if (x < 12) x = 12;
+  peek.style.left = x + 'px';
+  peek.style.top = '12px';
+  peek.classList.add('on');
+  requestAnimationFrame(() => {
+    const h = peek.offsetHeight;
+    let y = r.top; if (y + h > innerHeight - 12) y = innerHeight - h - 12; if (y < 12) y = 12;
+    peek.style.top = y + 'px';
+  });
+}
+
+/* ── drawer ── */
+function list(items) { return `<ul>${items.map((x) => `<li>${x}</li>`).join('')}</ul>`; }
+function openDrawer(id) {
+  const s = STEPS[id]; if (!s) return;
+  if (!order.includes(id)) { const m = MODULES.find((mm) => mm.lanes.some((l) => l.phases.some((p) => p.nodes.includes(id)))); if (m) { current = m.key; render(); } }
+  openId = id;
+  peek.classList.remove('on');
+  document.querySelectorAll('.node').forEach((n) => n.classList.toggle('active', n.dataset.id === id));
+  $('#d-no').textContent = stepNo(id);
+  $('#d-title').textContent = s.title;
+  $('#d-sum').textContent = s.summary;
+  const i = order.indexOf(id);
+  $('#d-prev').disabled = i <= 0; $('#d-next').disabled = i < 0 || i >= order.length - 1;
+  const gal = s.shots.length ? `<section class="gallery sec"><h4>หน้าจอ</h4>${s.shots.length > 1 ? `<div class="variants">${s.shots.map((x, k) => `<button class="pill" aria-pressed="${k === 0}" data-k="${k}">${x[1]}</button>`).join('')}</div>` : ''}
+      <div class="main"><img id="d-img" src="${S(s.shots[0][0])}" alt="${s.shots[0][1]}"></div><div class="cap" id="d-cap">${s.shots[0][1]} · คลิกภาพเพื่อขยาย</div></section>` : '';
+  const tbl = s.table ? `<section class="sec"><h4>ตารางอ้างอิง</h4><div class="tbl-wrap"><table><thead><tr>${s.table.h.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${s.table.rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>` : '';
+  const conds = s.conds.length ? `<section class="sec"><h4>เงื่อนไขและการทำงาน</h4><p class="hint">ถ้า … → ระบบทำอะไร → ไปขั้นไหนต่อ</p><div class="tbl-wrap"><table class="ct"><thead><tr><th>เงื่อนไข / การกระทำ</th><th>ผลลัพธ์</th><th>ไปต่อ</th></tr></thead><tbody>
+      ${s.conds.map((c) => `<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2] ? `<button class="go" data-go="${c[2]}">${c[2]} · ${STEPS[c[2]].title.slice(0, 22)}${STEPS[c[2]].title.length > 22 ? '…' : ''} →</button>` : '—'}</td></tr>`).join('')}</tbody></table></div></section>` : '';
+  $('#d-body').innerHTML = `
+    <section class="sec"><dl class="meta"><dt>Route</dt><dd class="mono">${s.route}</dd><dt>ผู้ใช้</dt><dd>${s.who}</dd><dt>ไฟล์</dt><dd class="mono">${s.file}</dd>
+      ${s.next.length ? `<dt>ขั้นถัดไปปกติ</dt><dd>${s.next.map((n) => `<button class="go pill" data-go="${n}">${n} · ${STEPS[n].title}</button>`).join(' ')}</dd>` : ''}</dl></section>
+    ${gal}
+    <section class="sec"><h4>องค์ประกอบบนหน้าจอ</h4>${list(s.screen)}</section>
+    ${tbl}${conds}
+    ${s.errors.length ? `<section class="sec"><h4>ข้อความแจ้งเตือน / validation</h4>${list(s.errors.map((e) => `<span class="q">${/[“"]/.test(e) ? e : '“' + e + '”'}</span>`))}</section>` : ''}
+    ${s.store.length ? `<section class="sec"><h4>ที่เก็บข้อมูล</h4>${list(s.store.map((x) => `<code>${x}</code>`))}</section>` : ''}
+    ${s.gaps.length ? `<section class="sec gaps"><h4>ข้อสังเกตจากโค้ด (Dev ต้องตัดสินใจ/แก้)</h4>${list(s.gaps)}</section>` : ''}`;
+  $('#d-body').scrollTop = 0;
+  $('#d-body').querySelectorAll('[data-go]').forEach((b) => b.onclick = () => openDrawer(b.dataset.go));
+  $('#d-body').querySelectorAll('.variants .pill').forEach((b) => b.onclick = () => {
+    const x = s.shots[+b.dataset.k];
+    $('#d-img').src = S(x[0]); $('#d-cap').textContent = x[1] + ' · คลิกภาพเพื่อขยาย';
+    $('#d-body').querySelectorAll('.variants .pill').forEach((p) => p.setAttribute('aria-pressed', p === b));
+  });
+  const main = $('#d-body .gallery .main'); if (main) main.onclick = () => { $('#lb-img').src = $('#d-img').src; $('#lb').classList.add('on'); };
+  $('#drawer').classList.add('on'); $('#scrim').classList.add('on');
+  history.replaceState(null, '', `#${current}/${id}`);
+  $('#d-close').focus();
+}
+function closeDrawer() {
+  $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); openId = null;
+  document.querySelectorAll('.node.active').forEach((n) => n.classList.remove('active'));
+  history.replaceState(null, '', `#${current}`);
+}
+$('#d-close').onclick = closeDrawer;
+$('#scrim').onclick = closeDrawer;
+$('#lb').onclick = () => $('#lb').classList.remove('on');
+$('#d-prev').onclick = () => { const i = order.indexOf(openId); if (i > 0) openDrawer(order[i - 1]); };
+$('#d-next').onclick = () => { const i = order.indexOf(openId); if (i >= 0 && i < order.length - 1) openDrawer(order[i + 1]); };
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { if ($('#lb').classList.contains('on')) $('#lb').classList.remove('on'); else closeDrawer(); }
+  if (!openId) return;
+  if (e.key === 'ArrowRight') $('#d-next').click();
+  if (e.key === 'ArrowLeft') $('#d-prev').click();
+});
+
+/* deep link: #login · #admin/A6 · #consent/S1 */
+const [hk, hid] = location.hash.slice(1).split('/');
+if (MODULES.some((m) => m.key === hk)) current = hk;
+render();
+if (hid && STEPS[hid]) openDrawer(hid);
+</script>
+</body>
+</html>
