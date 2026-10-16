@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เอกสาร PHCIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-800, 32px);
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--dim-space-800, 32px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px);
+  }
+  h1, h2 {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+    text-wrap: balance;
+  }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.5; }
+  h2 { font-size: var(--type-size-base, 16px); line-height: 1.5; }
+  .lede {
+    margin: var(--dim-space-100, 4px) 0 0;
+    max-width: 640px;
+    color: var(--text-content-secondary, #636B72);
+  }
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-400, 16px);
+  }
+  .group-head p {
+    margin: var(--dim-space-100, 4px) 0 0;
+    color: var(--text-content-secondary, #636B72);
+    font-size: var(--type-size-xs, 12px);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--dim-space-400, 16px);
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-300, 12px);
+    min-height: var(--dim-size-900, 44px);
+    padding: var(--dim-space-500, 20px);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border-radius: var(--dim-radius-500, 16px);
+    color: inherit;
+    text-decoration: none;
+    transition: box-shadow 200ms ease-out, border-color 200ms ease-out;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--border-brandPrimary-tertiary, #C5EDDA);
+  }
+  .card:focus-visible {
+    outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549);
+    outline-offset: var(--dim-stroke-200, 2px);
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: var(--dim-space-300, 12px);
+  }
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: var(--dim-size-800, 40px);
+    height: var(--dim-size-800, 40px);
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-brandPrimary-quaternary, #F4FBF8);
+    color: var(--icon-brandPrimary-default, #007549);
+    font-size: 20px;
+  }
+  .card-title {
+    margin: 0;
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-medium, 500);
+    color: var(--text-content-default, #363B3F);
+  }
+  .card-sum {
+    margin: 0;
+    font-size: var(--type-size-xs, 12px);
+    color: var(--text-content-secondary, #636B72);
+  }
+  .card-url {
+    display: flex;
+    align-items: center;
+    gap: var(--dim-space-100, 4px);
+    margin-top: auto;
+    padding-top: var(--dim-space-300, 12px);
+    border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    font-size: var(--type-size-xs, 12px);
+    color: var(--text-brandPrimary-default, #007549);
+    overflow-wrap: anywhere;
+  }
+  .card-url .material-symbols-outlined { font-size: 16px; margin-left: auto; }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    line-height: 1;
+    user-select: none;
+  }
+  .foot {
+    margin: 0;
+    color: var(--text-content-tertiary, #858C92);
+    font-size: var(--type-size-xs, 12px);
+  }
+  @media (max-width: 1023px) {
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 639px) {
+    .page { padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1000, 40px); }
+    .cards { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>เอกสาร PHCIS</h1>
+    <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
+  </header>
+
+  <section class="group" aria-labelledby="g-design">
+    <div class="group-head">
+      <h2 id="g-design">Design system</h2>
+      <p>token สี ขนาด ตัวอักษร และ component ที่ใช้ในระบบ อัปเดตอัตโนมัติจากโค้ดจริง</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://namonlims.github.io/bma-design-system/">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Tokens</span></span>
+        <p class="card-sum">สี ระยะ ขนาด ตัวอักษร เงา และมุมโค้งทั้งหมด</p>
+        <span class="card-url">bma-design-system<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="https://namonlims.github.io/bma-design-system/reference.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">widgets</span><span class="card-title">Reference</span></span>
+        <p class="card-sum">component พร้อมตัวอย่างและวิธีใช้</p>
+        <span class="card-url">bma-design-system/reference<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="https://namonlims.github.io/bma-design-system/history.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">history</span><span class="card-title">History</span></span>
+        <p class="card-sum">ประวัติการแก้ component และ token</p>
+        <span class="card-url">bma-design-system/history<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g-rules">
+    <div class="group-head">
+      <h2 id="g-rules">กติกาและเงื่อนไข</h2>
+      <p>สรุปพฤติกรรมของระบบสำหรับ BA จัดกลุ่มและตรวจทาน</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="consent-display-conditions.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">assignment_turned_in</span><span class="card-title">เงื่อนไขการแสดงแบบฟอร์มความยินยอม</span></span>
+        <p class="card-sum">54 แบบฟอร์ม · กรองตามงานและเงื่อนไข · ดาวน์โหลด Excel</p>
+        <span class="card-url">consent-display-conditions<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g-app">
+    <div class="group-head">
+      <h2 id="g-app">ระบบ Demo</h2>
+      <p>แอปจริงที่ใช้สาธิต</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://bma-health.mih.co.th/">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">desktop_windows</span><span class="card-title">PHCIS Demo</span></span>
+        <p class="card-sum">ระบบสารสนเทศศูนย์บริการสาธารณสุข</p>
+        <span class="card-url">bma-health.mih.co.th<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="https://bma-health.mih.co.th/components">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">view_quilt</span><span class="card-title">Components Library</span></span>
+        <p class="card-sum">component ที่ทำงานได้จริงในแอป</p>
+        <span class="card-url">bma-health.mih.co.th/components<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <p class="foot">อัปเดต 17 ตุลาคม 2569</p>
+</main>
+</body>
+</html>
