@@ -584,9 +584,9 @@ select {
 
 <div class="page-header">
   <h1>Service Blueprint · MIH PHCIS</h1>
-  <span class="badge"><span class="ms" style="font-size:14px">stethoscope</span> Patient Journey ข้ามแผนก</span>
+  <span class="badge"><span class="ms" style="font-size:14px">stethoscope</span> เส้นทางผู้รับบริการข้ามแผนก</span>
   <span class="badge"><span class="ms" style="font-size:14px">grid_view</span> 12 Phases × 5 Layers</span>
-  <span class="sub">รวมเส้นทางผู้ป่วย OPD ตั้งแต่เดินเข้า รพ. จนถึงจบ Encounter + Claims + ระบบเบื้องหลัง (อ้างอิงจาก Workflow ทั้ง 11 ไฟล์)</span>
+  <span class="sub">เส้นทางผู้รับบริการ 1 ครั้งที่ศูนย์บริการสาธารณสุข ตั้งแต่รับบัตรคิวถึงกลับบ้านและส่งเบิกตามสิทธิ · อ้างอิง flow-spec ฉบับร่าง + กติกาในระบบ · อัปเดต 17 ต.ค. 69</span>
 </div>
 
 <div class="controls">
@@ -604,11 +604,11 @@ select {
 </div>
 
 <div class="legend">
-  <span><span class="swatch" style="background:var(--surface-success-quaternary);border:1px solid rgba(31,157,85,0.4)"></span>Evidence · สิ่งที่ผู้ป่วยสัมผัส</span>
-  <span><span class="swatch" style="background:var(--surface-info-quaternary);border:1px solid rgba(31,111,235,0.4)"></span>Customer · การกระทำผู้ป่วย</span>
+  <span><span class="swatch" style="background:var(--surface-success-quaternary);border:1px solid rgba(31,157,85,0.4)"></span>Evidence · สิ่งที่ผู้รับบริการสัมผัส</span>
+  <span><span class="swatch" style="background:var(--surface-info-quaternary);border:1px solid rgba(31,111,235,0.4)"></span>Customer · ผู้รับบริการทำ</span>
   <span><span class="swatch" style="background:#FFF3D6;border:1px solid rgba(166,109,0,0.4)"></span>Frontstage · หน้างาน (เห็น)</span>
   <span><span class="swatch" style="background:var(--pastel-lilac);border:1px solid rgba(106,79,228,0.4)"></span>Backstage · หลังบ้าน (ไม่เห็น)</span>
-  <span><span class="swatch" style="background:var(--pastel-coral);border:1px solid rgba(212,56,56,0.4)"></span>Support · ระบบ HCIS/LIS/RIS/ERP</span>
+  <span><span class="swatch" style="background:var(--pastel-coral);border:1px solid rgba(212,56,56,0.4)"></span>Support · ระบบ PHCIS (คิว · ทะเบียน · สิทธิ · คลัง)</span>
 </div>
 
 <div class="main">
@@ -623,125 +623,128 @@ select {
 </div>
 
 <script>
-/* ─── Phases (12 columns, time-ordered patient journey).
-   `icon` = Material Symbols Outlined glyph name (matches PHCIS code via <Sym> helper). */
+/* ─── Phases (12 คอลัมน์ ตามลำดับการมารับบริการ 1 ครั้งที่ศูนย์บริการสาธารณสุข)
+   อ้างอิง docs/flow-spec-draft.md §1 · .claude/rules/* (อัปเดต 17 ต.ค. 69)
+   src = หน้าในระบบ Demo · srcName = route · icon = Material Symbols */
+const DEMO = 'https://bma-health.mih.co.th';
 const PHASES = [
-  { k:'arrival',     n:'มาถึง รพ.',         icon:'meeting_room',       src:null,                              srcName:null },
-  { k:'kiosk',       n:'รับคิว',             icon:'confirmation_number', src:'03_Queue_Kiosk_Workflow.html',    srcName:'Queue/Kiosk Workflow' },
-  { k:'registration',n:'เวชระเบียน',         icon:'assignment_ind',     src:'02_MedRecord_Workflow.html',      srcName:'Medical Records' },
-  { k:'triage',      n:'พยาบาลคัดกรอง',       icon:'monitor_heart',      src:'04_NurseCounter_Workflow.html',   srcName:'Nurse Counter' },
-  { k:'consult',     n:'พบแพทย์',            icon:'stethoscope',        src:'05_Doctor_CPOE_Workflow.html',    srcName:'Doctor Room & CPOE' },
-  { k:'lab',         n:'ห้องแล็บ',            icon:'biotech',            src:'06_Lab_LIS_Workflow.html',        srcName:'Lab & LIS' },
-  { k:'xray',        n:'รังสีวิทยา',          icon:'radiology',          src:'07_Radiology_Workflow.html',      srcName:'Radiology & RIS/PACS' },
-  { k:'pharmacy',    n:'เภสัช OPD',           icon:'pill',               src:'09_Pharmacy_OPD_Workflow.html',   srcName:'Pharmacy OPD' },
-  { k:'billing',     n:'การเงิน',             icon:'payments',           src:'08_Finance_Workflow.html',        srcName:'Billing & Finance' },
-  { k:'discharge',   n:'กลับบ้าน',            icon:'directions_walk',    src:'01_OPD_Workflow.html',            srcName:'OPD Workflow' },
-  { k:'claims',      n:'เคลม',               icon:'request_quote',      src:'12_Claims_Workflow.html',         srcName:'Claims' },
-  { k:'accounting',  n:'บัญชี/คลัง',          icon:'inventory_2',        src:'10_Inventory_Workflow.html',      srcName:'Inventory' },
+  { k:'kiosk',        n:'รับบัตรคิว',             icon:'confirmation_number', src:DEMO + '/queue-center',          srcName:'/queue-center' },
+  { k:'registration', n:'เวชระเบียน',             icon:'assignment_ind',      src:DEMO + '/registration/queue',    srcName:'/registration/queue' },
+  { k:'triage',       n:'คัดกรองกลาง',            icon:'monitor_heart',       src:DEMO + '/opd/queue',             srcName:'/opd/queue' },
+  { k:'clinic',       n:'คัดกรองคลินิก',          icon:'local_hospital',      src:null,                            srcName:'คลินิกพิเศษเท่านั้น' },
+  { k:'consult',      n:'แพทย์ตรวจ + CPOE',       icon:'stethoscope',         src:DEMO + '/treat/queue',           srcName:'/treat/queue' },
+  { k:'orders',       n:'แล็บ · เอกซเรย์',        icon:'biotech',             src:DEMO + '/lab/queue',             srcName:'/lab/queue · /xray/queue' },
+  { k:'exit',         n:'พยาบาลหลังตรวจ',         icon:'assignment_turned_in',src:DEMO + '/exit',                  srcName:'/exit' },
+  { k:'pharmacy',     n:'ห้องเภสัช (ยืนยันยา)',   icon:'pill',                src:DEMO + '/pharmacy/queue',        srcName:'/pharmacy/queue' },
+  { k:'billing',      n:'การเงิน · ปิดสิทธิ',     icon:'payments',            src:DEMO + '/finance',               srcName:'/finance' },
+  { k:'dispense',     n:'กลับมารับยา',            icon:'medication',          src:DEMO + '/pharmacy/dispense',     srcName:'/pharmacy/dispense' },
+  { k:'discharge',    n:'กลับบ้าน · นัด',         icon:'directions_walk',     src:null,                            srcName:'จบ Visit' },
+  { k:'claims',       n:'ส่งเบิกตามสิทธิ',        icon:'request_quote',       src:DEMO + '/rights',                srcName:'/rights' },
 ];
 
-/* ─── Layers (5 rows) — Material Symbols icon names ─── */
+/* ─── Layers (5 แถว) ─── */
 const LAYERS = [
   { k:'evidence',   en:'Physical Evidence', th:'สิ่งที่สัมผัส/เห็น',     icon:'visibility' },
-  { k:'customer',   en:'Customer Actions',  th:'การกระทำผู้ป่วย',       icon:'person' },
-  { k:'frontstage', en:'Frontstage',        th:'หน้างาน (ผู้ป่วยเห็น)', icon:'support_agent' },
+  { k:'customer',   en:'Customer Actions',  th:'ผู้รับบริการทำ',         icon:'person' },
+  { k:'frontstage', en:'Frontstage',        th:'หน้าบ้าน (ผู้รับบริการเห็น)', icon:'support_agent' },
   { k:'backstage',  en:'Backstage',         th:'หลังบ้าน (ไม่เห็น)',     icon:'engineering' },
   { k:'support',    en:'Support',           th:'ระบบสนับสนุน',         icon:'settings_suggest' },
 ];
 
-/* ─── Blueprint data: phaseKey -> layerKey -> [touchpoints] ─── */
+/* ─── Blueprint: phaseKey → layerKey → [touchpoints] · "(เดโม: …)" = ตกลงแล้วแต่ระบบ Demo ยังไม่เชื่อม ─── */
 const BP = {
-  arrival: {
-    evidence:  ['ป้ายโรงพยาบาล', 'แผนผังภายใน', 'จุดประชาสัมพันธ์'],
-    customer:  ['เดินเข้า รพ.', 'มองหาแผนก/Kiosk'],
-    frontstage:['พนักงาน รปภ./ประชาสัมพันธ์ แนะนำทาง'],
-    backstage: [],
-    support:   [],
-  },
   kiosk: {
-    evidence:  ['ตู้ Kiosk หน้าจอสัมผัส', 'บัตรคิวกระดาษ + QR Code'],
-    customer:  ['สแกนบัตรประชาชน', 'เลือกแผนก', 'รับบัตรคิว'],
-    frontstage:['เจ้าหน้าที่ช่วยใช้งาน (ถ้าจำเป็น)'],
-    backstage: [],
-    support:   ['Queue Engine สร้าง Visit ID', 'ส่งแจ้งเตือนผ่าน SMS/LINE', 'จอแสดงคิวสาธารณะ'],
+    evidence:  ['ตู้ Kiosk', 'บัตรคิว', 'จอเรียกคิว'],
+    customer:  ['เลือก Walk-in / มีนัด / ลงทะเบียนผ่านแอป', 'รับบัตรคิว', 'รอเรียกที่เวชระเบียน'],
+    frontstage:['เจ้าหน้าที่ศูนย์คิวช่วยใช้ตู้'],
+    backstage: ['เรียกคิว · พักคิว · ข้ามคิว'],
+    support:   ['ศูนย์คิว: รอเรียก → กำลังเรียก → กำลังให้บริการ → เสร็จสิ้น', '(เดโม: ยังไม่ส่งต่อคิวเวชระเบียนอัตโนมัติ)'],
   },
   registration: {
-    evidence:  ['บัตร HN พิมพ์ใหม่', 'ใบสรุปสิทธิ์'],
-    customer:  ['ยื่นบัตรประชาชน', 'ตอบคำถามสิทธิ์', 'รอเรียก'],
-    frontstage:['เจ้าหน้าที่เวชระเบียนยืนยันตัวบุคคล', 'ออกบัตร HN ใหม่ (ถ้ายังไม่มี)'],
-    backstage: ['Coder ตรวจสิทธิ์ NHSO', 'ดึงประวัติเดิมจาก EMR'],
-    support:   ['HCIS Patient Profile', 'NHSO API ดึงสิทธิ์', 'สร้าง Encounter Record'],
+    evidence:  ['บัตรประชาชน / Passport / บัตรชมพู', 'แบบฟอร์มความยินยอม (รายใหม่)', 'แจ้งเตือนค้างชำระเก่า (ถ้ามี)'],
+    customer:  ['ยื่นบัตร · ยืนยันตัวตน', 'ลงนามความยินยอม (รายใหม่ / มาครั้งแรกหลังลงทะเบียนแอป)', 'ญาติมารับยาแทน → ใช้ HN ผู้ป่วย'],
+    frontstage:['เจ้าหน้าที่เวชระเบียนยืนยันตัวตน', 'ลงทะเบียน / แก้ข้อมูล → "บันทึกและส่งต่อ"', '"ส่งตรวจ (เปิด Visit)"'],
+    backstage: ['รายเก่าที่ลงนามแล้ว: ความยินยอมดูได้ใน ⋮ ไม่ลงนามซ้ำ', 'มารับยาแทน: ข้ามคัดกรองไปแพทย์'],
+    support:   ['ทะเบียนผู้รับบริการ (HN) · ออก VN', 'ทะเบียนค้างชำระ', '(เดโม: ส่งข้อมูลแล้ว แต่ยังไม่มีแถวในคิวคัดกรอง)'],
   },
   triage: {
-    evidence:  ['เครื่องวัดความดัน/อุณหภูมิ', 'Label sticker ติดเสื้อ'],
-    customer:  ['ให้วัด BP/Temp/Pulse', 'บอกอาการสำคัญ (CC)', 'ตอบ Pain Score'],
-    frontstage:['พยาบาลวัด Vitals', 'พยาบาลซักประวัติ', 'พยาบาล Triage ESI'],
-    backstage: ['พยาบาลบันทึก EMR Vitals + CC'],
-    support:   ['HCIS บันทึก Vitals', 'CDS เตือนค่าผิดปกติ', 'ส่ง Doctor Work List'],
+    evidence:  ['เครื่องวัดสัญญาณชีพ', 'ป้ายสถานะคิว รอคัดกรอง / กำลังคัดกรอง'],
+    customer:  ['วัดสัญญาณชีพ', 'ตอบซักประวัติ · แพ้ยา · ยาประจำ', 'ติ๊ก "มาฟังผล" → ไปแพทย์เลย'],
+    frontstage:['พยาบาลคัดกรอง: สัญญาณชีพ → ซักประวัติ → แบบประเมิน', 'ESI ฉุกเฉิน → ปุ่มแดง "ส่งห้องแพทย์"', '"บันทึกและส่งต่อ" → เลือกคลินิก (ได้ 2) และแพทย์'],
+    backstage: ['แพ้ยา / ยาประจำ / นำยามา → เภสัชกรประเมินยา แล้วกลับมาคัดกรองต่อ', 'ไม่ระบุแพทย์ → คิวรวมรอรับเคส'],
+    support:   ['ผลคัดกรองชุดเดียว ทุกจุดอ่านร่วมกัน', 'คิวรวม: รอแพทย์รับเคส → รับเคสแล้ว', '(เดโม: เลือกแพทย์ระบุชื่อ ยังไม่ขึ้นคิวแพทย์)'],
+  },
+  clinic: {
+    evidence:  ['แบบประเมินของคลินิก', 'แบบฟอร์มความยินยอมคลินิก (ครั้งแรก)'],
+    customer:  ['ตอบแบบประเมินของคลินิก', 'ลงนามความยินยอมคลินิก (ถ้ายังไม่เคย)'],
+    frontstage:['พยาบาลคัดกรองคลินิก (หลังคัดกรองกลางเสมอ)', 'เบาหวาน · ความดัน · ทันตกรรม มีขั้น "ตรวจสอบข้อมูล"', '"บันทึกและส่งต่อ" → เลือกแพทย์คลินิก'],
+    backstage: ['เคยลงนามแล้ว → ขั้นความยินยอมอยู่ใน ⋮', 'ฟื้นฟู · กายภาพ · สังคมสงเคราะห์ ไม่มีพยาบาลคัดกรอง'],
+    support:   ['ทะเบียนคลินิก (ขึ้นทะเบียนเมื่อรายใหม่)', '(เดโม: คัดกรองคลินิก → แพทย์คลินิก ยังไม่เชื่อม)'],
   },
   consult: {
-    evidence:  ['ใบสั่ง Lab / X-Ray / ยา'],
-    customer:  ['เล่าอาการ', 'ตอบ HPI/PMH/Allergy', 'ฟังแผนการรักษา'],
-    frontstage:['แพทย์ซักประวัติ', 'แพทย์ตรวจร่างกาย (PE)', 'แพทย์อธิบาย Diagnosis + Plan'],
-    backstage: ['แพทย์บันทึก EMR SOAP', 'แพทย์สั่ง CPOE: Lab/X-Ray/ยา', 'แพทย์ใส่ ICD-10'],
-    support:   ['HCIS EMR/CPOE', 'CDS Drug Interaction Alert', 'HL7 ORM ส่งไปยัง LIS/RIS/Pharmacy พร้อมกัน'],
+    evidence:  ['ใบสั่งยา · ใบนัด', 'ใบรับรองแพทย์ (ถ้าขอ)'],
+    customer:  ['เล่าอาการ · รับการตรวจ', 'ฟังผลวินิจฉัยและแผนการรักษา'],
+    frontstage:['แพทย์: สรุปคัดกรอง → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'ส่งปรึกษา (คลินิกในศูนย์ · Telemedicine)', '"บันทึกและส่งต่อ" → ส่งต่อ / นัด'],
+    backstage: ['สั่งยา · แล็บ · เอกซเรย์ · นัดหมาย ใน CPOE', 'ส่งต่อนอกศูนย์ → ใบส่งตัว + ความยินยอม Health Link'],
+    support:   ['ใบสั่งยาเข้าคิวห้องเภสัชทันทีที่แพทย์จบ', 'EKG · CXR ส่ง PACS อัตโนมัติ', 'ข้อมูลไม่ครบไม่บล็อกการจบ'],
   },
-  lab: {
-    evidence:  ['หลอดเก็บเลือด Barcode', 'ใบรายงานผลแล็บ'],
-    customer:  ['ยืนยันตัวตน (ชื่อ+วันเกิด)', 'ถูกเจาะเลือด/เก็บปัสสาวะ'],
-    frontstage:['เจ้าหน้าที่ Phlebotomist เก็บตัวอย่าง'],
-    backstage: ['นักเทคนิคแล็บปั่นแยกตัวอย่าง', 'รันเครื่องวิเคราะห์ + QC', 'อนุมัติผล + Delta Check'],
-    support:   ['LIS รับ HL7 ORM', 'Auto-Analyzer ASTM', 'HL7 ORU ส่งกลับ HCIS', 'Critical alert → แพทย์'],
+  orders: {
+    evidence:  ['หลอดเก็บตัวอย่าง', 'เครื่องเอกซเรย์'],
+    customer:  ['เจาะเลือด / เก็บตัวอย่าง', 'ถ่ายภาพเอกซเรย์', 'รอผล หรือนัดฟังผล'],
+    frontstage:['เจ้าหน้าที่แล็บเก็บตัวอย่าง', 'นักรังสีเทคนิคถ่ายภาพ'],
+    backstage: ['แล็บ: รอรับคำขอ → กำลังตรวจ → รอรับรองผล → รายงานผลแล้ว', 'เอกซเรย์: รอดำเนินการ → รอบันทึกผล → ยืนยันผล (รังสีแพทย์)'],
+    support:   ['ผลกลับกล่องผลตรวจของแพทย์', 'ส่งตรวจภายนอกได้', '(เดโม: CPOE แล็บ/เอกซเรย์อื่น ยังไม่ขึ้นคิวแผนก)'],
   },
-  xray: {
-    evidence:  ['เครื่อง X-Ray/CT/MRI', 'CD ภาพ DICOM (ตามคำขอ)'],
-    customer:  ['เปลี่ยนเสื้อ', 'ถูกถ่ายภาพ X-Ray/CT'],
-    frontstage:['เจ้าหน้าที่รังสีเตรียมผู้ป่วย', 'เจ้าหน้าที่รังสีถ่ายภาพ'],
-    backstage: ['รังสีแพทย์อ่านภาพใน PACS', 'รังสีแพทย์เขียน Report', 'โทรแจ้ง Critical Finding'],
-    support:   ['RIS Modality Worklist', 'PACS DICOM Store', 'HL7 ORU Report กลับ EMR'],
+  exit: {
+    evidence:  ['เอกสาร / ใบรับรองแพทย์', 'ใบนัดครั้งถัดไป'],
+    customer:  ['รับคำแนะนำการใช้ยาและดูแลตนเอง', 'ยืนยันวันนัด', 'รับเอกสาร'],
+    frontstage:['พยาบาลหลังตรวจ: ตรวจร่างกายและวินิจฉัย → CPOE → เอกสาร', '"บันทึกและส่งกลับ"', 'ยังมีคลินิกที่ 2 → "ส่งต่อไป…" ก่อนกลับบ้าน'],
+    backstage: ['ปิดคิว → คลินิกที่ 2 เข้าคิวรวม (ไม่ระบุแพทย์)', 'ระหว่างนี้เภสัชกรจัดยารอได้'],
+    support:   ['คิวหลังตรวจ: รอส่งกลับ → กำลังส่งกลับ → ส่งต่อแล้ว', '(เดโม: เข้าคิวอัตโนมัติเฉพาะคนที่มีคลินิกที่ 2)'],
   },
   pharmacy: {
-    evidence:  ['ซองยา+ฉลาก', 'เอกสารคำแนะนำการใช้ยา'],
-    customer:  ['ยืนยันตัวตน 2 ข้อมูล', 'ฟัง Counseling', 'รับยา + เซ็นรับ'],
-    frontstage:['เภสัชกรเรียกชื่อ', 'เภสัชกร Counseling', 'เภสัชกร 5 Rights Check'],
-    backstage: ['Clinical Pharmacist Review', 'จัดยา + พิมพ์ฉลาก', 'ตัดสต็อค FEFO'],
-    support:   ['HCIS รับ Drug Order', 'Inventory ตัดสต็อค Lot/Exp', 'MAR บันทึก Dispensing'],
+    evidence:  ['สถานะ "รอชำระเงิน/ปิดสิทธิ"'],
+    customer:  ['รอเภสัชกรยืนยันรายการยา', 'ไปการเงินก่อนรับยา'],
+    frontstage:['เภสัชกรแจ้งยอดยาและให้ไปการเงิน'],
+    backstage: ['เภสัชกรยืนยันรายการยา (ก่อนนี้การเงินออกบิลไม่ได้)', 'จัดยาเตรียมไว้'],
+    support:   ['คิวห้องยา: รอเภสัชยืนยันรายการยา → รอชำระเงิน/ปิดสิทธิ → พร้อมจ่ายยา'],
   },
   billing: {
-    evidence:  ['ใบเสร็จกระดาษ/e-Receipt', 'QR PromptPay'],
-    customer:  ['ยื่นบัตรคิว', 'ตรวจสอบยอด', 'จ่ายเงิน (สด/บัตร/QR)'],
-    frontstage:['เจ้าหน้าที่การเงินคิดเงิน', 'อธิบายส่วนลด/สิทธิ์ครอบคลุม'],
-    backstage: ['Billing คำนวณ Co-pay', 'ตรวจรายการ Drug/Lab/X-Ray'],
-    support:   ['Billing System จาก EMR/CPOE', 'Payment Gateway (ธนาคาร)', 'พิมพ์ e-Receipt'],
+    evidence:  ['ใบเสร็จ (Electronic / กระดาษ)', 'QR Code ชำระเงิน'],
+    customer:  ['ชำระ: เงินสด · สแกน QR · เช็ค · บัตรเครดิต (≥ 1,000 บาท +1%)', 'บัตรทอง: ปิดสิทธิ (Smart Card · ThaiD)'],
+    frontstage:['เจ้าหน้าที่การเงินเลือกรายการ (รวมหนี้เก่า)', 'ไม่ใช่เงินสด → "ตรวจสอบการรับเงิน" ก่อน', '"บันทึกและออกใบเสร็จ"'],
+    backstage: ['ลดหย่อน: ส่งนักสังคมสงเคราะห์ · เกิน 500 บาท → ผอ.ศูนย์', 'ยกเลิกใบเสร็จข้ามวัน / พิมพ์สำเนา → ขออนุมัติ'],
+    support:   ['ปลดล็อกห้องยา "พร้อมจ่ายยา"', 'บัตรทองยังไม่ปิดสิทธิ = ค้างชำระ · ประกันสังคมเบิกตรง = รอเงินส่วนกลาง', 'ทะเบียนรายรับ · ตัดรอบ'],
+  },
+  dispense: {
+    evidence:  ['ซองยา + ฉลาก', 'คำแนะนำการใช้ยา'],
+    customer:  ['กลับมารับยาที่ห้องเภสัช', 'ฟังวิธีใช้ยา'],
+    frontstage:['เภสัชกรจ่ายยา + อธิบายวิธีใช้'],
+    backstage: ['บันทึกจ่ายแล้ว / จ่ายบางส่วน / ไม่มารับยา', 'บริบาลเภสัชกรรม · ADR · Med error (ถ้ามี)'],
+    support:   ['ตัดสต็อกห้องยา', 'แพ้ยาบันทึกลงประวัติผู้รับบริการชุดเดียว'],
   },
   discharge: {
-    evidence:  ['ใบนัด follow-up', 'ใบรับรองแพทย์ (ถ้าขอ)'],
-    customer:  ['ตรวจของ/ของฝาก', 'รับใบนัดครั้งหน้า', 'เดินทางกลับ'],
-    frontstage:['พยาบาลอธิบายขั้นตอนกลับบ้าน'],
-    backstage: ['ปิด Encounter ใน EMR'],
-    support:   ['HCIS ปิด Visit', 'ส่งแจ้งเตือน follow-up (Mobile App)'],
+    evidence:  ['ใบนัด', 'แจ้งเตือนนัดในแอป'],
+    customer:  ['กลับบ้าน', 'มาตามนัดครั้งถัดไป'],
+    frontstage:[],
+    backstage: ['นัดล่วงหน้าเข้าคิว "นัดล่วงหน้า" ของคลินิก', 'ไม่มาตามนัด → แท็บ "ไม่มาตามนัด"'],
+    support:   ['ปิด Visit', 'Pre-order แล็บล่วงหน้าตามนัด'],
   },
   claims: {
     evidence:  [],
     customer:  [],
     frontstage:[],
-    backstage: ['Coder วิเคราะห์ Discharge Summary', 'ใส่ ICD-10 / ICD-9-CM', 'DRG Grouper คำนวณ RW', 'ตรวจคุณภาพ Coding'],
-    support:   ['ส่ง e-Claim สปสช. (UC/EMS)', 'ส่ง e-Claim ประกันสังคม', 'NHSO Acknowledgement/Error', 'ส่ง 43 แฟ้ม → สปสช.'],
-  },
-  accounting: {
-    evidence:  [],
-    customer:  [],
-    frontstage:[],
-    backstage: ['นักบัญชี Journal Entry', 'คลังยาตรวจ Reorder Point', 'PR/PO/GR ผ่าน ERP'],
-    support:   ['BMA-ERP GL Posting', 'Inventory FEFO + Bin Location', 'Physical Count Reconcile'],
+    backstage: ['ตรวจรายการเบิกต่อ Visit: รอตรวจสอบ → ยืนยันแล้ว / ต้องแก้ไข', 'Close Visit → พร้อมส่ง e-Claim', 'นำเข้า REP / Statement กระทบยอด'],
+    support:   ['เชื่อมต่อ e-Claim / สปสช.', 'ส่งไม่ได้ → คิวรอส่งใหม่', 'รายงานสิทธิและการเบิกจ่าย'],
   },
 };
 
-/* ─── Cross-cutting / background processes ─── */
+/* ─── งานคู่ขนาน / งานเบื้องหลัง ─── */
 const BG_PROCESSES = [
-  { name:'Telemedicine (Alternative Path)', src:'11_Telemedicine_Workflow.html', desc:'ทางเลือกแทน Phase 4-5 — ผู้ป่วยปรึกษาผ่าน Video Call แทนการเดินมา รพ. (16 steps).' },
-  { name:'Drug & Medical Supply Inventory', src:'10_Inventory_Workflow.html',    desc:'ทำงานต่อเนื่องเบื้องหลังตลอดเวลา — เติมยาเข้าคลังหลัก/ย่อย ตัด FEFO ตอน Pharmacy dispense (18 steps).' },
-  { name:'Claims Reconciliation',           src:'12_Claims_Workflow.html',       desc:'ทำงานหลังจบ Visit — Coder ทำ ICD-10/DRG ส่ง e-Claim สปสช./สปส./กรมบัญชีกลาง รับเงิน + reconcile กับ Billing (18 steps).' },
+  { name:'ส่งปรึกษา vs ส่งต่อ', src:'system-user-flow.html#consult-refer', desc:'ส่งปรึกษา = ขอความเห็นคลินิกในศูนย์ คนยังอยู่ที่เดิม · ส่งต่อ = ย้ายการดูแล (ในศูนย์ / ศบส. อื่น / โรงพยาบาล ต้องผ่านการเงินก่อน)' },
+  { name:'Telemedicine', src:DEMO + '/telemed', desc:'ส่งปรึกษาผ่าน Telemedicine: จองเวลาที่ทุกคนว่าง เปิดห้อง ผู้รับกด "รับทราบ" หรือ "ปฏิเสธ"' },
+  { name:'คลังศูนย์ · คลังห้องยา', src:DEMO + '/center-warehouse', desc:'เติมยาและเวชภัณฑ์เข้าคลัง ตัดสต็อกตอนจ่ายยา ทำต่อเนื่องเบื้องหลัง' },
+  { name:'User flow ตามคลินิก', src:'system-user-flow.html', desc:'เส้นทางแยก 17 คลินิก ขยายดูขั้นย่อยได้ ดูได้ทั้งแบบ User flow และ Service Design' },
 ];
 
 let curPhase = -1, playing = false, timer = null, spd = 2200;
@@ -797,8 +800,8 @@ function init() {
     });
 
     /* Lines after specific layers */
-    if (ly.k === 'customer')   addLineRow(bp, 'interaction', '── Line of Interaction · ระหว่างผู้ป่วยและพนักงาน ──');
-    if (ly.k === 'frontstage') addLineRow(bp, 'visibility',  '── Line of Visibility · ผู้ป่วยเห็น vs ไม่เห็น ──');
+    if (ly.k === 'customer')   addLineRow(bp, 'interaction', '── Line of Interaction · ระหว่างผู้รับบริการและเจ้าหน้าที่ ──');
+    if (ly.k === 'frontstage') addLineRow(bp, 'visibility',  '── Line of Visibility · ผู้รับบริการเห็น vs ไม่เห็น ──');
     if (ly.k === 'backstage')  addLineRow(bp, 'internal',    '── Line of Internal Interaction · พนักงาน ↔ ระบบ ──');
   });
 }
@@ -855,10 +858,10 @@ function showInfo() {
     '<div class="pt"><span class="ms" style="font-size:26px;color:var(--text-brandPrimary-default);margin-right:8px">' + ph.icon + '</span>' + ph.n + '</div>';
 
   if (ph.src) {
-    html += '<div class="pi">Source workflow</div>';
+    html += '<div class="pi">หน้าในระบบ Demo</div>';
     html += '<a class="src" href="' + ph.src + '" target="_blank" rel="noopener"><span class="ms" style="font-size:14px">folder_open</span> ' + ph.srcName + ' <span class="ms" style="font-size:14px">north_east</span></a>';
   } else {
-    html += '<div class="pi">Patient touchpoint phase (ไม่มี workflow แยก)</div>';
+    html += '<div class="pi">' + (ph.srcName || 'จุดสัมผัสของผู้รับบริการ') + '</div>';
   }
 
   html += renderSec('evidence',   'visibility',       'Physical Evidence',  data.evidence);
@@ -868,7 +871,7 @@ function showInfo() {
   html += renderSec('support',    'settings_suggest', 'Support Processes',  data.support);
 
   if (curPhase === PHASES.length - 1) {
-    html += '<div class="bg-process"><h4><span class="ms" style="font-size:14px;vertical-align:-2px">sync</span> Cross-cutting Background Processes</h4>';
+    html += '<div class="bg-process"><h4><span class="ms" style="font-size:14px;vertical-align:-2px">sync</span> งานคู่ขนาน · ดูเพิ่ม</h4>';
     BG_PROCESSES.forEach(bg => {
       html += '<div class="item"><b>' + bg.name + '</b>' + bg.desc + ' <a href="' + bg.src + '" target="_blank" rel="noopener">เปิด <span class="ms" style="font-size:12px">north_east</span></a></div>';
     });
