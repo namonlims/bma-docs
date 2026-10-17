@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>User flow ทั้งระบบ</title>
+<meta name="description" content="เส้นทางผู้รับบริการ 1 ครั้งตั้งแต่ Kiosk ถึงกลับบ้าน ดูได้ทั้งแบบ User flow และ Service Design พร้อมเงื่อนไขทุกจุดแยก ส่งปรึกษา vs ส่งต่อ คลินิกพิเศษ งานบำบัด และสถานะคิว" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: var(--type-size-xl, 20px);
+    line-height: 1;
+    user-select: none;
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-800, 32px);
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--dim-space-600, 24px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px);
+  }
+  h1, h2, h3 {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+    text-wrap: balance;
+  }
+  h1 { font-size: var(--type-size-2xl, 24px); }
+  h2 { font-size: var(--type-size-lg, 18px); }
+  h3 { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .back {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-900, 44px);
+    font-size: var(--type-size-xs, 12px);
+    text-decoration: none;
+  }
+  .back .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .lede { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); max-width: 760px; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
+    margin-top: var(--dim-space-300, 12px);
+    font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92);
+  }
+  .meta b { color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); }
+
+  /* section nav */
+  .toc {
+    position: sticky; top: 0; z-index: 5;
+    margin: 0 calc(-1 * var(--dim-space-600, 24px));
+    padding: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
+    background: var(--brand-p50, #F4FBF8);
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    display: flex; gap: var(--dim-space-200, 8px);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc a {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center;
+    min-height: var(--dim-size-900, 44px);
+    padding: 0 var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    color: var(--text-content-default, #363B3F);
+    text-decoration: none; white-space: nowrap;
+  }
+  .toc a:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+
+  .sec { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .sec-head p { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .panel {
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border-radius: var(--dim-radius-500, 16px);
+    padding: var(--dim-space-500, 20px);
+    min-width: 0;
+  }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-300, 12px) var(--dim-space-600, 24px); align-items: center; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .legend span.k { display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .sw { display: inline-block; width: var(--dim-space-600, 24px); height: var(--dim-space-400, 16px); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-default, #007549); background: var(--surface-card-100, #FFFFFF); }
+  .sw.pill { border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-default, #007549); }
+  .sw.step { border-radius: var(--dim-radius-200, 8px); }
+  .sw.dia { width: var(--dim-space-400, 16px); transform: rotate(45deg); border-color: var(--text-colorfulbadge-orange, #C2410C); background: var(--surface-colorfulbadge-orange, #FFEDD5); }
+  .sw.opt { border-radius: var(--dim-radius-200, 8px); border-color: var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .sw.grp { border-radius: var(--dim-radius-200, 8px); border-width: var(--dim-stroke-200, 2px); box-shadow: var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 0 var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .sw.tgt { border-radius: var(--dim-radius-200, 8px); border-style: dashed; }
+
+  /* badges */
+  .badge {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    padding: 0 var(--dim-space-200, 8px);
+    border-radius: var(--dim-radius-full, 9999px);
+    font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500);
+    line-height: 1.7; white-space: nowrap;
+  }
+  .b-blue   { background: var(--surface-colorfulbadge-blue, #DBEAFE);   color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .b-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .b-teal   { background: var(--surface-colorfulbadge-teal, #D1F6EE);   color: var(--text-colorfulbadge-teal, #196C65); }
+  .b-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .b-red    { background: var(--surface-colorfulbadge-red, #FEE2E2);    color: var(--text-colorfulbadge-red, #B91C1C); }
+  .b-grey   { background: var(--surface-colorfulbadge-grey, #F5F7F9);  color: var(--text-colorfulbadge-grey, #4D5358); }
+  .b-green  { background: var(--surface-colorfulbadge-green, #E2F3EB);  color: var(--text-colorfulbadge-green, #007549); }
+  .b-indigo { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+
+  /* flow chart — ไหลซ้าย → ขวา · เลื่อนแนวนอนในกล่องของตัวเอง */
+  .chart-panel { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .hint { display: flex; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .hint .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .chart-box {
+    overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-neutral-quaternary, #F9FBFB);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+  }
+  .uf-canvas { position: relative; }
+  .uf-edges { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .uf-edges path { fill: none; stroke: var(--text-content-tertiary, #858C92); stroke-width: var(--dim-stroke-150, 1.5px); }
+  .uf-edges .ah { fill: none; stroke: var(--text-content-tertiary, #858C92); stroke-width: var(--dim-stroke-150, 1.5px); }
+  .uf-edges .ah.hot, .uf-edges .hot path { stroke: var(--border-brandPrimary-default, #007549); stroke-width: var(--dim-stroke-200, 2px); }
+  .uf-edges text {
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-xs, 12px); fill: var(--text-content-secondary, #636B72);
+    paint-order: stroke; stroke: var(--surface-neutral-quaternary, #F9FBFB); stroke-width: var(--dim-space-100, 4px); stroke-linejoin: round;
+  }
+  .uf-edges .hot text { fill: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .uf-node {
+    position: absolute; display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    font: inherit; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.35;
+    color: var(--text-content-default, #363B3F);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-150, 1.5px) solid var(--border-brandPrimary-default, #007549);
+    border-radius: var(--dim-radius-200, 8px);
+    cursor: pointer;
+    transition: box-shadow 200ms ease-out;
+  }
+  .uf-node:hover { box-shadow: var(--shadow-card); }
+  .uf-node:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: var(--dim-stroke-200, 2px); }
+  .uf-node.is-active { box-shadow: 0 0 0 var(--dim-space-100, 4px) var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .uf-node.target { border-style: dashed; }
+  .uf-node .lbl { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .uf-node .tag { font-size: var(--type-size-xxs, 10px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .uf-node.start {
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549);
+    color: var(--text-content-on-primary, #FFFFFF);
+  }
+  .uf-node.option { background: var(--surface-neutral-tertiary, #F4F5F5); border-color: var(--border-neutral-tertiary, #E2E4E6); }
+  .uf-node.dec { background: transparent; border: 0; padding: var(--dim-space-500, 20px); }
+  .uf-node.dec::before {
+    content: ''; position: absolute; inset: 19px;
+    transform: rotate(45deg);
+    background: var(--surface-colorfulbadge-orange, #FFEDD5);
+    border: var(--dim-stroke-150, 1.5px) solid var(--text-colorfulbadge-orange, #C2410C);
+    border-radius: var(--dim-radius-100, 4px);
+  }
+  .uf-node.dec:hover { box-shadow: none; }
+  .uf-node.dec:hover::before, .uf-node.dec.is-active::before { box-shadow: 0 0 0 var(--dim-space-100, 4px) var(--surface-colorfulbadge-orange, #FFEDD5); }
+  .uf-node.dec.is-active { box-shadow: none; }
+
+  /* detail drawer (ขวา) · bottom sheet บนมือถือ */
+  .detail {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 20;
+    width: min(420px, 100vw);
+    overflow-y: auto; display: flex; flex-direction: column; gap: var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-500, 16px) 0 0 var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-card-strong, var(--shadow-card));
+    transform: translateX(100%); visibility: hidden;
+    transition: transform 200ms ease-out, visibility 200ms;
+  }
+  .detail.open { transform: none; visibility: visible; }
+  .detail .d-top { display: flex; align-items: flex-start; gap: var(--dim-space-300, 12px); }
+  .detail .d-kind { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .detail .d-top h3 { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .detail .d-sum { margin: var(--dim-space-100, 4px) 0 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .x {
+    margin-left: auto; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+    width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px);
+    border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent; color: var(--icon-content-secondary, #636B72); cursor: pointer;
+  }
+  .x:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); align-items: center; font-size: var(--type-size-xs, 12px); }
+  .grp { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); padding-top: var(--dim-space-400, 16px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .grp-h { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); }
+  .kv dt { color: var(--text-content-tertiary, #858C92); }
+  .kv dd { margin: 0; color: var(--text-content-default, #363B3F); overflow-wrap: anywhere; }
+  .kv code, td code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); }
+  ul.bul { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); }
+  .scrim { display: none; }
+  .scrim.open { display: block; position: fixed; inset: 0; z-index: 15; background: var(--surface-overlay-default, rgba(17, 19, 20, 0.4)); }
+  /* เลือกคลินิก */
+  .clinic-pick { display: flex; gap: var(--dim-space-200, 8px); overflow-x: auto; scrollbar-width: thin; padding-bottom: var(--dim-space-100, 4px); }
+  .clinic-pick button {
+    flex: 0 0 auto; min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-full, 9999px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F);
+    font: inherit; white-space: nowrap; cursor: pointer;
+  }
+  .clinic-pick button:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+  .clinic-pick button[aria-pressed="true"] { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-primary, #FFFFFF); }
+  .clinic-sum { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .clinic-sum .cs-top { display: flex; align-items: flex-start; gap: var(--dim-space-300, 12px); }
+  .clinic-sum .cs-ic { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); }
+  .clinic-sum h3 { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .clinic-sum p { margin: var(--dim-space-100, 4px) 0 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  /* ขั้นที่ขยายได้ */
+  .uf-node.group { border-width: var(--dim-stroke-200, 2px); box-shadow: var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 calc(-1 * var(--dim-stroke-100, 1px)) var(--surface-card-100, #FFFFFF), var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 0 var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .uf-node.group:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .uf-node .more { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); margin-top: var(--dim-space-100, 4px); padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-tertiary, #E2F3EB); color: var(--text-brandPrimary-default, #007549); font-size: var(--type-size-xxs, 10px); }
+  .uf-node .more .material-symbols-outlined { font-size: var(--type-size-xs, 12px); }
+  .band {
+    position: absolute;
+    border: var(--dim-stroke-150, 1.5px) dashed var(--border-brandPrimary-default, #007549);
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-brandPrimary-quaternary, #F4FBF8);
+  }
+  .band-h { position: absolute; top: var(--dim-space-100, 4px); left: var(--dim-space-200, 8px); right: var(--dim-space-200, 8px); display: flex; align-items: center; gap: var(--dim-space-100, 4px); }
+  .band-collapse, .band-info {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-700, 36px); padding: 0 var(--dim-space-300, 12px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #C5EDDA); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-brandPrimary-default, #007549);
+    font: inherit; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); cursor: pointer; white-space: nowrap;
+  }
+  .band-info { padding: 0; width: var(--dim-size-700, 36px); justify-content: center; }
+  .band-collapse .material-symbols-outlined, .band-info .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .band-collapse:hover, .band-info:hover { border-color: var(--border-brandPrimary-default, #007549); }
+  .add-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--dim-space-400, 16px) var(--dim-space-600, 24px); }
+  .add-info .grp, .panel.add-info .grp:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+  .add-info { align-items: start; }
+
+  /* สลับมุมมอง User flow / Service Design */
+  .view-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+  .seg { display: inline-flex; padding: var(--dim-space-100, 4px); gap: var(--dim-space-100, 4px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .seg button {
+    display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px);
+    min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border: var(--dim-stroke-100, 1px) solid transparent; border-radius: var(--dim-radius-full, 9999px);
+    background: transparent; color: var(--text-content-secondary, #636B72);
+    font: inherit; white-space: nowrap; cursor: pointer;
+  }
+  .seg button .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  .seg button:hover { color: var(--text-brandPrimary-default, #007549); }
+  .seg button[aria-pressed="true"] { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .view-row .hint { flex: 1 1 280px; }
+  body:not([data-view="bp"]) .bp-only { display: none !important; }
+  .sw.cust { border-radius: var(--dim-radius-200, 8px); border-color: var(--text-colorfulbadge-blue, #1D4ED8); background: var(--surface-colorfulbadge-blue, #DBEAFE); }
+  .sw.tp { height: 0; border: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--text-colorfulbadge-blue, #1D4ED8); background: transparent; }
+
+  /* เส้น: หักมุมโค้ง · ป้ายเป็นแถบบนเส้น · ชี้กล่องแล้วเส้นที่เกี่ยวข้องเด่น ที่เหลือจาง */
+  .uf-edges text { stroke: none; dominant-baseline: central; }
+  .uf-edges rect.lb { fill: var(--surface-card-100, #FFFFFF); stroke: var(--border-neutral-tertiary, #E2E4E6); stroke-width: var(--dim-stroke-100, 1px); }
+  .uf-edges .hot rect.lb { stroke: var(--border-brandPrimary-default, #007549); }
+  .uf-edges g { transition: opacity 150ms ease-out; }
+  .uf-edges.dim g:not(.hot) { opacity: var(--opacity-disabled, 0.5); }
+  .uf-edges .tp path { stroke: var(--text-colorfulbadge-blue, #1D4ED8); stroke-dasharray: 4 4; }
+  .uf-edges .cj path, .uf-edges .cj .ah { stroke: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .uf-node { z-index: 1; }
+  .uf-edges.uf-labels { z-index: 2; }
+  .uf-node.cust { background: var(--surface-colorfulbadge-blue, #DBEAFE); border-color: var(--text-colorfulbadge-blue, #1D4ED8); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+
+  /* Service Design: เลน */
+  .lane { position: absolute; left: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-quaternary, #F9FBFB); }
+  .lane.lane-cust, .lane.lane-back { background: var(--surface-card-100, #FFFFFF); }
+  .lane-l {
+    position: sticky; left: 0; z-index: 3;
+    display: flex; flex-direction: column; justify-content: center; gap: var(--dim-space-100, 4px);
+    height: 100%; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    background: inherit; border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92);
+  }
+  .lane-l .badge { align-self: flex-start; }
+  .lane-l .ln { position: absolute; top: var(--dim-space-100, 4px); left: var(--dim-space-300, 12px); font-size: var(--type-size-xxs, 10px); }
+  .uf-canvas.bp .band { background: transparent; }
+  .uf-canvas.bp .band-h { z-index: 2; }
+  @media (max-width: 767px) { .lane-l .d, .lane-l .ln { display: none; } .lane-l .badge { white-space: normal; } }
+
+  /* tables */
+  .tbl-box { overflow-x: auto; border-radius: var(--dim-radius-400, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--type-size-xs, 12px); }
+  th, td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  th { background: var(--surface-neutral-quaternary, #F9FBFB); color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  tr.gh td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); font-size: var(--type-size-xs, 12px); }
+  td.c { text-align: center; }
+  table.matrix { min-width: 960px; }
+
+  /* compare cards */
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--dim-space-400, 16px); }
+  .card-h { display: flex; align-items: center; gap: var(--dim-space-300, 12px); }
+  .card-h .ic { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); }
+  .card-h p { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .panel .grp:first-of-type { margin-top: var(--dim-space-400, 16px); }
+
+  .foot { margin: 0; color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+
+  /* responsive */
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); gap: var(--dim-space-600, 24px); }
+    .toc { margin: 0 calc(-1 * var(--dim-space-400, 16px)); padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+    .panel { padding: var(--dim-space-400, 16px); }
+    .detail {
+      top: auto; left: 0; width: auto; max-height: min(80dvh, 640px);
+      border-radius: var(--dim-radius-500, 16px) var(--dim-radius-500, 16px) 0 0;
+      padding-bottom: calc(var(--dim-space-500, 20px) + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+    }
+    /* stacked rows for the conditions table */
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack thead { display: none; }
+    table.stack tr { padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+    table.stack tr.gh { padding: 0; }
+    table.stack td { border: 0; padding: var(--dim-space-100, 4px) 0; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: var(--dim-space-300, 12px); }
+    table.stack td::before { content: attr(data-l); color: var(--text-content-tertiary, #858C92); }
+    table.stack td .badge { justify-self: start; }
+    table.stack td[data-l="จุด"] { display: none; }
+    table.stack tr.gh td { display: block; padding: var(--dim-space-300, 12px); }
+    table.stack tr.gh td::before { content: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .node, .detail { transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <a class="back" href="index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
+    <h1>User flow ทั้งระบบ PHCIS</h1>
+    <p class="lede">เส้นทางผู้รับบริการ 1 ครั้ง ตั้งแต่ Kiosk ถึงกลับบ้าน พร้อมเงื่อนไขทุกจุดแยกทาง ให้ทีมเห็นภาพเดียวกัน กดกล่องเพื่อดูหน้า บทบาท และปุ่มสุดท้าย</p>
+    <div class="meta">
+      <span><b>อ้างอิง</b> flow-spec ฉบับร่าง · .claude/rules ของแต่ละคลินิก · Kaebrain · หน้าจอในเดโม · TOR 1.5.6</span>
+      <span><b>อัปเดต</b> 17 ต.ค. 69</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="หัวข้อในหน้า">
+    <a href="#journey">1 · เส้นทางตามคลินิก</a>
+    <a href="#conditions">2 · เงื่อนไขทั้งหมด</a>
+    <a href="#consult-refer">3 · ส่งปรึกษา vs ส่งต่อ</a>
+    <a href="#clinics">4 · คลินิกพิเศษ</a>
+    <a href="#addiction">5 · งานบำบัดยาเสพติด</a>
+    <a href="#status">6 · สถานะคิว</a>
+    <a href="#pending">7 · รอตัดสินใจ</a>
+  </nav>
+
+  <!-- 1 -->
+  <section class="sec" id="journey" aria-labelledby="h-journey">
+    <div class="sec-head">
+      <h2 id="h-journey">1 · เส้นทางตามคลินิก</h2>
+      <p>กล่องเส้นประ = เป้าหมายที่ตกลงแล้ว แต่ระบบ Demo ยังไม่เชื่อมต่อขั้นถัดไปให้อัตโนมัติ</p>
+    </div>
+    <div class="legend" aria-label="คำอธิบายสัญลักษณ์">
+      <span class="k"><span class="sw pill"></span>เริ่ม / จบ</span>
+      <span class="k"><span class="sw step"></span>ขั้นงาน (ทำงานได้ในเดโม)</span>
+      <span class="k"><span class="sw tgt"></span>ขั้นงาน (เป้าหมาย ยังไม่เชื่อม)</span>
+      <span class="k"><span class="sw dia"></span>เงื่อนไข / ทางแยก</span>
+      <span class="k"><span class="sw opt"></span>ทางเลือก</span>
+      <span class="k"><span class="sw grp"></span>ขั้นที่ขยายได้</span>
+      <span class="k bp-only"><span class="sw cust"></span>สิ่งที่ผู้รับบริการทำ</span>
+      <span class="k bp-only"><span class="sw tp"></span>จุดที่ผู้รับบริการพบเจ้าหน้าที่</span>
+    </div>
+    <div class="panel chart-panel">
+      <span class="grp-h">ผู้รับบริการต้องการเข้าคลินิกไหน</span>
+      <div class="clinic-pick" id="clinic-pick" role="group" aria-label="เลือกคลินิก"></div>
+      <div class="clinic-sum" id="clinic-sum"></div>
+      <div class="view-row">
+        <div class="seg" id="view-seg" role="group" aria-label="มุมมองแผนภาพ">
+          <button type="button" data-view="uf" aria-pressed="true"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span>User flow</button>
+          <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_agenda</span>Service Design</button>
+        </div>
+        <span class="hint"><span class="material-symbols-outlined" aria-hidden="true">swipe</span><span id="view-hint"></span></span>
+      </div>
+      <div class="chart-box" id="chart-main"></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="sec" id="conditions" aria-labelledby="h-cond">
+    <div class="sec-head">
+      <h2 id="h-cond">2 · เงื่อนไขทั้งหมดในที่เดียว</h2>
+      <p>ถ้าเจอกรณีนี้ ระบบพาไปไหน เรียงตามจุดบริการ</p>
+    </div>
+    <div class="tbl-box">
+      <table class="stack">
+        <thead><tr><th>จุด</th><th>ถ้า…</th><th>ระบบทำ</th><th>สถานะในเดโม</th></tr></thead>
+        <tbody id="cond-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="sec" id="consult-refer" aria-labelledby="h-cr">
+    <div class="sec-head">
+      <h2 id="h-cr">3 · ส่งปรึกษา vs ส่งต่อ</h2>
+      <p>สองงานนี้ไม่ใช่อย่างเดียวกัน ดูว่าการดูแลยังอยู่ที่เดิม หรือย้ายไปปลายทาง</p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">forum</span><div><h3>ส่งปรึกษา</h3><p>ขอความเห็น ผู้รับบริการยังอยู่ในการตรวจครั้งนี้</p></div></div>
+        <div class="grp">
+          <span class="grp-h">กดจากที่ไหน</span>
+          <dl class="kv">
+            <dt>แพทย์</dt><dd>แท็บ "ส่งปรึกษา" ในสั่งการรักษา (CPOE)</dd>
+            <dt>วิชาชีพอื่น</dt><dd>ปุ่มหัวแฟ้ม "ส่งปรึกษา" · ทันตแพทย์ · เภสัชกร · นักสังคมสงเคราะห์ · นักจิตวิทยา · พยาบาลคัดกรองสุขภาพจิต</dd>
+            <dt>ปลายทาง</dt><dd>คลินิกในศูนย์เดียวกันเท่านั้น (ไม่มี "ส่งปรึกษาภายนอกศูนย์")</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">ในศูนย์ (ทะเบียน /treat/consult)</span>
+          <dl class="kv">
+            <dt>ช่องบนใบ</dt><dd>วันเวลา · คลินิก · แพทย์ · ประเภท · วินิจฉัย · รายละเอียด · พิมพ์</dd>
+            <dt>สถานะ</dt><dd><span class="badge b-grey">ร่าง</span> → <span class="badge b-blue">ส่งแล้ว</span> → <span class="badge b-orange">รับเรื่องแล้ว</span> → <span class="badge b-teal">ตอบกลับแล้ว</span> · <span class="badge b-red">ยกเลิก</span></dd>
+            <dt>นัดเมื่อไร</dt><dd>กด "ส่ง" = นัดปรึกษาแล้ว ไม่ต้องรอปลายทางรับเรื่อง</dd>
+            <dt>รับเรื่อง</dt><dd>แพทย์/บุคลากรปลายทางกด = รับทราบ (acknowledge) ไม่ใช่ด่านอนุมัติ</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">ผ่าน Telemedicine</span>
+          <dl class="kv">
+            <dt>ผู้ขอ</dt><dd>เลือกวิชาชีพ · ประเภท · ช่วงเวลาที่ทุกคนว่าง · ผู้ให้คำปรึกษาวิชาชีพละ 1 คน → "ส่งปรึกษา"</dd>
+            <dt>ระบบ</dt><dd>จองเวลา · เปิดห้อง Telemedicine</dd>
+            <dt>ผู้รับ</dt><dd>แท็บ "ปรึกษา (Consult) › ให้คำปรึกษา" + To-Do → "รับทราบ" หรือ "ปฏิเสธ" (ใส่เหตุผล)</dd>
+            <dt>แจ้งกลับ</dt><dd>การ์ดแจ้งเตือน · กระดิ่ง ของผู้ขอ</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">move_up</span><div><h3>ส่งต่อ</h3><p>การดูแลย้ายไปที่ปลายทาง ใช้ป๊อปอัป "ส่งต่อ"</p></div></div>
+        <div class="grp">
+          <span class="grp-h">3 ขอบเขต</span>
+          <dl class="kv">
+            <dt>ภายในศูนย์</dt><dd>ปลายทางเดียวต่อครั้ง · เวชระเบียน / คัดกรอง / ห้องแพทย์ / พยาบาลหลังตรวจ</dd>
+            <dt>ศบส. อื่น</dt><dd>ในสำนักอนามัย → แวะห้องการเงินปิดสิทธิก่อน</dd>
+            <dt>โรงพยาบาล</dt><dd>นอกสำนักอนามัย → ใบส่งตัว + ความยินยอม Health Link → การเงิน</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">กรณีพิเศษ</span>
+          <ul class="bul">
+            <li>ติ๊ก "ส่งต่อต่างประเทศ" → ไม่ต้องเลือกโรงพยาบาล · ใบส่งตัวภาษาอังกฤษ ("แปลเป็นภาษาอังกฤษ")</li>
+            <li>ส่งต่อนักสังคมสงเคราะห์ → ต้องเลือก "เหตุผล / ข้อควรระวัง" อย่างน้อย 1 ข้อ</li>
+            <li>ติ๊ก "ส่งปรึกษาผ่าน Telemedicine" ในป๊อปอัปนี้ได้ · การส่งต่อยังไปด้วย</li>
+          </ul>
+        </div>
+        <div class="grp">
+          <span class="grp-h">มักสับสน</span>
+          <ul class="bul">
+            <li>เขียน "ปรึกษาแพทย์เฉพาะทาง" ในช่องความต้องการของใบส่งต่อ = ยังเป็น <b>ส่งต่อ</b></li>
+            <li>ปลายทางกับแพทย์ที่เลือกจากขั้นก่อน แสดงเป็นข้อความ ไม่ให้เลือกซ้ำ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="sec" id="clinics" aria-labelledby="h-cl">
+    <div class="sec-head">
+      <h2 id="h-cl">4 · คลินิกพิเศษ: ใครทำ และขั้นของแพทย์</h2>
+      <p>(C) = ขั้นความยินยอม ซ่อนไปไว้ใน ⋮ ถ้าเคยลงนามแล้ว · "ตรวจสอบข้อมูล" มีเฉพาะเบาหวาน · ความดัน · ทันตกรรม</p>
+    </div>
+    <div class="tbl-box">
+      <table class="matrix">
+        <thead><tr><th>คลินิก</th><th>พยาบาลคัดกรอง</th><th>พยาบาลหลังตรวจ</th><th>ขั้นของแพทย์</th><th>ขั้นสุดท้าย</th><th>ทะเบียน</th><th>บทบาทอื่น</th></tr></thead>
+        <tbody id="clinic-body"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>ทุกคลินิกเหมือนกัน</h3>
+      <dl class="kv" style="margin-top: var(--dim-space-300, 12px);">
+        <dt>พยาบาลคัดกรอง</dt><dd>(C) → แบบประเมิน → เลือกคลินิกและแพทย์ → "บันทึกและส่งต่อ" (ป๊อปอัปเติมคลินิก/แพทย์ที่เลือกให้แล้ว)</dd>
+        <dt>พยาบาลหลังตรวจ</dt><dd><code>/exit/record</code> → [สถานะความยินยอม · ยกเว้น OPD · แพทย์แผนไทย · เบาหวาน · ความดัน] → ตรวจร่างกายและวินิจฉัย → CPOE → เอกสาร/ใบรับรองแพทย์ → "บันทึกและส่งกลับ"</dd>
+        <dt>ขั้นหลัง CPOE</dt><dd>ทุกคลินิกยกเว้นทันตกรรม มี "แผนการดูแลรักษา" ต่อจาก CPOE</dd>
+        <dt>ท้ายฟอร์ม</dt><dd>"ตรวจสอบความครบถ้วน (ขาด N)" มีทุกหน้า ไม่ใช่ขั้น</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="sec" id="addiction" aria-labelledby="h-ad">
+    <div class="sec-head">
+      <h2 id="h-ad">5 · งานบำบัดยาเสพติด</h2>
+      <p>แผนภาพอยู่ในข้อ 1 (เลือก "งานบำบัด") · 4 คลินิก: ก้าวใหม่ · เมทาโดน/BNX · บุหรี่ · แอลกอฮอล์ · หลังแพทย์วางแผน ไปได้ทางเดียว</p>
+    </div>
+    <div>
+      <div class="panel add-info">
+        <div class="grp">
+        <span class="grp-h">สถานะในคอลัมน์ "การส่งต่อ / สถานะ"</span>
+        <div class="chips">
+          <span class="badge b-grey">ยังไม่ขึ้นทะเบียน</span><span class="badge b-blue">รักษาในคลินิก</span><span class="badge b-orange">รอปลายทางรับ</span><span class="badge b-purple">บ้านพิชิตใจ</span><span class="badge b-teal">จำหน่ายแล้ว</span>
+        </div>
+        </div>
+        <div class="grp">
+          <span class="grp-h">จำนวนครั้งตามระดับ (ก้าวใหม่ ใช้ทุกคลินิก)</span>
+          <dl class="kv"><dt>ผู้ใช้</dt><dd>1–2 ครั้ง</dd><dt>ผู้เสพ</dt><dd>4–8 ครั้ง</dd><dt>ผู้ติด</dt><dd>8–16 ครั้ง</dd><dt>After Care</dt><dd>4–7 ครั้ง/ปี</dd></dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">กติกา</span>
+          <ul class="bul">
+            <li>ผู้รับบริการใหม่ ขึ้นทะเบียนได้ทุกบทบาท · แก้ทะเบียนเฉพาะแพทย์</li>
+            <li>ยังไม่ขึ้นทะเบียน = ยังไม่มีความคืบหน้าคอร์ส (0%)</li>
+            <li>ครั้งที่บำบัดนับจากครั้งแรกของคอร์ส ไม่นับวันพบแพทย์</li>
+            <li>จบการคัดกรองได้เมื่อทำ OAS แล้ว</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="sec" id="status" aria-labelledby="h-st">
+    <div class="sec-head">
+      <h2 id="h-st">6 · สถานะคิว</h2>
+      <p>สถานะเดียว = ความหมายเดียวในทุกคิว · ตัวเลขในแท็บ = ตัวเลขในเมนูข้าง</p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <h3>ชุดมาตรฐาน (คิวผู้รับบริการ)</h3>
+        <div class="tbl-box" style="margin-top:var(--dim-space-300,12px);">
+          <table>
+            <thead><tr><th>ความหมาย</th><th>ป้าย</th><th>แท็บ</th></tr></thead>
+            <tbody>
+              <tr><td>รอ</td><td><span class="badge b-blue">รอตรวจ</span> <span class="badge b-blue">รอคัดกรอง</span></td><td>คิววันนี้</td></tr>
+              <tr><td>อยู่ห้องยา (คัดกรอง)</td><td><span class="badge b-purple">รอห้องยาประเมิน</span></td><td>คิววันนี้</td></tr>
+              <tr><td>กำลังทำ</td><td><span class="badge b-orange">กำลังตรวจ</span> <span class="badge b-orange">กำลังคัดกรอง</span></td><td>คิววันนี้</td></tr>
+              <tr><td>ร่าง</td><td><span class="badge b-orange">บันทึกไม่เสร็จ</span></td><td>คิววันนี้</td></tr>
+              <tr><td>เสร็จ</td><td><span class="badge b-teal">ตรวจเสร็จแล้ว</span> <span class="badge b-teal">คัดกรองแล้ว</span></td><td>ตรวจเสร็จแล้ว</td></tr>
+              <tr><td>นัดแต่ยังไม่มา</td><td><span class="badge b-purple">นัดแล้วยังไม่มา</span></td><td>—</td></tr>
+              <tr><td>ยกเลิก (แถวยังอยู่)</td><td><span class="badge b-red">ยกเลิกนัด</span></td><td>ยกเลิกนัด</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>คิวของแผนก (คำของแผนกเอง)</h3>
+        <dl class="kv" style="margin-top:var(--dim-space-300,12px);">
+          <dt>หลังตรวจ</dt><dd><span class="badge b-orange">รอส่งกลับ</span> → <span class="badge b-blue">กำลังส่งกลับ</span> → <span class="badge b-teal">ส่งต่อแล้ว</span> · <span class="badge b-grey">ยกเลิกคิว</span></dd>
+          <dt>คิวรวม</dt><dd><span class="badge b-orange">รอแพทย์รับเคส</span> → <span class="badge b-teal">รับเคสแล้ว</span></dd>
+          <dt>ห้องยา</dt><dd>รอเภสัชยืนยันรายการยา → รอชำระเงิน/ปิดสิทธิ → พร้อมจ่ายยา → จ่ายแล้ว / จ่ายบางส่วน · ไม่มารับยา · มีปัญหา · ยกเลิก</dd>
+          <dt>การเงิน</dt><dd>รอชำระเงิน → ชำระแล้ว · ยกเลิกใบเสร็จ</dd>
+          <dt>แล็บ</dt><dd>รอรับคำขอ → รอเก็บ/รับตัวอย่าง → กำลังตรวจ → (ส่งตรวจภายนอก) → รอรับรองผล → รายงานผลแล้ว · ปฏิเสธตัวอย่าง · รอเจาะซ้ำ</dd>
+          <dt>เอกซเรย์</dt><dd>รอรับรายการ → (นัดตรวจ) → รอดำเนินการ → รอบันทึกผล → บันทึกผลแล้ว → ยืนยันผล</dd>
+          <dt>ศูนย์คิว</dt><dd>รอเรียก → กำลังเรียก → กำลังให้บริการ → เสร็จสิ้น · พักคิว · ข้ามคิว · ยกเลิก</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="sec" id="pending" aria-labelledby="h-pe">
+    <div class="sec-head">
+      <h2 id="h-pe">7 · รอตัดสินใจ และจุดที่เดโมยังไม่ตรง</h2>
+      <p>ทีมใช้ส่วนนี้คุยต่อ ตอบเป็นเลขข้อได้</p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <h3>คำถามที่ยังไม่มีคำตอบ</h3>
+        <div class="tbl-box" style="margin-top:var(--dim-space-300,12px);">
+          <table>
+            <thead><tr><th>ข้อ</th><th>คำถาม</th><th>ตัวเลือก</th></tr></thead>
+            <tbody>
+              <tr><td>Q3</td><td>หน้าบันทึกงานสังคมสงเคราะห์ถาวร ใช้แบบไหน</td><td>ก. หน้าเฉพาะ (จบที่ ส.ส.2)<br />ข. เทมเพลตคลินิก</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>ตกลงแล้ว แต่เดโมยังไม่ส่งต่อให้อัตโนมัติ</h3>
+        <ul class="bul" style="margin-top:var(--dim-space-300,12px);">
+          <li>Kiosk → เวชระเบียน ยังไม่เชื่อม</li>
+          <li>เวชระเบียน → คัดกรองกลาง ยังส่งเฉพาะข้อมูล ไม่มีแถวในคิวคัดกรอง</li>
+          <li>คัดกรองกลาง เลือกแพทย์ระบุชื่อ → ยังไม่ขึ้นในคิวแพทย์</li>
+          <li>คัดกรองคลินิก → แพทย์คลินิก ยังไม่เชื่อม</li>
+          <li>แพทย์จบ → พยาบาลหลังตรวจ เข้าคิวอัตโนมัติเฉพาะคนที่มีคลินิกลำดับที่ 2 (คนอื่นยังเป็นข้อมูลตัวอย่าง)</li>
+          <li>CPOE แล็บ / เอกซเรย์ → คิวแผนก ยังไม่เชื่อม (EKG · CXR เชื่อมแล้ว)</li>
+          <li>สถานะ "รอห้องยาประเมิน" ในคิวคัดกรอง ยังไม่แสดง</li>
+          <li>กายภาพบำบัด · สังคมสงเคราะห์ จบแล้วยังไม่เปิดป๊อปอัปส่งต่อ</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">ที่มา: <code>docs/flow-spec-draft.md</code> · <code>.claude/rules/staff-condition-flow.md</code> ใน bma.health · แก้ flow แล้วต้องอัปเดตหน้านี้ด้วย · <a href="user-flow.html">Userflow Map ฉบับเดิม (พ.ค. 69)</a></p>
+</main>
+<div class="scrim" id="scrim"></div>
+<aside class="panel detail" id="detail" aria-live="polite" aria-hidden="true" aria-label="รายละเอียดขั้นตอน"></aside>
+
+<script src="system-user-flow-clinics.js"></script>
+<script>
+/* ---------- แผนภาพ: เลือกคลินิก · ไหลซ้าย → ขวา · กดขั้นที่มี "＋" เพื่อขยาย (เปิดได้ทีละขั้น) ---------- */
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const COLW = 204, ROWH = 150, ROWH_BP = 140, PAD = 28;
+const SIZE = { start: [140, 56], action: [160, 72], option: [140, 60], dec: [124, 124], group: [172, 84], cust: [148, 52] };
+const NS = 'http://www.w3.org/2000/svg';
+const KIND = { start: 'เริ่ม / จบ', action: 'ขั้นงาน', option: 'ทางเลือก', dec: 'เงื่อนไข', group: 'ขั้นที่ขยายได้', cust: 'ผู้รับบริการทำ' };
+
+const box = document.getElementById('chart-main');
+const pick = document.getElementById('clinic-pick');
+const sumEl = document.getElementById('clinic-sum');
+const detail = document.getElementById('detail');
+const scrim = document.getElementById('scrim');
+
+let clinic = null;      // คลินิกที่เลือก
+let expanded = null;    // id ของขั้นที่ขยายอยู่ (ทีละขั้น)
+let view = 'uf';        // uf = User flow · bp = Service Design (blueprint แบ่งเลน)
+let index = {};         // id → node (ทุกระดับ)
+let parentOf = {};      // child id → group id
+let edgeEls = [];
+
+function indexClinic(c) {
+  index = {}; parentOf = {};
+  c.flow.forEach((it) => {
+    index[it.id] = it;
+    (it.children || []).forEach((ch) => { index[ch.id] = ch; parentOf[ch.id] = it.id; });
+  });
+}
+
+function layout(c) {
+  const pos = {}; const bands = []; let cur = -1, lastStart = 0;
+  c.flow.forEach((it) => {
+    const start = it.same ? lastStart : cur + 1; let end = start;
+    if (it.children && expanded === it.id) {
+      let cc = start - 1; const rows = [];
+      it.children.forEach((ch, i) => { if (!(ch.same && i > 0)) cc++; const r = ch.row ?? (it.row ?? 1); pos[ch.id] = { col: cc, row: r }; rows.push(r); });
+      bands.push({ id: it.id, c0: start, c1: cc, r0: Math.min(...rows), r1: Math.max(...rows) });
+      end = cc;
+    } else pos[it.id] = { col: start, row: it.row ?? 1 };
+    lastStart = start; cur = Math.max(cur, end);
+  });
+  return { pos, bands };
+}
+
+/* edge endpoint → node ที่มองเห็น */
+function visible(id, pos, asSource) {
+  if (pos[id]) return id;
+  const g = index[id];
+  if (g && g.children && expanded === g.id) {
+    const kids = g.children;
+    const pick1 = asSource ? (g.exit || [...kids].reverse().find((k) => (k.row ?? 1) === (g.row ?? 1))?.id || kids[kids.length - 1].id) : (g.entry || kids[0].id);
+    return pick1;
+  }
+  if (parentOf[id] && pos[parentOf[id]]) return parentOf[id];
+  return null;
+}
+
+/* ---------- Service Design: แบ่งเลนตามผู้ทำงาน (ข้อมูลชุดเดียวกับ User flow) ---------- */
+const LANES = [
+  { k: 'cust', t: 'ผู้รับบริการ', d: 'ทำอะไร · เห็นอะไร', b: 'b-blue' },
+  { k: 'front', t: 'หน้าบ้าน', d: 'เจ้าหน้าที่ที่พบผู้รับบริการ', b: 'b-green', ln: 'เส้นปฏิสัมพันธ์' },
+  { k: 'back', t: 'หลังบ้าน', d: 'งานที่ผู้รับบริการไม่เห็น', b: 'b-orange', ln: 'เส้นที่ผู้รับบริการมองเห็น' },
+  { k: 'sys', t: 'ระบบสนับสนุน', d: 'คิว · Worklist · ทะเบียน', b: 'b-grey', ln: 'เส้นงานภายใน' },
+];
+const roleOf = (id) => index[id].role || index[parentOf[id]]?.role || '';
+
+/* lane ในข้อมูลมาก่อน · ไม่ใส่ = ดูจากชนิดและชื่อขั้น */
+function laneOf(id) {
+  const n = index[id]; if (n.lane) return n.lane;
+  const type = typeOf(id), t = n.t || '';
+  if (type === 'cust' || type === 'start') return 'cust';
+  if (/มารับยาแทน|มาฟังผล|ขอรับบริการเอง|Kiosk/.test(t)) return 'cust';
+  if (/^คิว|Worklist|^ทะเบียน(?!.*ช่วยเหลือ)/.test(t)) return 'sys';
+  if (/^(ส่งต่อ|ป๊อปอัป|รับเคส|ขึ้นทะเบียน|สรุปผล|ตรวจสอบ|อนุมัติ|ห้องยาประเมิน|ดูตัวอย่างรายงาน)/.test(t)) return 'back';
+  return 'front';
+}
+
+/* ผู้รับบริการทำอะไรที่จุดหน้าบ้าน · cust ในข้อมูลมาก่อน */
+function custText(id) {
+  const n = index[id]; if (n.cust) return n.cust;
+  const r = roleOf(id), t = n.t || '';
+  if (/เวชระเบียน/.test(r)) return 'ยื่นบัตร · ยืนยันตัวตน';
+  if (/พยาบาลหลังตรวจ/.test(r)) return 'รับคำแนะนำ · เอกสาร';
+  if (/การเงิน/.test(r)) return 'ชำระเงิน';
+  if (/^เภสัชกร/.test(r)) return 'รับยา';
+  if (/คัดกรอง/.test(r + t)) return 'รับการคัดกรอง';
+  if (/บ้านพิชิตใจ/.test(r)) return 'พักฟื้นฟูที่บ้านพิชิตใจ';
+  if (/ทีมงานบำบัด/.test(r)) return 'เข้ารับการบำบัด';
+  if (/แพทย์/.test(r)) return 'พบแพทย์';
+  if (/กายภาพ/.test(r)) return 'รับกายภาพบำบัด';
+  if (/นักสังคม/.test(r)) return 'พบนักสังคมสงเคราะห์';
+  if (/นักจิตวิทยา/.test(r)) return 'พบนักจิตวิทยา';
+  if (/โภชนาการ/.test(r)) return 'พบนักโภชนาการ';
+  return 'รับบริการ';
+}
+
+/* จัด pos ใหม่เป็นเลน: คอลัมน์เดิม · แถว = เลน + ลำดับในช่อง · เพิ่มกล่องผู้รับบริการ + เส้นจุดสัมผัส */
+function toLanes(pos, extra) {
+  const byCol = {}; const lastInGroup = {};
+  Object.keys(pos).sort((a, b) => pos[a].col - pos[b].col || pos[a].row - pos[b].row).forEach((id) => {
+    const ty = typeOf(id);
+    if (laneOf(id) !== 'front' || ty === 'dec' || ty === 'option') return;
+    const txt = custText(id), g = parentOf[id];
+    if (g && lastInGroup[g] === txt) return;          // ขั้นย่อยติดกันที่ผู้รับบริการทำเหมือนเดิม = กล่องเดียว
+    if (g) lastInGroup[g] = txt;
+    const key = pos[id].col + '|' + txt;
+    let c = byCol[key];
+    if (!c) { c = byCol[key] = { id: 'cu:' + id, type: 'cust', t: txt, ofs: [] }; index[c.id] = c; pos[c.id] = { col: pos[id].col, row: 99 }; }   // ล่างสุดของช่อง = ติดเลนหน้าบ้าน เส้นประไม่ผ่านกล่องอื่น
+    c.ofs.push(id);
+    extra.push({ s: c.id, t: id, label: '', mode: 'tp', cls: 'tp' });
+  });
+
+  const cells = {};
+  Object.keys(pos).forEach((id) => { const L = laneOf(id); ((cells[L] ??= {})[pos[id].col] ??= []).push(id); });
+  let r = 0; const lanes = [];
+  LANES.forEach((L) => {
+    const cols = Object.values(cells[L.k] || {});
+    cols.forEach((a) => a.sort((x, y) => pos[x].row - pos[y].row).forEach((id, i) => { pos[id] = { col: pos[id].col, row: r + i }; }));
+    const n = Math.max(1, ...cols.map((a) => a.length));
+    lanes.push({ ...L, r0: r, n }); r += n;
+  });
+
+  /* เส้นทางของผู้รับบริการ: ต่อกล่องในเลนบนตามลำดับคอลัมน์ */
+  const steps = Object.values(cells.cust || {}).sort((a, b) => pos[a[0]].col - pos[b[0]].col);
+  steps.slice(1).forEach((B, i) => {
+    const A = steps[i];
+    B.forEach((b) => extra.push({ s: A[0], t: b, label: '', mode: '', cls: 'cj' }));
+    A.slice(1).forEach((a) => extra.push({ s: a, t: B[0], label: '', mode: '', cls: 'cj' }));
+  });
+  return lanes;
+}
+
+/* เส้นหักมุมโค้ง */
+function rpath(pts, r = 10) {
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], [x2, y2] = pts[i + 1];
+    const l1 = Math.hypot(x1 - x0, y1 - y0), l2 = Math.hypot(x2 - x1, y2 - y1), k = Math.min(r, l1 / 2, l2 / 2);
+    if (!k) continue;
+    d += ` L${x1 - (x1 - x0) / l1 * k} ${y1 - (y1 - y0) / l1 * k} Q${x1} ${y1} ${x1 + (x2 - x1) / l2 * k} ${y1 + (y2 - y1) / l2 * k}`;
+  }
+  const [xn, yn] = pts[pts.length - 1];
+  return d + ` L${xn} ${yn}`;
+}
+
+const laneW = () => (matchMedia('(max-width: 767px)').matches ? 84 : 136);
+
+function render() {
+  const bp = view === 'bp';
+  Object.keys(index).forEach((k) => { if (k.startsWith('cu:')) delete index[k]; });
+  const { pos, bands } = layout(clinic);
+  const extra = [];
+  const lanes = bp ? toLanes(pos, extra) : null;
+  const RH = bp ? ROWH_BP : ROWH, TOP = bp ? 44 : 0, X0 = PAD + (bp ? laneW() : 0);
+  const ids = Object.keys(pos);
+  const rows = ids.map((id) => pos[id].row);
+  const minRow = bp ? 0 : Math.min(...rows);
+  const maxRow = bp ? lanes.at(-1).r0 + lanes.at(-1).n - 1 : Math.max(...rows);
+  const cols = Math.max(...ids.map((id) => pos[id].col)) + 1;
+  const cx = (id) => X0 + pos[id].col * COLW + COLW / 2;
+  const cy = (id) => PAD + TOP + (pos[id].row - minRow) * RH + RH / 2;
+  const rowTop = (id) => PAD + TOP + (pos[id].row - minRow) * RH;
+  const half = (id) => SIZE[typeOf(id)].map((v) => v / 2);
+
+  /* edges: แม็ปไปยัง node ที่มองเห็น · ตัดซ้ำ */
+  const seen = new Set(); const list = [];
+  const all = [...clinic.edges];
+  clinic.flow.forEach((g) => (g.edges || []).forEach((e) => all.push(e)));
+  all.forEach(([a, b, label, mode]) => {
+    const s = visible(a, pos, true), t = visible(b, pos, false);
+    if (!s || !t || s === t) return;
+    const k = s + '>' + t; if (seen.has(k)) return; seen.add(k);
+    const mapped = !(s === a && t === b);
+    const skip = pos[t].row === pos[s].row && ids.some((o) => pos[o].row === pos[s].row && pos[o].col > pos[s].col && pos[o].col < pos[t].col);
+    let m = mapped ? (skip ? 'over' : '') : (mode || '');
+    if (!m && skip) m = 'over';
+    if (!m && pos[t].col < pos[s].col) m = 'back';
+    if (!m && pos[t].col === pos[s].col && pos[t].row !== pos[s].row) m = pos[t].row > pos[s].row ? 'down' : 'up';
+    list.push({ s, t, label: mapped && m !== 'over' ? '' : (label || ''), mode: m });
+  });
+  extra.forEach((e) => { const k = e.s + '>' + e.t; if (seen.has(k)) return; seen.add(k); list.push(e); });
+  const backs = list.filter((e) => e.mode === 'back').length;
+  const bodyH = (maxRow - minRow + 1) * RH;
+  const W = X0 + PAD + cols * COLW;
+  const H = PAD * 2 + TOP + bodyH + (backs ? 16 + backs * 16 : 0);
+
+  box.innerHTML = '';
+  const canvas = document.createElement('div');
+  canvas.className = 'uf-canvas' + (bp ? ' bp' : '');
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+
+  (lanes || []).forEach((L) => {
+    const el = document.createElement('div');
+    el.className = `lane lane-${L.k}`;
+    el.style.top = PAD + TOP + L.r0 * RH + 'px'; el.style.height = L.n * RH + 'px'; el.style.width = W + 'px';
+    el.innerHTML = `<div class="lane-l" style="width:${X0 - PAD / 2}px">${L.ln ? `<span class="ln">${esc(L.ln)}</span>` : ''}<span class="badge ${L.b}">${esc(L.t)}</span><span class="d">${esc(L.d)}</span></div>`;
+    canvas.appendChild(el);
+  });
+
+  bands.forEach((b) => {
+    const g = index[b.id];
+    const el = document.createElement('div');
+    el.className = 'band';
+    el.style.left = X0 + b.c0 * COLW + 4 + 'px';
+    el.style.width = (b.c1 - b.c0 + 1) * COLW - 8 + 'px';
+    el.style.top = (bp ? PAD : PAD + (b.r0 - minRow) * RH + 2) + 'px';
+    el.style.height = (bp ? TOP + bodyH : (b.r1 - b.r0 + 1) * RH - 4) + 'px';
+    el.innerHTML = `<div class="band-h"><button type="button" class="band-collapse" data-collapse="${b.id}" aria-label="ย่อ ${esc(g.t)}"><span class="material-symbols-outlined" aria-hidden="true">unfold_less</span>${esc((g.n ? g.n + ' · ' : '') + g.t)}</button><button type="button" class="band-info" data-key="${b.id}" aria-label="รายละเอียด ${esc(g.t)}"><span class="material-symbols-outlined" aria-hidden="true">info</span></button></div>`;
+    canvas.appendChild(el);
+  });
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'uf-edges');
+  svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" class="ah"/></marker><marker id="ahh" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9" class="ah hot"/></marker></defs>';
+  let backN = 0;
+  const bandTop = (id) => { const b = bands.find((x) => pos[id] && pos[id].col >= x.c0 && pos[id].col <= x.c1 && pos[id].row === x.r0); return b ? PAD + (b.r0 - minRow) * RH + 4 : null; };
+  const labels = [];
+  /* ป้ายเส้นอยู่ชั้นบนสุด (เหนือกล่อง) ไม่ให้ถูกบัง */
+  const lsvg = document.createElementNS(NS, 'svg');
+  lsvg.setAttribute('class', 'uf-edges uf-labels');
+  lsvg.setAttribute('width', W); lsvg.setAttribute('height', H); lsvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  edgeEls = list.map((e) => {
+    const { s, t } = e; const [sw, sh] = half(s), [tw, th] = half(t);
+    let pts, lx, ly, anchor = 'middle';
+    if (e.mode === 'over') {
+      if (bp) {
+        /* Service Design: ออกขวา ขึ้นแถบบนสุดในช่องว่างระหว่างคอลัมน์ แล้วลงเข้าทางซ้าย ไม่ทับกล่องผู้รับบริการ */
+        const lane = PAD + TOP - 14, xs = cx(s) + sw + 14, xg = cx(t) - tw - 16;
+        pts = [[cx(s) + sw, cy(s)], [xs, cy(s)], [xs, lane], [xg, lane], [xg, cy(t)], [cx(t) - tw - 2, cy(t)]];
+        lx = xs + 14; ly = lane;
+      } else {
+        const lane = Math.max(8, (bandTop(s) ?? rowTop(s)) - 6);
+        pts = [[cx(s), cy(s) - sh], [cx(s), lane], [cx(t), lane], [cx(t), cy(t) - th - 2]];
+        lx = cx(s) + 14; ly = lane;
+      }
+      anchor = 'start';
+    } else if (e.mode === 'back') {
+      backN++;
+      const lane = PAD + TOP + bodyH + 8 + backN * 16;
+      pts = [[cx(s), cy(s) + sh], [cx(s), lane], [cx(t), lane], [cx(t), cy(t) + th + 2]];
+      lx = (cx(s) + cx(t)) / 2; ly = lane;
+    } else if (e.mode === 'tp' || e.mode === 'down' || e.mode === 'up') {
+      const up = cy(t) < cy(s);
+      pts = up ? [[cx(s), cy(s) - sh], [cx(t), cy(t) + th + 2]] : [[cx(s), cy(s) + sh], [cx(t), cy(t) - th - 2]];
+      lx = cx(s); ly = (cy(s) + cy(t)) / 2;
+    } else {
+      const y1 = cy(s), y2 = cy(t), x2 = cx(t) - tw - 2;
+      if (y1 === y2) {
+        pts = [[cx(s) + sw, y1], [x2, y2]]; lx = (cx(s) + sw + x2) / 2; ly = y1;
+      } else if (typeOf(s) === 'dec' && !ids.some((o) => o !== s && pos[o].col === pos[s].col && (pos[o].row - pos[s].row) * (pos[o].row - pos[t].row) <= 0)) {
+        /* ทางแยก: ออกจากมุมบน/ล่างของเพชร แล้วเลี้ยวเข้ากล่อง */
+        const up = y2 < y1;
+        pts = [[cx(s), up ? y1 - sh : y1 + sh], [cx(s), y2], [x2, y2]];
+        lx = cx(s) + 14; ly = y2; anchor = 'start';
+      } else {
+        /* หักมุมในช่องว่างหน้ากล่องปลายทาง → เส้นที่เข้ากล่องเดียวกันรวมเป็นเส้นเดียว */
+        const x1 = cx(s) + sw, xm = x2 - Math.min(20, (x2 - x1) / 2);
+        pts = [[x1, y1], [xm, y1], [xm, y2], [x2, y2]];
+        lx = xm; ly = (y1 + y2) / 2;                       // ป้ายบนเส้นแนวตั้งในช่องว่าง ไม่ทับกล่อง
+      }
+    }
+    const g = document.createElementNS(NS, 'g');
+    if (e.cls) g.setAttribute('class', e.cls);
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', rpath(pts));
+    if (e.mode !== 'tp') p.setAttribute('marker-end', 'url(#ah)');
+    g.appendChild(p);
+    let lg = null;
+    if (e.label) {
+      lg = document.createElementNS(NS, 'g');
+      const tx = document.createElementNS(NS, 'text');
+      tx.setAttribute('x', lx); tx.setAttribute('y', ly); tx.setAttribute('text-anchor', anchor);
+      tx.textContent = e.label; lg.appendChild(tx); labels.push(tx); lsvg.appendChild(lg);
+    }
+    svg.appendChild(g);
+    return { s, t, g, lg, p, tp: e.mode === 'tp' };
+  });
+  canvas.appendChild(svg);
+
+  ids.forEach((id) => {
+    const n = index[id]; const type = typeOf(id);
+    const [w, h] = SIZE[type];
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = `uf-node ${type}${n.target ? ' target' : ''}`;
+    el.dataset.key = type === 'cust' ? n.ofs[0] : id; el.id = 'node-' + id;
+    el.style.left = cx(id) - w / 2 + 'px'; el.style.top = cy(id) - h / 2 + 'px';
+    el.style.width = w + 'px'; el.style.height = h + 'px';
+    const more = type === 'group' ? `<span class="more"><span class="material-symbols-outlined" aria-hidden="true">unfold_more</span>ขยาย ${n.children.length} ขั้น</span>` : '';
+    el.innerHTML = `<span class="lbl">${n.n ? `<span class="tag">${esc(n.n)}</span>` : ''}${esc(n.t)}${more}</span>`;
+    el.setAttribute('aria-label', type === 'cust' ? `ผู้รับบริการ: ${n.t} — ดูรายละเอียดจุดบริการ` : `${n.n ? n.n + ' ' : ''}${n.t}${type === 'group' ? ' — กดเพื่อขยาย' : ' — ดูรายละเอียด'}`);
+    if (type === 'group') el.setAttribute('aria-expanded', 'false');
+    canvas.appendChild(el);
+  });
+  canvas.appendChild(lsvg);
+  box.appendChild(canvas);
+
+  /* ป้ายบนเส้น: พื้นขาว ขอบบาง ไม่ให้เส้นอื่นลากทับตัวอักษร */
+  labels.forEach((tx) => {
+    const b = tx.getBBox(); if (!b.width) return;
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('class', 'lb'); r.setAttribute('rx', 4);
+    r.setAttribute('x', b.x - 6); r.setAttribute('y', b.y - 2); r.setAttribute('width', b.width + 12); r.setAttribute('height', b.height + 4);
+    tx.before(r);
+  });
+  hl(activeKey);
+}
+
+/* เส้นที่เกี่ยวกับกล่องที่เลือก/ชี้อยู่ = เด่น · ที่เหลือจาง */
+let activeKey = null;
+function hl(key) {
+  const svgs = box.querySelectorAll('.uf-edges'); if (!svgs.length) return;
+  const ids = key ? new Set([key, ...Object.keys(index).filter((k) => k.startsWith('cu:') && index[k].ofs.includes(key))]) : new Set();
+  edgeEls.forEach((e) => { const hot = ids.has(e.s) || ids.has(e.t); e.g.classList.toggle('hot', hot); e.lg?.classList.toggle('hot', hot); if (!e.tp) e.p.setAttribute('marker-end', `url(#${hot ? 'ahh' : 'ah'})`); });
+  svgs.forEach((v) => v.classList.toggle('dim', !!key));
+}
+box.addEventListener('mouseover', (e) => { const n = e.target.closest('.uf-node'); if (n) hl(n.dataset.key); });
+box.addEventListener('mouseleave', () => hl(activeKey));
+box.addEventListener('mouseout', (e) => { if (e.target.closest('.uf-node') && !e.relatedTarget?.closest?.('.uf-node')) hl(activeKey); });
+
+function typeOf(id) { const n = index[id]; return n.children ? 'group' : (n.type || 'action'); }
+
+function kvHtml(rows) {
+  return '<dl class="kv">' + rows.map(([k, v]) => {
+    let val = esc(v);
+    if (k === 'หน้า' && String(v).startsWith('/')) val = `<a href="${DEMO}${v}" target="_blank" rel="noopener"><code>${esc(v)}</code></a>`;
+    return `<dt>${esc(k)}</dt><dd>${val}</dd>`;
+  }).join('') + '</dl>';
+}
+
+function show(key, push = true) {
+  const r = index[key]; if (!r) return;
+  document.querySelectorAll('.uf-node.is-active').forEach((b) => b.classList.remove('is-active'));
+  document.getElementById('node-' + key)?.classList.add('is-active');
+  activeKey = key; hl(key);
+  const info = [...(r.role ? [['บทบาท', r.role]] : []), ...(r.route ? [['หน้า', r.route]] : []), ...(r.info || []), ...(r.final ? [['ปุ่มสุดท้าย', r.final]] : [])];
+  let body = '';
+  if (info.length) body += `<div class="grp"><span class="grp-h">หน้าและบทบาท</span>${kvHtml(info)}</div>`;
+  if (r.children) body += `<div class="grp"><span class="grp-h">ขั้นย่อย (${r.children.length})</span><ol class="bul">${r.children.map((c) => `<li>${esc(c.t)}</li>`).join('')}</ol></div>`;
+  (r.groups || []).forEach((g) => {
+    body += `<div class="grp"><span class="grp-h">${esc(g.h)}</span>`;
+    if (g.kv) body += kvHtml(g.kv);
+    if (g.list) body += '<ul class="bul">' + g.list.map((x) => `<li>${esc(x)}</li>`).join('') + '</ul>';
+    if (g.html) body += `<div class="chips">${g.html}</div>`;
+    body += '</div>';
+  });
+  if (r.link) body += `<div class="grp"><a href="${r.link[1]}" data-close>${esc(r.link[0])}</a></div>`;
+  if (r.target) body += '<div class="grp"><span class="badge b-purple">เป้าหมาย · เดโมยังไม่เชื่อม</span></div>';
+  if (r.unknown) body += `<div class="grp"><span class="badge b-grey">ยังไม่มีในเอกสาร</span> <span class="d-sum">${esc(r.unknown)}</span></div>`;
+  detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[typeOf(key)]}${parentOf[key] ? ' · ใน ' + esc(index[parentOf[key]].t) : ''}</span><h3>${esc((r.n ? r.n + ' · ' : '') + r.t)}</h3>${r.sum ? `<p class="d-sum">${esc(r.sum)}</p>` : ''}</div><button type="button" class="x" aria-label="ปิด" data-close><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>${body}`;
+  detail.classList.add('open'); scrim.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+  if (push) setHash(key);
+}
+function closeSheet() { activeKey = null; hl(null); document.querySelectorAll('.uf-node.is-active').forEach((b) => b.classList.remove('is-active')); detail.classList.remove('open'); scrim.classList.remove('open'); detail.setAttribute('aria-hidden', 'true'); }
+
+function setHash(k) { history.replaceState(null, '', `#c=${clinic.key}${view === 'bp' ? '&v=bp' : ''}${expanded ? '&x=' + expanded : ''}${k ? '&k=' + k : ''}`); }
+
+function toggle(id) {
+  expanded = expanded === id ? null : id;   // ทีละขั้น: ขยายอันใหม่ = ย่ออันเดิม
+  render(); setHash();
+  const target = expanded ? document.querySelector(`[data-collapse="${id}"]`) : document.getElementById('node-' + id);
+  target?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  target?.focus({ preventScroll: true });
+}
+
+function selectClinic(key, push = true) {
+  clinic = CLINICS.find((c) => c.key === key) || CLINICS[0];
+  expanded = null; indexClinic(clinic);
+  pick.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.clinic === clinic.key)));
+  const facts = clinic.facts || [];
+  sumEl.innerHTML = `<div class="cs-top"><span class="material-symbols-outlined cs-ic" aria-hidden="true">${esc(clinic.icon || 'local_hospital')}</span><div><h3>${esc(clinic.name)}</h3><p>${esc(clinic.sum)}</p></div></div>${facts.length ? `<div class="grp">${kvHtml(facts)}</div>` : ''}`;
+  closeSheet(); render(); box.scrollLeft = 0;
+  if (push) setHash();
+}
+
+const HINT = {
+  uf: 'ไหลจากซ้ายไปขวา · กล่องที่มี "ขยาย" กดเพื่อดูขั้นย่อย (เปิดได้ทีละขั้น) · กล่องอื่นกดเพื่อดูรายละเอียด',
+  bp: 'แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
+};
+const seg = document.getElementById('view-seg');
+function setView(v, push = true) {
+  view = v === 'bp' ? 'bp' : 'uf';
+  document.body.dataset.view = view;
+  seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
+  document.getElementById('view-hint').textContent = HINT[view];
+  if (clinic) { closeSheet(); render(); box.scrollLeft = 0; if (push) setHash(); }
+}
+seg.addEventListener('click', (e) => { const b = e.target.closest('[data-view]'); if (b) setView(b.dataset.view); });
+
+pick.innerHTML = CLINICS.map((c) => `<button type="button" data-clinic="${c.key}" aria-pressed="false">${esc(c.short || c.name)}</button>`).join('');
+pick.addEventListener('click', (e) => { const b = e.target.closest('[data-clinic]'); if (b) selectClinic(b.dataset.clinic); });
+
+document.addEventListener('click', (e) => {
+  const c = e.target.closest('[data-collapse]');
+  if (c) { toggle(c.dataset.collapse); return; }
+  const b = e.target.closest('.uf-node, .band-info');
+  if (b) { const k = b.dataset.key; if (b.classList.contains('group')) toggle(k); else show(k); return; }
+  if (e.target.closest('[data-close]') || e.target === scrim) closeSheet();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+
+{
+  const h = new URLSearchParams(location.hash.slice(1));
+  setView(h.get('v'), false);
+  selectClinic(h.get('c') || CLINICS[0].key, false);
+  if (h.get('x') && index[h.get('x')]?.children) { expanded = h.get('x'); render(); }
+  document.fonts?.ready.then(() => render());   // วัดป้ายบนเส้นใหม่หลังฟอนต์ไทยโหลด
+  addEventListener('resize', () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });
+  if (h.get('k') && index[h.get('k')]) { document.getElementById('node-' + h.get('k'))?.scrollIntoView({ block: 'center', inline: 'center' }); show(h.get('k'), false); }
+}
+
+/* ---------- conditions table ---------- */
+const COND = [
+  ['เวชระเบียน', [
+    ['ญาติมารับยาแทน', 'ใช้ HN ผู้ป่วย ข้ามคัดกรอง ไปแพทย์ ป้าย "มารับยาแทน · รอพบแพทย์"', 'done'],
+    ['รายเก่า ลงนามความยินยอมแล้ว', 'ไม่ให้ลงนามซ้ำ การ์ดแสดงอย่างเดียว อยู่ใน ⋮', 'done'],
+    ['ลงทะเบียนแอป มาครั้งแรก', 'กรอกแบบเต็มที่เวชระเบียน แล้วไปคัดกรอง', 'done'],
+  ]],
+  ['คัดกรองกลาง', [
+    ['ติ๊ก "มาฟังผล"', 'ไม่คัดกรอง เลือกประเภทผล + แพทย์ → คิวแพทย์ เปิดที่ตรวจและวินิจฉัย', 'done'],
+    ['แพ้ยา · ยาประจำ · นำยามาเอง', 'ส่งเภสัชกรประเมิน → กลับมาคัดกรองต่อ', 'part'],
+    ['มีแค่โรคประจำตัว', 'บันทึกไว้ ไม่ส่งห้องยา', 'done'],
+    ['เลือกแพทย์ระบุชื่อ', 'เข้าคิวแพทย์คนนั้น', 'target'],
+    ['"ไม่ระบุแพทย์" / ด่วน', 'คิวรวมรอรับเคส', 'done'],
+    ['เลือก 2 คลินิก', 'คลินิกที่ 1 เลือกแพทย์ได้ · คลินิกที่ 2 เข้าคิวรวมหลังคลินิกแรกจบ', 'done'],
+  ]],
+  ['คลินิกพิเศษ', [
+    ['ไปคลินิกพิเศษ', 'คัดกรองคลินิกต่อจากคัดกรองกลางเสมอ (ไม่แทนกัน)', 'target'],
+    ['คลินิกที่ไม่มีพยาบาลคัดกรอง', 'เวชศาสตร์ฟื้นฟู · กายภาพ · สังคมสงเคราะห์ → ไปคลินิกตรง', 'done'],
+    ['เคยลงนามความยินยอมคลินิกแล้ว', 'ขั้น (C) ซ่อนไปไว้ใน ⋮', 'done'],
+    ['เบาหวาน · ความดัน · ทันตกรรม', 'มีขั้น "ตรวจสอบข้อมูล" (คลินิกอื่นไม่มี)', 'done'],
+  ]],
+  ['แพทย์', [
+    ['สั่งแล็บ / เอกซเรย์', 'ไปคิวแผนก ผลกลับกล่องผลตรวจ', 'part'],
+    ['ขอความเห็นคลินิกอื่น', 'ส่งปรึกษา (คนยังอยู่ที่นี่) → §3', 'done'],
+    ['ให้คลินิกอื่นดูแลต่อ', 'ส่งต่อในศูนย์ ปลายทางเดียว', 'done'],
+    ['ส่ง ศบส. อื่น / โรงพยาบาล', 'การเงินปิดสิทธิก่อน · โรงพยาบาลต้องมีความยินยอม Health Link', 'done'],
+    ['ส่งต่อต่างประเทศ', 'ไม่ต้องเลือกโรงพยาบาล · ใบส่งตัวภาษาอังกฤษ', 'done'],
+  ]],
+  ['หลังตรวจ · ห้องยา · การเงิน', [
+    ['แพทย์จบ', 'ใบสั่งยาเข้าคิวห้องเภสัชทันที (ทุกคลินิก) · ตัวผู้รับบริการไปพยาบาลหลังตรวจก่อน', 'done'],
+    ['ยังมีคลินิกถัดไป', 'พยาบาลหลังตรวจเห็นป้าย "ยังมีคลินิกถัดไป" → ปิดคิว = เข้าคิวรวมคลินิกที่ 2 (ไม่ระบุแพทย์)', 'done'],
+    ['เภสัชยังไม่ยืนยันรายการ', 'การเงินยังออกบิลไม่ได้', 'done'],
+    ['ยังไม่ชำระ / ปิดสิทธิ', 'ห้องเภสัชล็อกจ่ายยา "รอชำระเงิน/ปิดสิทธิ" → ชำระที่การเงินแล้วกลับมารับยาที่ห้องเภสัช', 'done'],
+    ['ส่ง HPV แล้วผลยังไม่ออก (วางแผนครอบครัว)', 'ปิดวันนั้นเป็น "รอผลแล็บ" → ผลออก บันทึกย้อนหลังใน VN เดิม', 'done'],
+  ]],
+];
+
+/* ---------- clinic matrix ---------- */
+const CLIN = [
+  ['ก้าวใหม่ / งานบำบัด', '✓', '✓', 'ผลการประเมิน → ตรวจร่างกายและวินิจฉัย → แผนการดูแลรักษา → CPOE (แพทย์ไม่มีขั้นความยินยอม)', 'CPOE → "ยืนยันส่งต่อ"', '✓', 'นักสังคมฯ · นักจิตวิทยา · บ้านพิชิตใจ'],
+  ['สุขภาพจิต', '✓', '✓', '(C) → แบบประเมิน → การทดสอบทางจิตวิทยา → ตรวจสภาพจิตและวินิจฉัย → บำบัดทางจิตวิทยา → CPOE → แผนการดูแลและสุขศึกษา', 'แผนการดูแลและสุขศึกษา', '✓', 'นักจิตวิทยา · นักสังคมฯ'],
+  ['ทันตกรรม', '✓', '✓', '(C) → แบบประเมิน → ตรวจฟันและวินิจฉัย → CPOE → เอกสาร/ใบรับรองแพทย์ → ตรวจสอบข้อมูล', 'ตรวจสอบข้อมูล (โรงเรียน/เด็กดี: "บันทึกผลการตรวจ")', '—', 'ผู้ช่วยบันทึก → "รอทันตแพทย์ตรวจสอบ"'],
+  ['ฝากครรภ์', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', 'บางส่วน', '—'],
+  ['เบาหวาน', '✓', '✓', '(C) → แบบประเมิน → ตรวจและวินิจฉัย → CPOE → แผนการดูแลและสุขศึกษา → ตรวจตามเกณฑ์การดูแล', 'ตรวจตามเกณฑ์การดูแล', '✓', '—'],
+  ['ความดัน', '✓', '✓', '(C) → แบบประเมิน → ตรวจและวินิจฉัย → CPOE → แผนการดูแลและสุขศึกษา → ตรวจสอบข้อมูล', 'ตรวจสอบข้อมูล', '✓', '—'],
+  ['หอบหืด / COPD', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓', 'เภสัชกรประเมินยาพ่น'],
+  ['จักษุ', '✓', '✓', '(C) → แบบประเมิน → ตรวจและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '—', '—'],
+  ['วัณโรค', '✓ (คิวของตัวเอง)', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → แผนการดูแลรักษา → CPOE', 'CPOE', '✓', '—'],
+  ['วางแผนครอบครัว', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓', '—'],
+  ['รักปลอดภัย', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา (มีขั้นยืนยันความลับ)', 'แผนการดูแลรักษา', '✓', '—'],
+  ['สุขภาพเด็กดี', '✓', '✓', '(C) → แบบประเมิน → ตรวจสุขภาพเด็กดีและวินิจฉัย → CPOE → แผนการดูแลรักษา → เอกสาร/ใบรับรองแพทย์', 'เอกสาร/ใบรับรองแพทย์', '✓', '—'],
+  ['เวชศาสตร์ฟื้นฟู', '—', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓ (+ IMC)', 'คอร์ส → กายภาพ'],
+  ['กายภาพบำบัด', '—', '✓', 'ความยินยอม → รับเคส → ตรวจและประเมิน → ADL → บริการ → นัด/สรุปคอร์ส', '"บันทึกและส่งต่อ" (เป้าหมาย)', '✓', '—'],
+  ['สังคมสงเคราะห์', '—', '—', 'หน้าเฉพาะ (จบ ส.ส.2) หรือเทมเพลต — รอตัดสินใจ Q3', '"บันทึกและส่งต่อ" (เป้าหมาย)', '✓', '—'],
+  ['แพทย์แผนไทย', '✓', '✓', 'แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE', 'CPOE', '—', '—'],
+];
+
+
+
+const ST = { done: '<span class="badge b-teal">ทำงานได้</span>', part: '<span class="badge b-orange">บางส่วน</span>', target: '<span class="badge b-purple">เป้าหมาย</span>' };
+document.getElementById('cond-body').innerHTML = COND.map(([g, rows]) =>
+  `<tr class="gh"><td colspan="4">${esc(g)}</td></tr>` + rows.map(([a, b, s]) =>
+    `<tr><td data-l="จุด">${esc(g)}</td><td data-l="ถ้า">${esc(a)}</td><td data-l="ระบบทำ">${esc(b)}</td><td data-l="สถานะ">${ST[s]}</td></tr>`).join('')
+).join('');
+document.getElementById('clinic-body').innerHTML = CLIN.map((r) =>
+  `<tr><td><b>${esc(r[0])}</b></td><td class="c">${esc(r[1])}</td><td class="c">${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td class="c">${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join('');
+</script>
+</body>
+</html>
