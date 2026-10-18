@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ผลทดสอบการใช้งาน BMA Mobile · AI รอบ 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--brand-p50, #F4FBF8); color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
+  .page { max-width: 1120px; margin: 0 auto; padding: var(--dim-space-800, 32px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  h1, h2, h3 { margin: 0; color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
+  h1 { font-size: var(--type-size-2xl, 24px); } h2 { font-size: var(--type-size-lg, 18px); } h3 { font-size: var(--type-size-base, 16px); color: var(--text-content-default, #363B3F); }
+  p { margin: 0; }
+  .muted { color: var(--text-content-tertiary, #858C92); } .small { font-size: var(--type-size-xs, 12px); } .strong { font-weight: var(--type-weight-medium, 500); }
+  .lede { color: var(--text-content-secondary, #636B72); margin-top: var(--dim-space-200, 8px); }
+  section { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #9DDAC4); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .tile { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .tile b { font-size: var(--type-size-2xl, 24px); color: var(--text-brandPrimary-default, #007549); }
+  .divider { height: var(--dim-stroke-100, 1px); background: var(--border-neutral-quaternary, #F4F5F5); }
+  .table-wrap { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-300, 10px); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th, td { padding: var(--dim-space-300, 12px); text-align: left; border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); white-space: nowrap; }
+  th { font-weight: var(--type-weight-medium, 500); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .num { text-align: right; }
+  .pill { display: inline-block; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  .pill.ok { background: var(--surface-statusbadge-success, #D1F6EE); color: var(--text-statusbadge-success, #196C65); }
+  .pill.warn { background: var(--surface-statusbadge-warning, #FFEDD5); color: var(--text-statusbadge-warning, #C2410C); }
+  .pill.danger { background: var(--surface-statusbadge-error, #FEE2E2); color: var(--text-statusbadge-error, #B91C1C); }
+  .pill.neutral { background: var(--surface-statusbadge-neutral, #F5F7F9); color: var(--text-statusbadge-neutral, #4D5358); }
+  .warn-text { color: var(--text-statusbadge-warning, #C2410C); }
+  .ok-text { color: var(--text-statusbadge-success, #196C65); font-weight: var(--type-weight-medium, 500); }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .card { border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-100, 4px) var(--dim-space-300, 12px); margin: 0; }
+  .kv dt { color: var(--text-content-tertiary, #858C92); } .kv dd { margin: 0; }
+  .issue { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--dim-space-400, 16px); padding-top: var(--dim-space-400, 16px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .issue img { width: 120px; border-radius: var(--dim-radius-300, 10px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); display: block; }
+  .noshot { width: 120px; aspect-ratio: 390 / 844; border-radius: var(--dim-radius-300, 10px); background: var(--surface-statusbadge-neutral, #F5F7F9); display: grid; place-items: center; color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+  .issue-body { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); align-items: center; }
+  .heats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .heat { margin: 0; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .heat-frame { position: relative; border-radius: var(--dim-radius-300, 10px); overflow: hidden; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .heat-frame img { width: 100%; display: block; opacity: 0.85; }
+  .dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; opacity: 0.55; }
+  .dot.human { background: var(--surface-brandPrimary-default, #007549); }
+  .dot.ai { background: var(--color-indigo-500, #6F82FF); }
+  .dot.miss { box-shadow: 0 0 0 3px var(--text-danger-default, #B91C1C); }
+  figcaption { display: flex; justify-content: space-between; gap: var(--dim-space-200, 8px); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-400, 16px); }
+  .legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: var(--dim-space-100, 4px); background: var(--c); }
+  ul { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  @media (max-width: 1023px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .heats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) { .cards { grid-template-columns: 1fr; } section { padding: var(--dim-space-400, 16px); } .issue { grid-template-columns: 88px minmax(0, 1fr); } .issue img, .noshot { width: 88px; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>ผลทดสอบการใช้งาน BMA Mobile · AI รอบ 1</h1>
+    <p class="lede">6 โจทย์ชุดเดียวกัน · AI สวมบท 4 บทบาท · ผู้ทดสอบจริง 0 คน · AI รอบ 1 · 18 ต.ค. 69</p>
+  </header>
+
+  <section>
+    <h2>ภาพรวม</h2>
+    <div class="tiles">
+      <div class="tile"><span class="muted small">โจทย์ที่ AI ทำสำเร็จ</span><b>88%</b><span class="small muted">24 ครั้ง</span></div>
+      <div class="tile"><span class="muted small">โจทย์ที่คนจริงทำสำเร็จ</span><b>—</b><span class="small muted">0 ครั้ง</span></div>
+      <div class="tile"><span class="muted small">คะแนน SUS เฉลี่ย</span><b>—</b><span class="small muted">รอผู้ทดสอบจริง</span></div>
+      <div class="tile"><span class="muted small">ปัญหาระดับใหญ่ขึ้นไป</span><b>12</b><span class="small muted">จากทั้งหมด 20 ข้อ</span></div>
+    </div>
+  </section>
+
+  
+
+  <section>
+    <h2>ผลราย Task · AI</h2>
+    <p class="muted small">สำเร็จ = ระบบตรวจเจอหน้าจอสำเร็จ หรือผู้ทดสอบยืนยันว่าทำเสร็จ · แตะเกิน 1.5 เท่าของที่ควรเป็นแสดงสีส้ม</p>
+    
+  <div class="table-wrap"><table>
+    <thead><tr><th>โจทย์</th><th class="num">คน</th><th class="num">สำเร็จ</th><th class="num">เวลา (มัธยฐาน)</th><th class="num">แตะเฉลี่ย / ควรเป็น</th><th class="num">แตะพลาด</th><th class="num">ง่าย (1–7)</th></tr></thead>
+    <tbody><tr><td>T1 · เข้าสู่ระบบ</td><td class="num">4</td><td class="num"><span class="pill ok">100%</span></td>
+        <td class="num">22 วิ</td><td class="num ">3 / 4</td>
+        <td class="num">0%</td><td class="num">5.8</td></tr><tr><td>T2 · จองนัดทำฟัน</td><td class="num">4</td><td class="num"><span class="pill ok">100%</span></td>
+        <td class="num">146 วิ</td><td class="num warn-text">19.3 / 8</td>
+        <td class="num">0%</td><td class="num">3</td></tr><tr><td>T3 · เลื่อนนัดครั้งถัดไป</td><td class="num">4</td><td class="num"><span class="pill danger">50%</span></td>
+        <td class="num">75 วิ</td><td class="num ">6 / 5</td>
+        <td class="num">0%</td><td class="num">3.5</td></tr><tr><td>T4 · ดูวิธีกินยา</td><td class="num">4</td><td class="num"><span class="pill ok">100%</span></td>
+        <td class="num">17 วิ</td><td class="num ">3 / 3</td>
+        <td class="num">0%</td><td class="num">3.3</td></tr><tr><td>T5 · ชำระค่าบริการที่ค้าง</td><td class="num">4</td><td class="num"><span class="pill warn">75%</span></td>
+        <td class="num">50 วิ</td><td class="num ">3.8 / 5</td>
+        <td class="num">0%</td><td class="num">3.8</td></tr><tr><td>T6 · แสดงบัตรผู้ป่วย</td><td class="num">4</td><td class="num"><span class="pill ok">100%</span></td>
+        <td class="num">5 วิ</td><td class="num ">1 / 1</td>
+        <td class="num">0%</td><td class="num">6.5</td></tr></tbody>
+  </table></div>
+  </section>
+
+  <section>
+    <h2>ผลราย Task · คนจริง</h2>
+    
+  <div class="table-wrap"><table>
+    <thead><tr><th>โจทย์</th><th class="num">คน</th><th class="num">สำเร็จ</th><th class="num">เวลา (มัธยฐาน)</th><th class="num">แตะเฉลี่ย / ควรเป็น</th><th class="num">แตะพลาด</th><th class="num">ง่าย (1–7)</th></tr></thead>
+    <tbody><tr><td>T1 · เข้าสู่ระบบ</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr><tr><td>T2 · จองนัดทำฟัน</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr><tr><td>T3 · เลื่อนนัดครั้งถัดไป</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr><tr><td>T4 · ดูวิธีกินยา</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr><tr><td>T5 · ชำระค่าบริการที่ค้าง</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr><tr><td>T6 · แสดงบัตรผู้ป่วย</td><td class="num" colspan="6">ยังไม่มีข้อมูลจากผู้ทดสอบ</td></tr></tbody>
+  </table></div>
+    
+  </section>
+
+  <section>
+    <h2>ปัญหาที่พบ เรียงตามความรุนแรง</h2>
+    <p class="muted small">0 ไม่ใช่ปัญหา · 1 ความสวยงาม · 2 เล็ก · 3 ใหญ่ · 4 ทำต่อไม่ได้ · แตะภาพเพื่อขยาย</p>
+    <article class="issue">
+    <a href="shots/ai-p3-shots-040.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-040.jpg" alt="ภาพจอ U01" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">4 · ทำต่อไม่ได้</span><span class="muted small">U01 · T4 · H5 ป้องกันความผิดพลาด</span></div>
+      <p class="strong">รายการยาแสดง VILERM (Aciclovir 400 mg) ขนาด 5 mg ข้อบ่งใช้ 'ลดความดันโลหิต' ซ้ำ 2 รายการ และไม่ตรงกับคำสั่งแพทย์ในหน้าเดียวกัน</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>ให้ชื่อยา · ขนาด · ข้อบ่งใช้มาจากรายการเดียวกับคำสั่งแพทย์ · ไม่แสดงยาซ้ำ</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p4-shots-058.jpg" target="_blank" rel="noopener"><img src="shots/ai-p4-shots-058.jpg" alt="ภาพจอ U02" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">4 · ทำต่อไม่ได้</span><span class="muted small">U02 · T5 · H1 สถานะระบบ</span></div>
+      <p class="strong">ยืนยันชำระแล้วเปิดใบเสร็จทันที ไม่มีหน้า 'ชำระเงินสำเร็จ' · กลับหน้ารายการยังขึ้นค้าง ฿500 · ใบเสร็จลงวันที่ปี 2566</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>หน้าสำเร็จแบบเดียวกับจองนัด (SuccessCard) · อัปเดตยอดค้างทันที · ใบเสร็จลงวันที่ชำระ</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p4-shots-012.jpg" target="_blank" rel="noopener"><img src="shots/ai-p4-shots-012.jpg" alt="ภาพจอ U09" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">4 · ทำต่อไม่ได้</span><span class="muted small">U09 · T2 · H2 ภาษาตรงกับผู้ใช้</span></div>
+      <p class="strong">เลือก English ในตั้งค่าแล้ว ข้อความทั้งแอปยังเป็นไทย · หน้าเข้าสู่ระบบและหน้าแรกไม่มีปุ่มเปลี่ยนภาษา</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>Mr. Aung (1)</dd>
+      <dt>ข้อเสนอ</dt><dd>แปลจริงอย่างน้อยเมนูหลัก + ปุ่มภาษาบนหน้าเข้าสู่ระบบ · พิจารณาภาษาเมียนมา/กัมพูชา/ลาว สำหรับบัตรสีชมพู</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-035.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-035.jpg" alt="ภาพจอ U03" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U03 · T3 · H1 สถานะระบบ</span></div>
+      <p class="strong">กด 'ยืนยันเลื่อนนัด' แล้วกลับหน้ารายละเอียดทันที ไม่มีข้อความ 'เลื่อนนัดหมายสำเร็จ' · 2 ใน 4 บทบาทยอมแพ้ทั้งที่เลื่อนได้แล้ว</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>แสดงหน้า 'เลื่อนนัดหมายสำเร็จ' (มี title นี้ในโค้ดจองนัดอยู่แล้ว) พร้อมวันเวลาเดิม → ใหม่</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-027.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-027.jpg" alt="ภาพจอ U04" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U04 · T3 · H2 ภาษาตรงกับผู้ใช้</span></div>
+      <p class="strong">วันนัดแสดงเป็น 'วันนี้, 27 ต.ค.' / 'วันนี้, 29 ต.ค.' ทั้งที่วันนี้คือ 18 ต.ค. — ผู้ใช้ตกใจว่าต้องไปวันนี้</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>ใช้คำ 'วันนี้' เฉพาะวันที่ตรงกับวันนี้จริง</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-038.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-038.jpg" alt="ภาพจอ U05" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U05 · T4 · H4 ความสม่ำเสมอ</span></div>
+      <p class="strong">ทางลัด 'ยาของฉัน' พาไปหน้าประวัติการรักษา (ปลายทางเดียวกับ 'ประวัติการรักษา') ไม่มีรายการยาที่กินอยู่</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>ทำหน้า/แท็บยาที่ใช้อยู่ (ชื่อ · วิธีกิน · เหลือกี่เม็ด) แล้วให้ทางลัดชี้ไปที่นั่น</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p3-shots-023.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-023.jpg" alt="ภาพจอ U06" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U06 · T2 · H9 ช่วยแก้ข้อผิดพลาด</span></div>
+      <p class="strong">หน้ายืนยันการจอง ปุ่ม 'ยืนยันเวลานัดหมาย' เป็นสีเทาโดยไม่บอกเหตุผล — ช่องบังคับ 'ต้องการรับใบรับรองแพทย์' อยู่ใต้ขอบจอ</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>กดปุ่มได้เสมอ แล้วเลื่อนไปช่องที่ขาด + ข้อความแดงใต้ช่อง หรือย้ายช่องขึ้นก่อนช่องอาการ</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p2-shots-043.jpg" target="_blank" rel="noopener"><img src="shots/ai-p2-shots-043.jpg" alt="ภาพจอ U10" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U10 · T5 · H7 ยืดหยุ่น</span></div>
+      <p class="strong">ชำระด้วย QR PromptPay แสดง QR บนมือถือเครื่องเดียวกับที่ต้องใช้สแกน · ไม่มีปุ่มบันทึก QR · กดยืนยันจ่ายเองได้โดยไม่ตรวจยอด</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก (3)</dd>
+      <dt>ข้อเสนอ</dt><dd>ปุ่ม 'บันทึก QR ลงเครื่อง' / 'เปิดแอปธนาคาร' · ยืนยันจากผลชำระ ไม่ใช่ปุ่มที่ผู้ใช้กดเอง</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p3-shots-021.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-021.jpg" alt="ภาพจอ U07" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U07 · T2 · H1 สถานะระบบ</span></div>
+      <p class="strong">เลือก 'ทันตกรรม' แล้ว แต่การ์ดแพทย์ขั้นเลือกวัน · เวลา · หน้ายืนยันแสดง 'แผนก: —'</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>คุณฝน · พี่เอก (2)</dd>
+      <dt>ข้อเสนอ</dt><dd>ส่งแผนกที่เลือกต่อไปทุกขั้น</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-017.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-017.jpg" alt="ภาพจอ U08" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U08 · T2 · H2 ภาษาตรงกับผู้ใช้</span></div>
+      <p class="strong">ปฏิทินเลือกวันเป็นภาษาอังกฤษ (October 2026 · Su Mo Tu) แต่แถบวันในขั้นเลือกเวลาเป็นตัวย่อไทย</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · Mr. Aung (2)</dd>
+      <dt>ข้อเสนอ</dt><dd>ปฏิทินตามภาษาแอป (ไทย: ต.ค. 2569 · อา จ อ)</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p4-shots-017.jpg" target="_blank" rel="noopener"><img src="shots/ai-p4-shots-017.jpg" alt="ภาพจอ U14" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U14 · T2 · A11y การเข้าถึง</span></div>
+      <p class="strong">รายการแผนกเป็นข้อความไทยล้วนไม่มีไอคอน · ค้นหา 'dental' ไม่เจอ</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>Mr. Aung (1)</dd>
+      <dt>ข้อเสนอ</dt><dd>ไอคอนต่อแผนก + คำค้นภาษาอังกฤษ (searchTerms)</dd></dl>
+    </div>
+  </article><article class="issue">
+    <div class="noshot">ตรวจด้วยระบบ</div>
+    <div class="issue-body">
+      <div class="row"><span class="pill danger">3 · ใหญ่</span><span class="muted small">U18 · ทั้งแอป · A11y การเข้าถึง</span></div>
+      <p class="strong">กรอบโทรศัพท์ 402×874 (+ขอบ) ใหญ่กว่าจอมือถือจริง — ที่จอ 390×844 หน้าเว็บกว้าง 411 สูง 890 · เมนูล่างหลุดจอครึ่งหนึ่ง และเลื่อนแนวนอนได้</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ระบบ (1)</dd>
+      <dt>ข้อเสนอ</dt><dd>บนจอเล็กกว่ากรอบ ให้เต็มจอ (100vw × 100dvh) ไม่วาดกรอบ — ต้องแก้ก่อนให้เพื่อนทดสอบบนมือถือจริง</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p2-shots-015.jpg" target="_blank" rel="noopener"><img src="shots/ai-p2-shots-015.jpg" alt="ภาพจอ U11" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U11 · T2 · H7 ยืดหยุ่น</span></div>
+      <p class="strong">จองนัดใช้ 17–25 แตะ (เป้า 8) · ทุกขั้นต้องแตะเลือกแล้วแตะ 'ถัดไป' อีกครั้ง</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>เลือกแล้วไปขั้นถัดไปเลยสำหรับขั้นที่เลือกได้ข้อเดียว</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p3-shots-019.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-019.jpg" alt="ภาพจอ U12" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U12 · T2 · H1 สถานะระบบ</span></div>
+      <p class="strong">ขั้นเลือกเวลา แถบวันที่เริ่มที่ 21 — วันที่เลือกไว้ (26/27) อยู่นอกจอ ไม่เห็นว่าเลือกวันไหน</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก (3)</dd>
+      <dt>ข้อเสนอ</dt><dd>เลื่อนแถบวันให้วันที่เลือกอยู่กลางจอตอนเปิด</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p3-shots-028.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-028.jpg" alt="ภาพจอ U15" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U15 · T3 · H6 จำได้ไม่ต้องนึก</span></div>
+      <p class="strong">ปุ่ม 'เลื่อนนัด' · 'ยกเลิก' อยู่ท้ายหน้ารายละเอียด ต้องเลื่อนจนสุด · กดย้อนกลับหลังเลื่อนนัดกลับเข้าหน้าเลื่อนนัดอีก</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · พี่เอก · Mr. Aung (3)</dd>
+      <dt>ข้อเสนอ</dt><dd>ปุ่มติดล่างจอ · หลังสำเร็จใช้ replace ไม่ให้ย้อนกลับเข้าฟอร์ม</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p2-shots-025.jpg" target="_blank" rel="noopener"><img src="shots/ai-p2-shots-025.jpg" alt="ภาพจอ U13" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U13 · T2 · H4 ความสม่ำเสมอ</span></div>
+      <p class="strong">แจ้งเตือนบอก 'ได้รับการยืนยันเรียบร้อย' แต่หน้าสำเร็จบอก 'กรุณารอการยืนยันจากเจ้าหน้าที่ภายใน 5 วัน'</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>คุณฝน · พี่เอก (2)</dd>
+      <dt>ข้อเสนอ</dt><dd>ใช้สถานะเดียวกันทั้งสองที่ (รอยืนยัน)</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p3-shots-042.jpg" target="_blank" rel="noopener"><img src="shots/ai-p3-shots-042.jpg" alt="ภาพจอ U16" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U16 · T5 · H6 จำได้ไม่ต้องนึก</span></div>
+      <p class="strong">แถบแดง 'ยอดค้างชำระทั้งหมด ฿500 · ชำระผ่านแอปได้ทันที' ไม่มีปุ่มจ่าย ต้องกดเข้าบิลเอง</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · พี่เอก (2)</dd>
+      <dt>ข้อเสนอ</dt><dd>ปุ่ม 'ชำระเงิน' ในแถบยอดค้าง</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-037.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-037.jpg" alt="ภาพจอ U17" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill warn">2 · เล็ก</span><span class="muted small">U17 · ทั้งแอป · A11y การเข้าถึง</span></div>
+      <p class="strong">แถบเมนูล่างมีแต่ไอคอนไม่มีชื่อ · แตะไอคอนโปรไฟล์ที่ขอบล่างครั้งแรกไม่มีอะไรเกิดขึ้น</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · Mr. Aung (2)</dd>
+      <dt>ข้อเสนอ</dt><dd>ใส่ชื่อใต้ไอคอน (หน้าแรก · นัดหมาย · ส่งคำขอ · ประวัติ · โปรไฟล์)</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-002.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-002.jpg" alt="ภาพจอ U19" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill neutral">1 · ความสวยงาม</span><span class="muted small">U19 · T1 · H2 ภาษาตรงกับผู้ใช้</span></div>
+      <p class="strong">ช่องรหัสผ่านหน้าเข้าสู่ระบบมี placeholder 'กรอกรหัสผ่านอีกครั้ง' (คำของหน้าสมัคร)</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี · คุณฝน · พี่เอก · Mr. Aung (4)</dd>
+      <dt>ข้อเสนอ</dt><dd>'กรอกรหัสผ่าน'</dd></dl>
+    </div>
+  </article><article class="issue">
+    <a href="shots/ai-p1-shots-047.jpg" target="_blank" rel="noopener"><img src="shots/ai-p1-shots-047.jpg" alt="ภาพจอ U20" loading="lazy"></a>
+    <div class="issue-body">
+      <div class="row"><span class="pill neutral">1 · ความสวยงาม</span><span class="muted small">U20 · T6 · H4 ความสม่ำเสมอ</span></div>
+      <p class="strong">ปุ่มหน้าแรก 'บัตรประจำตัว' เปิดหน้า 'บัตรผู้ป่วยดิจิทัล' — ผู้สูงอายุนึกว่าบัตรประชาชน</p>
+      <dl class="kv"><dt>พบโดย</dt><dd>ป้าสมศรี (1)</dd>
+      <dt>ข้อเสนอ</dt><dd>ใช้คำ 'บัตรผู้ป่วย' ทั้งสองที่</dd></dl>
+    </div>
+  </article>
+  </section>
+
+  <section>
+    <h2>จุดที่แตะบนหน้าจอ</h2>
+    <div class="legend small"><span style="--c: var(--surface-brandPrimary-default, #007549)">คนจริง</span><span style="--c: var(--color-indigo-500, #6F82FF)">AI</span><span style="--c: var(--text-danger-default, #B91C1C)">ขอบแดง = แตะโดนที่กดไม่ได้</span></div>
+    <div class="heats">
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-007.jpg" alt="หน้า /m/book" loading="lazy">
+      <span class="dot ai" style="left:50.0%;top:50.8%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:52.8%;top:62.1%"></span><span class="dot ai" style="left:50.0%;top:87.9%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:43.6%;top:52.1%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:76.8%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:37.4%;top:85.3%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:80.0%;top:77.7%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:74.6%"></span><span class="dot ai" style="left:72.6%;top:84.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:50.8%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:52.8%;top:62.1%"></span><span class="dot ai" style="left:50.0%;top:87.9%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:45.1%;top:63.5%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:60.3%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:37.4%;top:85.3%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:70.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:74.6%"></span><span class="dot ai" style="left:72.6%;top:84.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:50.8%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:52.8%;top:62.1%"></span><span class="dot ai" style="left:50.0%;top:87.9%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:45.1%;top:63.5%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:60.3%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:25.1%;top:85.3%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:70.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:74.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:72.6%;top:84.6%"></span><span class="dot ai" style="left:50.0%;top:98.1%"></span><span class="dot ai" style="left:50.0%;top:50.8%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:52.8%;top:62.1%"></span><span class="dot ai" style="left:54.6%;top:36.7%"></span><span class="dot ai" style="left:90.0%;top:13.0%"></span><span class="dot ai" style="left:50.0%;top:87.9%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:45.1%;top:63.5%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:50.0%;top:76.8%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:25.1%;top:85.3%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:79.7%;top:77.7%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span><span class="dot ai" style="left:50.0%;top:74.6%"></span><span class="dot ai" style="left:72.6%;top:84.6%"></span><span class="dot ai" style="left:50.0%;top:97.9%"></span>
+    </div>
+    <figcaption><span class="strong">/m/book</span><span class="muted small">67 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-005.jpg" alt="หน้า /m/home" loading="lazy">
+      <span class="dot ai" style="left:13.6%;top:24.3%"></span><span class="dot ai" style="left:50.0%;top:51.3%"></span><span class="dot ai" style="left:37.9%;top:24.3%"></span><span class="dot ai" style="left:62.1%;top:36.5%"></span><span class="dot ai" style="left:71.0%;top:12.3%"></span><span class="dot ai" style="left:13.6%;top:24.3%"></span><span class="dot ai" style="left:62.6%;top:74.2%"></span><span class="dot ai" style="left:37.9%;top:24.3%"></span><span class="dot ai" style="left:62.1%;top:36.5%"></span><span class="dot ai" style="left:71.0%;top:12.3%"></span><span class="dot ai" style="left:13.6%;top:24.3%"></span><span class="dot ai" style="left:50.0%;top:51.3%"></span><span class="dot ai" style="left:37.9%;top:24.3%"></span><span class="dot ai" style="left:62.1%;top:36.5%"></span><span class="dot ai" style="left:71.0%;top:12.3%"></span><span class="dot ai" style="left:91.3%;top:100.0%"></span><span class="dot ai" style="left:91.3%;top:98.1%"></span><span class="dot ai" style="left:13.6%;top:24.3%"></span><span class="dot ai" style="left:29.5%;top:98.1%"></span><span class="dot ai" style="left:37.9%;top:24.3%"></span><span class="dot ai" style="left:62.1%;top:36.5%"></span><span class="dot ai" style="left:71.0%;top:12.3%"></span>
+    </div>
+    <figcaption><span class="strong">/m/home</span><span class="muted small">22 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-001.jpg" alt="หน้า /m/login" loading="lazy">
+      <span class="dot ai" style="left:53.6%;top:53.8%"></span><span class="dot ai" style="left:50.0%;top:66.5%"></span><span class="dot ai" style="left:50.0%;top:82.1%"></span><span class="dot ai" style="left:53.6%;top:53.8%"></span><span class="dot ai" style="left:50.0%;top:66.5%"></span><span class="dot ai" style="left:50.0%;top:82.1%"></span><span class="dot ai" style="left:53.6%;top:53.8%"></span><span class="dot ai" style="left:50.0%;top:66.5%"></span><span class="dot ai" style="left:50.0%;top:82.1%"></span><span class="dot ai" style="left:53.6%;top:53.8%"></span><span class="dot ai" style="left:50.0%;top:66.5%"></span><span class="dot ai" style="left:50.0%;top:82.1%"></span>
+    </div>
+    <figcaption><span class="strong">/m/login</span><span class="muted small">12 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-043.jpg" alt="หน้า /m/payment/INV-2569-001" loading="lazy">
+      <span class="dot ai" style="left:50.0%;top:91.5%"></span><span class="dot ai" style="left:50.0%;top:91.5%"></span><span class="dot ai" style="left:50.0%;top:91.5%"></span><span class="dot ai" style="left:92.3%;top:37.0%"></span><span class="dot ai" style="left:50.0%;top:91.5%"></span><span class="dot ai" style="left:92.3%;top:37.0%"></span><span class="dot ai" style="left:5.6%;top:13.0%"></span>
+    </div>
+    <figcaption><span class="strong">/m/payment/INV-2569-001</span><span class="muted small">7 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-030.jpg" alt="หน้า /m/reschedule/APT-1792340453521" loading="lazy">
+      <span class="dot ai" style="left:62.6%;top:86.3%"></span><span class="dot ai" style="left:50.0%;top:97.6%"></span><span class="dot ai" style="left:16.7%;top:63.3%"></span><span class="dot ai" style="left:50.0%;top:97.6%"></span>
+    </div>
+    <figcaption><span class="strong">/m/reschedule/APT-1792340453521</span><span class="muted small">4 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-038.jpg" alt="หน้า /m/records" loading="lazy">
+      <span class="dot ai" style="left:50.0%;top:68.2%"></span><span class="dot ai" style="left:50.0%;top:68.2%"></span><span class="dot ai" style="left:50.0%;top:68.2%"></span><span class="dot ai" style="left:50.0%;top:68.4%"></span>
+    </div>
+    <figcaption><span class="strong">/m/records</span><span class="muted small">4 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-039.jpg" alt="หน้า /m/visit/V-2566-11-15-a" loading="lazy">
+      <span class="dot ai" style="left:50.0%;top:84.4%"></span><span class="dot ai" style="left:50.0%;top:84.4%"></span><span class="dot ai" style="left:50.0%;top:84.4%"></span><span class="dot ai" style="left:50.0%;top:84.4%"></span>
+    </div>
+    <figcaption><span class="strong">/m/visit/V-2566-11-15-a</span><span class="muted small">4 แตะ</span></figcaption>
+  </figure>
+  <figure class="heat">
+    <div class="heat-frame"><img src="shots/ai-p1-shots-042.jpg" alt="หน้า /m/payment" loading="lazy">
+      <span class="dot ai" style="left:50.0%;top:43.1%"></span><span class="dot ai" style="left:50.0%;top:43.1%"></span><span class="dot ai" style="left:50.0%;top:43.1%"></span><span class="dot ai" style="left:50.0%;top:43.1%"></span>
+    </div>
+    <figcaption><span class="strong">/m/payment</span><span class="muted small">4 แตะ</span></figcaption>
+  </figure></div>
+  </section>
+
+  <section>
+    <h2>บทบาทที่ AI สวม</h2>
+    <div class="cards">
+  <article class="card">
+    <h3>ป้าสมศรี <span class="muted">· 68 ปี</span></h3>
+    <p class="muted small">เกษียณ ใช้ LINE กับ YouTube เป็นหลัก สายตายาว อ่านตัวเล็กไม่ถนัด กลัวกดผิดแล้วเสียเงิน อ่านทีละคำ ไม่ชอบเลื่อนหน้า</p>
+    <div class="divider"></div>
+    <p>ป้าสมศรีทำได้ครบ 6 โจทย์ แต่การจองและเลื่อนนัดช้าและไม่มั่นใจ ปฏิทินเป็นภาษาอังกฤษ ปุ่มยืนยันกดไม่ได้โดยไม่บอกเหตุผล หลังเลื่อนนัดและหลังจ่ายเงินไม่มีข้อความยืนยันว่าสำเร็จ และหน้านัดหมายบอกว่า 'วันนี้' ทั้งที่ยังไม่ถึงวันนัด ทำให้ป้าตกใจ</p>
+    <dl class="kv"><dt>T1</dt><dd>✓ สำเร็จ · ง่าย 6 · 3 แตะ · “เข้าได้ไม่ยาก แต่ช่องรหัสเขียนว่ากรอกอีกครั้ง ป้างงนิดนึงว่าเคยกรอกแล้วเหรอ”</dd><dt>T2</dt><dd>✓ สำเร็จ · ง่าย 4 · 17 แตะ · “จองได้ แต่ปฏิทินเป็นภาษาอังกฤษ ป้าดูวันไม่ออก แล้วตอนเลือกเวลาไม่เห็นวันที่ 27 ที่เลือกไว้ ตอนท้ายปุ่มยืนยันกดไม่ได้ ไม่รู้ว่าขาดอะไร ต้องเลื่อนหาเอง แล้วบอกว่าสำเร็จแต่ต้องรอยืนยันอีก 5 วัน ป้างงว่าได้นัดแล้วหรือยัง”</dd><dt>T3</dt><dd>✓ สำเร็จ · ง่าย 3 · 6 แตะ · “วันที่เปลี่ยนเป็น 29 แล้วก็จริง แต่ไม่มีอะไรบอกว่าเลื่อนสำเร็จ ป้าไม่แน่ใจ แล้วปุ่มเลื่อนนัดต้องเลื่อนลงไปสุดถึงจะเจอ ยังเขียนว่าวันนี้ทั้งที่ยังไม่ถึง ป้าตกใจ”</dd><dt>T4</dt><dd>✓ สำเร็จ · ง่าย 4 · 3 แตะ · “หาเจอว่ากินหลังอาหารเช้า แต่ปุ่มยาของฉันพาไปหน้าประวัติ ต้องเดาเอาว่ายาอยู่ในการตรวจครั้งไหน ชื่อยาภาษาอังกฤษ แล้วยาซ้ำสองรายการ ป้ากลัวกินผิด”</dd><dt>T5</dt><dd>✓ สำเร็จ · ง่าย 4 · 3 แตะ · “หาเจอง่าย ปุ่มชำระเงินชัด แต่ QR อยู่ในเครื่องตัวเองจะสแกนยังไง แล้วกดยืนยันเองได้เลยไม่มีการเช็ค ไม่มีคำว่าชำระสำเร็จชัดๆ ใบเสร็จลงวันที่ปีเก่า”</dd><dt>T6</dt><dd>✓ สำเร็จ · ง่าย 6 · 1 แตะ · “กดทีเดียวเจอ QR กับชื่อป้า ง่ายดี แต่ปุ่มเขียนว่าบัตรประจำตัว ขึ้นมาเป็นบัตรผู้ป่วย ป้านึกว่าบัตรประชาชน แล้วปุ่มสแกนรูป QR ก็ทำให้ลังเล”</dd></dl>
+  </article>
+  <article class="card">
+    <h3>คุณฝน <span class="muted">· 29 ปี</span></h3>
+    <p class="muted small">ตั้งครรภ์ 6 เดือน ใช้แอปธนาคาร/ช้อปปิ้งคล่อง ใช้มือเดียวขณะอุ้มของ</p>
+    <div class="divider"></div>
+    <p>ทางลัดหน้าแรกชัดดี บัตรผู้ป่วยกับจ่ายเงินทำได้ใน 1–3 แตะ แต่จองนัดยาวถึง 17 แตะ หลายหน้าไม่บอกผลว่าทำสำเร็จหรือยัง และข้อมูลยา/วันที่ขัดกันเอง ทำให้ไม่มั่นใจ</p>
+    <dl class="kv"><dt>T1</dt><dd>✓ สำเร็จ · ง่าย 6 · 3 แตะ · “เข้าได้เร็ว 3 แตะ แต่ช่องรหัสเขียนว่า 'กรอกรหัสผ่านอีกครั้ง' ทำให้งงนิดนึงว่าอยู่หน้าสมัครหรือเปล่า”</dd><dt>T2</dt><dd>✓ สำเร็จ · ง่าย 3 · 17 แตะ · “จองได้แต่ 17 แตะ เยอะเกิน ทุกหน้าต้องเลือกแล้วกดถัดไปอีก แผนกขึ้นขีดตลอดไม่บอกว่าทันตกรรม แจ้งเตือนบอกยืนยันแล้วแต่หน้าจอบอกรอยืนยัน 5 วัน สรุปยังไง”</dd><dt>T3</dt><dd>✗ ยอมแพ้ · ง่าย 4 · 6 แตะ · “กดเลื่อนนัดง่าย 5 แตะ แต่กดยืนยันแล้วเด้งไปหน้ารายละเอียดเฉย ๆ ไม่มีบอกว่าเลื่อนสำเร็จ แถมเขียน 'วันนี้, 29 ต.ค.' ทั้งที่ไม่ใช่วันนี้ เลยไม่มั่นใจ”</dd><dt>T4</dt><dd>✓ สำเร็จ · ง่าย 3 · 3 แตะ · “ปุ่มยาของฉันพาไปหน้าประวัติ ไม่ใช่หน้ายา ต้องเดาว่าครั้งไหน พอเจอก็ชื่อยากับขนาดไม่ตรงกัน ยาซ้ำสองรายการ ไม่กล้าเชื่อ”</dd><dt>T5</dt><dd>✓ สำเร็จ · ง่าย 5 · 3 แตะ · “จ่ายได้ใน 3 แตะ แต่ปุ่มยืนยันอยู่ใต้ QR ต้องเลื่อน QR อยู่ในมือถือเครื่องเดียวกันสแกนไม่ได้ ไม่มีปุ่มบันทึก QR และไม่มีหน้าบอกว่าชำระสำเร็จ เห็นแค่ป้ายชำระแล้ว”</dd><dt>T6</dt><dd>✓ สำเร็จ · ง่าย 7 · 1 แตะ · “แตะเดียวได้บัตรเลย ปุ่มบัตรประจำตัวอยู่ตรงหัวหน้าเห็นชัด QR อยากให้ใหญ่กว่านี้หน่อย”</dd></dl>
+  </article>
+  <article class="card">
+    <h3>พี่เอก <span class="muted">· 41 ปี</span></h3>
+    <p class="muted small">พนักงานบริษัท โรคความดัน รีบ ใช้แอปช่วงพักเที่ยง</p>
+    <div class="divider"></div>
+    <p>พี่เอกทำได้ครบ 6 โจทย์ บัตรผู้ป่วยกับเข้าสู่ระบบเร็วมาก แต่จองนัดใช้ 18 แตะ / 2 นาที ซึ่งเกินความอดทนช่วงพักเที่ยง ส่วนเลื่อนนัดกับจ่ายเงิน กดยืนยันแล้วไม่มีข้อความบอกว่าสำเร็จ และข้อมูลยากับวันที่ที่แสดงขัดกันเอง ทำให้ไม่แน่ใจว่าทำถูก</p>
+    <dl class="kv"><dt>T1</dt><dd>✓ สำเร็จ · ง่าย 6 · 3 แตะ · “กรอกเลขบัตรกับรหัสแล้วเข้าได้เลย เร็วดี แค่ช่องรหัสเขียนว่ากรอกอีกครั้งงงนิดนึง”</dd><dt>T2</dt><dd>✓ สำเร็จ · ง่าย 3 · 18 แตะ · “จองได้ แต่ขั้นเยอะไป 18 แตะ หน้ายืนยันแผนกเป็นขีด ไม่รู้จองทันตกรรมจริงไหม ปุ่มยืนยันเทาไม่บอกว่าขาดอะไร แถมแจ้งเตือนว่ายืนยันแล้ว แต่หน้าบอกรอยืนยัน 5 วัน งง”</dd><dt>T3</dt><dd>✓ สำเร็จ · ง่าย 4 · 6 แตะ · “เลื่อนได้ แต่ปุ่มเลื่อนนัดอยู่ล่างสุดต้องเลื่อนหา กดยืนยันแล้วไม่มีข้อความว่าสำเร็จ ต้องเดาเองจากวันที่ที่เปลี่ยน แถมเขียนว่าวันนี้ทั้งที่ไม่ใช่”</dd><dt>T4</dt><dd>✓ สำเร็จ · ง่าย 3 · 3 แตะ · “ปุ่มยาของฉันพาไปหน้าประวัติ ต้องเดาเปิดเอาเอง เจอวิธีกินแต่ชื่อยาไม่ตรงกับที่จำได้ ขึ้นซ้ำสองอัน ไม่ค่อยมั่นใจ”</dd><dt>T5</dt><dd>✓ สำเร็จ · ง่าย 4 · 4 แตะ · “จ่ายได้ แต่หน้ารวมไม่มีปุ่มจ่ายเลย ต้องกดเข้าบิล ปุ่มยืนยันอยู่ใต้ QR ต้องเลื่อน กดแล้วโผล่ใบเสร็จเลย ไม่มีบอกว่าสำเร็จชัด ๆ และวันที่ในใบเสร็จไม่ใช่วันที่จ่าย”</dd><dt>T6</dt><dd>✓ สำเร็จ · ง่าย 7 · 1 แตะ · “แตะเดียวขึ้นบัตรกับ QR เลย ง่ายสุดในแอป”</dd></dl>
+  </article>
+  <article class="card">
+    <h3>Mr. Aung <span class="muted">· 35 ปี</span></h3>
+    <p class="muted small">แรงงานเมียนมา มีบัตรสีชมพู อ่านภาษาไทยได้น้อย พอเข้าใจคำง่าย ๆ และไอคอน</p>
+    <div class="divider"></div>
+    <p>ไม่มีปุ่มเปลี่ยนภาษาบนหน้าเข้าสู่ระบบและหน้าแรก ไปหาเจอในตั้งค่า เลือก English แล้วแต่ข้อความยังเป็นภาษาไทยทั้งหมด จึงต้องเดาจากไอคอนกับตัวเลข งานที่มีไอคอนชัด (บัตรผู้ป่วย QR, จ่ายด้วย QR) ทำได้ง่าย ส่วนงานที่มีแต่ตัวหนังสือ (เลือกแผนก, กล่องที่ต้องกรอก, เลื่อนนัด) ทำช้าหรือไม่แน่ใจว่าสำเร็จ</p>
+    <dl class="kv"><dt>T1</dt><dd>✓ สำเร็จ · ง่าย 5 · 3 แตะ · “Can login, icons person and lock help. But no language button, all Thai. Box says 'กรอกรหัสผ่านอีกครั้ง'? friend say this mean 'again' - confusing.”</dd><dt>T2</dt><dd>✓ สำเร็จ · ง่าย 2 · 25 แตะ · “Finally! Trophy picture so I think OK. But English setting did nothing, tooth department no picture, search 'dental' nothing, button grey and I don't know why. Very long.”</dd><dt>T3</dt><dd>✗ ยอมแพ้ · ง่าย 3 · 6 แตะ · “I press change, pick 28 and 14:30, then page jump, no OK picture, no 'success'. Back button open change page again. I not sure it is changed. Also first appointment has no change button.”</dd><dt>T4</dt><dd>✓ สำเร็จ · ง่าย 3 · 3 แตะ · “Pill button open history, not medicine - strange. I found list by luck. Time to eat only Thai words, no sun/moon picture. Name 400 mg but also 5 mg, same medicine 2 times - confused, maybe wrong medicine.”</dd><dt>T5</dt><dd>✗ ยอมแพ้ · ง่าย 2 · 5 แตะ · “QR easy to find, I know PromptPay. But after I press, no 'success'. Then list still red ฿500 and orange. I afraid pay 2 times. Will go center and ask.”</dd><dt>T6</dt><dd>✓ สำเร็จ · ง่าย 6 · 1 แตะ · “Easy! Card button top, QR big. Show staff. Only word on button Thai but icon card help.”</dd></dl>
+  </article></div>
+  </section>
+</main>
+</body>
+</html>
