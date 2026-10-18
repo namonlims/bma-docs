@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demo การเงินและการเบิกจ่าย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    line-height: 1.6;
+  }
+  .page { max-width: 1120px; margin: 0 auto; padding: var(--dim-space-800, 32px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-800, 32px); }
+  h1, h2, h3 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-wrap: balance; }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-lg, 18px); line-height: 1.4; }
+  h3 { font-size: var(--type-size-base, 16px); line-height: 1.4; color: var(--text-content-default, #363B3F); }
+  p { margin: 0; }
+  .lede { margin-top: var(--dim-space-200, 8px); color: var(--text-content-secondary, #636B72); max-width: 720px; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); margin-top: var(--dim-space-300, 12px); }
+  .chip { display: inline-flex; align-items: center; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
+  .c-green { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .c-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .c-indigo { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+  .c-grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+
+  .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .gh { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  hr { border: 0; border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); margin: 0; width: 100%; }
+
+  /* สารบัญ */
+  .toc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--dim-space-200, 8px) var(--dim-space-600, 24px); margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+  .toc a { display: flex; gap: var(--dim-space-200, 8px); align-items: baseline; min-height: var(--dim-size-900, 44px); padding: var(--dim-space-200, 8px) 0; color: var(--text-content-default, #363B3F); text-decoration: none; border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .toc a:hover { color: var(--text-brandPrimary-default, #007549); }
+  .toc .n { color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); min-width: 24px; }
+  .toc .t { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); margin-left: auto; white-space: nowrap; }
+
+  /* label / value */
+  dl.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); margin: 0; }
+  dl.kv dt { color: var(--text-content-tertiary, #858C92); }
+  dl.kv dd { margin: 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--type-size-sm, 14px); }
+  .tbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-300, 8px); }
+  th { text-align: left; font-weight: var(--type-weight-medium, 500); color: var(--text-content-secondary, #636B72); background: var(--surface-brandPrimary-quaternary, #F4FBF8); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); white-space: nowrap; }
+  td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); vertical-align: top; }
+  td a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--dim-size-900, 44px); min-height: var(--dim-size-900, 44px); margin: calc(-1 * var(--dim-space-300, 12px)) 0; }
+  td.code { white-space: nowrap; font-weight: var(--type-weight-medium, 500); }
+
+  /* ขั้นเดโม */
+  .step { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--dim-space-600, 24px); align-items: start; }
+  .step + .step { padding-top: var(--dim-space-600, 24px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .step-body { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
+  ol.clicks { margin: 0; padding-left: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  ol.clicks li::marker { color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); }
+  .btn { display: inline-block; padding: 0 var(--dim-space-150, 6px); border-radius: var(--dim-radius-150, 6px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  .say { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); background: var(--surface-colorfulbadge-indigo, #EEF2FF); }
+  .say .gh { color: var(--text-colorfulbadge-indigo, #4F46E5); display: block; margin-bottom: var(--dim-space-100, 4px); }
+  .warn { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  figure { margin: 0; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  figure a { display: block; border-radius: var(--dim-radius-300, 8px); overflow: hidden; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  figure img { display: block; width: 100%; height: auto; }
+  figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .shots2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-300, 12px); }
+
+  ul.plain { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .part-h { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .foot { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 18px; line-height: 1; vertical-align: -3px; }
+
+  @media (max-width: 1023px) {
+    .step { grid-template-columns: 1fr; }
+    .toc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 639px) {
+    .page { padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1000, 40px); }
+    .card { padding: var(--dim-space-400, 16px); }
+    .toc, .shots2 { grid-template-columns: 1fr; }
+    dl.kv { grid-template-columns: 1fr; gap: 0; }
+    dl.kv dd { margin-bottom: var(--dim-space-200, 8px); }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+<header>
+  <h1>Demo การเงินและสิทธิและการเบิกจ่าย</h1>
+  <p class="lede">บทเดโมสำหรับนำเสนอคณะทำงาน: กดอะไร ตรงไหน ใช้ผู้ป่วยคนไหน และพูดอะไร · เรียงตามเส้นทางผู้ป่วยตั้งแต่มาจ่ายเงินจนถึงส่งเบิก · ไม่รวม Mobile Application</p>
+  <div class="chips">
+    <span class="chip c-orange">Demo script</span>
+    <span class="chip c-green">/finance</span>
+    <span class="chip c-green">/finance/rates</span>
+    <span class="chip c-green">/rights</span>
+    <span class="chip c-grey">อ้างอิงมติ คทง.8 ครั้งที่ 1 (11 ก.ย. 69)</span>
+    <span class="chip c-grey">ทดสอบกดจริง 18 ต.ค. 69</span>
+  </div>
+</header>
+
+<!-- ───────── เตรียมตัว ───────── -->
+<section class="card" id="prep">
+  <div class="part-h">
+    <h2>ก่อนเริ่มเดโม</h2>
+    <p class="sum">ทำครั้งเดียวก่อนขึ้นจอ · ใช้เวลาประมาณ 2 นาที</p>
+  </div>
+  <dl class="kv">
+    <dt>เว็บ</dt><dd><a href="https://bma-health.mih.co.th/">bma-health.mih.co.th</a> · ดูท้ายหน้า "Last Build" ว่าเป็นของวันล่าสุด</dd>
+    <dt>บัญชี</dt><dd>บัญชี Demo ฝ่ายการเงิน <code>demo.finance@phcis.bma.go.th</code> · รหัสผ่านขอจากพี่ (ไม่เขียนไว้ในหน้านี้เพราะหน้านี้เปิดสาธารณะ)</dd>
+    <dt>ยืนยันตัวตน</dt><dd>เลือก <span class="btn">รหัส OTP</span> → ใส่เลขอะไรก็ได้ 6 หลัก (เดโม)</dd>
+    <dt>ศูนย์</dt><dd>เลือก <span class="btn">ศูนย์ 4 ดินแดง</span> → การ์ด <span class="btn">ระบบ PHCIS</span> → เมนูซ้าย <span class="btn">การเงิน</span></dd>
+    <dt>สลับบทบาท</dt><dd>รูปโปรไฟล์มุมซ้ายล่าง → <span class="btn">สลับบทบาท</span> (ป้าย "สำหรับ Demo") → พิมพ์ชื่อบทบาทในช่องค้นหา → กดบทบาท</dd>
+  </dl>
+  <div class="warn"><b>สำคัญ: ห้ามกดรีเฟรชหน้า (F5) ระหว่างเดโม</b> · ข้อมูลเดโมอยู่ในหน่วยความจำ รีเฟรชแล้วทุกอย่างกลับเป็นค่าเริ่มต้น (บิลที่จ่าย คำขอลดหย่อน ฯลฯ หายหมด) · เปลี่ยนบทบาทให้ใช้เมนูสลับบทบาทเท่านั้น · ถ้าเดโมพังกลางทาง รีเฟรชเพื่อเริ่มใหม่ได้</div>
+  <hr />
+  <div class="part-h">
+    <h3>ผู้ป่วยตัวอย่างที่ใช้</h3>
+    <p class="sum">คิว F = คิวการเงินวันนี้ · ทุกคนอยู่แท็บ "คิวชำระเงิน" › "รอชำระเงิน" (หน้า 1–3)</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>คิว · HN</th><th>ผู้ป่วย</th><th>ใช้โชว์</th><th>ขั้น</th></tr></thead>
+      <tbody>
+        <tr><td class="code">F001 · 67-00001</td><td>สมชาย มีสุข</td><td>ประกันสังคม ยอด ฿450 · ค้างเก่า 3 Visit ฿495 · วันนี้มา 2 Visit (VN 69-00001 + ทันตกรรม 69-50005)</td><td><a href="#s2">2</a></td></tr>
+        <tr><td class="code">F003 · 67-00003</td><td>ปริญญา รัตนา</td><td>ข้าราชการ ยอด ฿0 · ปุ่ม "พิมพ์ใบยานอก" · ติ๊ก "มารับยาแทน" มาให้แล้ว</td><td><a href="#s3">3</a></td></tr>
+        <tr><td class="code">F004 · 67-00004</td><td>ภูริ ใจกล้า</td><td>บิลถูกล็อกโดย จนท.การเงิน วิภาวรรณ (ปุ่ม "ชำระเงิน" มีรูปกุญแจ)</td><td><a href="#s1">1</a></td></tr>
+        <tr><td class="code">F005 · 67-00005</td><td>สุดา ปลอดโปร่ง</td><td>บัตรทองยังไม่ปิดสิทธิ → "รับยาไม่ได้ · รอปิดสิทธิ"</td><td><a href="#s4">4</a></td></tr>
+        <tr><td class="code">F015 · 67-00015</td><td>รัตนาภรณ์ ใสสะอาด</td><td>ขอลดหย่อน ฿235 (ไม่เกิน ฿500 → นักสังคมอนุมัติจบ)</td><td><a href="#s6">6</a></td></tr>
+        <tr><td class="code">F012 · 67-00012</td><td>วิชัย รุ่งเรือง</td><td>ขอลดหย่อน ฿2,000 (เกิน ฿500 → นักสังคมประเมิน → ผอ.ศูนย์อนุมัติ)</td><td><a href="#s7">7</a></td></tr>
+        <tr><td class="code">F010 · 67-00010</td><td>นพดล ช่วยเหลือ</td><td>ประกันเอกชน ฿1,970 (จ่ายบัตรเครดิตได้ ≥ ฿1,000) · ใบเคลมประกัน</td><td><a href="#s10">10</a></td></tr>
+        <tr><td class="code">F019 · 67-00019</td><td>นันทิดา พรเลิศ</td><td>งานบำบัดยาเสพติด ปิดสิทธิที่คลินิกเอง</td><td><a href="#s13">13</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sum">ฝั่ง /rights: VN 69-00003 ล็อกโดยผู้อื่น · 69-00009 สปสช. ปฏิเสธ · 69-00010 รออุทธรณ์ · 69-00011 ต้องแก้ไข · 69-00016 รอแพทย์ยืนยัน ICD-10</p>
+</section>
+
+<!-- ───────── สารบัญ ───────── -->
+<section class="card" aria-labelledby="toc-h">
+  <div class="part-h">
+    <h2 id="toc-h">ลำดับการเล่า</h2>
+    <p class="sum">ประมาณ 35–40 นาที · ถ้าเวลาน้อย เล่าข้อ 1–7 และ 14–16 ก่อน</p>
+  </div>
+  <ol class="toc">
+    <li><a href="#s1"><span class="n">1</span>ภาพรวมคิวชำระเงิน<span class="t">3 นาที</span></a></li>
+    <li><a href="#s2"><span class="n">2</span>รับเงินสด + ใบเสร็จ<span class="t">5 นาที</span></a></li>
+    <li><a href="#s3"><span class="n">3</span>ยอด ฿0 · ใบยานอก<span class="t">2 นาที</span></a></li>
+    <li><a href="#s4"><span class="n">4</span>บัตรทองยังไม่ปิดสิทธิ<span class="t">2 นาที</span></a></li>
+    <li><a href="#s5"><span class="n">5</span>ยกเลิก / แก้ไขใบเสร็จ<span class="t">3 นาที</span></a></li>
+    <li><a href="#s6"><span class="n">6</span>ลดหย่อน ≤ ฿500 (นักสังคม)<span class="t">5 นาที</span></a></li>
+    <li><a href="#s7"><span class="n">7</span>ลดหย่อน &gt; ฿500 (ผอ.ศูนย์)<span class="t">3 นาที</span></a></li>
+    <li><a href="#s8"><span class="n">8</span>ค้างชำระ<span class="t">2 นาที</span></a></li>
+    <li><a href="#s9"><span class="n">9</span>ทะเบียนรายรับ · ตรวจสอบใบเสร็จ<span class="t">2 นาที</span></a></li>
+    <li><a href="#s10"><span class="n">10</span>เมนูพิมพ์ ▾<span class="t">3 นาที</span></a></li>
+    <li><a href="#s11"><span class="n">11</span>โควตา สปสช. · ตรวจสิทธิ<span class="t">1 นาที</span></a></li>
+    <li><a href="#s12"><span class="n">12</span>REP / Statement · แท็บอื่น<span class="t">2 นาที</span></a></li>
+    <li><a href="#s13"><span class="n">13</span>ปิดสิทธิที่คลินิกยาเสพติด<span class="t">1 นาที</span></a></li>
+    <li><a href="#s14"><span class="n">14</span>/rights คิวส่งเบิก<span class="t">3 นาที</span></a></li>
+    <li><a href="#s15"><span class="n">15</span>แก้ ICD-10 · อุทธรณ์<span class="t">2 นาที</span></a></li>
+    <li><a href="#s16"><span class="n">16</span>e-Claim · Dashboard · รายงาน<span class="t">2 นาที</span></a></li>
+  </ol>
+</section>
+
+<!-- ───────── ส่วนที่ 1 การเงิน ───────── -->
+<section class="card" aria-labelledby="p1">
+  <div class="part-h">
+    <h2 id="p1">ส่วนที่ 1 · งานการเงิน (/finance)</h2>
+    <p class="sum">บทบาท ฝ่ายการเงิน · ทุกขั้นเริ่มจากเมนูซ้าย "การเงิน"</p>
+  </div>
+
+  <article class="step" id="s1">
+    <div class="step-body">
+      <h3>1. ภาพรวมคิวชำระเงิน</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.1.5 · 2.1.9 · 2.2.5 · 2.2.6</span></div>
+      <ol class="clicks">
+        <li>ชี้การ์ดสรุป 4 ใบ: รอชำระเงิน · ชำระแล้ววันนี้ · ยอดค้างชำระ (N ราย · ทุก Visit) · ใบเสร็จที่ยกเลิก</li>
+        <li>ชี้แท็บบน 8 แท็บ แล้วอยู่ที่ <span class="btn">คิวชำระเงิน</span> › <span class="btn">รอชำระเงิน</span></li>
+        <li>ชี้ตัวกรอง <span class="btn">จุดบริการ:</span> (ทั่วไป · ทำแผล · ฉีดยา · งานบำบัดยาเสพติด)</li>
+        <li>ชี้แถว F001 สองแถว: "Visit 1 จาก 2" และ "Visit 2 จาก 2" ใต้ VN</li>
+        <li>ชี้ไอคอนเงินสีส้มหลังชื่อ + "ค้างเก่า 3 ครั้ง · 495" + ปุ่ม <span class="btn">ดูรายการค้างชำระ</span></li>
+        <li>ชี้แถว F004: ปุ่ม <span class="btn">ชำระเงิน</span> มีกุญแจ → ชี้เมาส์ค้างให้เห็นชื่อผู้ที่เปิดบิลอยู่</li>
+        <li>กด ⋮ ของแถวใดก็ได้ ให้เห็นเมนู: ขอลดหย่อน · ดูประวัติการขอลดหย่อน · ดูรายการค้างชำระ · ยกเลิกคิว</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>คลินิกตรวจโรคทั่วไป เบาหวาน ความดัน ใช้ Visit เดียวกัน คลินิกอื่นแยก Visit และ 1 Visit = 1 บิล · ยอดค้างชำระแจ้งเตือนทุกจุดแต่ไม่บล็อกการรับบริการ · บิลที่คนอื่นเปิดอยู่จะถูกล็อกกันรับเงินซ้ำ</div>
+    </div>
+    <figure><a href="finance-shots/02-finance-queue.jpg" target="_blank"><img src="finance-shots/02-finance-queue.jpg" alt="หน้าคิวชำระเงิน" loading="lazy" /></a><figcaption>คิวชำระเงิน · การ์ดสรุป · แท็บ · ตัวกรอง</figcaption></figure>
+  </article>
+
+  <article class="step" id="s2">
+    <div class="step-body">
+      <h3>2. รับชำระเงินสดและออกใบเสร็จ (F001)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-blue">HN 67-00001 · VN 69-00001</span><span class="chip c-grey">มติ 2.1.1 · 2.1.2 · 2.1.6 · 2.2.2</span></div>
+      <ol class="clicks">
+        <li>แถว F001 (VN 69-00001) กดลำโพง <span class="btn">เรียกคิว</span> → ปุ่ม "ชำระเงิน" เปลี่ยนเป็นปุ่มเขียวเข้ม</li>
+        <li>กด <span class="btn">ชำระเงิน</span> → ป๊อปอัป "ยืนยันรับผู้ป่วย" (ติ๊ก มารับยาแทน / มาฟังผล) → <span class="btn">ยืนยัน</span></li>
+        <li>หน้า "ชำระเงิน" ขั้น 1 รายการค่าใช้จ่าย: ชี้แถบ 4 ขั้นใต้การ์ดผู้ป่วย</li>
+        <li>กล่องส้ม "มียอดค้างชำระ" → <span class="btn">ดูรายการ</span> → เห็น 3 Visit (11 ต.ค. ฿60 · 22 ก.ย. ฿165 · 29 ส.ค. ฿270) ติ๊กเก็บพร้อมบิลนี้ได้ (ออกใบเสร็จแยก ลงวันที่วันนี้)</li>
+        <li>ตารางรายการ: ชี้ Checkbox (เอาติ๊กออก = ไม่เก็บครั้งนี้ คงค้างไว้) · กดลูกศรหน้าแถว "ค่าตรวจทางห้องปฏิบัติการ" ให้เห็นรายละเอียด</li>
+        <li>ฝั่งขวา "ยอดที่ต้องชำระ" ค่ารักษา ฿1,460 · เบิกได้ -฿1,010 · <b>ยอดเงินที่ต้องชำระ ฿450</b> → <span class="btn">ดำเนินการชำระเงิน</span></li>
+        <li>ขั้น 2 ตรวจสอบสิทธิ: ชี้ 2 กล่อง "สำหรับผู้ที่ใช้สิทธิ" (บัตรประชาชน | ThaiD) / "สำหรับผู้ที่ไม่ใช้สิทธิ" (ชำระเงินเอง) → <span class="btn">ยืนยันสิทธิและดำเนินการชำระเงิน</span></li>
+        <li>ขั้น 3: ชี้ 4 วิธีชำระ (บัตรเครดิตกดไม่ได้เพราะยอดต่ำกว่า 1,000) → เลือก <span class="btn">เงินสด</span> ใส่ 500 → เงินทอน 50 บาท → รูปแบบใบเสร็จ อิเล็กทรอนิกส์ / กระดาษ → <span class="btn">บันทึกและออกใบเสร็จ</span></li>
+        <li>ขั้น 4 ใบเสร็จ: <span class="btn">พิมพ์ใบเสร็จ (ฉบับจริง)</span> → หน้า "ตัวอย่างก่อนพิมพ์" (แบบ-01 ลายน้ำ "ต้นฉบับ") → <span class="btn">พิมพ์ใบเสร็จ (ต้นฉบับ)</span> → ปุ่มเปลี่ยนเป็น "พิมพ์สำเนา"</li>
+        <li>เซ็น "ลายเซ็นผู้รับบริการ" → <span class="btn">บันทึกและส่งต่อ</span> → ป๊อปอัปส่งต่อ (เหมือนแผนกอื่น)</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ชำระได้ 4 ช่องทางตามมติ · บัตรเครดิตขั้นต่ำ 1,000 บาทบวกค่าธรรมเนียม 1% · ที่ไม่ใช่เงินสดต้องกด "ตรวจสอบการรับเงิน" ก่อนออกใบเสร็จ · ฉบับจริงพิมพ์ได้ครั้งเดียว ครั้งต่อไปเป็นสำเนา</div>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/04-bill.jpg" target="_blank"><img src="finance-shots/04-bill.jpg" alt="หน้าบิล" loading="lazy" /></a><figcaption>ขั้น 1 รายการค่าใช้จ่าย</figcaption></figure>
+      <figure><a href="finance-shots/05-bill-debt.jpg" target="_blank"><img src="finance-shots/05-bill-debt.jpg" alt="ยอดค้างชำระเดิม" loading="lazy" /></a><figcaption>กาง "มียอดค้างชำระ"</figcaption></figure>
+      <figure><a href="finance-shots/07-rights.jpg" target="_blank"><img src="finance-shots/07-rights.jpg" alt="ตรวจสอบสิทธิ" loading="lazy" /></a><figcaption>ขั้น 2 ตรวจสอบสิทธิ</figcaption></figure>
+      <figure><a href="finance-shots/08-pay.jpg" target="_blank"><img src="finance-shots/08-pay.jpg" alt="ดำเนินการชำระเงิน" loading="lazy" /></a><figcaption>ขั้น 3 วิธีชำระเงิน</figcaption></figure>
+      <figure><a href="finance-shots/09-receipt.jpg" target="_blank"><img src="finance-shots/09-receipt.jpg" alt="ใบเสร็จ" loading="lazy" /></a><figcaption>ขั้น 4 ใบเสร็จ</figcaption></figure>
+      <figure><a href="finance-shots/10-print-preview.jpg" target="_blank"><img src="finance-shots/10-print-preview.jpg" alt="ตัวอย่างก่อนพิมพ์" loading="lazy" /></a><figcaption>ตัวอย่างก่อนพิมพ์ (แบบ-01)</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s3">
+    <div class="step-body">
+      <h3>3. ยอด ฿0 และใบยานอก (F003)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-blue">HN 67-00003 · ข้าราชการ</span><span class="chip c-grey">มติ 2.1.9</span></div>
+      <ol class="clicks">
+        <li>แถว F003 → <span class="btn">ชำระเงิน</span> → ป๊อปอัปยืนยันรับ: "มารับยาแทน" ติ๊กมาให้แล้ว พร้อม "บันทึกโดย …" → <span class="btn">ยืนยัน</span></li>
+        <li><span class="btn">ดำเนินการชำระเงิน</span> → <span class="btn">ยืนยันสิทธิและดำเนินการชำระเงิน</span></li>
+        <li>เห็นกล่อง "ไม่มียอดบริการที่ต้องชำระ" (ไม่มีช่องวิธีชำระ เลือกแค่รูปแบบใบเสร็จ) → <span class="btn">บันทึกและออกใบเสร็จ</span></li>
+        <li>หัวใบเสร็จมีปุ่ม <span class="btn">พิมพ์ใบยานอก</span> (เฉพาะสิทธิข้าราชการ กรมบัญชีกลาง + ข้าราชการ กทม. ที่มีรายการยา)</li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/12-zero.jpg" target="_blank"><img src="finance-shots/12-zero.jpg" alt="ไม่มียอดชำระ" loading="lazy" /></a><figcaption>ยอด ฿0</figcaption></figure>
+      <figure><a href="finance-shots/13-receipt-civil.jpg" target="_blank"><img src="finance-shots/13-receipt-civil.jpg" alt="ใบเสร็จข้าราชการ" loading="lazy" /></a><figcaption>ปุ่มพิมพ์ใบยานอก</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s4">
+    <div class="step-body">
+      <h3>4. บัตรทองยังไม่ปิดสิทธิ (F005)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-blue">HN 67-00005 · บัตรทอง</span><span class="chip c-grey">มติ 2.1.6 · 2.1.7</span></div>
+      <ol class="clicks">
+        <li>ชี้แถว F005: สถานะสีแดง "ค้างชำระ · ยังไม่ปิดสิทธิ" + ใต้สถานะยา "รับยาไม่ได้ · รอปิดสิทธิ"</li>
+        <li>⋮ → <span class="btn">ปิดสิทธิ (บัตรประชาชน / ThaiD / สปสช.)</span></li>
+        <li>เลือกช่องทาง (บัตรประชาชน · ThaiD · ระบบ สปสช. กรณีลืมบัตร) → <span class="btn">ยืนยันตัวตน</span> → <span class="btn">ยืนยันปิดสิทธิ</span></li>
+        <li>"ปิดสิทธิเรียบร้อย · รับยาได้แล้ว" → <span class="btn">ตกลง</span> → แถวเปลี่ยนเป็น "รอชำระเงิน"</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ห้องยาจ่ายยาไม่ได้จนกว่าจะปิดสิทธิ (ห้องยาคิว P-052 คือคนเดียวกัน)</div>
+    </div>
+    <figure><a href="finance-shots/16-close-rights.jpg" target="_blank"><img src="finance-shots/16-close-rights.jpg" alt="ปิดสิทธิบัตรทอง" loading="lazy" /></a><figcaption>ป๊อปอัปปิดสิทธิบัตรทอง</figcaption></figure>
+  </article>
+
+  <article class="step" id="s5">
+    <div class="step-body">
+      <h3>5. ยกเลิกและแก้ไขใบเสร็จ</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.1.3 · 2.1.4</span></div>
+      <p class="gh">ยกเลิก (ต่อจากข้อ 3 ได้เลย)</p>
+      <ol class="clicks">
+        <li>หน้าใบเสร็จ → <span class="btn">ยกเลิกใบเสร็จ</span> (ปุ่มแดงซ้ายล่าง)</li>
+        <li>เลือกเหตุผล เช่น "ระบุสิทธิผิด" → <span class="btn">ยืนยันการยกเลิกใบเสร็จ</span> → การ์ด "ใบเสร็จที่ยกเลิก" เพิ่ม 1</li>
+      </ol>
+      <p class="gh">แก้ไข</p>
+      <ol class="clicks">
+        <li>แท็บ <span class="btn">ทะเบียนรายรับ</span> → แถวใบเสร็จ RE69-1064 → ไอคอนดินสอ "แก้ไขใบเสร็จ"</li>
+        <li>ซ้าย "ข้อมูลใบเสร็จ" แก้ไม่ได้ (ยอดผิดต้องยกเลิกแล้วออกใหม่) · ขวาแก้วิธีชำระเงิน + ต้องเลือกเหตุผล → <span class="btn">บันทึกการแก้ไข</span></li>
+        <li>ชี้ใบเสร็จที่มีรูปกุญแจ: สร้างโดยคนอื่น แก้ไม่ได้ (ชี้เมาส์ค้างให้เห็นเหตุผล)</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ยกเลิกเองได้ภายในวันเดียวกันและก่อนตัดยอด · ข้ามวันหรือตัดยอดแล้วต้อง "ขออนุมัติยกเลิกใบเสร็จ" (ไปที่หัวหน้างานการเงินในแท็บคำขออนุมัติ) · แก้บิลได้เฉพาะคนสร้างบิล</div>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/14-void.jpg" target="_blank"><img src="finance-shots/14-void.jpg" alt="ยกเลิกใบเสร็จ" loading="lazy" /></a><figcaption>เหตุผลในการยกเลิก</figcaption></figure>
+      <figure><a href="finance-shots/34-edit-receipt.jpg" target="_blank"><img src="finance-shots/34-edit-receipt.jpg" alt="แก้ไขใบเสร็จ" loading="lazy" /></a><figcaption>แก้ไขใบเสร็จ</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s6">
+    <div class="step-body">
+      <h3>6. ลดหย่อนไม่เกิน ฿500 → นักสังคมสงเคราะห์ (F015)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-indigo">นักสังคมสงเคราะห์ศูนย์</span><span class="chip c-blue">HN 67-00015</span><span class="chip c-grey">มติ 2.1.9</span></div>
+      <p class="gh">ฝั่งการเงิน · ขอ</p>
+      <ol class="clicks">
+        <li>แถว F015 (หน้า 2) → ⋮ → <span class="btn">ขอลดหย่อน</span> (หรือติ๊ก "ขอลดหย่อนค่าบริการทางการแพทย์" ในหน้าบิล)</li>
+        <li>ระบบใส่ 100% ให้ · สลับ % | บาท ได้ · บรรทัด "ผู้อนุมัติ: นักสังคมสงเคราะห์" → <span class="btn">ส่งนักสังคมสงเคราะห์</span></li>
+        <li>แบบฟอร์มที่ 1 "ส่งเคสลดหย่อน": เลือก "ผู้ที่ได้รับมอบหมาย" (ไม่บังคับ) · เลือกเหตุผล · เซ็นชื่อผู้ส่ง → <span class="btn">ส่งเคสลดหย่อน</span> → "ส่งคำขออนุมัติเรียบร้อย"</li>
+        <li>สถานะในบิลและคิว = "รอนักสังคมอนุมัติลดหย่อน" (สีเหลือง)</li>
+      </ol>
+      <p class="gh">ฝั่งนักสังคมสงเคราะห์ · ประเมิน</p>
+      <ol class="clicks">
+        <li>สลับบทบาท → <span class="btn">นักสังคมสงเคราะห์ศูนย์</span> → เมนู <span class="btn">แดชบอร์ด</span> (สิ่งที่ต้องดำเนินการ)</li>
+        <li>แถว "อนุมัติลดหย่อนค่ารักษา ฿235" → <span class="btn">ทำแบบประเมิน</span></li>
+        <li>แบบฟอร์มที่ 2: ตอบข้อ 1–5 (ข้อละ 1 ตัวเลือก) + ข้อ 6.1–6.8 (มี/ไม่มี) → ระบบรวมคะแนน 13–35 และเลือกร้อยละตามเกณฑ์ให้</li>
+        <li><span class="btn">ถัดไป: แบบแจ้งผลการพิจารณา</span> → แบบฟอร์มที่ 3: เลือก "ได้สัมภาษณ์ ผู้ป่วย" · กด "ลายเซ็นหลัก" → <span class="btn">ส่งผลให้เจ้าหน้าที่การเงิน</span></li>
+      </ol>
+      <p class="gh">กลับฝั่งการเงิน · รับชำระ</p>
+      <ol class="clicks">
+        <li>สลับบทบาท → <span class="btn">ฝ่ายการเงิน</span> → เปิดบิล F015: บรรทัด "ได้รับการลดหย่อนค่าบริการทางการแพทย์ -฿…" หักให้อัตโนมัติ · ป้าย "นักสังคมอนุมัติแล้ว" · <span class="btn">ดูรายละเอียด</span> เห็นแบบแจ้งผล</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ไม่มีส่วนลดทั่วไปแล้ว ลดได้ทางเดียวคือขอลดหย่อน · ทุกเคสผ่านนักสังคมสงเคราะห์ก่อน · คะแนน 29–35 ลดได้มากกว่า 75% · 21–28 ลด 50–75% · 13–20 ลดไม่เกิน 50% · อนุมัติบางส่วน ยอดที่เหลือยังเป็นหนี้ค้างจนกว่าจะจ่าย</div>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/17-reduction.jpg" target="_blank"><img src="finance-shots/17-reduction.jpg" alt="ขอลดหย่อน" loading="lazy" /></a><figcaption>ป๊อปอัป "ขอลดหย่อน"</figcaption></figure>
+      <figure><a href="finance-shots/20-assess.jpg" target="_blank"><img src="finance-shots/20-assess.jpg" alt="แบบประเมิน" loading="lazy" /></a><figcaption>แบบฟอร์มที่ 2 (นักสังคม)</figcaption></figure>
+      <figure><a href="finance-shots/21-form3.jpg" target="_blank"><img src="finance-shots/21-form3.jpg" alt="แบบแจ้งผล" loading="lazy" /></a><figcaption>แบบฟอร์มที่ 3 แจ้งผล</figcaption></figure>
+      <figure><a href="finance-shots/22-after-reduction.jpg" target="_blank"><img src="finance-shots/22-after-reduction.jpg" alt="บิลหลังลดหย่อน" loading="lazy" /></a><figcaption>บิลหักยอดลดหย่อนแล้ว</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s7">
+    <div class="step-body">
+      <h3>7. ลดหย่อนเกิน ฿500 → ผอ.ศูนย์ (F012)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-indigo">นักสังคมสงเคราะห์ศูนย์</span><span class="chip c-indigo">ผอ.ศูนย์บริการสาธารณสุข</span><span class="chip c-blue">HN 67-00012 · ฿2,000</span></div>
+      <ol class="clicks">
+        <li>การเงิน: แถว F012 (หน้า 2) → ⋮ → <span class="btn">ขอลดหย่อน</span> · บรรทัดผู้อนุมัติ = "นักสังคมสงเคราะห์ประเมิน → ผอ.ศูนย์อนุมัติ (เกิน ฿500)" → ส่งเหมือนข้อ 6</li>
+        <li>นักสังคม: ทำแบบประเมิน (เดโมเลือกกลาง ๆ ได้ 24 คะแนน = 75% = ฿1,500) → แบบฟอร์มที่ 3 ปุ่มเปลี่ยนเป็น <span class="btn">ส่งผล ผอ.ศูนย์อนุมัติ</span></li>
+        <li>สลับบทบาท → <span class="btn">ผอ.ศูนย์บริการสาธารณสุข</span> → แดชบอร์ด "รายการที่ต้องอนุมัติ" → แถว "พิจารณาอนุมัติ ลดหย่อนค่ารักษา นายวิชัย รุ่งเรือง · 1,500 บาท" → <span class="btn">อนุมัติ</span> → ในกล่องรายละเอียดกด <span class="btn">อนุมัติ</span> อีกครั้ง</li>
+        <li>กลับการเงิน: แท็บ <span class="btn">ลดหย่อน</span> แถว 67-00012 = "ผอ.ศูนย์อนุมัติแล้ว" · บิลเหลือยอด ฿500</li>
+      </ol>
+      <div class="warn">เคส F004 (ภูริ ฿850) ในข้อมูลตั้งต้นแสดง "รอ ผอ.ศูนย์อนุมัติ" แต่ไม่ขึ้นในรายการของ ผอ. — เดโมสาย ผอ. ให้สร้างเคสใหม่ด้วย F012 ตามขั้นข้างบน</div>
+    </div>
+    <figure><a href="finance-shots/30-director.jpg" target="_blank"><img src="finance-shots/30-director.jpg" alt="ผอ.ศูนย์อนุมัติ" loading="lazy" /></a><figcaption>รายละเอียดคำขอฝั่ง ผอ.ศูนย์</figcaption></figure>
+  </article>
+
+  <article class="step" id="s8">
+    <div class="step-body">
+      <h3>8. ค้างชำระ</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.1.5 · 2.1.6</span></div>
+      <ol class="clicks">
+        <li>แท็บ <span class="btn">ค้างชำระ</span>: 1 แถวต่อ 1 คน · ขวาบนตาราง "ยอดค้างชำระรวม (41 ราย · 79 Visit)"</li>
+        <li>กดลูกศรหน้าแถว 67-00001 → กางดูทีละ Visit (วันที่ · VN · คลินิก · ยอด · รับชำระ)</li>
+        <li><span class="btn">รับยอดค้างชำระ ▾</span> → "เลือกรายการที่ต้องการรับยอดชำระ" → เลือก 1 Visit → เข้าหน้าบิลเหมือนข้อ 2</li>
+        <li>หลังจ่าย Visit หนี้แล้วยังมีค้างอีก ตอน "บันทึกและส่งต่อ" ระบบถาม "ยังมียอดค้างชำระอีก N Visit" (จ่ายต่อ หรือ "ไว้ชำระวันหลัง")</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ไม่มีการผ่อนจ่าย รับทีละ Visit เต็มจำนวน · ป้ายค้างชำระเห็นทุกหน้าทุกบทบาท (worklist · การ์ดผู้ป่วย · เวชระเบียน) จ่ายแล้วป้ายหายเอง</div>
+    </div>
+    <figure><a href="finance-shots/25-tab.jpg" target="_blank"><img src="finance-shots/25-tab.jpg" alt="แท็บค้างชำระ" loading="lazy" /></a><figcaption>แท็บค้างชำระ</figcaption></figure>
+  </article>
+
+  <article class="step" id="s9">
+    <div class="step-body">
+      <h3>9. ทะเบียนรายรับ · ตรวจสอบใบเสร็จ · คำขออนุมัติ · ลดหย่อน</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span></div>
+      <ol class="clicks">
+        <li><span class="btn">ทะเบียนรายรับ</span>: กราฟ "รายรับแยกตามช่องทางการชำระเงิน" + "ความครบถ้วนการรับชำระ" · มุมมอง รายผู้รับบริการ | รายคลินิก | รายผู้รับเงิน · <span class="btn">นำส่งออกรายงาน</span></li>
+        <li><span class="btn">ตรวจสอบใบเสร็จ</span>: แท็บสถานะ ทั้งหมด · ปกติ · แก้ไขแล้ว · ยกเลิกแล้ว · <span class="btn">ดูใบเสร็จ</span> = ดูอย่างเดียว</li>
+        <li><span class="btn">คำขออนุมัติ</span>: รออนุมัติ · อนุมัติแล้ว · ไม่อนุมัติ · ตัวกรอง "ประเภท:" (ลดหย่อน · ยกเลิกใบเสร็จข้ามวัน) · การเงินอนุมัติลดหย่อนเองไม่ได้ เห็นแค่สถานะ</li>
+        <li><span class="btn">ลดหย่อน</span>: ตารางเคสทั้งหมด ตัวกรอง "สถานะ:" + "ผู้อนุมัติ:"</li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/23-tab.jpg" target="_blank"><img src="finance-shots/23-tab.jpg" alt="ทะเบียนรายรับ" loading="lazy" /></a><figcaption>ทะเบียนรายรับ</figcaption></figure>
+      <figure><a href="finance-shots/24-tab.jpg" target="_blank"><img src="finance-shots/24-tab.jpg" alt="ตรวจสอบใบเสร็จ" loading="lazy" /></a><figcaption>ตรวจสอบใบเสร็จ</figcaption></figure>
+      <figure><a href="finance-shots/26-tab.jpg" target="_blank"><img src="finance-shots/26-tab.jpg" alt="คำขออนุมัติ" loading="lazy" /></a><figcaption>คำขออนุมัติ</figcaption></figure>
+      <figure><a href="finance-shots/27-tab.jpg" target="_blank"><img src="finance-shots/27-tab.jpg" alt="ลดหย่อน" loading="lazy" /></a><figcaption>ลดหย่อน</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s10">
+    <div class="step-body">
+      <h3>10. เมนูพิมพ์ ▾ (หัวหน้า /finance)</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.1.8</span></div>
+      <ol class="clicks">
+        <li>กด <span class="btn">พิมพ์ ▾</span> ข้างปุ่ม "รายงาน" → 5 รายการ</li>
+        <li><b>พิมพ์ใบสรุปยอดการรับชำระเงิน</b> — ตัดยอดใบเสร็จวันนี้ของคนที่ login · มีกล่องยืนยัน "ตัดยอดและพิมพ์" · <b>อย่ากดยืนยันตอนเดโม</b> ถ้ายังจะโชว์การยกเลิกใบเสร็จต่อ</li>
+        <li><b>พิมพ์ใบสรุปการเงินรายวัน</b> — ทุกจุดรับเงินของวันนี้</li>
+        <li><b>พิมพ์ใบสรุปการนำฝากเงิน</b> — รอบ 16:00 เมื่อวาน ถึง 15:59 วันนี้</li>
+        <li><b>พิมพ์ใบเคลมประกัน</b> — ตารางผู้ป่วยประกันเอกชนวันนี้ (F010 ไทยประกันชีวิต · F018 เอไอเอ) → <span class="btn">พิมพ์</span></li>
+        <li><b>พิมพ์ใบส่งเบิกประกันสังคม</b> — 1. เลือกโรงพยาบาลคู่สัญญาหลัก (ตากสิน · หลวงพ่อทวีศักดิ์ · สิรินธร · ราชพิพัฒน์ · เจริญกรุงประชารักษ์ · โรงพยาบาลอื่น) → 2. รายชื่อของโรงพยาบาลนั้น → <span class="btn">พิมพ์</span> (แต่ละโรงพยาบาลใช้แบบฟอร์มของตัวเอง)</li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/31-print-menu.jpg" target="_blank"><img src="finance-shots/31-print-menu.jpg" alt="เมนูพิมพ์" loading="lazy" /></a><figcaption>เมนูพิมพ์ ▾</figcaption></figure>
+      <figure><a href="finance-shots/32-sso.jpg" target="_blank"><img src="finance-shots/32-sso.jpg" alt="ใบส่งเบิกประกันสังคม" loading="lazy" /></a><figcaption>เลือกโรงพยาบาลคู่สัญญา</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s11">
+    <div class="step-body">
+      <h3>11. โควตาตรวจสิทธิ สปสช.</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.2.1</span></div>
+      <ol class="clicks">
+        <li>หัวหน้า กดข้อความ <span class="btn">โควตา สปสช. วันนี้ 79 / 5,000 คน ›</span></li>
+        <li>ป๊อปอัป "ตรวจสอบสิทธิการรักษา" → กดแถวผู้ป่วย → ผลตรวจสิทธิ: ปุ่มตรวจกับ สปสช. · กรมบัญชีกลาง · ประกันสังคม + ลำดับการใช้สิทธิ</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>ตรวจซ้ำคนเดิมในวันเดียวกันใช้ผลเดิม ไม่นับโควตา</div>
+    </div>
+    <figure><a href="finance-shots/33-quota.jpg" target="_blank"><img src="finance-shots/33-quota.jpg" alt="โควตา สปสช." loading="lazy" /></a><figcaption>ป๊อปอัปตรวจสอบสิทธิ</figcaption></figure>
+  </article>
+
+  <article class="step" id="s12">
+    <div class="step-body">
+      <h3>12. REP / Statement · ผู้รับบริการทั้งหมด · อัตราค่ารักษา · รายงาน</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.1.9 · 2.2.7</span></div>
+      <ol class="clicks">
+        <li><span class="btn">REP / Statement</span>: ปุ่ม ประวัติการนำเข้า · บันทึกรับเงินจากหน่วยงาน (ประกันสังคม สนพ. · ต้นสังกัด ที่เป็นเอกสาร) · นำเข้า REP · นำเข้า Statement · ตาราง "รายการที่นำเข้า" มีคอลัมน์ "กระทบยอด" (ตรงกับระบบ · ยอดไม่ตรง · ไม่พบในระบบ) · แท็บ "บันทึกข้อผิดพลาดรายบรรทัด"</li>
+        <li><span class="btn">ผู้รับบริการทั้งหมด</span>: ดูอย่างเดียว · กดแถวกาง "ประวัติการรับบริการ" (ไม่มีข้อมูลการรักษา)</li>
+        <li>เมนูซ้าย <span class="btn">อัตราค่ารักษาพยาบาล</span>: แท็บ อัตราค่าบริการ · รายการเบิกได้ตามสิทธิ · รายการค่าใช้จ่ายแยกตามสิทธิการรักษา · ยา/เวชภัณฑ์ที่ราคาเปลี่ยน กดลูกศรดู "ประวัติการเปลี่ยนราคา"</li>
+        <li>หัวหน้า <span class="btn">รายงาน</span> → หน้า "รายงานการเงิน" (รายรับ · รายจ่าย · แยกช่องทาง · แยกหมวด · ทะเบียนคุมลูกหนี้ 5 สิทธิ)</li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/28-tab.jpg" target="_blank"><img src="finance-shots/28-tab.jpg" alt="REP Statement" loading="lazy" /></a><figcaption>REP / Statement</figcaption></figure>
+      <figure><a href="finance-shots/29-tab.jpg" target="_blank"><img src="finance-shots/29-tab.jpg" alt="ผู้รับบริการทั้งหมด" loading="lazy" /></a><figcaption>ผู้รับบริการทั้งหมด</figcaption></figure>
+      <figure><a href="finance-shots/40-rates.jpg" target="_blank"><img src="finance-shots/40-rates.jpg" alt="อัตราค่ารักษา" loading="lazy" /></a><figcaption>อัตราค่ารักษาพยาบาล</figcaption></figure>
+      <figure><a href="finance-shots/41-reports.jpg" target="_blank"><img src="finance-shots/41-reports.jpg" alt="รายงานการเงิน" loading="lazy" /></a><figcaption>รายงานการเงิน</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s13">
+    <div class="step-body">
+      <h3>13. ปิดสิทธิ / ชำระที่คลินิกยาเสพติด (F019)</h3>
+      <div class="meta"><span class="chip c-indigo">แพทย์เวชศาสตร์การเสพติด (คลินิกโปรแกรมก้าวใหม่)</span><span class="chip c-blue">HN 67-00019</span></div>
+      <ol class="clicks">
+        <li>สลับบทบาท → <span class="btn">แพทย์เวชศาสตร์การเสพติด (คลินิกโปรแกรมก้าวใหม่)</span> → หน้า /clinic/addiction</li>
+        <li>แถว 67-00019 → ⋮ → <span class="btn">ปิดสิทธิ / ชำระเงิน</span></li>
+        <li>ป๊อปอัปแสดงทุกบิลของ HN: Visit ของงานบำบัด กด <span class="btn">ปิดสิทธิ</span> ได้ที่คลินิก · Visit อื่นขึ้น "ชำระที่ห้องการเงิน"</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>บิลงานบำบัดที่ยอด ฿0 ไม่ต้องออกใบเสร็จ ปิดสิทธิแล้วจบ · คลินิกอื่นยังต้องไปห้องการเงิน</div>
+    </div>
+    <figure><a href="finance-shots/60-addiction-settle.jpg" target="_blank"><img src="finance-shots/60-addiction-settle.jpg" alt="ปิดสิทธิที่คลินิก" loading="lazy" /></a><figcaption>ป๊อปอัปปิดสิทธิ / ชำระเงิน ที่คลินิก</figcaption></figure>
+  </article>
+</section>
+
+<!-- ───────── ส่วนที่ 2 สิทธิและการเบิกจ่าย ───────── -->
+<section class="card" aria-labelledby="p2">
+  <div class="part-h">
+    <h2 id="p2">ส่วนที่ 2 · สิทธิและการเบิกจ่าย (/rights)</h2>
+    <p class="sum">บทบาท ฝ่ายการเงิน → เมนูซ้าย "สิทธิและการเบิกจ่าย" · ข้อมูลชุดนี้เป็นครั้งบริการที่ Close Visit แล้ว 17 ครั้ง</p>
+  </div>
+
+  <article class="step" id="s14">
+    <div class="step-body">
+      <h3>14. คิวส่งเบิกและหน้าตรวจสอบ</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.2.2 · 2.2.4 · 2.2.5 · 2.2.6</span></div>
+      <ol class="clicks">
+        <li>ชี้การ์ดสรุป 7 ใบ: รอตรวจสอบ · ยืนยันแล้ว · ต้องแก้ไข · รอแพทย์ยืนยัน ICD-10 · สปสช. ปฏิเสธ · รออุทธรณ์ · Close Visit ทั้งหมด</li>
+        <li>แท็บ <span class="btn">ส่งเบิก</span> › <span class="btn">คิวส่งเบิก</span> · ตัวกรอง วันที่รับบริการ (ไม่เกิน 1 เดือน) · คลินิก · รูปแบบการส่งเบิก (Digital Platform | เอกสาร) · ประเภทบริการ OP/PP · กิจกรรม · สิทธิ · สถานะ</li>
+        <li>ชี้คอลัมน์ "ส่งได้ถึง" (1 ต.ค. ปีงบถัดไป · เหลือ ≤ 30 วันสีส้ม · เลยแล้วสีแดง)</li>
+        <li>ชี้แถว 69-00003 มีกุญแจ = มีคนรับงานแล้ว (น.ส.พิมพ์ชนก ส่งเบิก) คนอื่นเปิดได้แต่อ่านอย่างเดียว</li>
+        <li>แถว 69-00001 → <span class="btn">ตรวจสอบ →</span> หน้า "ตรวจสอบข้อมูลส่งเบิก": ข้อมูลการรับบริการ · คลินิก/แพทย์ · ICD10 · ICD9CM · ยอดค่าใช้จ่ายและการเรียกเก็บ</li>
+        <li>ล่างสุด ยืนยัน 2 ส่วน: <span class="btn">ยืนยันข้อมูลการรักษา</span> + <span class="btn">ยืนยันรหัสโรค</span> → ครบทั้งคู่ถึงจะเข้าไฟล์ส่งเบิก · <span class="btn">บันทึกข้อมูลส่งเบิก</span></li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/50-rights.jpg" target="_blank"><img src="finance-shots/50-rights.jpg" alt="คิวส่งเบิก" loading="lazy" /></a><figcaption>คิวส่งเบิก</figcaption></figure>
+      <figure><a href="finance-shots/51-claim-detail.jpg" target="_blank"><img src="finance-shots/51-claim-detail.jpg" alt="ตรวจสอบข้อมูลส่งเบิก" loading="lazy" /></a><figcaption>หน้าตรวจสอบข้อมูลส่งเบิก</figcaption></figure>
+    </div>
+  </article>
+
+  <article class="step" id="s15">
+    <div class="step-body">
+      <h3>15. แก้ ICD-10 ต้องให้แพทย์ยืนยัน · ยื่นอุทธรณ์</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-indigo">แพทย์</span><span class="chip c-grey">มติ 2.2.3</span></div>
+      <ol class="clicks">
+        <li>หน้า 2 ของคิว แถว 69-00016 สถานะ "รอแพทย์ยืนยัน ICD-10" (เจ้าหน้าที่เพิ่ม E78.5)</li>
+        <li>สลับบทบาท → <span class="btn">อายุรแพทย์ (คลินิกตรวจโรคทั่วไป)</span> → เปิด /rights/submit/rv-016 (เมนู สิทธิและการเบิกจ่าย → แถว 69-00016 → ตรวจสอบ)</li>
+        <li>แถบเตือน "รอแพทย์ยืนยันการแก้ไข ICD-10 · เดิม I10 → ใหม่ I10, E78.5" → <span class="btn">อนุมัติ</span> หรือ <span class="btn">ไม่อนุมัติ</span> (ไม่อนุมัติ = รหัสกลับเป็นเดิม)</li>
+        <li>แถว 69-00009 "สปสช. ปฏิเสธ" → เปิดดู → <span class="btn">ยื่นอุทธรณ์</span> ใส่เหตุผล → กลายเป็น "รออุทธรณ์" (ตัวอย่างที่ยื่นแล้ว = 69-00010)</li>
+      </ol>
+      <div class="say"><span class="gh">พูดว่า</span>เจ้าหน้าที่เบิกจ่ายแก้รหัสได้ แต่ต้องให้แพทย์ผู้ตรวจยืนยันก่อน ระหว่างรอยืนยันรหัสไม่ได้ · เฉพาะบทบาทแพทย์เห็นปุ่มอนุมัติ</div>
+    </div>
+  </article>
+
+  <article class="step" id="s16">
+    <div class="step-body">
+      <h3>16. ส่ง e-Claim · Dashboard · รายงาน</h3>
+      <div class="meta"><span class="chip c-green">ฝ่ายการเงิน</span><span class="chip c-grey">มติ 2.2.8</span></div>
+      <ol class="clicks">
+        <li>แท็บ <span class="btn">เชื่อมต่อ e-Claim / สปสช.</span>: ป้ายเขียว "e-Claim เชื่อมต่อแล้ว" · ครั้งบริการที่ยืนยันแล้ว 7 รายการ → <span class="btn">ส่ง e-Claim</span> ทีละแถว หรือ <span class="btn">ส่งรายการที่พร้อมทั้งหมด</span></li>
+        <li>แท็บ <span class="btn">Dashboard</span>: ยอดเรียกเก็บ · ส่วนเงินสดจากผู้รับบริการ · คิวส่งเบิกตามสถานะ · ยอดเรียกเก็บแยกตามผู้จ่าย · รายเดือนแยกตามสิทธิ · ยอดส่งเบิกเทียบยอดได้รับ</li>
+        <li>แท็บส่งเบิก › <span class="btn">สรุปตามรอบส่งเบิก</span>: กดแถวรอบกางดูรายการ</li>
+        <li>หัวหน้า <span class="btn">รายงาน</span> → รายงานสิทธิและการเบิกจ่าย</li>
+      </ol>
+    </div>
+    <div class="shots2">
+      <figure><a href="finance-shots/53-eclaim.jpg" target="_blank"><img src="finance-shots/53-eclaim.jpg" alt="ส่ง e-Claim" loading="lazy" /></a><figcaption>ส่ง e-Claim</figcaption></figure>
+      <figure><a href="finance-shots/52-rights-dash.jpg" target="_blank"><img src="finance-shots/52-rights-dash.jpg" alt="Dashboard การเบิกจ่าย" loading="lazy" /></a><figcaption>Dashboard</figcaption></figure>
+    </div>
+  </article>
+</section>
+
+<!-- ───────── ระวัง ───────── -->
+<section class="card" aria-labelledby="w-h">
+  <div class="part-h">
+    <h2 id="w-h">จุดที่ต้องระวังตอนเดโม</h2>
+    <p class="sum">เจอตอนทดสอบกดจริง 18 ต.ค. 69 · ทีมกำลังแก้</p>
+  </div>
+  <ul class="plain">
+    <li>รีเฟรชหน้า = ข้อมูลกลับเป็นค่าเริ่มต้น (บอกคณะทำงานได้ว่าเป็นข้อมูลเดโม)</li>
+    <li>ใบเสร็จแสดง "ศูนย์ 8 บางนา" และผู้สร้างบิล "จนท.การเงิน สมศรี" แม้ login เป็นศูนย์ 4 · ถ้าถาม ตอบว่าเป็นข้อมูลจำลอง</li>
+    <li>หน้า "ตัวอย่างก่อนพิมพ์" มีปุ่ม "ย้อนกลับ" ซ้ำ 2 ปุ่ม</li>
+    <li>อย่าใช้ F017 (ภัคจิรา) โชว์ลดหย่อน: คิวแสดงยอด 405 แต่หน้าลดหย่อน/บิลแสดง 450</li>
+    <li>F004 แสดง "รอ ผอ.ศูนย์อนุมัติ" แต่ ผอ. ไม่เห็นรายการ → ใช้ F012 แทน (ข้อ 7)</li>
+    <li>งาน "ยืนยัน ICD-10 เพื่อการเคลม" ยังไม่ขึ้นใน To-Do ของแพทย์ → เข้าทางหน้า /rights ตามข้อ 15</li>
+    <li>สิทธิของ HN เดียวกันใน /rights ไม่ตรงกับ /finance (เช่น 67-00001 = ประกันสังคม ที่การเงิน แต่ UC ที่ส่งเบิก) และยอดเรียกเก็บต่างกัน · อย่าเปิดสองหน้าเทียบกันต่อหน้าคณะทำงาน</li>
+    <li>"ส่งเคสลดหย่อน" กำลังเปลี่ยนจากหน้าเต็มเป็นป๊อปอัป (ภาพในหน้านี้อาจเป็นแบบก่อนเปลี่ยน) ช่องข้างในเหมือนเดิม</li>
+  </ul>
+  <hr />
+  <div class="part-h">
+    <h3>ยังไม่ได้กดทดสอบ</h3>
+  </div>
+  <ul class="plain">
+    <li>จ่ายด้วย QR · เช็ค · บัตรเครดิต (ขั้น "ตรวจสอบการรับเงิน") · ติ๊กหนี้เก่าจ่ายพร้อมบิล (ใบเสร็จแยก)</li>
+    <li>ขออนุมัติยกเลิกใบเสร็จข้ามวัน · ตัดยอดแล้วยกเลิก</li>
+    <li>นำเข้าไฟล์ REP / Statement จริง · บันทึกรับเงินจากหน่วยงาน</li>
+    <li>ห้องยาบล็อกจ่ายยาบัตรทองยังไม่ปิดสิทธิ (P-052)</li>
+    <li>พิมพ์ออกเครื่องพิมพ์จริง (ทดสอบแค่หน้าตัวอย่างก่อนพิมพ์)</li>
+  </ul>
+</section>
+
+<p class="foot">ทดสอบบน build 18 ต.ค. 69 14:26 · บัญชี ฝ่ายการเงิน ศูนย์ 4 ดินแดง · ต้นฉบับ bma.health/docs/finance-demo-walkthrough.html · กติกา .claude/rules/finance-cashier.md</p>
+</main>
+</body>
+</html>

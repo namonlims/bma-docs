@@ -126,6 +126,21 @@
     line-height: 1;
     user-select: none;
   }
+  /* ป้ายประเภทแผนภาพ */
+  .ctypes { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
+  .ctype { display: inline-flex; align-items: center; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.7; white-space: nowrap; }
+  .t-uf { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .t-sd { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .t-sb { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+  .t-sf { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .t-pf { background: var(--surface-colorfulbadge-teal, #D1F6EE); color: var(--text-colorfulbadge-teal, #196C65); }
+  .t-sm { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .types { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); padding: var(--dim-space-400, 16px) var(--dim-space-500, 20px); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-500, 16px); }
+  .types-h, .sub-h { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .sub-h { margin-top: var(--dim-space-200, 8px); }
+  .types dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); margin: 0; font-size: var(--type-size-xs, 12px); align-items: center; }
+  .types dd { margin: 0; color: var(--text-content-default, #363B3F); }
+  @media (max-width: 767px) { .types dl { grid-template-columns: 1fr; gap: var(--dim-space-100, 4px); } .types dd { margin-bottom: var(--dim-space-200, 8px); } }
   .foot {
     margin: 0;
     color: var(--text-content-tertiary, #858C92);
@@ -190,39 +205,69 @@
 
   <section class="group" aria-labelledby="g-flow">
     <div class="group-head">
-      <h2 id="g-flow">User flow</h2>
-      <p>ลำดับการทำงานของแต่ละบทบาทและการทำงานข้ามแผนก</p>
+      <h2 id="g-flow">Flow และ Service Design</h2>
+      <p>ทุกการ์ดมีป้ายบอกประเภทของแผนภาพ · ทีม BA + Dev เริ่มจาก 2 ใบแรก</p>
     </div>
+    <div class="types" aria-label="ประเภทแผนภาพ">
+      <span class="types-h">แต่ละประเภทตอบคำถามอะไร</span>
+      <dl>
+        <dt><span class="ctype t-uf">User flow</span></dt><dd>ผู้รับบริการเดินไปทางไหน มีทางแยก/เงื่อนไขตรงไหน</dd>
+        <dt><span class="ctype t-sd">Service Design</span></dt><dd>ขั้นเดียวกัน แบ่งเลนว่าใครทำ: ผู้รับบริการ · หน้าบ้าน · หลังบ้าน · ระบบ</dd>
+        <dt><span class="ctype t-sb">Service Blueprint</span></dt><dd>ทั้ง Visit เป็นตาราง Phase × 5 ชั้น (สิ่งที่เห็น → ระบบ)</dd>
+        <dt><span class="ctype t-sf">Screen flow</span></dt><dd>หน้าจอไหนต่อหน้าจอไหน พร้อมภาพหน้าจอ · สำหรับ Dev</dd>
+        <dt><span class="ctype t-pf">Process flow (Swimlane)</span></dt><dd>งานส่งต่อระหว่างหน่วยงาน/ระบบ</dd>
+        <dt><span class="ctype t-sm">Sitemap</span></dt><dd>มีหน้าอะไรบ้าง อยู่เมนูไหน</dd>
+      </dl>
+    </div>
+    <span class="sub-h">ใช้เป็นหลัก · ฉบับล่าสุดสำหรับทีม BA + Dev</span>
     <div class="cards">
       <a class="card" href="system-user-flow.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">account_tree</span><span class="card-title">User flow ทั้งระบบ</span></span>
-        <p class="card-sum">ฉบับล่าสุดสำหรับทีม BA + Dev · เลือกคลินิก 17 คลินิก · สลับ User flow / Service Design · hover · ซูม · เต็มจอ · อัปเดต 17 ต.ค. 69</p>
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">account_tree</span><span class="card-title">User flow ทั้งระบบ (17 คลินิก)</span></span>
+        <span class="ctypes"><span class="ctype t-uf">User flow</span><span class="ctype t-sd">Service Design</span></span>
+        <p class="card-sum">เลือกคลินิก แล้วสลับดูแบบ User flow หรือ Service Design · hover · ซูม · เต็มจอ · อัปเดต 17 ต.ค. 69</p>
         <span class="card-url">system-user-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="13_Service_Blueprint.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">hub</span><span class="card-title">Service Blueprint</span></span>
-        <p class="card-sum">ฉบับล่าสุดสำหรับทีม BA + Dev · 12 Phase × 5 เลน ตั้งแต่รับบัตรคิวถึงส่งเบิกตามสิทธิ · ลิงก์ไปหน้า Demo · อัปเดต 17 ต.ค. 69</p>
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">hub</span><span class="card-title">Service Blueprint ทั้ง Visit</span></span>
+        <span class="ctypes"><span class="ctype t-sb">Service Blueprint</span></span>
+        <p class="card-sum">12 Phase × 5 ชั้น ตั้งแต่รับบัตรคิวถึงส่งเบิกตามสิทธิ · ลิงก์ไปหน้า Demo · อัปเดต 17 ต.ค. 69</p>
         <span class="card-url">service-blueprint<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="user-flow.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">history</span><span class="card-title">Userflow Map ฉบับเดิม</span></span>
-        <p class="card-sum">แผนที่หน้าจอ พ.ค. 69 · เก็บไว้อ้างอิง</p>
-        <span class="card-url">user-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+    </div>
+    <span class="sub-h">รายโมดูล</span>
+    <div class="cards">
+      <a class="card" href="finance-demo-walkthrough.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">payments</span><span class="card-title">Demo การเงินและการเบิกจ่าย</span></span>
+        <span class="ctypes"><span class="ctype t-sf">Screen flow</span></span>
+        <p class="card-sum">บทเดโม 16 ขั้น · กดอะไร ใช้ HN ไหน พูดอะไร · /finance + /rights · อัปเดต 18 ต.ค. 69</p>
+        <span class="card-url">finance-demo-walkthrough<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="login-admin-consent-flow.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">login</span><span class="card-title">เข้าสู่ระบบ · จัดการระบบ · ความยินยอม</span></span>
-        <p class="card-sum">user flow สำหรับ Dev พร้อมภาพหน้าจอ</p>
+        <span class="ctypes"><span class="ctype t-sf">Screen flow</span></span>
+        <p class="card-sum">ลำดับหน้าจอพร้อมภาพจริง เงื่อนไข และข้อสังเกต · สำหรับ Dev</p>
         <span class="card-url">login-admin-consent-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="kiosk-userflow.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">touch_app</span><span class="card-title">Kiosk Userflow</span></span>
-        <p class="card-sum">ตู้ Kiosk รับบัตรคิวและตรวจสิทธิ</p>
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">touch_app</span><span class="card-title">Kiosk</span></span>
+        <span class="ctypes"><span class="ctype t-uf">User flow</span><span class="ctype t-sf">Screen flow</span></span>
+        <p class="card-sum">ตู้ Kiosk รับบัตรคิวและตรวจสิทธิ · ลำดับหน้าจอ 6 ขั้น</p>
         <span class="card-url">kiosk-userflow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="tb-user-flow.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">pulmonology</span><span class="card-title">คลินิกวัณโรค (PHCIS ↔ NTIP)</span></span>
-        <p class="card-sum">flow การทำงานคลินิกวัณโรคและการเชื่อม NTIP</p>
+        <span class="ctypes"><span class="ctype t-pf">Process flow (Swimlane)</span></span>
+        <p class="card-sum">การทำงานคลินิกวัณโรคและการเชื่อม NTIP แบ่งเลนตามหน่วยงาน</p>
         <span class="card-url">tb-user-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+    <span class="sub-h">เก็บไว้อ้างอิง</span>
+    <div class="cards">
+      <a class="card" href="user-flow.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">history</span><span class="card-title">Userflow Map ฉบับเดิม (พ.ค. 69)</span></span>
+        <span class="ctypes"><span class="ctype t-sm">Sitemap</span></span>
+        <p class="card-sum">แผนที่หน้าจอและเมนู · ไม่อัปเดตแล้ว</p>
+        <span class="card-url">user-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
     </div>
   </section>
@@ -246,7 +291,7 @@
     </div>
   </section>
 
-  <p class="foot">อัปเดต 17 ตุลาคม 2569</p>
+  <p class="foot">อัปเดต 18 ตุลาคม 2569</p>
 </main>
 </body>
 </html>
