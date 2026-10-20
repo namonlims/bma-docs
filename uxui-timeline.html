@@ -510,6 +510,7 @@ a.btn{text-decoration:none}
 .hd{bottom:6px}
 .additem{white-space:nowrap}
 @media (max-width:640px){ .additem{font-size:12px} }
+#tStatusFor:not(:empty){display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;background:var(--brand-p50);color:var(--brand-p700);font-size:12px;font-weight:500;line-height:20px}
 </style>
 </head>
 <body>
@@ -603,7 +604,7 @@ a.btn{text-decoration:none}
         </section>
         <section class="fgrp">
           <h4 class="gh">ความคืบหน้า</h4>
-          <div class="field"><span class="fl">สถานะ</span><div class="seg" id="tStatus"></div></div>
+          <div class="field"><span class="fl">สถานะ <small class="cnt" id="tStatusFor"></small></span><div class="seg" id="tStatus"></div></div>
           <div class="field"><label for="tNote">หมายเหตุ</label><textarea id="tNote" rows="3"></textarea></div>
         </section>
       </div>
@@ -657,7 +658,9 @@ const STATUS = {todo:'To do', prog:'In progress', done:'Done'};   // ลบ "เ
 const TYPE = {uxui:'UXUI', doc:'Document', figma:'Figma'};   // ประเภทงาน (ผู้ใช้สั่ง 21 ต.ค. 69) · ไม่ระบุ = UXUI
 const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
 // คณะที่ทำเครื่องหมาย Done = ทุกงานในคณะนั้นแสดงเป็น Done (สถานะเดิมของงานเก็บไว้ ยกเลิกได้) (ผู้ใช้สั่ง 21 ต.ค. 69)
-const TICON = {doc:'description', figma:'draw'};   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
+const TICON = {doc:'description', figma:'draw'};
+// สถานะรายคลินิก (ผู้ใช้สั่ง 21 ต.ค. 69 "เปลี่ยนสถานะเฉพาะงานที่เลือก"): t.itemStatus[คลินิก] ทับ t.status เฉพาะแถวนั้น
+const stAt = (t, it) => (it && STATUS[t.itemStatus?.[it]]) ? t.itemStatus[it] : t.status;   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
 const PMODE = {onsite:'ที่คณะ', online:'Pre-Online', video:'ส่ง Video'};   // รูปแบบ Present (ผู้ใช้สั่ง 21 ต.ค. 69)
 const modeOf = e => PMODE[e.mode] ? e.mode : (/online/i.test(e.text||'') ? 'online' : /คลิป|video/i.test(e.text||'') ? 'video' : 'onsite');
 const KIND = {present:{label:'Present', color:'var(--ev-present)'}, ba:{label:'ส่งที่แก้ / BA Pre', color:'var(--ev-ba)'},
@@ -886,8 +889,8 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
-    const tip = `${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[t.status]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${t.status}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>`;
+    const tip = `${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>`;
   };
 
   // ภาพรวม
@@ -912,7 +915,7 @@ function renderGantt(){
   g.innerHTML = html;
 
   g.querySelectorAll('.bar').forEach(b=>{
-    b.onclick=()=>{ if(b.dataset.dragged){ delete b.dataset.dragged; return; } openTask(b.dataset.t); };
+    b.onclick=()=>{ if(b.dataset.dragged){ delete b.dataset.dragged; return; } openTask(b.dataset.t, null, b.dataset.it); };
     b.insertAdjacentHTML('beforeend','<span class="rz l" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันเริ่ม"></span><span class="rz r" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันสิ้นสุด"></span>');
     b.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',ev=>startResize(ev,b,h.classList.contains('l')?'start':'end',a,n)));
   });
@@ -951,7 +954,7 @@ function tipHtml(el){
       `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span>${e.place?`<span>สถานที่</span><span>${esc(e.place)}</span>`:''}${e.src==='gcal'?'<span>ที่มา</span><span>Google Calendar · คลิกเพื่อเปิด</span>':''}</div>`+linksTip(e.links);
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
-  return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[t.status])}</div>`+
+  return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
     `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
@@ -1057,7 +1060,7 @@ function startResize(ev, bar, edge, a, n){
 
 // ---------- ฟอร์มงาน ----------
 const $ = id => document.getElementById(id);
-let editT = null, tStatus = 'todo', eKind = 'present', eMode = 'onsite', editE = null;
+let editT = null, tItem = null, tStatus = 'todo', eKind = 'present', eMode = 'onsite', editE = null;
 const segs = (el, map, cur, pick) => {
   el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>pick(b.dataset.k));
@@ -1222,7 +1225,7 @@ DSP.time($('eT'));
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close', ()=>DSP.close(false)));
 
 let tType = 'uxui';
-function openTask(id, preset){
+function openTask(id, preset, it){
   const t = id ? state.tasks.find(x=>x.id===id) : null;
   editT = t ? t.id : null;
   const v = t || {c:state.committees[0].id, items:[], who:fWho!=='ทั้งหมด'?fWho:'Kae', start:iso(today), end:iso(today), status:'todo', md:null, note:'', ...preset};
@@ -1238,7 +1241,9 @@ function openTask(id, preset){
   $('tInfo').hidden = !ctx; $('tCField').hidden = ctx; $('tItemsField').hidden = ctx;
   $('tInfoC').textContent = state.committees.find(c=>c.id===v.c)?.name || '—';
   $('tInfoI').textContent = v.items.join(' · ') || '—';
-  tStatus = v.status;
+  tItem = (t && it && t.items.length > 1 && t.items.includes(it)) ? it : null;
+  tStatus = t ? stAt(t, tItem) : v.status;
+  $('tStatusFor').textContent = tItem ? `เฉพาะ ${tItem}` : (t && t.items.length > 1 ? `ทุกคลินิกในงานนี้ (${t.items.length})` : '');
   tType = typeOf(v);
   const pickT = k=>{ tType=k; segs($('tType'), TYPE, tType, pickT); }; pickT(tType);
   const pickS = k=>{ tStatus=k; segs($('tStatus'), STATUS, tStatus, pickS); }; segs($('tStatus'), STATUS, tStatus, pickS);
@@ -1262,7 +1267,18 @@ $('taskForm').onsubmit = ev=>{
   const md = $('tMd').value.trim();
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
     status:tStatus, type:tType, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
-  if(editT){ const o = state.tasks.find(x=>x.id===editT); logHist('แก้ไข','งาน', tTitle(data), cName(data.c), diff({...o, type:typeOf(o)}, data, TF)); Object.assign(o, data); }
+  if(editT){
+    const o = state.tasks.find(x=>x.id===editT);
+    let extra = [];
+    if(tItem){   // เปิดจากแถวคลินิก = สถานะเปลี่ยนเฉพาะคลินิกนั้น
+      const before = stAt(o, tItem); data.status = o.status;
+      const IS = {...(o.itemStatus||{})}; if(tStatus === o.status) delete IS[tItem]; else IS[tItem] = tStatus;
+      data.itemStatus = Object.keys(IS).length ? IS : undefined;
+      if(before !== tStatus) extra = [{f:`สถานะ (${tItem})`, from:STATUS[before], to:STATUS[tStatus]}];
+    } else if(o.itemStatus && tStatus !== o.status){ data.itemStatus = undefined; }   // เปลี่ยนทั้งงาน = ทุกคลินิกตามกัน
+    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o)}, data, TF), ...extra]);
+    Object.assign(o, data); if(o.itemStatus === undefined) delete o.itemStatus;
+  }
   else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
   persist(); $('taskDlg').close(); render(); toast('บันทึกแล้ว');
 };
