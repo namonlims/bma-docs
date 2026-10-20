@@ -1002,7 +1002,6 @@ const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ
 function renderRoundSum(){
   const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[]), 'link'];
   const rank = r => r==='link' ? 9 : r;
-  const agg = list => !list.length ? null : list.every(x=>x==='done') ? 'done' : list.some(x=>x==='prog'||x==='done') ? 'prog' : 'todo';
   const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}"><span class="ms">${RS_ST[st].i}</span>${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
   let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
   let totDone = 0, totAll = 0;
@@ -1010,7 +1009,7 @@ function renderRoundSum(){
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
     const rows = c.items.map(it=>{
       const mine = ts.filter(t=>t.items.includes(it));
-      const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r); byR[r] = {st:agg(L.map(t=>stAt(t,it))), id:L[0]?.id}; });
+      const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r).sort((x,y)=>(y.end+y.start).localeCompare(x.end+x.start)); byR[r] = {st:L[0] ? stAt(L[0], it) : null, id:L[0]?.id}; });   // ใช้งานล่าสุดของรอบนั้น (ผู้ใช้ 21 ต.ค. 69: ปรับ Done แล้วสรุปต้องตาม)
       const last = [...rounds].reverse().find(r=>byR[r].st);
       return {it, byR, last};
     }).filter(r=>r.last!==undefined);
