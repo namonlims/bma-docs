@@ -869,9 +869,9 @@ const people = () => PEOPLE;
 function range(){
   const ds = [...state.tasks.flatMap(t=>[t.start,t.end]), ...allEvents().map(e=>e.date)].map(pd);
   let a = new Date(Math.min(...ds)), b = new Date(Math.max(...ds));
-  a = new Date(today);   // ตารางเริ่มที่วันนี้ (ผู้ใช้สั่ง 20 ต.ค. 69 "วันแรกคือ 20 Oct") · งานก่อนหน้าไม่แสดงในตาราง แต่ยังนับ manday
+  a = new Date(a.getTime() - ((a.getDay()+6)%7)*DAY);   // เริ่มวันจันทร์ก่อนงานแรก — แสดงงานเก่าให้ตรงกับตารางสรุป (ผู้ใช้เลือก 21 ต.ค. 69) · เปิดหน้าแล้วเลื่อนมาที่วันนี้ให้เอง
   b = new Date(b.getTime() + (7-((b.getDay()+6)%7)-1)*DAY);     // จบวันอาทิตย์
-  return {a, n: Math.max(60, Math.round((b-a)/DAY)+1)};   // อย่างน้อย 60 วัน ให้เต็มกรอบและเพิ่มงานล่วงหน้าได้
+  return {a, n: Math.max(60, Math.round((b-a)/DAY)+1, Math.round((today-a)/DAY)+60)};   // ล่วงหน้าจากวันนี้อย่างน้อย 60 วัน ให้เพิ่มงานล่วงหน้าได้
 }
 function committeeStart(c){
   const ds = state.tasks.filter(t=>t.c===c.id).map(t=>t.start).concat(allEvents().filter(e=>e.c===c.id).map(e=>e.date)).sort();
@@ -1764,7 +1764,7 @@ const SYNC = (()=>{
       }
       else if(apply(res.records, true) && !document.querySelector('dialog[open]')) render();
       since = res.now; api.last = Date.now(); api.err = ''; saveSent();
-      if(first) render();
+      if(first){ render(); requestAnimationFrame(scrollToToday); }
     } catch(e){ api.err = 'เชื่อมข้อมูลกลางไม่ได้ · ข้อมูลยังอยู่ในเบราว์เซอร์นี้ จะส่งให้เมื่อเชื่อมได้'; }
     pulling = false; status();
   }
@@ -1826,11 +1826,12 @@ window.FH = (()=>{
 
 render();
 // เลื่อน timeline ให้เห็นวันนี้
-requestAnimationFrame(()=>{
-  const sc = $('scroller'), {a} = range(), i = Math.round((today-a)/DAY);
-  const dw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--DW')) || 32;
-  if(i>0) sc.scrollLeft = Math.max(0, i*dw - sc.clientWidth/2);
-});
+function scrollToToday(){
+  const sc = $('scroller'), h = gEl.querySelector(`.hd[data-day="${iso(today)}"]`), L = gEl.querySelector('.lab.h'); if(!h || !L) return;
+  const dw = h.offsetWidth || 32;
+  sc.scrollLeft = 0; sc.scrollLeft = Math.max(0, h.getBoundingClientRect().left - L.getBoundingClientRect().right - 2*dw);   // วันนี้อยู่ชิดซ้าย เห็นย้อนหลัง 2 วัน · เลื่อนซ้ายดูงานเก่า
+}
+requestAnimationFrame(scrollToToday);
 </script>
 </body>
 </html>
