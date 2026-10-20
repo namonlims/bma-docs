@@ -498,6 +498,16 @@ h1{font-weight:700}
 .saved .sy{font-size:16px;vertical-align:-3px;margin-right:4px}
 a.btn{text-decoration:none}
 .btn .ext{font-size:16px;margin-left:-2px;opacity:.7}
+
+/* หัววันที่ติดด้านบนเมื่อเลื่อน (ผู้ใช้สั่ง 21 ต.ค. 69): ตาราง timeline เลื่อนในกรอบตัวเองทั้งแนวตั้ง/แนวนอน สูงไม่เกินจอ */
+.scroller{overflow:auto;max-height:calc(100dvh - 32px);overscroll-behavior:contain}
+.lab.h,.trk.h{position:sticky;top:0;z-index:7;background:var(--card);box-shadow:0 1px 0 var(--line)}
+.lab.h{left:0;z-index:9}
+.trk.h{height:60px}
+.mo{top:6px}
+.hd{bottom:6px}
+.additem{white-space:nowrap}
+@media (max-width:640px){ .additem{font-size:12px} }
 </style>
 </head>
 <body>
