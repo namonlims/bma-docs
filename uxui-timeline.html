@@ -998,11 +998,11 @@ function renderTable(){
 
 
 // ---------- สรุปรอบงาน ----------
-const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ', i:'pending'}, todo:{t:'To do', i:'radio_button_unchecked'}};
+const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ', i:''}, todo:{t:'To do', i:''}};   // ไอคอนเฉพาะ Done (ผู้ใช้ 21 ต.ค. 69)
 function renderRoundSum(){
   const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[]), 'link'];
   const rank = r => r==='link' ? 9 : r;
-  const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}"><span class="ms">${RS_ST[st].i}</span>${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
+  const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}">${RS_ST[st].i?`<span class="ms">${RS_ST[st].i}</span>`:''}${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
   let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
   let totDone = 0, totAll = 0;
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
