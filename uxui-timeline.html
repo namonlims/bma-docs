@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UXUI Manday Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=block" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F8F7; --card:#FFFFFF; --text:#1B2420; --text2:#55625C; --text3:#86928C;
+  --line:#E3E8E5; --line2:#F0F3F1; --weekend:#F7F9F8; --brand:#007549; --brand-soft:#E6F4EE;
+  --today:#F08C00; --today-soft:#FFF4E5;
+  --kae:#007549; --mel:#4F46E5; --prang:#C2410C; --oat:#BE185D; --mink:#0E7490; --aim:#A16207; --pim:#475569; --dev:#0E7490; --other:#6B7280;
+  --ev-present:#007549; --ev-ba:#9333EA; --ev-meet:#0E7490; --ev-ms:#DC2626;
+  --s-delay:#B91C1C; --s-delay-bg:#FDECEC;
+  --DW:32px; --LW:360px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111614; --card:#1A211E; --text:#E8EEEB; --text2:#AAB6B0; --text3:#7D8A84;
+    --line:#2A3430; --line2:#222A27; --weekend:#151B18; --brand:#3DD39A; --brand-soft:#16302A;
+    --today:#F5A524; --today-soft:#33270F;
+    --kae:#2FB884; --mel:#8B86FF; --prang:#F08A4B; --oat:#F472B6; --mink:#22B8D6; --aim:#EAB308; --pim:#A3B1C6; --dev:#22B8D6; --other:#9CA3AF;
+    --ev-present:#3DD39A; --ev-ba:#C88BFF; --ev-meet:#22D3EE; --ev-ms:#F87171;
+    --s-delay:#F87171; --s-delay-bg:#3A1818;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Sarabun",system-ui,sans-serif}
+.wrap{max-width:1600px;margin:0 auto;padding:28px 16px 64px}
+.head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+h1{margin:0;font-size:24px;color:var(--brand)}
+.sub{color:var(--text2);margin:4px 0 0}
+.saved{color:var(--text3);font-size:12px;margin-top:2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:500}
+.btn.danger{color:var(--s-delay)}
+.btn.link{border:0;background:none;min-height:32px;padding:0 4px;font-size:13px}
+/* summary */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.kpi .l{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.kpi .v{font-size:24px;font-weight:700}
+.kpi .v small{font-size:13px;font-weight:400;color:var(--text3);margin-left:4px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:12px}
+.frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.frow .lbl{font-size:12px;color:var(--text3)}
+.chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.chip[aria-pressed="true"]{border:2px solid var(--brand);background:var(--brand-soft);font-weight:500}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;min-height:40px;cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--brand)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--text2);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg-bar{width:22px;height:12px;border-radius:4px;display:inline-block}
+/* gantt */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.panel h2{font-size:16px;margin:0;padding:14px 16px 2px}
+.panel .hint{margin:0;padding:0 16px 12px;color:var(--text2);font-size:13px}
+.scroller{overflow-x:auto;position:relative}
+.gantt{display:grid;grid-template-columns:var(--LW) max-content;min-width:max-content}
+.lab,.trk{border-top:1px solid var(--line2);min-height:36px}
+.lab{position:sticky;left:0;z-index:6;background:var(--card);border-right:1px solid var(--line);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.lab .nm{min-width:0;overflow-wrap:anywhere}
+.lab .md{font-size:12px;color:var(--text2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lab.c{background:var(--brand-soft);font-weight:700;font-size:14px;color:var(--text)}
+.lab.c .md{color:var(--brand);font-weight:700;font-size:13px}
+.lab.sub{padding-left:28px;color:var(--text2)}
+.lab.sub.none{color:var(--text3)}
+.lab.h{border-top:0;font-size:12px;color:var(--text3);font-weight:500;align-items:flex-end}
+.trk{position:relative;width:calc(var(--days) * var(--DW));background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(var(--DW) - 1px),var(--line2) calc(var(--DW) - 1px),var(--line2) var(--DW))}
+.trk.c{background-color:var(--brand-soft)}
+.trk.h{border-top:0;height:52px;background-image:none}
+.wk{position:absolute;top:0;bottom:0;background:var(--weekend);pointer-events:none}
+.trk.c .wk{background:transparent}
+.todayline{position:absolute;top:0;bottom:0;width:2px;background:var(--today);z-index:2;pointer-events:none}
+.msline{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--ev-ms);opacity:.55;z-index:1;pointer-events:none}
+.hd{position:absolute;bottom:4px;width:var(--DW);text-align:center;font-size:12px;line-height:1.2;color:var(--text2)}
+.hd b{display:block;font-size:13px;color:var(--text)}
+.hd.we{color:var(--text3)}
+.hd.td{color:var(--today);font-weight:700}
+.hd.td b{color:var(--today)}
+.mo{position:absolute;top:4px;font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;padding-left:4px;border-left:1px solid var(--line)}
+.bar{position:absolute;top:5px;height:26px;border-radius:6px;font-size:12px;line-height:24px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;z-index:2;border:1px solid var(--c);color:#fff;background:var(--c);font-weight:500;font-family:inherit;text-align:left}
+.bar.todo{background:color-mix(in srgb,var(--c) 18%,var(--card));color:var(--text)}
+.bar.prog{background-image:repeating-linear-gradient(135deg,transparent 0,transparent 6px,rgba(255,255,255,.22) 6px,rgba(255,255,255,.22) 12px)}
+.bar:hover,.bar:focus-visible{outline:2px solid var(--text);outline-offset:1px}
+.mk{position:absolute;top:8px;width:20px;height:20px;margin-left:calc((var(--DW) - 20px) / 2);border:0;padding:0;cursor:pointer;z-index:3;background:none}
+.mk::before{content:"";position:absolute;inset:3px;background:var(--k);border:2px solid var(--card)}
+.mk.present::before{transform:rotate(45deg);border-radius:2px}
+.mk.ba::before{border-radius:50%}
+.mk.meet::before{border-radius:3px}
+.mk.ms::before{clip-path:polygon(50% 0,100% 100%,0 100%);border:0}
+.mk.stack2{top:2px}.mk.stack2+.mk{top:14px}
+.addhit{position:absolute;inset:0;z-index:1;cursor:copy}
+.bar .rz{position:absolute;top:0;bottom:0;width:10px;cursor:ew-resize;touch-action:none;z-index:3}
+.bar .rz.l{left:-1px;border-radius:6px 0 0 6px}
+.bar .rz.r{right:-1px;border-radius:0 6px 6px 0}
+.bar .rz::after{content:"";position:absolute;top:7px;bottom:7px;width:2px;border-radius:1px;background:currentColor;opacity:0;transition:opacity .15s}
+.bar .rz.l::after{left:3px}.bar .rz.r::after{right:3px}
+.bar:hover .rz::after,.bar.resizing .rz::after{opacity:.6}
+.bar.resizing{z-index:4;outline:2px solid var(--text);outline-offset:1px}
+@media (pointer:coarse){.bar .rz{width:16px}.bar .rz::after{opacity:.6}}
+/* manday table */
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{padding:10px 16px;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{border-top:0;font-size:13px;color:var(--text2);font-weight:500}
+tfoot td{font-weight:700;background:var(--brand-soft)}
+td.zero{color:var(--text3)}
+/* dialogs */
+dialog{border:0;border-radius:16px;padding:0;width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);background:var(--card);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg{display:flex;flex-direction:column;max-height:calc(100dvh - 32px)}
+.dlg h3{margin:0;padding:20px 20px 4px;font-size:18px}
+.dlg .hint{padding:0 20px 8px;color:var(--text2);font-size:13px;margin:0}
+.dlg .body{padding:8px 20px 16px;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field.full{grid-column:1 / -1}
+.field label,.field .fl{font-size:13px;color:var(--text2);font-weight:500}
+.field input[type=text],.field input[type=date],.field input[type=time],.field input[type=number],.field select,.field textarea{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit;width:100%}
+.field textarea{min-height:64px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.field .help{font-size:12px;color:var(--text3)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.checks{display:flex;flex-wrap:wrap;gap:6px}
+.checks label{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:14px;color:var(--text);font-weight:400}
+.checks label:has(input:checked){border:2px solid var(--brand);background:var(--brand-soft)}
+.checks input{accent-color:var(--brand)}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1}
+.dlg .bar2{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--line)}
+.dlg .bar2 .r{display:flex;gap:8px;margin-left:auto}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+.foot{color:var(--text3);font-size:13px}
+@media (max-width:1023px){ :root{--LW:270px} }
+@media (max-width:640px){
+  :root{--DW:28px;--LW:190px}
+  .lab{font-size:12px;padding:6px 8px}
+  .lab.sub{padding-left:14px}
+  .lab .md{font-size:11px}
+  .dlg .body{grid-template-columns:1fr}
+  .actions{width:100%}
+  .actions .btn{flex:1 1 auto;justify-content:center}
+}
+
+/* ===== MIH Design System (ค่าจาก @mih/design-tokens · ผู้ใช้สั่ง 20 ต.ค. 69 "ปรับ ui โดยใช้ design system") ===== */
+:root{
+  --brand-p50:#F4FBF8; --brand-p100:#E2F3EB; --brand-p200:#C5EDDA; --brand-p600:#08A768; --brand-p700:#007549; --brand-p800:#004C31;
+  --text-content-default:#363B3F; --text-content-secondary:#636B72; --text-content-tertiary:#858C92;
+  --text-input-label:#4D5358; --text-input-placeholder:#636B72; --text-danger-default:#B91C1C;
+  --surface-card-100:#FFFFFF; --surface-input-default:#FFFFFF; --surface-neutral-tertiary:#F4F5F5; --surface-alert-error:#FFF0F0;
+  --border-input-default:#E2E4E6; --border-neutral-tertiary:#E2E4E6; --border-brandPrimary-tertiary:var(--brand-p200);
+  --shadow-brand-drop-bottom-200:0 4px 12px rgba(0,117,73,.12);
+  --dim-radius-100:4px; --dim-radius-200:8px; --dim-radius-400:12px; --dim-radius-500:16px;
+  --bg:var(--brand-p50);   /* พื้นหน้าเขียวอ่อนแบบ PHCIS (ผู้ใช้สั่ง 20 ต.ค. 69 · เดิมเทา) */
+  --brand:var(--brand-p700); --brand-soft:var(--brand-p50); --text:var(--text-content-default); --text2:var(--text-content-secondary); --text3:var(--text-content-tertiary); --line:var(--border-neutral-tertiary);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --text-content-default:var(--text); --text-content-secondary:var(--text2); --text-content-tertiary:var(--text3); --text-input-label:var(--text2); --text-input-placeholder:var(--text3);
+    --surface-card-100:var(--card); --surface-input-default:var(--card); --surface-neutral-tertiary:var(--line2); --surface-alert-error:var(--s-delay-bg);
+    --border-input-default:var(--line); --border-neutral-tertiary:var(--line); --brand-p50:var(--brand-soft); --brand-p700:var(--brand); --brand-p200:#2D5A47; --text-danger-default:var(--s-delay);
+  }
+}
+.ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;display:inline-block;white-space:nowrap;font-size:20px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+/* ปุ่ม = BrandButton / NeutralSubdueButton outline / DangerSubdueButton ghost */
+.btn{min-height:44px;border-radius:var(--dim-radius-200);border:1px solid var(--border-neutral-tertiary);background:var(--surface-card-100);color:var(--text-content-default);font-weight:500;font-size:16px}
+.btn:hover{border-color:var(--brand-p600);background:var(--brand-p50)}
+.btn.primary{background:var(--brand-p700);border-color:var(--brand-p700);color:#fff}
+.btn.primary:hover{background:var(--brand-p800);border-color:var(--brand-p800)}
+.btn.danger{border-color:transparent;background:transparent;color:var(--text-danger-default)}
+.btn.danger:hover{background:var(--surface-alert-error)}
+/* Popup */
+dialog{border-radius:var(--dim-radius-500);width:min(960px,calc(100vw - 32px));box-shadow:0 16px 48px rgba(0,0,0,.18)}
+/* ป๊อปอัปกว้าง 960 (ผู้ใช้สั่ง 20 ต.ค. 69 "ขยาย popup ให้กว้างขึ้น") · จอกว้างจัดช่องสั้นเป็น 4 คอลัมน์แถวเดียว */
+@media (min-width:1000px){ .dlg .body{grid-template-columns:repeat(4,minmax(0,1fr))} }
+dialog::backdrop{background:rgba(17,19,20,.48)}
+.dlg .ph{display:flex;align-items:flex-start;gap:12px;padding:20px 24px 12px;border-bottom:1px solid var(--border-neutral-tertiary)}
+.dlg .ph > div{flex:1;min-width:0}
+.dlg h3{padding:0;font-size:20px;font-weight:700;color:var(--text-content-default);line-height:1.4}
+.dlg .hint{padding:2px 0 0;font-size:14px;color:var(--text-content-secondary)}
+.xclose{width:40px;height:40px;flex:none;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--text-content-secondary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.xclose:focus{outline:none}.xclose:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+.xclose:hover{background:var(--surface-neutral-tertiary);color:var(--text-content-default)}
+.dlg .body{padding:20px 24px;gap:24px 16px}
+.field{gap:8px}
+.field label,.field .fl{font-size:14px;color:var(--text-input-label);font-weight:500}
+.field .req{color:#DC2626}
+/* InputField / Select — ไม่มีกรอบ/โฟกัสของเบราว์เซอร์ */
+.field input[type=text],.field input[type=date],.field input[type=time],.field input[type=number],.field select,.field textarea{min-height:44px;padding:10px 12px;border:1px solid var(--border-input-default);border-radius:var(--dim-radius-200);background:var(--surface-input-default);color:var(--text-content-default);font-size:16px;-webkit-appearance:none;appearance:none}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-input-placeholder);opacity:1}
+.field input:hover,.field select:hover,.field textarea:hover{border-color:var(--brand-p600)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none !important;border-color:var(--brand-p700);box-shadow:0 0 0 3px var(--brand-p100)}
+.selwrap{position:relative;display:flex}
+.selwrap select{flex:1;padding-right:44px;cursor:pointer}
+.selwrap .ms{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text-content-secondary)}
+.field .help{font-size:12px;color:var(--text-content-tertiary)}
+/* SelectableCardButton — ตัวเลือก (คลินิก · ผู้รับผิดชอบ · สถานะ · ประเภท) */
+.seg,.checks{gap:8px}
+.chip,.checks label{min-height:40px;padding:0 14px;border-radius:var(--dim-radius-200);border:0;box-shadow:inset 0 0 0 1px var(--border-neutral-tertiary);background:var(--surface-card-100);color:var(--text-content-default);font-size:14px;font-weight:400}
+.chip:hover,.checks label:hover{box-shadow:inset 0 0 0 1px var(--brand-p600);background:var(--brand-p50)}
+.chip[aria-pressed="true"],.checks label:has(input:checked){border:0;box-shadow:inset 0 0 0 2px var(--brand-p700);background:var(--brand-p50);color:var(--brand-p700);font-weight:500}
+/* CheckboxBox 18px */
+.checks input{-webkit-appearance:none;appearance:none;width:18px;height:18px;margin:0;border:1.5px solid #ADB2B7;border-radius:var(--dim-radius-100);background:var(--surface-card-100);display:inline-grid;place-content:center;flex:none;cursor:pointer}
+.checks input:checked{background:var(--brand-p700);border-color:var(--brand-p700)}
+.checks input:checked::after{content:"";width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.addrow .btn{min-height:44px}
+/* footer */
+.dlg .bar2{padding:16px 24px;gap:12px;border-top:1px solid var(--border-neutral-tertiary)}
+.dlg .bar2 .r{gap:12px}
+.dlg .bar2 .btn{min-width:96px;justify-content:center}
+/* หน้าหลัก: การ์ด/แผงเงาแบรนด์ */
+.kpi,.panel{border-color:var(--border-brandPrimary-tertiary);box-shadow:var(--shadow-brand-drop-bottom-200);border-radius:var(--dim-radius-400)}
+h1{font-weight:700}
+@media (max-width:640px){ .dlg .ph,.dlg .body,.dlg .bar2{padding-left:16px;padding-right:16px} .dlg .bar2 .r{width:100%} .dlg .bar2 .r .btn{flex:1} }
+.wbox{background:var(--surface-card-100);border:1px solid var(--border-brandPrimary-tertiary);border-radius:var(--dim-radius-400);box-shadow:var(--shadow-brand-drop-bottom-200);padding:16px 20px;margin-bottom:16px}
+.wbox.filters .toolbar{margin-bottom:8px}
+.wbox.filters .legend{margin:0}
+@media (max-width:640px){ .wbox{padding:12px 16px} }
+.field input[type=number]::-webkit-inner-spin-button,.field input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.field input[type=number]{-moz-appearance:textfield}
+.tipcard{position:fixed;z-index:50;max-width:min(320px,calc(100vw - 24px));background:var(--surface-card-100);color:var(--text-content-default);border:1px solid var(--border-neutral-tertiary);border-radius:var(--dim-radius-200);box-shadow:0 8px 24px rgba(17,19,20,.16);padding:12px;display:none;flex-direction:column;gap:8px;pointer-events:none;font-size:12px;line-height:1.5}
+.tipcard.show{display:flex}
+.tipcard .tt-t{font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+.tipcard .tt-s{color:var(--text-content-secondary)}
+.tipcard .tt-g{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 12px;padding-top:8px;border-top:1px solid var(--border-neutral-tertiary)}
+.tipcard .tt-g span:nth-child(odd){color:var(--text-content-tertiary)}
+.tipcard .tt-k{width:10px;height:10px;flex:none;border-radius:2px}
+.hovcell{position:absolute;top:2px;bottom:2px;width:calc(var(--DW) - 2px);margin-left:1px;border-radius:6px;background:var(--brand-p100);box-shadow:inset 0 0 0 1px var(--brand-p600);pointer-events:none;z-index:1;display:flex;align-items:center;justify-content:center;color:var(--brand-p700)}
+.hovcell .ms{font-size:18px}
+.addhit{cursor:pointer}
+.lab.addl{padding-top:2px;padding-bottom:2px}
+.additem{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 8px;margin-left:-8px;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--brand-p700);font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.additem .ms{font-size:18px}
+.additem:hover{background:var(--brand-p50)}
+.addinput{display:flex;gap:6px;align-items:center;width:100%}
+.addinput input{flex:1;min-width:0;min-height:32px;padding:4px 8px;border:1px solid var(--brand-p700);border-radius:var(--dim-radius-200);font:inherit;font-size:13px;background:var(--surface-input-default);color:var(--text-content-default);outline:none;box-shadow:0 0 0 3px var(--brand-p100);-webkit-appearance:none;appearance:none}
+.addinput button{min-height:32px;min-width:32px;border:0;border-radius:var(--dim-radius-200);background:var(--brand-p700);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.trk.addl{min-height:36px}
+@media (pointer:coarse){.additem,.addinput input,.addinput button{min-height:44px}}
+/* ===== Select · DatePicker · TimePicker ตาม Design system (ผู้ใช้สั่ง 21 ต.ค. 69 "ใช้ dropdown ตาม design system") ===== */
+:root{
+  --border-input-hover:var(--brand-p600); --primaryBorder-600:rgba(8,167,104,.15);
+  --icon-input-default:#ADB2B7; --icon-input-filled:#4D5358; --text-input-filled:#4D5358; --text-input-default:#ADB2B7;
+  --surface-list-default:#FFFFFF; --surface-list-hover:var(--brand-p50); --text-list-default:#4D5358; --text-list-hover:var(--brand-p700);
+  --icon-positive-success:#24A899; --surface-dropdown-default:#FFFFFF; --border-dropdown-default:#EBEBEB;
+  --shadow-dropdown:0 4px 4px rgba(100,116,139,.10),0 16px 32px rgba(100,116,139,.15);
+  --surface-calendar-current:var(--brand-p100); --text-calendar-current:var(--brand-p700); --border-neutral-quaternary:#F4F5F5;
+  --dim-radius-150:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --icon-input-filled:var(--text); --text-input-filled:var(--text); --surface-list-default:var(--card); --text-list-default:var(--text);
+    --surface-dropdown-default:var(--card); --border-dropdown-default:var(--line); --surface-calendar-current:#2D5A47; --text-calendar-current:#8FE0B9; --border-neutral-quaternary:var(--line);
+    --shadow-dropdown:0 16px 32px rgba(0,0,0,.5);
+  }
+}
+/* ช่องเดิมของเบราว์เซอร์ซ่อนไว้เก็บค่า (ยังใช้ validation ได้) */
+.dsp-native{position:absolute !important;width:1px !important;height:1px !important;min-height:0 !important;opacity:0 !important;pointer-events:none !important;padding:0 !important;border:0 !important;bottom:0;left:0}
+.dsp-host{position:relative;display:flex;flex-direction:column}
+.selwrap > .ms{display:none}
+/* Trigger = Select / DatePicker / TimePicker size lg */
+.dsp-trigger{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 16px;border:0;border-radius:var(--dim-radius-200);background:var(--surface-input-default);box-shadow:inset 0 0 0 1px var(--border-input-default);color:var(--text-input-filled);font:inherit;font-size:16px;text-align:left;cursor:pointer;transition:box-shadow 160ms cubic-bezier(.4,0,.2,1)}
+.dsp-trigger:focus{outline:none}
+.dsp-trigger:hover,.dsp-trigger:focus-visible,.dsp-trigger[aria-expanded="true"]{box-shadow:inset 0 0 0 2px var(--border-input-hover),0 0 0 4px var(--primaryBorder-600)}
+.dsp-trigger .ms{font-size:20px;color:var(--icon-input-filled);flex:none}
+.dsp-trigger.empty .ms,.dsp-trigger.empty .v{color:var(--text-input-default)}
+.dsp-trigger .v{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dsp-trigger .chev{font-size:16px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;transition:transform 160ms}
+.dsp-trigger[aria-expanded="true"] .chev{transform:rotate(180deg)}
+@media (min-width:1024px){ .dsp-trigger{min-height:40px;font-size:14px} }
+/* Popover = กล่อง dropdown ของ Select */
+.dsp-pop{position:fixed;z-index:100;background:var(--surface-dropdown-default);border:1px solid var(--border-dropdown-default);border-radius:var(--dim-radius-500);box-shadow:var(--shadow-dropdown);padding:4px;display:flex;flex-direction:column;overflow:hidden;color:var(--text-list-default)}
+.dsp-pop[hidden]{display:none}
+.dsp-list{overflow-y:auto;overflow-x:hidden;min-height:0;flex:1 1 auto;scrollbar-width:thin}
+.dsp-opt{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;padding:8px 12px;border:0;border-radius:var(--dim-radius-150);background:var(--surface-list-default);color:var(--text-list-default);font:inherit;font-size:14px;line-height:1.75;text-align:left;cursor:pointer}
+.dsp-opt .l{flex:1;min-width:0}
+.dsp-opt .ms{font-size:16px;color:var(--icon-positive-success);flex:none}
+.dsp-opt:hover,.dsp-opt.act{background:var(--surface-list-hover);color:var(--text-list-hover)}
+.dsp-opt:focus{outline:none}
+/* Calendar */
+.dsp-cal{width:min(320px,calc(100vw - 32px));padding:16px;display:flex;flex-direction:column;gap:4px}
+.dsp-cal .dsp-chd{display:flex;align-items:center;gap:4px;height:32px;margin-bottom:4px}
+.dsp-cal .dsp-chd b{flex:1;text-align:center;font-size:16px;font-weight:500;color:var(--text-list-default)}
+.dsp-nav{width:32px;height:32px;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--text-content-default);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.dsp-nav:hover{background:var(--surface-list-hover);color:var(--brand-p700)}
+.dsp-nav .ms{font-size:20px}
+.dsp-wk,.dsp-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;justify-items:center}
+.dsp-wk span{height:28px;display:flex;align-items:center;font-size:12px;font-weight:500;color:var(--text-content-tertiary)}
+.dsp-day{width:40px;height:40px;max-width:100%;border:0;border-radius:9999px;background:transparent;color:var(--text-content-default);font:inherit;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dsp-day.out{visibility:hidden}
+.dsp-day:hover,.dsp-day.act{background:var(--brand-p100);color:var(--brand-p700)}
+.dsp-day.today{background:var(--surface-calendar-current);color:var(--text-calendar-current);font-weight:500}
+.dsp-day.sel{background:var(--brand-p700);color:#fff;font-weight:500}
+.dsp-day:focus{outline:none}
+.dsp-cal .ft{display:flex;justify-content:flex-end;gap:8px;padding-top:8px;margin-top:4px;border-top:1px solid var(--border-neutral-quaternary)}
+.dsp-link{min-height:36px;padding:0 12px;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--brand-p700);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.dsp-link:hover{background:var(--surface-list-hover)}
+/* Time = 2 คอลัมน์ ชั่วโมง | นาที */
+.dsp-time{padding:4px}
+.dsp-time .cols{display:flex;gap:4px;min-height:0}
+.dsp-time .col{width:72px;max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:4px;scrollbar-width:thin}
+.dsp-time .col + .col{border-left:1px solid var(--border-neutral-quaternary)}
+.dsp-time .dsp-opt{min-height:40px;justify-content:center;padding:0 12px}
+.dsp-time .dsp-opt.sel{background:var(--brand-p600);color:#fff;font-weight:500}
+.dsp-time .ft{display:flex;justify-content:flex-end;padding:4px 4px 0;margin-top:4px;border-top:1px solid var(--border-neutral-quaternary)}
+
+/* ชื่อแถวชิดกันแนวตั้ง — .sub ของหัวหน้ามี margin-top 4px ทำให้ชื่อแถวคลินิกเลื่อนลงจนเห็นเส้นวันนี้ลอดช่อง (ผู้ใช้สั่ง 21 ต.ค. 69) */
+.lab.sub{margin:0}
+.bar .ms{font-size:14px;vertical-align:-3px;margin-right:2px}
+.lg-doc{font-size:16px;color:var(--text-content-secondary)}
+.field[hidden]{display:none}
+
+/* ===== หัวหน้า + สรุป + ตัวกรอง จัด hierarchy ใหม่ (ผู้ใช้สั่ง 21 ต.ค. 69 "ปรับ ui ให้ดูง่ายขึ้น") ===== */
+.head{align-items:center}
+.head .ttl{min-width:0;flex:1 1 360px}
+.head .sub{font-size:14px}
+.actions{justify-content:flex-end}
+.menuwrap{position:relative}
+.btn .chev{font-size:18px;margin-left:-2px}
+.menu{position:absolute;right:0;top:calc(100% + 8px);z-index:40;min-width:260px;background:var(--surface-dropdown-default);border:1px solid var(--border-dropdown-default);border-radius:var(--dim-radius-500);box-shadow:var(--shadow-dropdown);padding:4px;display:flex;flex-direction:column}
+.menu[hidden]{display:none}
+.menu button{display:flex;align-items:flex-start;gap:12px;min-height:48px;padding:8px 12px;border:0;border-radius:var(--dim-radius-150);background:transparent;color:var(--text-list-default);font:inherit;text-align:left;cursor:pointer}
+.menu button:hover,.menu button:focus-visible{background:var(--surface-list-hover);color:var(--text-list-hover);outline:none}
+.menu button .ms{font-size:20px;margin-top:2px}
+.menu b{display:block;font-size:14px;font-weight:500}
+.menu small{display:block;font-size:12px;color:var(--text-content-tertiary)}
+.sumbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:20px 24px}
+.sumbox .sg{min-width:0;display:flex;flex-direction:column;gap:16px}
+.sumbox .sg + .sg{border-left:1px solid var(--border-neutral-tertiary);padding-left:24px}
+.gh{margin:0;font-size:12px;font-weight:500;color:var(--text-content-tertiary);letter-spacing:.2px}
+.gh small{font-weight:400}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.st{display:flex;flex-direction:column;gap:2px;min-width:0}
+.st .l{font-size:14px;color:var(--text-content-secondary)}
+.st .v{font-size:28px;font-weight:700;line-height:1.3;color:var(--text-content-default);font-variant-numeric:tabular-nums}
+.st .v.ok{color:var(--brand-p700)}
+.st .v small{font-size:14px;font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
+.st .s{font-size:12px;color:var(--text-content-tertiary)}
+.prog{height:8px;border-radius:999px;background:var(--surface-neutral-tertiary);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--brand-p700);border-radius:999px}
+.who{display:flex;flex-direction:column;gap:8px}
+.wr{display:grid;grid-template-columns:72px minmax(0,1fr) max-content;gap:12px;align-items:center;min-height:24px}
+.wn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-content-default)}
+.wb{height:10px;border-radius:999px;background:var(--surface-neutral-tertiary);overflow:hidden}
+.wb > i{display:block;height:100%;border-radius:999px;overflow:hidden}
+.wb > i > i{display:block;height:100%}
+.wv{font-size:14px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--text-content-default);min-width:96px}
+.wv small{font-size:12px;font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
+.wkey{margin:0;font-size:12px;color:var(--text-content-tertiary);display:flex;align-items:center;gap:6px}
+.wkey i{width:16px;height:8px;border-radius:999px;display:inline-block}
+.wkey .k1{background:var(--text-content-secondary)}.wkey .k2{background:color-mix(in srgb,var(--text-content-secondary) 22%,transparent);margin-left:8px}
+.empty{margin:0;font-size:14px;color:var(--text-content-tertiary)}
+.filters .toolbar{justify-content:space-between;margin-bottom:0;padding-bottom:16px;border-bottom:1px solid var(--border-neutral-tertiary)}
+.frow .lbl{font-size:12px;font-weight:500;color:var(--text-content-tertiary);margin-right:4px}
+.legends{display:flex;flex-wrap:wrap;gap:12px 40px;padding-top:16px}
+.lgroup{display:flex;flex-direction:column;gap:8px;min-width:0}
+.legends .legend{margin:0;font-size:13px;color:var(--text-content-secondary);gap:6px 16px}
+.lg-mk{font-style:normal;font-size:12px;width:14px;text-align:center}
+@media (max-width:1023px){
+  .sumbox{grid-template-columns:minmax(0,1fr)}
+  .sumbox .sg + .sg{border-left:0;padding-left:0;border-top:1px solid var(--border-neutral-tertiary);padding-top:20px}
+}
+@media (max-width:640px){
+  .sumbox{padding:16px}
+  .stats{gap:8px}
+  .st .v{font-size:22px}
+  .wr{grid-template-columns:56px minmax(0,1fr) max-content;gap:8px}
+  .wv{min-width:0}
+  .head .actions{width:100%}
+  .head .actions .btn{flex:1 1 auto;justify-content:center}
+  .menuwrap{flex:1 1 auto;display:flex}
+  .menuwrap .btn{flex:1}
+  .menu{left:0;right:auto}
+}
+
+.lab .nm{flex:1}
+.tipcard .tt-big{font-size:16px;font-weight:700;line-height:1.4}
+.tipcard .tt-kind{display:flex;align-items:center;gap:6px}
+
+/* BrandSubdueButton outline (ผู้ใช้สั่ง 21 ต.ค. 69) */
+.btn.subdue{background:transparent;border:1px solid var(--brand-p200);color:var(--brand-p700)}
+.btn.subdue .ms{color:var(--brand-p700)}
+.btn.subdue:hover,.btn.subdue[aria-expanded="true"]{background:var(--brand-p50);border-color:var(--brand-p200)}
+.btn.subdue:focus{outline:none}.btn.subdue:focus-visible{outline:4px solid var(--brand-p200)}
+
+/* ป๊อปอัปงาน: กว้าง 1200 · 2 คอลัมน์ · หัวกลุ่ม + เส้นคั่น · ระยะ กลุ่ม 24 > ในกลุ่ม 16 > ป้าย↔ค่า 8 */
+#taskDlg{width:min(1200px,calc(100vw - 32px))}
+#taskDlg .tbody{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;padding:0}
+#taskDlg .fgrp{display:flex;flex-direction:column;gap:16px;padding:24px;min-width:0}
+#taskDlg .fcol{display:flex;flex-direction:column;border-left:1px solid var(--border-neutral-tertiary);min-width:0}
+#taskDlg .fcol .fgrp + .fgrp{border-top:1px solid var(--border-neutral-tertiary)}
+#taskDlg .gh{font-size:14px;font-weight:700;color:var(--brand-p700);margin:0}
+#taskDlg .field{gap:8px}
+#taskDlg .frow2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+#taskDlg .cnt{font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
+#taskDlg .addrow{margin-top:4px}
+#taskDlg .addrow .btn{min-width:96px;justify-content:center}
+#taskDlg textarea{min-height:88px;resize:vertical}
+@media (max-width:1023px){
+  #taskDlg .tbody{grid-template-columns:minmax(0,1fr)}
+  #taskDlg .fcol{border-left:0;border-top:1px solid var(--border-neutral-tertiary)}
+}
+@media (max-width:640px){
+  #taskDlg .fgrp{padding:20px 16px}
+  #taskDlg .frow2{gap:12px}
+}
+
+/* Alignment คอลัมน์ชื่อ: วงกลมของคลินิกย่อย + ปุ่มเพิ่ม ตรงแนวชื่อคณะ · ชื่อคลินิกย่อยตรงกันทุกแถว */
+.lab.sub.isdone .nm{color:var(--text-content-default)}
+.lab.sub.addl .additem{margin-left:-4px;padding:0 4px;gap:8px}
+.lab.sub.addl .additem .ms{width:20px;text-align:center}
+
+/* คอลัมน์ชื่อ: ชื่อคลินิกย่อยเยื้องเข้า 16px จากชื่อคณะ · ปุ่มเพิ่มคลินิกตรงแนวชื่อคลินิก */
+.lab,.lab.c,.lab.c.gen,.lab.h,.lab.sub{padding-left:12px;gap:6px}
+.lab.sub .nm{padding-left:16px}
+.lab.sub.addl{padding-left:28px}
+.lab.h .nm{flex:1}
+@media (max-width:640px){ .lab,.lab.c,.lab.c.gen,.lab.h,.lab.sub{padding-left:8px;gap:4px} .lab.sub .nm{padding-left:12px} .lab.sub.addl{padding-left:20px} }
+
+/* ตัวกรองประเภทงาน */
+.fstack{display:flex;flex-direction:column;gap:12px;min-width:0}
+.frow .lbl{min-width:76px}
+.chip .ms{font-size:18px}
+@media (max-width:640px){ .frow .lbl{min-width:0;width:100%} }
+
+/* สีสถานะ = StatusBadge: To do ฟ้า (info) · In progress ส้ม (warning) · Done เขียว (success) (ผู้ใช้สั่ง 21 ต.ค. 69) */
+:root{--surface-statusbadge-info:#DBEAFE;--text-statusbadge-info:#1D4ED8;--surface-statusbadge-warning:#FFEDD5;--text-statusbadge-warning:#C2410C;--surface-statusbadge-success:#D1F6EE;--text-statusbadge-success:#196C65}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--surface-statusbadge-info:#1E3A8A;--text-statusbadge-info:#93C5FD;--surface-statusbadge-warning:#7C2D12;--text-statusbadge-warning:#FDBA74;--surface-statusbadge-success:#194845;--text-statusbadge-success:#6CDCCA} }
+#tStatus .chip[data-k="todo"]{--sc:var(--text-statusbadge-info);--sb:var(--surface-statusbadge-info)}
+#tStatus .chip[data-k="prog"]{--sc:var(--text-statusbadge-warning);--sb:var(--surface-statusbadge-warning)}
+#tStatus .chip[data-k="done"]{--sc:var(--text-statusbadge-success);--sb:var(--surface-statusbadge-success)}
+#tStatus .chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--sc);flex:none}
+#tStatus .chip:hover{box-shadow:inset 0 0 0 1px var(--sc);background:var(--sb)}
+#tStatus .chip[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--sc);background:var(--sb);color:var(--sc)}
+
+/* ข้อมูลงาน informative (label/value) */
+#taskDlg .info{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 24px;margin:0;padding:16px;border-radius:var(--dim-radius-200);background:var(--brand-p50)}
+#taskDlg .info[hidden]{display:none}
+#taskDlg .info dt{font-size:14px;color:var(--text-content-tertiary)}
+#taskDlg .info dd{margin:0;font-size:14px;font-weight:500;color:var(--text-content-default)}
+
+/* ย่อ/ขยายคณะ: ลูกศรหน้าชื่อคณะ · ชื่อคลินิกตรงแนวชื่อคณะ */
+.phd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 2px}
+.panel .phd h2{padding:0}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px}
+.ctog{width:24px;height:24px;flex:none;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--text-content-secondary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.ctog.sp{cursor:default}
+.ctog .ms{font-size:20px;transition:transform 160ms}
+.ctog[aria-expanded="false"] .ms{transform:rotate(-90deg)}
+.ctog[data-tog]:hover{background:var(--brand-p100);color:var(--brand-p700)}
+.ctog:focus{outline:none}.ctog:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+.lab.c .cn{font-size:12px;font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
+.lab.sub .nm{padding-left:30px}
+.lab.sub.addl{padding-left:42px}
+@media (max-width:640px){ .lab.sub .nm{padding-left:28px} .lab.sub.addl{padding-left:36px} .phd .btn span:last-child{display:none} }
+@media (pointer:coarse){ .ctog{width:32px;height:32px;margin:-4px 0} .lab.sub .nm{padding-left:38px} .lab.sub.addl{padding-left:50px} .btn.sm{min-height:44px} }
+
+/* ป๊อปอัปประวัติการแก้ไข */
+#histDlg{width:min(880px,calc(100vw - 32px))}
+#histDlg .hbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 24px;border-bottom:1px solid var(--border-neutral-tertiary)}
+#histDlg .hbar .fl{font-size:14px;color:var(--text-content-secondary)}
+#histDlg .hbar .chip{min-height:36px}
+#histDlg .hbody{overflow:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:24px}
+.hday{display:flex;flex-direction:column}
+.hday .gh{position:sticky;top:0;background:var(--surface-card-100);padding:12px 0 8px;margin:0;font-size:12px;font-weight:500;color:var(--text-content-tertiary);z-index:1}
+.hrow{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--border-neutral-tertiary)}
+.hrow .ht{font-size:14px;color:var(--text-content-tertiary);font-variant-numeric:tabular-nums;padding-top:2px}
+.hc{display:flex;flex-direction:column;gap:4px;min-width:0}
+.hh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hh b{font-size:14px;font-weight:500;color:var(--text-content-default);overflow-wrap:anywhere}
+.hb{font-size:12px;font-weight:500;line-height:20px;padding:0 8px;border-radius:999px;white-space:nowrap}
+.hb.add{background:var(--surface-statusbadge-success);color:var(--text-statusbadge-success)}
+.hb.edit{background:var(--surface-statusbadge-info);color:var(--text-statusbadge-info)}
+.hb.del{background:var(--surface-alert-error);color:var(--text-danger-default)}
+.hs{font-size:12px;color:var(--text-content-tertiary)}
+.hd2{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 16px;margin:4px 0 0;font-size:13px}
+.hd2 dt{color:var(--text-content-tertiary)}
+.hd2 dd{margin:0;color:var(--text-content-default);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hd2 s{color:var(--text-content-tertiary)}
+.hd2 .ms{font-size:14px;color:var(--text-content-tertiary)}
+@media (max-width:640px){ #histDlg .hbar,#histDlg .hbody{padding-left:16px;padding-right:16px} .hrow{grid-template-columns:40px minmax(0,1fr);gap:8px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head wbox">
+    <div class="ttl">
+      <h1>UXUI Manday Timeline</h1>
+      <p class="sub">แยกตามคณะ › คลินิก/ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
+      <div class="saved" id="saved"></div>
+    </div>
+    <div class="actions">
+      <button class="btn subdue" id="histBtn"><span class="ms">history</span>ประวัติการแก้ไข</button>
+      <div class="menuwrap">
+        <button class="btn subdue" id="fileBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="fileMenu"><span class="ms">folder_open</span>ไฟล์<span class="ms chev">expand_more</span></button>
+        <div class="menu" id="fileMenu" role="menu" hidden>
+          <button type="button" role="menuitem" id="saveFile"><span class="ms">download</span><span><b>บันทึกเป็นไฟล์ HTML</b><small>ฝังข้อมูลล่าสุด ส่งต่อให้คนอื่นได้</small></span></button>
+          <button type="button" role="menuitem" id="exportBtn"><span class="ms">data_object</span><span><b>ส่งออก JSON</b><small>สำรองข้อมูล</small></span></button>
+          <button type="button" role="menuitem" id="importBtn"><span class="ms">upload_file</span><span><b>นำเข้า JSON</b><small>แทนที่ข้อมูลปัจจุบัน</small></span></button>
+        </div>
+      </div>
+      <button class="btn subdue" id="addEvent"><span class="ms">event</span>เพิ่มนัด / Present</button>
+      <button class="btn primary" id="addTask"><span class="ms">add</span>เพิ่มงาน</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </div>
+
+  <div class="wbox filters">
+    <div class="toolbar">
+      <div class="fstack"><div class="frow" id="fWho"><span class="lbl">ผู้รับผิดชอบ</span></div>
+      <div class="frow" id="fType"><span class="lbl">ประเภทงาน</span></div></div>
+      <label class="switch"><input type="checkbox" id="skipWe"> ไม่นับเสาร์–อาทิตย์ใน manday</label>
+    </div>
+    <div class="legends">
+      <div class="lgroup"><span class="gh">สถานะงาน</span><div class="legend">
+        <span><i class="lg-bar" style="background:color-mix(in srgb,var(--kae) 18%,var(--card));border:1px solid var(--kae)"></i>To do</span>
+        <span><i class="lg-bar" style="background:var(--kae);background-image:repeating-linear-gradient(135deg,transparent 0,transparent 4px,rgba(255,255,255,.3) 4px,rgba(255,255,255,.3) 8px)"></i>In progress</span>
+        <span><i class="lg-bar" style="background:var(--kae)"></i>Done</span>
+        <span><span class="ms lg-doc">description</span>Document</span>
+        <span><span class="ms lg-doc">draw</span>Figma</span>
+      </div></div>
+      <div class="lgroup"><span class="gh">นัด · วันสำคัญ <small>(ไม่นับ manday)</small></span><div class="legend">
+        <span><i class="lg-mk" style="color:var(--ev-present)">◆</i>Present</span>
+        <span><i class="lg-mk" style="color:var(--ev-ba)">●</i>ส่งที่แก้ / BA Pre</span>
+        <span><i class="lg-mk" style="color:var(--ev-meet)">■</i>นัด / ส่งลิงก์</span>
+        <span><i class="lg-mk" style="color:var(--ev-ms)">▲</i>วันสำคัญ</span>
+        <span><i class="lg-bar" style="width:2px;background:var(--today)"></i>วันนี้</span>
+      </div></div>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="phd"><h2>Timeline รายคณะ</h2><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div>
+    <p class="hint">เรียงคณะตามวันเริ่มงาน · ตัวเลขด้านขวาของชื่อ = manday · งานที่ทำหลายคลินิกพร้อมกัน manday แบ่งเท่ากันให้แต่ละคลินิก</p>
+    <div class="scroller" id="scroller"><div class="gantt" id="gantt"></div></div>
+  </section>
+
+
+  <p class="foot">แก้แล้วบันทึกในเบราว์เซอร์นี้อัตโนมัติ (Refresh ไม่หาย) · จะส่งให้คนอื่นหรือเปิดเครื่องอื่น กด "บันทึกเป็นไฟล์ HTML" แล้วส่งไฟล์ใหม่ไป ·
+    <button class="btn link danger" id="resetBtn">ล้างการแก้ไขในเบราว์เซอร์นี้</button></p>
+</div>
+
+<dialog id="taskDlg">
+  <form class="dlg" id="taskForm">
+    <div class="ph"><div><h3 id="tTitle">แก้ไขงาน</h3><p class="hint" id="tHint"></p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="body tbody">
+      <!-- ป๊อปอัปงาน 2 คอลัมน์: งาน | ผู้รับผิดชอบ + ช่วงเวลา + ความคืบหน้า (ผู้ใช้สั่ง 21 ต.ค. 69 "ขยาย popup สร้าง alignment hierarchy") -->
+      <section class="fgrp">
+        <h4 class="gh">งาน</h4>
+        <!-- เปิดจากแถว/แถบงาน = คณะ + คลินิกเป็นข้อความ informative (ผู้ใช้สั่ง 21 ต.ค. 69) · เปิดจากปุ่ม "เพิ่มงาน" = เลือกเอง -->
+        <dl class="info" id="tInfo"><dt>คณะ</dt><dd id="tInfoC"></dd><dt>คลินิก / ระบบย่อย</dt><dd id="tInfoI"></dd></dl>
+        <div class="field" id="tCField"><label for="tC">คณะ</label><div class="selwrap"><select id="tC" autofocus></select><span class="ms">expand_more</span></div></div>
+        <div class="field" id="tItemsField"><span class="fl">คลินิก / ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
+          <div class="addrow"><input type="text" id="tNewItem" placeholder="เพิ่มคลินิกย่อยใหม่ในคณะนี้"><button type="button" class="btn subdue" id="tAddItem"><span class="ms">add</span>เพิ่ม</button></div></div>
+        <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
+      </section>
+      <div class="fcol">
+        <section class="fgrp">
+          <h4 class="gh">ผู้รับผิดชอบและช่วงเวลา</h4>
+          <div class="field"><span class="fl">ผู้รับผิดชอบ</span><div class="seg" id="tWhoSeg"></div><input type="hidden" id="tWho"></div>
+          <div class="frow2">
+            <div class="field"><label for="tS">วันเริ่ม</label><input type="date" id="tS" required></div>
+            <div class="field"><label for="tE">วันสิ้นสุด</label><input type="date" id="tE" required></div>
+          </div>
+          <div class="field"><label for="tMd">Manday</label><div class="selwrap"><select id="tMd"></select><span class="ms">expand_more</span></div><span class="help" id="tMdHelp"></span></div>
+        </section>
+        <section class="fgrp">
+          <h4 class="gh">ความคืบหน้า</h4>
+          <div class="field"><span class="fl">สถานะ</span><div class="seg" id="tStatus"></div></div>
+          <div class="field"><label for="tNote">หมายเหตุ</label><textarea id="tNote" rows="3"></textarea></div>
+        </section>
+      </div>
+    </div>
+    <div class="bar2">
+      <button type="button" class="btn danger" id="tDel"><span class="ms">delete</span>ลบงาน</button>
+      <div class="r"><button type="button" class="btn" data-close>ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="evDlg">
+  <form class="dlg" id="evForm">
+    <div class="ph"><div><h3 id="eTitle">แก้ไขนัด</h3><p class="hint">Present · ส่งที่แก้ให้ BA · นัดประชุม · วันสำคัญ (ไม่นับ manday)</p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="body">
+      <div class="field full"><label for="eC">คณะ</label><div class="selwrap"><select id="eC" autofocus></select><span class="ms">expand_more</span></div></div>
+      <div class="field full"><label for="eText">รายการ</label><input type="text" id="eText" required></div>
+      <div class="field"><label for="eD">วันที่</label><input type="date" id="eD" required></div>
+      <div class="field"><label for="eT">เวลา (ไม่บังคับ)</label><input type="time" id="eT"></div>
+      <div class="field full"><span class="fl">ประเภท</span><div class="seg" id="eKind"></div></div>
+      <div class="field full" id="eModeF"><span class="fl">รูปแบบ Present</span><div class="seg" id="eMode"></div></div>
+    </div>
+    <div class="bar2">
+      <button type="button" class="btn danger" id="eDel"><span class="ms">delete</span>ลบ</button>
+      <div class="r"><button type="button" class="btn" data-close>ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div>
+    </div>
+  </form>
+</dialog>
+<dialog id="histDlg">
+  <div class="dlg">
+    <div class="ph"><div><h3>ประวัติการแก้ไข</h3><p class="hint" id="hHint"></p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="hbar"><span class="fl">บันทึกการแก้ไขในชื่อ</span><div class="seg" id="hMe"></div></div>
+    <div class="hbody" id="hList"></div>
+  </div>
+</dialog>
+<datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"></datalist>
+<div class="toast" id="toast"></div>
+<div class="tipcard" id="tipcard" role="tooltip"></div>
+
+<!-- ข้อมูลที่ฝังในไฟล์ ปุ่ม "บันทึกเป็นไฟล์ HTML" จะเขียนข้อมูลล่าสุดลงตรงนี้ -->
+<script id="embedded-data" type="application/json">null</script>
+<script>
+const STORE_KEY = 'uxui-manday-v2';
+const PEOPLE = ['Kae','Mel','Prang','Oat','Mink','Aim','Pim'];   // ผู้รับผิดชอบ 7 คน (ผู้ใช้สั่ง 20 ต.ค. 69 เอา Dev ออก · 21 ต.ค. 69 เพิ่ม Oat Mink Aim Pim)
+const WHO_COLOR = {Kae:'var(--kae)', Mel:'var(--mel)', Prang:'var(--prang)', Oat:'var(--oat)', Mink:'var(--mink)', Aim:'var(--aim)', Pim:'var(--pim)'};
+const whoColor = w => WHO_COLOR[w] || 'var(--other)';
+const STATUS = {todo:'To do', prog:'In progress', done:'Done'};   // ลบ "เลื่อน" (ผู้ใช้สั่ง 21 ต.ค. 69) · งานเดิมที่เลื่อน = To do
+const TYPE = {uxui:'UXUI', doc:'Document', figma:'Figma'};   // ประเภทงาน (ผู้ใช้สั่ง 21 ต.ค. 69) · ไม่ระบุ = UXUI
+const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
+// คณะที่ทำเครื่องหมาย Done = ทุกงานในคณะนั้นแสดงเป็น Done (สถานะเดิมของงานเก็บไว้ ยกเลิกได้) (ผู้ใช้สั่ง 21 ต.ค. 69)
+const TICON = {doc:'description', figma:'draw'};   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
+const PMODE = {onsite:'ที่คณะ', online:'Pre-Online', video:'ส่ง Video'};   // รูปแบบ Present (ผู้ใช้สั่ง 21 ต.ค. 69)
+const modeOf = e => PMODE[e.mode] ? e.mode : (/online/i.test(e.text||'') ? 'online' : /คลิป|video/i.test(e.text||'') ? 'video' : 'onsite');
+const KIND = {present:{label:'Present', color:'var(--ev-present)'}, ba:{label:'ส่งที่แก้ / BA Pre', color:'var(--ev-ba)'},
+  meet:{label:'นัด / ส่งลิงก์', color:'var(--ev-meet)'}, ms:{label:'วันสำคัญ', color:'var(--ev-ms)'}};
+
+// ---------- ข้อมูลตั้งต้น (จากชีต UXUI Tracking - BA Analyze: แท็บ Timeline + รายการระบบ) ----------
+const SEED_COMMITTEES = [
+  ['c1','คณะ 1 · PHCIS หลัก',['เวชระเบียน (Registration)','OPD คัดกรอง','EMR','CPOE','Appointment','Observation','ห้องปฏิบัติการ (Lab)','Kiosk','Dashboard']],
+  ['c6','คณะ 6 · ทันตกรรม',['งานทันตกรรม','Dashboard']],
+  ['c13','คณะ 13 · Consent / ผู้ดูแลระบบ',['Consent Management','ระบบงานผู้ดูแลระบบ','Dashboard']],
+  ['c7','คณะ 7 · เภสัชกรรม',['ห้องยา (ศูนย์)','คลังยาเวชภัณฑ์ (กองเภสัช)','Dashboard']],
+  ['c2','คณะ 2 · สร้างเสริมสุขภาพและครอบครัว',['ฝากครรภ์ ANC','วางแผนครอบครัว + มะเร็ง','WellBaby','IIS','Dashboard']],
+  ['c3','คณะ 3 · กลุ่มโรคเฉพาะ / ตรวจสุขภาพ',['เบาหวาน','ความดันโลหิตสูง','หอบหืด/ถุงลมโป่งพอง (Asma)','ตรวจสุขภาพ','Dashboard']],
+  ['c5','คณะ 5 · Childcare / School Health',['ทะเบียนโรงเรียน','ทะเบียนนักเรียน','บริการนักเรียน','วิเคราะห์และแปลผลตรวจ','สถานรับเลี้ยงเด็กกลางวัน','Dashboard']],
+  ['c4','คณะ 4 · เยี่ยมบ้าน / Community',['เยี่ยมบ้าน (Home Visit)','ทะเบียนชุมชน','ศูนย์สุขภาพชุมชน อสส.','แผนที่ภูมิศาสตร์','Dashboard']],
+  ['c9','คณะ 9 · ส่งเสริม ป้องกัน ฟื้นฟู',['บำบัดสารเสพติด','สุขภาพจิต','HIV / STI','วัณโรค','เวชศาสตร์ฟื้นฟู','กายภาพ / แผนไทย','RIS X-ray','Dashboard']],
+  ['c10','คณะ 10 · สังคมสงเคราะห์',['งานสังคมสงเคราะห์','Dashboard']],
+  ['c8','คณะ 8 · การเงิน / เบิกจ่าย',['สิทธิและการเบิกจ่าย (E-claim)','การเงิน','Dashboard']],
+  ['c12','คณะ 12 · Mobile Application',['Design Concept','Mobile App']],
+  ['c11','คณะ 11 · Dashboard รวม',['Dashboard รวม']],
+];
+// [คณะ, [คลินิก], ผู้รับผิดชอบ, เริ่ม MM-DD, สิ้นสุด MM-DD, สถานะ, manday (null = คำนวณจากวัน), หมายเหตุ]
+const C1A = ['เวชระเบียน (Registration)','OPD คัดกรอง','EMR','CPOE','Appointment'], C1B = ['Observation','ห้องปฏิบัติการ (Lab)','Kiosk'];
+const SEED_TASKS = [
+  ['c1',C1A,'Kae','09-16','09-17','done',null,'คณะ 1 CPOE etc.'],
+  ['c1',C1B,'Mel','09-16','09-18','done',null,'คณะ 1 Observe etc.'],
+  ['c1',['Dashboard'],'Dev','09-19','09-21','todo',null,'Dashboard คณะ 1'],
+  ['c1',C1A,'Kae','10-20','10-21','prog',null,'รอบ 2 · คณะ 1 CPOE etc.'],
+  ['c1',C1B,'Kae','10-20','10-21','prog',null,'รอบ 2 · คณะ 1 Observe etc.'],
+  ['c6',['งานทันตกรรม'],'Mel','09-19','09-20','done',null,''],
+  ['c6',['งานทันตกรรม'],'Kae','09-25','09-25','todo',0.5,'ส่งที่แก้ (วันเดียวกับ Consent, จัดการระบบ)'],
+  ['c6',['Dashboard'],'Dev','09-19','09-21','todo',1.5,'Dashboard คณะ 6, 13 (แบ่งครึ่ง)'],
+  ['c13',['Consent Management','ระบบงานผู้ดูแลระบบ'],'Kae','09-19','09-20','todo',null,'คณะ 13 Consent Management'],
+  ['c13',['Consent Management','ระบบงานผู้ดูแลระบบ'],'Kae','09-25','09-25','todo',0.5,'ส่งที่แก้ Consent, จัดการระบบ (วันเดียวกับทันตกรรม)'],
+  ['c13',['Dashboard'],'Dev','09-19','09-21','todo',1.5,'Dashboard คณะ 6, 13 (แบ่งครึ่ง)'],
+  ['c13',['Dashboard'],'Dev','10-12','10-14','todo',null,'Dashboard คณะ 13 · วันสิ้นสุดไม่ระบุในชีต'],
+  ['c7',['ห้องยา (ศูนย์)'],'Kae','09-22','09-23','todo',null,'คณะ 7 ศูนย์เภสัช'],
+  ['c7',['คลังยาเวชภัณฑ์ (กองเภสัช)'],'Mel','09-22','09-25','prog',null,'คณะ 7 คลังยากอง'],
+  ['c7',['Dashboard'],'Dev','09-22','09-25','todo',null,'Dashboard 7 เภสัชกอง + ศูนย์'],
+  ['c2',['ฝากครรภ์ ANC','วางแผนครอบครัว + มะเร็ง'],'Kae','09-26','09-28','todo',null,'เลื่อน'],
+  ['c2',['WellBaby','IIS'],'Mel','09-26','09-29','todo',null,'เลื่อน'],
+  ['c2',['ฝากครรภ์ ANC','วางแผนครอบครัว + มะเร็ง'],'Kae','10-10','10-11','todo',null,''],
+  ['c2',['WellBaby','IIS'],'Kae','10-10','10-11','todo',null,'วันสิ้นสุดไม่ระบุในชีต'],
+  ['c2',['Dashboard'],'Dev','09-26','09-29','todo',null,''],
+  ['c3',['เบาหวาน','ความดันโลหิตสูง','หอบหืด/ถุงลมโป่งพอง (Asma)'],'Kae','09-30','10-01','todo',null,''],
+  ['c3',['ตรวจสุขภาพ'],'Mel','09-30','10-02','prog',null,''],
+  ['c3',['Dashboard'],'Dev','09-30','10-02','todo',1.5,'Dashboard คณะ 3, 5 (แบ่งครึ่ง)'],
+  ['c5',['ทะเบียนโรงเรียน','ทะเบียนนักเรียน','บริการนักเรียน','วิเคราะห์และแปลผลตรวจ','สถานรับเลี้ยงเด็กกลางวัน'],'Prang','09-30','10-05','todo',null,'คณะ 5 Childcare'],
+  ['c5',['Dashboard'],'Dev','09-30','10-02','todo',1.5,'Dashboard คณะ 3, 5 (แบ่งครึ่ง)'],
+  ['c4',['เยี่ยมบ้าน (Home Visit)','ทะเบียนชุมชน','ศูนย์สุขภาพชุมชน อสส.','แผนที่ภูมิศาสตร์'],'Mel','10-03','10-04','todo',null,''],
+  ['c4',['Dashboard'],'Dev','10-03','10-05','todo',1.5,'Dashboard คณะ 4, 9 (แบ่งครึ่ง)'],
+  ['c9',['บำบัดสารเสพติด','สุขภาพจิต'],'Kae','10-03','10-05','todo',null,''],
+  ['c9',['HIV / STI','วัณโรค'],'Kae','10-06','10-08','todo',null,''],
+  ['c9',['เวชศาสตร์ฟื้นฟู','กายภาพ / แผนไทย','RIS X-ray'],'Mel','10-06','10-09','todo',null,'ฟื้นฟู + บำบัด + RIS + แผนไทย'],
+  ['c9',['Dashboard'],'Dev','10-03','10-05','todo',1.5,'Dashboard คณะ 4, 9 (แบ่งครึ่ง)'],
+  ['c9',['Dashboard'],'Dev','10-06','10-08','todo',null,''],
+  ['c10',['งานสังคมสงเคราะห์'],'Mel','10-10','10-13','todo',null,''],
+  ['c10',['Dashboard'],'Dev','10-09','10-11','todo',1.5,'Dashboard คณะ 8, 10 (แบ่งครึ่ง)'],
+  ['c8',['สิทธิและการเบิกจ่าย (E-claim)','การเงิน'],'Mel','10-16','10-18','todo',null,''],
+  ['c8',['Dashboard'],'Dev','10-09','10-11','todo',1.5,'Dashboard คณะ 8, 10 (แบ่งครึ่ง)'],
+  ['c12',['Design Concept'],'Kae','09-16','09-16','prog',null,'Design Concept (2 Concepts) · ระยะเวลาไม่ระบุในชีต'],
+  ['c12',['Mobile App'],'Kae','10-16','10-18','todo',null,''],
+];
+// [คณะ ('' = ภาพรวม), วันที่, เวลา, ประเภท, รายการ]
+const SEED_EVENTS = [
+  ['','09-27','','meet','Dev ทำคลิปวิดีโอ'],['','10-27','','ms','สิ้นสุดการยืนยัน'],['','10-29','','meet','คุยกับคณะกำกับ'],
+  ['','10-30','','ms','ส่งเอกสาร'],['','11-05','','ms','สิ้นสุด'],
+  ['c1','09-18','','present','Present คณะ 1'],['c1','10-22','','present','Present คณะ 1 (รอบ 2)'],['c1','10-26','','ba','คณะ 1 ที่แก้ BA Pre'],
+  ['c6','09-21','','present','Present คณะ 6'],
+  ['c13','09-19','','ms','คณะ 13 ย้ายสลับกับ Mobile'],['c13','09-21','','present','Present คณะ 13'],
+  ['c7','09-24','','present','Present คณะ 7'],['c7','10-23','','ba','ไม่มีนัดเพิ่ม · แก้ไขคณะ 7'],
+  ['c2','09-29','','present','Present คณะ 2 (เลื่อน)'],['c2','10-12','','present','คณะ 2 UXUI Present'],['c2','10-20','','ba','Pre คณะ 2'],
+  ['c3','10-02','','present','Present คณะ 3'],['c3','10-07','','ba','คณะ 3 เบาหวาน ความดัน ที่แก้ BA Pre'],['c3','10-08','13:00','meet','คณะ 3 นัด Online (Asma)'],['c3','10-20','','ba','Pre คณะ 3'],
+  ['c5','10-06','','present','Present คณะ 5'],['c5','10-21','','ba','คณะ 5 Childcare ที่แก้ BA Pre'],
+  ['c4','10-05','','present','Present คณะ 4'],['c4','10-09','','ba','คณะ 4 เยี่ยมบ้าน ที่แก้ BA Pre'],
+  ['c9','10-09','','present','Present คณะ 9'],['c9','10-15','','ba','คณะ 9 ที่แก้ BA Pre'],['c9','10-15','','meet','ส่งลิงก์ก้าวใหม่ และสุขภาพจิต'],
+  ['c9','10-23','','meet','ส่งลิงก์ บำบัดสารเสพติด · สุขภาพจิต'],['c9','10-27','','meet','ส่งลิงก์ HIV · วัณโรค'],
+  ['c10','10-14','','present','Present คณะ 10'],['c10','10-15','','ba','คณะ 10 สังคม ที่แก้ BA Pre'],
+  ['c8','10-14','','ms','Present คณะ 8 เลื่อนไป 27 Oct (Tentative)'],['c8','10-19','','present','Present คณะ 8'],['c8','10-27','13:00','present','Present คณะ 8 การเงิน BA Pre'],
+  ['c12','10-05','','meet','คุย Mobile App กับทีม Dev'],['c12','10-19','','present','Present คณะ 12'],['c12','10-22','','ba','คณะ 12 Mobile App ที่แก้ BA Pre'],['c12','10-26','09:00','meet','Sync Mobile with Dev (Onsite)'],
+  ['c11','10-27','','present','Present คณะ 11'],['c11','10-27','','ba','คณะ 11 Dashboard ที่แก้ BA Pre'],
+];
+const y = s => '2026-' + s;
+const seedState = () => ({
+  savedAt: 0, skipWeekend: false,
+  committees: SEED_COMMITTEES.map(([id,name,items]) => ({id, name, items:[...items]})),
+  tasks: SEED_TASKS.map((r,i) => ({id:'t'+i, c:r[0], items:[...r[1]], who:r[2], start:y(r[3]), end:y(r[4]), status:r[5], md:r[6], note:r[7]})),
+  events: SEED_EVENTS.map((r,i) => ({id:'e'+i, c:r[0], date:y(r[1]), time:r[2], kind:r[3], text:r[4]})),
+});
+
+// ---------- โหลด / บันทึก ----------
+function loadState(){
+  let emb=null, sto=null;
+  try { emb = JSON.parse(document.getElementById('embedded-data').textContent); } catch(e){}
+  try { sto = JSON.parse(localStorage.getItem(STORE_KEY)); } catch(e){}
+  const ok = s => s && Array.isArray(s.tasks) && Array.isArray(s.committees);
+  const c = [emb, sto].filter(ok).sort((a,b)=>(b.savedAt||0)-(a.savedAt||0));
+  const st = c[0] || seedState();
+  st.tasks = st.tasks.filter(t => PEOPLE.includes(t.who));   // งานของคนอื่น (Dev) ไม่แสดง
+  st.tasks.forEach(t=>{ if(!STATUS[t.status]) t.status = 'todo'; });
+  st.committees.forEach(c=>['done','doneItems','doneU','doneD','doneF','doneItemsU','doneItemsD','doneItemsF'].forEach(k=>delete c[k]));   // ช่อง Done รายคณะ/คลินิกถูกลบ (ผู้ใช้สั่ง 21 ต.ค. 69) · ใช้สถานะของงานแทน
+  return st;
+}
+let state = loadState(), storageOk = true;
+function persist(){
+  state.savedAt = Date.now();
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); storageOk = true; } catch(e){ storageOk = false; }
+}
+
+// ---------- วันที่ ----------
+const DAY = 864e5;
+const pd = s => { const [a,b,c] = s.split('-').map(Number); return new Date(a,b-1,c); };
+const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const TH_MON = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_D1 = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const fmt = d => d.getDate()+' '+TH_MON[d.getMonth()];
+const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isWe = d => d.getDay()===0 || d.getDay()===6;
+function daysOf(t){ let n=0; for(let d=pd(t.start); d<=pd(t.end); d=new Date(d.getTime()+DAY)) if(!(state.skipWeekend && isWe(d))) n++; return n; }
+const mdOf = t => (t.md!=null && t.md!=='' && !isNaN(t.md)) ? Number(t.md) : daysOf(t);
+const n1 = v => (Math.round(v*10)/10).toLocaleString('th-TH',{maximumFractionDigits:1});
+
+// ---------- ตัวกรอง ----------
+let fWho = 'ทั้งหมด';
+try { fWho = localStorage.getItem(STORE_KEY+':who') || fWho; } catch(e){}
+if (fWho!=='ทั้งหมด' && !PEOPLE.includes(fWho)) fWho = 'ทั้งหมด';
+// ย่อ/ขยายคณะ (ผู้ใช้สั่ง 21 ต.ค. 69 "collapse หัวข้อได้") · จำในเบราว์เซอร์นี้
+let collapsed = new Set();
+try { collapsed = new Set(JSON.parse(localStorage.getItem(STORE_KEY+':collapsed')||'[]')); } catch(e){}
+const saveCollapsed = () => { try{ localStorage.setItem(STORE_KEY+':collapsed', JSON.stringify([...collapsed])); }catch(e){} };
+let fType = 'all';   // ตัวกรองประเภทงาน (ผู้ใช้สั่ง 21 ต.ค. 69 "เลือกดูแค่งาน uxui หรือ Document ได้")
+try { fType = localStorage.getItem(STORE_KEY+':type') || fType; } catch(e){}
+if (fType!=='all' && !TYPE[fType]) fType = 'all';
+const visTask = t => (fWho==='ทั้งหมด' || t.who===fWho) && (fType==='all' || typeOf(t)===fType);
+const people = () => PEOPLE;
+
+function range(){
+  const ds = [...state.tasks.flatMap(t=>[t.start,t.end]), ...state.events.map(e=>e.date)].map(pd);
+  let a = new Date(Math.min(...ds)), b = new Date(Math.max(...ds));
+  a = new Date(today);   // ตารางเริ่มที่วันนี้ (ผู้ใช้สั่ง 20 ต.ค. 69 "วันแรกคือ 20 Oct") · งานก่อนหน้าไม่แสดงในตาราง แต่ยังนับ manday
+  b = new Date(b.getTime() + (7-((b.getDay()+6)%7)-1)*DAY);     // จบวันอาทิตย์
+  return {a, n: Math.max(60, Math.round((b-a)/DAY)+1)};   // อย่างน้อย 60 วัน ให้เต็มกรอบและเพิ่มงานล่วงหน้าได้
+}
+function committeeStart(c){
+  const ds = state.tasks.filter(t=>t.c===c.id).map(t=>t.start).concat(state.events.filter(e=>e.c===c.id).map(e=>e.date)).sort();
+  return ds[0] || '9999';
+}
+
+// ---------- render ----------
+function render(){
+  renderSaved(); renderFilters();   // กล่องสรุป manday ลบออก (ผู้ใช้สั่ง 21 ต.ค. 69 "ลบ")
+  renderGantt();
+  document.getElementById('skipWe').checked = !!state.skipWeekend;
+}
+function renderSaved(){
+  const el = document.getElementById('saved');
+  if(!storageOk){ el.textContent='เบราว์เซอร์นี้บันทึกอัตโนมัติไม่ได้ · กด "บันทึกเป็นไฟล์ HTML" เพื่อเก็บการแก้ไข'; el.style.color='var(--s-delay)'; return; }
+  el.style.color='';
+  el.textContent = state.savedAt ? 'บันทึกล่าสุด '+new Date(state.savedAt).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}) : 'ข้อมูลตั้งต้นจากชีต (ยังไม่มีการแก้ไข)';
+}
+function renderFilters(){
+  const el = document.getElementById('fWho');
+  el.querySelectorAll('.chip').forEach(n=>n.remove());
+  ['ทั้งหมด', ...people()].forEach(p=>{
+    const b = document.createElement('button'); b.type='button'; b.className='chip';
+    b.setAttribute('aria-pressed', p===fWho);
+    b.innerHTML = (p==='ทั้งหมด'?'':`<span class="dot" style="background:${whoColor(p)}"></span>`)+esc(p);
+    b.onclick = ()=>{ fWho=p; try{localStorage.setItem(STORE_KEY+':who',p);}catch(e){} render(); };
+    el.appendChild(b);
+  });
+  const tl = document.getElementById('fType');
+  tl.querySelectorAll('.chip').forEach(n=>n.remove());
+  Object.entries({all:'ทั้งหมด', ...TYPE}).forEach(([k,v])=>{
+    const b = document.createElement('button'); b.type='button'; b.className='chip';
+    b.setAttribute('aria-pressed', k===fType);
+    b.innerHTML = (TICON[k]?`<span class="ms">${TICON[k]}</span>`:'')+esc(v);
+    b.onclick = ()=>{ fType=k; try{localStorage.setItem(STORE_KEY+':type',k);}catch(e){} render(); };
+    tl.appendChild(b);
+  });
+}
+function renderTogAll(){
+  const all = state.committees.length && state.committees.every(c=>collapsed.has(c.id));
+  const b = document.getElementById('togAll');
+  b.querySelector('.ms').textContent = all ? 'unfold_more' : 'unfold_less';
+  b.querySelector('span:last-child').textContent = all ? 'ขยายทั้งหมด' : 'ย่อทั้งหมด';
+  b.onclick = ()=>{ collapsed = all ? new Set() : new Set(state.committees.map(c=>c.id)); saveCollapsed(); render(); };
+}
+function renderGantt(){
+  renderTogAll();
+  const {a, n} = range();
+  const g = document.getElementById('gantt');
+  g.style.setProperty('--days', n);
+  const xi = s => Math.round((pd(s)-a)/DAY);
+  const px = i => `calc(${i} * var(--DW))`;
+  const tIdx = Math.round((today-a)/DAY);
+  // พื้นหลัง: เสาร์-อาทิตย์ · เส้นวันนี้ · เส้นวันสำคัญ
+  let bg = '';
+  for(let i=0;i<n;i++){ const d=new Date(a.getTime()+i*DAY); if(isWe(d)) bg += `<i class="wk" style="left:${px(i)};width:var(--DW)"></i>`; }
+  if(tIdx>=0 && tIdx<n) bg += `<i class="todayline" style="left:calc(${tIdx} * var(--DW) + var(--DW) / 2 - 1px)"></i>`;
+  state.events.filter(e=>!e.c && e.kind==='ms' && xi(e.date)>=0).forEach(e=>{ bg += `<i class="msline" style="left:calc(${xi(e.date)} * var(--DW) + var(--DW) / 2)"></i>`; });
+
+  // หัวตาราง
+  let hd = '', lastM = -1;
+  for(let i=0;i<n;i++){
+    const d = new Date(a.getTime()+i*DAY);
+    if(d.getMonth()!==lastM){ lastM=d.getMonth(); hd += `<span class="mo" style="left:${px(i)}">${TH_MON[d.getMonth()]} ${d.getFullYear()+543}</span>`; }
+    hd += `<span class="hd ${isWe(d)?'we':''} ${i===tIdx?'td':''}" style="left:${px(i)}">${TH_D1[d.getDay()]}<b>${d.getDate()}</b></span>`;
+  }
+  let html = `<div class="lab h"><span class="nm">คณะ › คลินิก / ระบบย่อย</span><span>manday</span></div><div class="trk h">${hd}</div>`;
+
+  const markers = evs => {
+    const cnt = {};
+    return evs.filter(e=>xi(e.date)>=0).map(e=>{
+      const k = e.date; cnt[k]=(cnt[k]||0)+1;
+      const off = cnt[k]>1 ? `margin-left:calc((var(--DW) - 20px) / 2 + ${(cnt[k]-1)*8}px);` : '';
+      const tip = `${fmt(pd(e.date))}${e.time?' '+e.time+' น.':''} · ${KIND[e.kind]?.label||''}${e.kind==='present'?' · '+PMODE[modeOf(e)]:''}\n${e.text}`;
+      return `<button type="button" class="mk ${e.kind}" style="left:${px(xi(e.date))};--k:${KIND[e.kind]?.color||'var(--other)'};${off}" data-ev="${esc(e.id)}" aria-label="${esc(tip)}"></button>`;
+    }).join('');
+  };
+  const bar = (t, label, it) => {
+    if(xi(t.end) < 0) return '';
+    const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
+    const tip = `${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[t.status]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    return `<button type="button" class="bar ${t.status}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${esc(label)}</button>`;
+  };
+
+  // ภาพรวม
+  const gen = state.events.filter(e=>!e.c);
+  html += `<div class="lab c gen"><span class="ctog sp"></span><span class="nm">ภาพรวม / วันสำคัญ</span><span class="md"></span></div><div class="trk c" data-ec=""><span class="addhit ev"></span>${bg}${markers(gen)}</div>`;
+
+  [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
+    const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
+    const tot = ts.reduce((s,t)=>s+mdOf(t),0);
+    const evs = state.events.filter(e=>e.c===c.id);
+    const col = collapsed.has(c.id);
+    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length} คลินิก</small>`:''}</span><span class="md">${n1(tot)} md</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
+    if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
+    c.items.forEach(it=>{
+      const its = ts.filter(t=>t.items.includes(it));
+      const md = its.reduce((s,t)=>s+mdOf(t)/t.items.length,0);
+      html += `<div class="lab sub ${its.length?'':'none'}"><span class="nm">${esc(it)}</span><span class="md">${its.length?n1(md):'—'}</span></div>`+
+        `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
+    });
+    html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มคลินิก / ระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
+  });
+  g.innerHTML = html;
+
+  g.querySelectorAll('.bar').forEach(b=>{
+    b.onclick=()=>{ if(b.dataset.dragged){ delete b.dataset.dragged; return; } openTask(b.dataset.t); };
+    b.insertAdjacentHTML('beforeend','<span class="rz l" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันเริ่ม"></span><span class="rz r" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันสิ้นสุด"></span>');
+    b.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',ev=>startResize(ev,b,h.classList.contains('l')?'start':'end',a,n)));
+  });
+  g.querySelectorAll('.mk').forEach(b=>b.onclick=()=>openEvent(b.dataset.ev));
+  g.querySelectorAll('.addhit').forEach(h=>h.onclick=ev=>{
+    const trk = h.parentElement, dw = trk.getBoundingClientRect().width / n;
+    const i = Math.max(0, Math.min(n-1, Math.floor((ev.clientX - trk.getBoundingClientRect().left)/dw)));
+    const d = iso(new Date(a.getTime()+i*DAY));
+    if(h.classList.contains('ev')) openEvent(null, {c:trk.dataset.ec, date:d});   // คลิกแถวคณะ/ภาพรวม = เพิ่มนัด (ผู้ใช้สั่ง 20 ต.ค. 69)
+    else openTask(null, {c:trk.dataset.c, items:[trk.dataset.item], start:d, end:d});
+  });
+}
+function renderTable(){
+  const ps = people().filter(p=>state.tasks.some(t=>t.who===p));
+  const cs = [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q)));
+  const v = (c,p) => state.tasks.filter(t=>t.c===c.id && t.who===p).reduce((s,t)=>s+mdOf(t),0);
+  const cell = x => `<td class="${x?'':'zero'}">${x?n1(x):'—'}</td>`;
+  let h = `<thead><tr><th>คณะ</th>${ps.map(p=>`<th><span class="dot" style="background:${whoColor(p)}"></span> ${esc(p)}</th>`).join('')}<th>รวม</th></tr></thead><tbody>`;
+  cs.forEach(c=>{ const row = ps.map(p=>v(c,p)); h += `<tr><td>${esc(c.name)}</td>${row.map(cell).join('')}${cell(row.reduce((s,x)=>s+x,0))}</tr>`; });
+  const tot = ps.map(p=>state.tasks.filter(t=>t.who===p).reduce((s,t)=>s+mdOf(t),0));
+  h += `</tbody><tfoot><tr><td>รวม</td>${tot.map(x=>`<td>${n1(x)}</td>`).join('')}<td>${n1(tot.reduce((s,x)=>s+x,0))}</td></tr></tfoot>`;
+  document.getElementById('mdTable').innerHTML = h;
+}
+
+// ---------- tooltip สีขาว (หมุดนัด/วันสำคัญ · แถบงาน) ----------
+const tipEl = document.getElementById('tipcard');
+const cName = id => state.committees.find(c=>c.id===id)?.name || 'ภาพรวม';
+function tipHtml(el){
+  if(el.dataset.ev){
+    const e = state.events.find(x=>x.id===el.dataset.ev); if(!e) return '';
+    const k = KIND[e.kind] || {label:'นัด', color:'var(--other)'};
+    // รายการเป็นหัวข้อเด่น · ประเภท + วันเวลาเป็นบรรทัดรอง (ผู้ใช้สั่ง 21 ต.ค. 69 "ให้รายการเป็นตัวเด่น")
+    return `<div class="tt-t tt-big">${esc(e.text||'—')}</div>`+
+      `<div class="tt-s tt-kind"><i class="tt-k" style="background:${k.color}"></i>${esc(k.label)} · ${esc(fmt(pd(e.date)))} ${pd(e.date).getFullYear()+543}${e.time?' · '+esc(e.time)+' น.':''}</div>`+
+      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span></div>`;
+  }
+  const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
+  return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[t.status])}</div>`+
+    `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
+    `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`;
+}
+function showTip(el){
+  const h = tipHtml(el); if(!h) return;
+  tipEl.innerHTML = h; tipEl.classList.add('show');
+  const r = el.getBoundingClientRect(), w = tipEl.offsetWidth, hh = tipEl.offsetHeight;
+  let x = Math.min(window.innerWidth - w - 12, Math.max(12, r.left + r.width/2 - w/2));
+  let y = r.bottom + 8; if(y + hh > window.innerHeight - 12) y = r.top - hh - 8;
+  tipEl.style.left = x+'px'; tipEl.style.top = y+'px';
+}
+const hideTip = () => tipEl.classList.remove('show');
+const gEl = document.getElementById('gantt');
+gEl.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el && !document.querySelector('.bar.resizing')) showTip(el); });
+gEl.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
+gEl.addEventListener('focusin', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el) showTip(el); });
+gEl.addEventListener('focusout', hideTip);
+document.getElementById('scroller').addEventListener('scroll', hideTip, {passive:true});
+window.addEventListener('scroll', hideTip, {passive:true});
+gEl.addEventListener('pointerdown', hideTip);
+
+// ---------- ชี้ช่องว่าง = ไฮไลต์ช่องวันนั้น + tooltip (ผู้ใช้สั่ง 20 ต.ค. 69 "hover ที่ช่องได้") ----------
+const hov = document.createElement('div'); hov.className = 'hovcell'; hov.innerHTML = '<span class="ms">add</span>';
+gEl.addEventListener('pointermove', ev=>{
+  const h = ev.target.classList && ev.target.classList.contains('addhit') ? ev.target : null;
+  if(!h){ if(hov.parentElement && !ev.target.closest('.mk,.bar')) { hov.remove(); } return; }
+  const {a, n} = range(), trk = h.parentElement, r = trk.getBoundingClientRect(), dw = r.width / n;
+  const i = Math.max(0, Math.min(n-1, Math.floor((ev.clientX - r.left)/dw)));
+  if(hov.parentElement !== trk) trk.appendChild(hov);
+  if(hov.dataset.i !== String(i)){
+    hov.dataset.i = i; hov.style.left = `calc(${i} * var(--DW))`;
+    const d = new Date(a.getTime()+i*DAY), isEv = h.classList.contains('ev');
+    const what = isEv ? 'เพิ่มนัด / วันสำคัญ' : 'เพิ่มงาน';
+    const where = isEv ? cName(trk.dataset.ec) : trk.dataset.item;
+    tipEl.innerHTML = `<div class="tt-t">${what}</div><div class="tt-s">${TH_D1[d.getDay()]} ${esc(fmt(d))} ${d.getFullYear()+543} · ${esc(where||'')}</div>`;
+    tipEl.classList.add('show');
+    const hr = hov.getBoundingClientRect(), w = tipEl.offsetWidth;
+    tipEl.style.left = Math.min(window.innerWidth - w - 12, Math.max(12, hr.left + hr.width/2 - w/2))+'px';
+    tipEl.style.top = (hr.bottom + 6 + tipEl.offsetHeight > window.innerHeight ? hr.top - tipEl.offsetHeight - 6 : hr.bottom + 6)+'px';
+  }
+});
+gEl.addEventListener('pointerleave', ()=>{ hov.remove(); hov.dataset.i=''; hideTip(); });
+
+// ---------- เพิ่มคลินิก / ระบบย่อย จากรายชื่อด้านซ้าย (ผู้ใช้สั่ง 20 ต.ค. 69 "เพิ่มลิสได้") ----------
+gEl.addEventListener('click', ev=>{
+  const tg = ev.target.closest('.ctog[data-tog]');
+  if(tg){ const id = tg.dataset.tog; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); saveCollapsed(); render(); return; }
+  const b = ev.target.closest('.additem'); if(!b) return;
+  const cid = b.dataset.c, box = b.parentElement;
+  box.innerHTML = `<div class="addinput"><input type="text" placeholder="ชื่อคลินิก / ระบบย่อย" aria-label="ชื่อคลินิก / ระบบย่อยใหม่"><button type="button" aria-label="เพิ่ม"><span class="ms">check</span></button></div>`;
+  const inp = box.querySelector('input'), ok = box.querySelector('button');
+  const commit = ()=>{
+    const v = inp.value.trim(), c = state.committees.find(x=>x.id===cid);
+    if(v && c && !c.items.includes(v)){ c.items.push(v); logHist('เพิ่ม','คลินิก', v, c.name); persist(); toast(`เพิ่ม "${v}" แล้ว`); }
+    render();
+  };
+  inp.addEventListener('keydown', k=>{ if(k.key==='Enter'){ k.preventDefault(); commit(); } if(k.key==='Escape') render(); });
+  ok.addEventListener('mousedown', k=>k.preventDefault());
+  ok.addEventListener('click', commit);
+  inp.addEventListener('blur', ()=>{ if(!inp.value.trim()) render(); });
+  inp.focus();
+});
+
+// ---------- ลากยืด-หดแถบงาน (ผู้ใช้สั่ง 20 ต.ค. 69 "กล่องสีสามารถยืดได้") ----------
+function startResize(ev, bar, edge, a, n){
+  ev.preventDefault(); ev.stopPropagation();
+  const t = state.tasks.find(x=>x.id===bar.dataset.t); if(!t) return;
+  const trk = bar.parentElement, dw = trk.getBoundingClientRect().width / n;
+  const s0 = Math.round((pd(t.start)-a)/DAY), e0 = Math.round((pd(t.end)-a)/DAY);
+  const x0 = ev.clientX; let s = s0, e = e0, moved = false;
+  bar.classList.add('resizing');
+  try { ev.target.setPointerCapture(ev.pointerId); } catch(_){}
+  const move = m => {
+    const d = Math.round((m.clientX - x0)/dw);
+    if(d!==0) moved = true;
+    if(edge==='start') s = Math.max(0, Math.min(e0, s0+d)); else e = Math.min(n-1, Math.max(s0, e0+d));
+    const vs = Math.max(0, s);   // งานที่เริ่มก่อนวันนี้ วาดจากขอบซ้าย
+    bar.style.left = `calc(${vs} * var(--DW) + 2px)`;
+    bar.style.width = `calc(${e-vs+1} * var(--DW) - 4px)`;
+  };
+  const up = () => {
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    bar.classList.remove('resizing');
+    if(!moved) return;
+    bar.dataset.dragged = '1';
+    const before = {start:t.start, end:t.end};
+    t.start = iso(new Date(a.getTime()+s*DAY)); t.end = iso(new Date(a.getTime()+e*DAY));
+    logHist('แก้ไข','งาน', tTitle(t), cName(t.c), diff(before, t, {start:TF.start, end:TF.end}));
+    persist(); render();
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+}
+
+// ---------- ฟอร์มงาน ----------
+const $ = id => document.getElementById(id);
+let editT = null, tStatus = 'todo', eKind = 'present', eMode = 'onsite', editE = null;
+const segs = (el, map, cur, pick) => {
+  el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>pick(b.dataset.k));
+};
+const fillCommittees = sel => { sel.innerHTML = state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join(''); };
+function renderItems(checked){
+  const c = state.committees.find(x=>x.id===$('tC').value);
+  $('tItems').innerHTML = (c?.items||[]).map(it=>`<label><input type="checkbox" value="${esc(it)}" ${checked.includes(it)?'checked':''}>${esc(it)}</label>`).join('');
+  updItemsCnt();
+}
+const updItemsCnt = ()=>{ const n=$('tItems').querySelectorAll('input:checked').length, all=$('tItems').querySelectorAll('input').length; $('tItemsCnt').textContent = all ? `เลือก ${n} จาก ${all}` : ''; };
+$('tItems').addEventListener('change', updItemsCnt);
+const checkedItems = () => [...$('tItems').querySelectorAll('input:checked')].map(i=>i.value);
+// Manday = dropdown (ผู้ใช้สั่ง 21 ต.ค. 69 "เป็น dropdown") · ค่าว่าง = อัตโนมัติจากช่วงวัน
+function updMdHelp(cur){
+  const s=$('tS').value, e=$('tE').value;
+  if(cur===undefined) cur = $('tMd').value;
+  const auto = (s&&e) ? daysOf({start:s,end:e}) : 0;
+  const vals = Array.from({length:30},(_,i)=>(i+1)/2);
+  if(cur!=='' && !vals.includes(+cur)) vals.push(+cur), vals.sort((a,b)=>a-b);
+  $('tMd').innerHTML = `<option value="">อัตโนมัติ · ${n1(auto)} วัน</option>` + vals.map(v=>`<option value="${v}">${n1(v)} วัน</option>`).join('');
+  $('tMd').value = cur==='' ? '' : String(+cur);
+  $('tMdHelp').textContent = `อัตโนมัติ = นับจากวันเริ่มถึงวันสิ้นสุด${state.skipWeekend?' ไม่นับเสาร์–อาทิตย์':''}`;
+}
+/* ===== Select · DatePicker · TimePicker ตาม Design system — ช่องเดิมเก็บค่า ตัวนี้เป็นหน้าตา (ผู้ใช้สั่ง 21 ต.ค. 69) ===== */
+const DSP = (()=>{
+  const TH_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const TH_WD = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const p2 = n=>String(n).padStart(2,'0');
+  let open = null; // {el, trig, pop, onKey}
+  const close = (focusBack=true)=>{
+    if(!open) return; const o=open; open=null;
+    o.pop.remove(); o.trig.setAttribute('aria-expanded','false');
+    document.removeEventListener('pointerdown', o.outside, true);
+    window.removeEventListener('resize', o.place); o.scrollers.forEach(s=>s.removeEventListener('scroll', o.place));
+    if(focusBack) o.trig.focus();
+  };
+  const commit = (el, v)=>{ el.value = v; el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); };
+  function place(trig, pop, matchWidth){
+    const r = trig.getBoundingClientRect(), vw = innerWidth, vh = innerHeight, m = 8;
+    if(matchWidth) pop.style.width = r.width+'px';
+    pop.style.maxHeight = ''; const h = pop.offsetHeight, w = pop.offsetWidth;
+    const below = vh - r.bottom - m - 8, above = r.top - m - 8;
+    let top;
+    if(h <= below || below >= above){ top = r.bottom + m; pop.style.maxHeight = Math.max(160, Math.min(480, below))+'px'; }
+    else { const hh = Math.min(h, above, 480); top = r.top - m - hh; pop.style.maxHeight = hh+'px'; }
+    let left = Math.min(r.left, vw - w - 16); left = Math.max(16, left);
+    pop.style.top = top+'px'; pop.style.left = left+'px';
+  }
+  function openPop(el, trig, build, matchWidth){
+    if(open && open.el===el){ close(); return; }
+    close(false);
+    const pop = document.createElement('div'); pop.className='dsp-pop';
+    const host = trig.closest('dialog') || document.body; host.appendChild(pop);
+    const api = build(pop);
+    const o = {el, trig, pop, place:()=>place(trig,pop,matchWidth), scrollers:[]};
+    o.outside = e=>{ if(!pop.contains(e.target) && !trig.contains(e.target)) close(false); };
+    let n = trig.parentElement; while(n){ if(n.scrollHeight>n.clientHeight){ n.addEventListener('scroll',o.place); o.scrollers.push(n);} n=n.parentElement; }
+    open = o; trig.setAttribute('aria-expanded','true');
+    o.place(); api?.focus?.();
+    document.addEventListener('pointerdown', o.outside, true); window.addEventListener('resize', o.place);
+    pop.addEventListener('keydown', e=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); } else if(e.key==='Tab'){ close(false); } });
+  }
+  function host(el, icon, chev){
+    el.parentElement.querySelectorAll(':scope > .dsp-trigger').forEach(x=>x.remove());
+    el.classList.add('dsp-native'); el.tabIndex = -1; el.setAttribute('aria-hidden','true');
+    el.parentElement.classList.add('dsp-host');
+    const t = document.createElement('button'); t.type='button'; t.className='dsp-trigger'; t.setAttribute('aria-haspopup', el.tagName==='SELECT'?'listbox':'dialog'); t.setAttribute('aria-expanded','false');
+    const lab = document.querySelector(`label[for="${el.id}"]`); if(lab){ lab.id = lab.id || el.id+'Lab'; t.setAttribute('aria-labelledby', lab.id+' '+el.id+'Val'); lab.htmlFor=''; lab.onclick=()=>t.focus(); }
+    t.innerHTML = (icon?`<span class="ms">${icon}</span>`:'') + `<span class="v" id="${el.id}Val"></span>` + (chev?'<span class="ms chev">expand_more</span>':'');
+    el.after(t);
+    if(el.hasAttribute('autofocus')){ el.removeAttribute('autofocus'); t.autofocus = true; }
+    return t;
+  }
+  function watch(el, sync){
+    const proto = Object.getPrototypeOf(el), d = Object.getOwnPropertyDescriptor(proto,'value');
+    Object.defineProperty(el,'value',{configurable:true, get(){ return d.get.call(el); }, set(v){ d.set.call(el,v); sync(); }});
+    new MutationObserver(sync).observe(el,{childList:true});
+    sync();
+  }
+  function listKeys(pop, items, pick){
+    let i = Math.max(0, items.findIndex(b=>b.classList.contains('sel')));
+    const go = k=>{ items.forEach(b=>b.classList.remove('act')); i=(k+items.length)%items.length; items[i].classList.add('act'); items[i].focus(); items[i].scrollIntoView({block:'nearest'}); };
+    pop.addEventListener('keydown', e=>{
+      if(e.key==='ArrowDown'){ e.preventDefault(); go(i+1); } else if(e.key==='ArrowUp'){ e.preventDefault(); go(i-1); }
+      else if(e.key==='Home'){ e.preventDefault(); go(0); } else if(e.key==='End'){ e.preventDefault(); go(items.length-1); }
+    });
+    return { focus:()=>go(i) };
+  }
+  function select(el){
+    const t = host(el, null, true);
+    const sync = ()=>{ const o = el.options[el.selectedIndex]; t.querySelector('.v').textContent = o ? o.text : 'เลือก'; t.classList.toggle('empty', !o); };
+    watch(el, sync);
+    const build = pop=>{
+      pop.innerHTML = `<div class="dsp-list" role="listbox" aria-labelledby="${t.getAttribute('aria-labelledby')}">` + [...el.options].map(o=>
+        `<button type="button" role="option" class="dsp-opt${o.selected?' sel':''}" aria-selected="${o.selected}" data-v="${esc(o.value)}"><span class="l">${esc(o.text)}</span>${o.selected?'<span class="ms">check</span>':''}</button>`).join('') + '</div>';
+      const items = [...pop.querySelectorAll('.dsp-opt')];
+      items.forEach(b=>b.onclick=()=>{ commit(el, b.dataset.v); close(); });
+      return listKeys(pop, items);
+    };
+    t.onclick = ()=>openPop(el, t, build, true);
+    t.onkeydown = e=>{ if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); openPop(el,t,build,true); } };
+  }
+  const parseISO = s=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); return m? new Date(+m[1],+m[2]-1,+m[3]) : null; };
+  function date(el){
+    const t = host(el, 'calendar_today', false);
+    const sync = ()=>{ const d=parseISO(el.value); t.querySelector('.v').textContent = d ? `${p2(d.getDate())}/${p2(d.getMonth()+1)}/${d.getFullYear()}` : 'เลือกวันที่'; t.classList.toggle('empty',!d); };
+    watch(el, sync);
+    const build = pop=>{
+      pop.classList.add('dsp-cal'); pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','เลือกวันที่');
+      const sel = parseISO(el.value), tdy = new Date(); tdy.setHours(0,0,0,0);
+      let view = new Date((sel||tdy).getFullYear(), (sel||tdy).getMonth(), 1), act = sel || tdy;
+      const draw = (focus)=>{
+        if(act.getMonth()!==view.getMonth() || act.getFullYear()!==view.getFullYear()) view = new Date(act.getFullYear(), act.getMonth(), 1);
+        const y=view.getFullYear(), m=view.getMonth(), first=new Date(y,m,1).getDay(), n=new Date(y,m+1,0).getDate();
+        let cells=''; for(let k=0;k<first;k++) cells+='<span class="dsp-day out"></span>';
+        for(let d=1; d<=n; d++){ const dt=new Date(y,m,d), v=iso(dt);
+          const cls = ['dsp-day', sel&&v===iso(sel)?'sel':'', v===iso(tdy)?'today':'', v===iso(act)?'act':''].join(' ');
+          cells += `<button type="button" class="${cls}" data-v="${v}" tabindex="${v===iso(act)?0:-1}" aria-label="${d} ${TH_MONTHS[m]} ${y+543}"${sel&&v===iso(sel)?' aria-current="date"':''}>${d}</button>`; }
+        pop.innerHTML = `<div class="dsp-chd"><button type="button" class="dsp-nav" data-n="-1" aria-label="เดือนก่อน"><span class="ms">chevron_left</span></button><b>${TH_MONTHS[m]} ${y+543}</b><button type="button" class="dsp-nav" data-n="1" aria-label="เดือนถัดไป"><span class="ms">chevron_right</span></button></div>`
+          + `<div class="dsp-wk">${TH_WD.map(w=>`<span>${w}</span>`).join('')}</div><div class="dsp-days">${cells}</div>`
+          + `<div class="ft"><button type="button" class="dsp-link" data-today>วันนี้</button></div>`;
+        pop.querySelectorAll('.dsp-nav').forEach(b=>b.onclick=()=>{ view=new Date(y, m + +b.dataset.n, 1); act=new Date(view.getFullYear(), view.getMonth(), Math.min(act.getDate(), new Date(view.getFullYear(),view.getMonth()+1,0).getDate())); draw(false); open?.place(); });
+        pop.querySelectorAll('.dsp-day[data-v]').forEach(b=>b.onclick=()=>{ commit(el, b.dataset.v); close(); });
+        pop.querySelector('[data-today]').onclick=()=>{ commit(el, iso(tdy)); close(); };
+        if(focus) pop.querySelector('.dsp-day.act')?.focus();
+      };
+      pop.addEventListener('keydown', e=>{
+        const step = {ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];
+        if(step && e.target.classList.contains('dsp-day')){ e.preventDefault(); act=new Date(act.getFullYear(),act.getMonth(),act.getDate()+step); draw(true); }
+      });
+      draw(false);
+      return { focus:()=>pop.querySelector('.dsp-day.act')?.focus() };
+    };
+    t.onclick = ()=>openPop(el, t, build, false);
+  }
+  function time(el){
+    const t = host(el, 'schedule', true);
+    const sync = ()=>{ t.querySelector('.v').textContent = el.value || 'ไม่ระบุเวลา'; t.classList.toggle('empty', !el.value); };
+    watch(el, sync);
+    const build = pop=>{
+      pop.classList.add('dsp-time'); pop.setAttribute('role','dialog'); pop.setAttribute('aria-label','เลือกเวลา');
+      let [h, mi] = (el.value||'').split(':');
+      const mins = new Set(Array.from({length:12},(_,k)=>p2(k*5))); if(mi) mins.add(mi);
+      const col = (vals, cur, key)=>`<div class="col" role="listbox" aria-label="${key==='h'?'ชั่วโมง':'นาที'}">`+vals.map(v=>`<button type="button" role="option" class="dsp-opt${v===cur?' sel':''}" aria-selected="${v===cur}" data-${key}="${v}">${v}</button>`).join('')+'</div>';
+      pop.innerHTML = `<div class="cols">${col(Array.from({length:24},(_,k)=>p2(k)), h, 'h')}${col([...mins].sort(), mi, 'm')}</div>`
+        + `<div class="ft"><button type="button" class="dsp-link" data-clear>ไม่ระบุเวลา</button></div>`;
+      const set = ()=>commit(el, `${h||'09'}:${mi||'00'}`);
+      pop.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{ h=b.dataset.h; pop.querySelectorAll('[data-h]').forEach(x=>{x.classList.toggle('sel',x===b); x.setAttribute('aria-selected',x===b);}); set(); });
+      pop.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{ mi=b.dataset.m; set(); close(); });
+      pop.querySelector('[data-clear]').onclick=()=>{ commit(el,''); close(); };
+      pop.querySelectorAll('.col .sel').forEach(b=>b.parentElement.scrollTop = b.offsetTop - 80);
+      return { focus:()=>(pop.querySelector('[data-h].sel')||pop.querySelector('[data-h="09"]')).focus() };
+    };
+    t.onclick = ()=>openPop(el, t, build, false);
+  }
+  return { select, date, time, close };
+})();
+['tC','eC','tMd'].forEach(id=>DSP.select($(id)));
+['tS','tE','eD'].forEach(id=>DSP.date($(id)));
+DSP.time($('eT'));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close', ()=>DSP.close(false)));
+
+let tType = 'uxui';
+function openTask(id, preset){
+  const t = id ? state.tasks.find(x=>x.id===id) : null;
+  editT = t ? t.id : null;
+  const v = t || {c:state.committees[0].id, items:[], who:fWho!=='ทั้งหมด'?fWho:'Kae', start:iso(today), end:iso(today), status:'todo', md:null, note:'', ...preset};
+  $('tTitle').textContent = t ? 'แก้ไขงาน' : 'เพิ่มงาน';
+  $('tHint').textContent = t ? `${fmt(pd(t.start))} – ${fmt(pd(t.end))} · ${n1(mdOf(t))} manday` : 'เลือกคณะ คลินิก ผู้รับผิดชอบ และช่วงวัน';
+  fillCommittees($('tC')); $('tC').value = v.c; renderItems(v.items);
+  $('tS').value = v.start; $('tE').value = v.end;
+  const who0 = PEOPLE.includes(v.who) ? v.who : 'Kae';
+  const pickW = k=>{ $('tWho').value = k; segs($('tWhoSeg'), Object.fromEntries(PEOPLE.map(p=>[p,p])), k, pickW); };
+  pickW(who0);
+  $('tNote').value = v.note || '';
+  const ctx = !!t || !!(preset?.c && preset?.items?.length);
+  $('tInfo').hidden = !ctx; $('tCField').hidden = ctx; $('tItemsField').hidden = ctx;
+  $('tInfoC').textContent = state.committees.find(c=>c.id===v.c)?.name || '—';
+  $('tInfoI').textContent = v.items.join(' · ') || '—';
+  tStatus = v.status;
+  tType = typeOf(v);
+  const pickT = k=>{ tType=k; segs($('tType'), TYPE, tType, pickT); }; pickT(tType);
+  const pickS = k=>{ tStatus=k; segs($('tStatus'), STATUS, tStatus, pickS); }; segs($('tStatus'), STATUS, tStatus, pickS);
+  $('tDel').style.display = t ? '' : 'none';
+  updMdHelp((v.md!=null && v.md!=='') ? String(v.md) : ''); $('taskDlg').showModal();
+}
+$('tC').onchange = ()=>renderItems([]);
+$('tS').oninput = ()=>{ if($('tE').value < $('tS').value) $('tE').value = $('tS').value; updMdHelp(); };
+$('tE').oninput = updMdHelp;
+$('tAddItem').onclick = ()=>{
+  const name = $('tNewItem').value.trim(); if(!name) return;
+  const c = state.committees.find(x=>x.id===$('tC').value);
+  if(!c.items.includes(name)){ c.items.push(name); logHist('เพิ่ม','คลินิก', name, c.name); }
+  renderItems([...checkedItems(), name]); $('tNewItem').value='';
+};
+$('taskForm').onsubmit = ev=>{
+  ev.preventDefault();
+  const items = checkedItems();
+  if(!items.length){ alert('เลือกคลินิก / ระบบย่อยอย่างน้อย 1 รายการ'); return; }
+  if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
+  const md = $('tMd').value.trim();
+  const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
+    status:tStatus, type:tType, md: md===''?null:Number(md), note:$('tNote').value.trim()};
+  if(editT){ const o = state.tasks.find(x=>x.id===editT); logHist('แก้ไข','งาน', tTitle(data), cName(data.c), diff({...o, type:typeOf(o)}, data, TF)); Object.assign(o, data); }
+  else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
+  persist(); $('taskDlg').close(); render(); toast('บันทึกแล้ว');
+};
+$('tDel').onclick = ()=>{
+  if(!editT || !confirm('ลบงานนี้?')) return;
+  const o = state.tasks.find(x=>x.id===editT); logHist('ลบ','งาน', tTitle(o), cName(o.c));
+  state.tasks = state.tasks.filter(x=>x.id!==editT); persist(); $('taskDlg').close(); render(); toast('ลบแล้ว');
+};
+
+// ---------- ฟอร์มนัด ----------
+function openEvent(id, preset){
+  const e = id ? state.events.find(x=>x.id===id) : null;
+  editE = e ? e.id : null;
+  $('eTitle').textContent = e ? 'แก้ไขนัด' : 'เพิ่มนัด / Present';
+  $('eC').innerHTML = `<option value="">ภาพรวม / วันสำคัญ</option>` + state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  $('eC').value = e ? e.c : (preset?.c || '');
+  $('eText').value = e ? e.text : ''; $('eD').value = e ? e.date : (preset?.date || iso(today)); $('eT').value = e ? e.time : '';
+  eKind = e ? e.kind : 'present';
+  eMode = e ? modeOf(e) : 'onsite';
+  const pickM = k=>{ eMode=k; segs($('eMode'), PMODE, eMode, pickM); }; pickM(eMode);
+  const pick = k=>{ eKind=k; segs($('eKind'), KIND, eKind, pick); $('eModeF').hidden = eKind!=='present'; }; pick(eKind);
+  $('eDel').style.display = e ? '' : 'none';
+  $('evDlg').showModal();
+}
+$('evForm').onsubmit = ev=>{
+  ev.preventDefault();
+  const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, ...(eKind==='present' ? {mode:eMode} : {})};
+  if(eKind!=='present' && editE) delete state.events.find(x=>x.id===editE).mode;
+  if(!data.text || !data.date) return;
+  if(editE){ const o = state.events.find(x=>x.id===editE); logHist('แก้ไข','นัด', data.text, cName(data.c), diff(o, data, EF)); Object.assign(o, data); }
+  else { state.events.push({id:'v'+Date.now(), ...data}); logHist('เพิ่ม','นัด', data.text, cName(data.c), [{f:'วันที่', from:'—', to:fmtD(data.date)+(data.time?' '+data.time:'')}]); }
+  persist(); $('evDlg').close(); render(); toast('บันทึกแล้ว');
+};
+$('eDel').onclick = ()=>{
+  if(!editE || !confirm('ลบรายการนี้?')) return;
+  const o = state.events.find(x=>x.id===editE); logHist('ลบ','นัด', o.text, cName(o.c));
+  state.events = state.events.filter(x=>x.id!==editE); persist(); $('evDlg').close(); render(); toast('ลบแล้ว');
+};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('addTask').onclick = ()=>openTask(null);
+$('addEvent').onclick = ()=>openEvent(null);
+$('skipWe').onchange = ev=>{ state.skipWeekend = ev.target.checked; persist(); render(); };
+
+
+// ---------- ประวัติการแก้ไข (ผู้ใช้สั่ง 21 ต.ค. 69 "มีปุ่มดูประวัติการแก้ไขได้") ----------
+// เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
+const HIST_MAX = 500;
+let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
+const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', md:'Manday', note:'หมายเหตุ'};
+const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present'};
+const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
+const showV = (k, v, kind) => {
+  if(v==null || v==='' || (Array.isArray(v) && !v.length)) return k==='md' ? 'อัตโนมัติ' : '—';
+  if(k==='c') return cName(v);
+  if(k==='items') return v.join(' · ');
+  if(k==='start'||k==='end'||k==='date') return fmtD(v);
+  if(k==='status') return STATUS[v]||v;
+  if(k==='type') return TYPE[v]||v;
+  if(k==='kind') return KIND[v]?.label||v;
+  if(k==='mode') return PMODE[v]||v;
+  if(k==='md') return n1(v)+' วัน';
+  return String(v);
+};
+const diff = (a, b, F) => Object.keys(F).filter(k => JSON.stringify(a?.[k] ?? null) !== JSON.stringify(b?.[k] ?? null))
+  .map(k => ({f:F[k], from:showV(k, a?.[k]), to:showV(k, b?.[k])}));
+const tTitle = t => `${t.items.join(' · ')} · ${t.who}`;
+function logHist(action, kind, title, where, changes){
+  if(action==='แก้ไข' && changes && !changes.length) return;
+  (state.history ||= []).unshift({at:Date.now(), by:me, action, kind, title, where, changes:changes||[]});
+  if(state.history.length > HIST_MAX) state.history.length = HIST_MAX;
+}
+function renderHist(){
+  const H = state.history || [];
+  $('hHint').textContent = H.length ? `${H.length} รายการ · ล่าสุดอยู่บนสุด` : 'ยังไม่มีการแก้ไข';
+  const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} segs($('hMe'), Object.fromEntries(['—',...PEOPLE].map(p=>[p,p==='—'?'ไม่ระบุ':p])), me||'—', pickMe); };
+  pickMe(me||'—');
+  let day = '', h = '';
+  H.forEach(e=>{
+    const d = new Date(e.at), dk = iso(d);
+    if(dk!==day){ if(day) h += '</div>'; day = dk; h += `<div class="hday"><h4 class="gh">${dk===iso(today)?'วันนี้ · ':''}${esc(fmtD(dk))}</h4>`; }
+    const cls = {'เพิ่ม':'add','แก้ไข':'edit','ลบ':'del'}[e.action] || 'edit';
+    h += `<article class="hrow"><span class="ht">${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span>
+      <div class="hc"><div class="hh"><span class="hb ${cls}">${esc(e.action)}${esc(e.kind)}</span><b>${esc(e.title)}</b></div>
+      <div class="hs">${esc(e.where||'')}${e.by?` · โดย ${esc(e.by)}`:''}</div>
+      ${e.changes.length?`<dl class="hd2">${e.changes.map(c=>`<dt>${esc(c.f)}</dt><dd><s>${esc(c.from)}</s><span class="ms">arrow_forward</span>${esc(c.to)}</dd>`).join('')}</dl>`:''}</div></article>`;
+  });
+  if(day) h += '</div>';
+  $('hList').innerHTML = h || '<p class="empty">ยังไม่มีการแก้ไข · แก้งานหรือนัดแล้วจะขึ้นที่นี่</p>';
+}
+$('histBtn').onclick = ()=>{ renderHist(); $('histDlg').showModal(); };
+
+// ---------- ไฟล์ ----------
+function download(name, text, type){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text],{type})); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+const stamp = () => { const d=new Date(); return iso(d).replace(/-/g,'')+'-'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0'); };
+$('saveFile').onclick = ()=>{
+  if(!state.savedAt) state.savedAt = Date.now();
+  const doc = document.documentElement.cloneNode(true);
+  ['gantt','cards','mdTable','saved','hList','hMe'].forEach(id=>{ const n=doc.querySelector('#'+id); if(n) n.innerHTML=''; });
+  doc.querySelectorAll('#fWho .chip').forEach(n=>n.remove());
+  doc.querySelectorAll('dialog').forEach(d=>d.removeAttribute('open'));
+  doc.querySelector('#embedded-data').textContent = JSON.stringify(state).replace(/</g,'\\u003c');
+  download('uxui-manday-'+stamp()+'.html', '<!doctype html>\n'+doc.outerHTML, 'text/html');
+  toast('ดาวน์โหลดไฟล์ HTML พร้อมข้อมูลล่าสุดแล้ว');
+};
+$('exportBtn').onclick = ()=>download('uxui-manday-'+stamp()+'.json', JSON.stringify(state,null,2), 'application/json');
+$('importBtn').onclick = ()=>$('importFile').click();
+$('importFile').onchange = async ev=>{
+  const f = ev.target.files[0]; if(!f) return;
+  try {
+    const s = JSON.parse(await f.text());
+    if(!s || !Array.isArray(s.tasks) || !Array.isArray(s.committees)) throw 0;
+    if(!confirm(`แทนที่ข้อมูลปัจจุบันด้วยไฟล์นี้ (${s.tasks.length} งาน)?`)) return;
+    const keep = state.history || [];
+    state = s; state.history = [...(s.history||[])]; if(!s.history) state.history = keep;
+    logHist('นำเข้า','ไฟล์', f.name, `${s.tasks.length} งาน`); persist(); render(); toast('นำเข้าแล้ว');
+  } catch(e){ alert('ไฟล์ไม่ถูกต้อง'); }
+  ev.target.value='';
+};
+$('resetBtn').onclick = ()=>{
+  if(!confirm('ล้างการแก้ไขในเบราว์เซอร์นี้ แล้วกลับไปใช้ข้อมูลที่ฝังในไฟล์?')) return;
+  try { localStorage.removeItem(STORE_KEY); } catch(e){}
+  state = loadState(); render(); toast('ล้างแล้ว');
+};
+
+// เมนู "ไฟล์" (ผู้ใช้สั่ง 21 ต.ค. 69)
+(()=>{
+  const b = $('fileBtn'), m = $('fileMenu');
+  const set = o=>{ m.hidden = !o; b.setAttribute('aria-expanded', o); if(o) m.querySelector('button').focus(); };
+  b.onclick = ()=>set(m.hidden);
+  m.addEventListener('click', e=>{ if(e.target.closest('button')) set(false); });
+  m.addEventListener('keydown', e=>{
+    const it=[...m.querySelectorAll('button')], i=it.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'){ e.preventDefault(); it[(i+1)%it.length].focus(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); it[(i-1+it.length)%it.length].focus(); }
+    else if(e.key==='Escape'){ set(false); b.focus(); }
+  });
+  document.addEventListener('pointerdown', e=>{ if(!m.hidden && !m.contains(e.target) && !b.contains(e.target)) set(false); });
+})();
+let tt; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),1800); }
+
+render();
+// เลื่อน timeline ให้เห็นวันนี้
+requestAnimationFrame(()=>{
+  const sc = $('scroller'), {a} = range(), i = Math.round((today-a)/DAY);
+  const dw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--DW')) || 32;
+  if(i>0) sc.scrollLeft = Math.max(0, i*dw - sc.clientWidth/2);
+});
+</script>
+</body>
+</html>
