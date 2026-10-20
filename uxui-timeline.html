@@ -495,6 +495,9 @@ h1{font-weight:700}
 .tipcard .tt-day b{font-weight:500}
 .tipcard .tt-day small{grid-column:2;color:var(--text-content-tertiary);font-size:11px}
 .tipcard{max-width:min(360px,calc(100vw - 24px))}
+.saved .sy{font-size:16px;vertical-align:-3px;margin-right:4px}
+a.btn{text-decoration:none}
+.btn .ext{font-size:16px;margin-left:-2px;opacity:.7}
 </style>
 </head>
 <body>
@@ -506,6 +509,7 @@ h1{font-weight:700}
       <div class="saved" id="saved"></div>
     </div>
     <div class="actions">
+      <a class="btn subdue" id="driveBtn" href="https://drive.google.com/drive/folders/1mKA6SXSueYuEvfkCUAovPak5YHfmDxL2" target="_blank" rel="noopener"><span class="ms">folder_shared</span>รวมลิงก์ Drive<span class="ms ext">open_in_new</span></a>
       <button class="btn subdue" id="histBtn"><span class="ms">history</span>ประวัติการแก้ไข</button>
       <div class="menuwrap">
         <button class="btn subdue" id="fileBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="fileMenu"><span class="ms">folder_open</span>ไฟล์<span class="ms chev">expand_more</span></button>
@@ -749,6 +753,7 @@ let state = loadState(), storageOk = true;
 function persist(){
   state.savedAt = Date.now();
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); storageOk = true; } catch(e){ storageOk = false; }
+  if(typeof SYNC !== 'undefined') SYNC.push();
 }
 
 // ---------- วันที่ ----------
@@ -799,6 +804,7 @@ function render(){
 }
 function renderSaved(){
   const el = document.getElementById('saved');
+  if(typeof SYNC !== 'undefined' && SYNC.on){ el.style.color = SYNC.err ? 'var(--s-delay)' : ''; el.innerHTML = SYNC.label(); return; }
   if(!storageOk){ el.textContent='เบราว์เซอร์นี้บันทึกอัตโนมัติไม่ได้ · กด "บันทึกเป็นไฟล์ HTML" เพื่อเก็บการแก้ไข'; el.style.color='var(--s-delay)'; return; }
   el.style.color='';
   el.textContent = state.savedAt ? 'บันทึกล่าสุด '+new Date(state.savedAt).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}) : 'ข้อมูลตั้งต้นจากชีต (ยังไม่มีการแก้ไข)';
@@ -1447,6 +1453,91 @@ $('resetBtn').onclick = ()=>{
   document.addEventListener('pointerdown', e=>{ if(!m.hidden && !m.contains(e.target) && !b.contains(e.target)) set(false); });
 })();
 let tt; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),1800); }
+
+// ---------- ข้อมูลกลาง (Google Sheet + Apps Script) — ทุกคนเห็นชุดเดียวกัน (ผู้ใช้เลือก ก. 21 ต.ค. 69) ----------
+// วาง URL ของ Web app (ลงท้าย /exec) ที่ SYNC_URL · ว่าง = เก็บในเบราว์เซอร์อย่างเดียวเหมือนเดิม
+// เก็บทีละรายการ (คณะ · งาน · นัด · ประวัติ · ตั้งค่า) · ใครบันทึกทีหลังชนะเฉพาะรายการนั้น · ดึงของคนอื่นทุก 15 วินาที
+const SYNC_URL = '';
+const SYNC = (()=>{
+  const on = !!SYNC_URL;
+  let since = 0, sent = new Map(), queue = Promise.resolve(), timer = null, pulling = false;
+  const api = { on, err:'', busy:false, last:0 };
+  const recs = st => {
+    const m = new Map();
+    st.committees.forEach(c=>m.set('committee|'+c.id, c));
+    st.tasks.forEach(t=>m.set('task|'+t.id, t));
+    st.events.forEach(e=>m.set('event|'+e.id, e));
+    (st.history||[]).forEach(h=>{ h.hid ||= 'h'+h.at+'-'+Math.random().toString(36).slice(2,7); m.set('history|'+h.hid, h); });
+    m.set('meta|settings', {skipWeekend:!!st.skipWeekend});
+    return m;
+  };
+  const snap = st => new Map([...recs(st)].map(([k,v])=>[k, JSON.stringify(v)]));
+  const fmtT = t => new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  api.label = () => api.err ? `<span class="ms sy">cloud_off</span>${esc(api.err)}`
+    : api.busy ? '<span class="ms sy">sync</span>กำลังบันทึกลงข้อมูลกลาง…'
+    : `<span class="ms sy">cloud_done</span>ข้อมูลกลาง · ทุกคนเห็นชุดเดียวกัน${api.last?` · ซิงก์ ${fmtT(api.last)}`:''}`;
+  const status = () => renderSaved();
+  async function call(method, body){
+    const r = method==='GET'
+      ? await fetch(SYNC_URL + '?since=' + since, {cache:'no-store'})
+      : await fetch(SYNC_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }
+  function apply(records){
+    let changed = false;
+    records.forEach(r=>{
+      const [kind, id] = [r.kind, r.id], key = kind+'|'+id;
+      const listName = {committee:'committees', task:'tasks', event:'events', history:'history'}[kind];
+      if(kind==='meta'){ if(!r.deleted){ state.skipWeekend = !!r.data.skipWeekend; } }
+      else if(listName){
+        const L = (state[listName] ||= []), idx = L.findIndex(x=>(kind==='history'?x.hid:x.id)===id);
+        if(r.deleted){ if(idx>=0){ L.splice(idx,1); } }
+        else if(idx>=0) L[idx] = r.data; else L.push(r.data);
+      }
+      if(r.deleted) sent.delete(key); else sent.set(key, JSON.stringify(r.data));
+      changed = true;
+    });
+    if(changed){
+      state.history = (state.history||[]).sort((a,b)=>b.at-a.at).slice(0, HIST_MAX);
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){}
+    }
+    return changed;
+  }
+  async function pull(first){
+    if(!on || pulling) return; pulling = true;
+    try {
+      const res = await call('GET');
+      if(first && !res.records.length){ sent = new Map(); await api.push(true); }   // ชีตว่าง = ส่งข้อมูลชุดแรกขึ้นไป
+      else if(first){ state.committees = []; state.tasks = []; state.events = []; state.history = []; sent = new Map(); apply(res.records); }
+      else if(apply(res.records) && !document.querySelector('dialog[open]')) render();
+      since = res.now; api.last = Date.now(); api.err = '';
+      if(first) render();
+    } catch(e){ api.err = 'เชื่อมข้อมูลกลางไม่ได้ · ข้อมูลยังอยู่ในเบราว์เซอร์นี้ จะส่งให้เมื่อเชื่อมได้'; }
+    pulling = false; status();
+  }
+  api.push = (now) => {
+    if(!on) return Promise.resolve();
+    const cur = snap(state), ops = [];
+    cur.forEach((v,k)=>{ if(sent.get(k)!==v){ const [kind,...rest] = k.split('|'); ops.push({kind, id:rest.join('|'), data:JSON.parse(v), by:me||''}); } });
+    sent.forEach((v,k)=>{ if(!cur.has(k)){ const [kind,...rest] = k.split('|'); ops.push({kind, id:rest.join('|'), deleted:true, by:me||''}); } });
+    if(!ops.length) return queue;
+    api.busy = true; status();
+    queue = queue.then(async ()=>{
+      try { const res = await call('POST', {ops}); ops.forEach(o=>{ const k=o.kind+'|'+o.id; if(o.deleted) sent.delete(k); else sent.set(k, JSON.stringify(o.data)); }); api.last = Date.now(); api.err = ''; since = Math.max(since, res.now ? res.now - 1 : since); }
+      catch(e){ api.err = 'ส่งข้อมูลกลางไม่สำเร็จ · จะลองใหม่อัตโนมัติ'; clearTimeout(timer); timer = setTimeout(()=>api.push(), 10000); }
+      api.busy = false; status();
+    });
+    return queue;
+  };
+  if(on){
+    pull(true);
+    setInterval(()=>{ if(!document.hidden) pull(); }, 15000);
+    window.addEventListener('focus', ()=>pull());
+    window.addEventListener('online', ()=>api.push());
+  }
+  return api;
+})();
 
 render();
 // เลื่อน timeline ให้เห็นวันนี้
