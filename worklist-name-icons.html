@@ -310,42 +310,42 @@
   <td data-l="ค่าที่ทำให้แสดง">patientType = &quot;anc&quot; (ผู้ป่วยฝากครรภ์)</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-error, #B91C1C);font-size:14px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">flag</span></span><span class="tt" role="tooltip"><span class="tt-t">แพ้สารทึบรังสี</span><span class="tt-s">ตรวจที่ใช้ contrast · ระบุสารที่แพ้และอาการ</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-error, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">flag</span></span><span class="tt" role="tooltip"><span class="tt-t">แพ้สารทึบรังสี</span><span class="tt-s">ตรวจที่ใช้ contrast · ระบุสารที่แพ้และอาการ</span></span></span></td>
   <td data-l="ชื่อ"><b>แพ้สารทึบรังสี (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">ใบส่งตรวจเอกซเรย์ (แพทย์สั่ง CPOE) ช่องประวัติแพ้สารทึบรังสี → xrayOrders.allergy · contrast<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
   <td data-l="ค่าที่ทำให้แสดง">รายการตรวจใช้สารทึบรังสี (contrast = true) และ allergy.has = true · tooltip: แพ้&lt;สาร&gt; — &lt;อาการ&gt;</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">pregnant_woman</span></span><span class="tt" role="tooltip"><span class="tt-t">ตั้งครรภ์</span><span class="tt-s">LMP · ระวังการฉายรังสี</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">pregnant_woman</span></span><span class="tt" role="tooltip"><span class="tt-t">ตั้งครรภ์</span><span class="tt-s">LMP · ระวังการฉายรังสี</span></span></span></td>
   <td data-l="ชื่อ"><b>ตั้งครรภ์ (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">ใบส่งตรวจเอกซเรย์ ช่องสถานะการตั้งครรภ์ + LMP → xrayOrders.pregnancy<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
   <td data-l="ค่าที่ทำให้แสดง">pregnancy.status = &quot;ตั้งครรภ์&quot; (หมดประจำเดือน / ไม่ตั้งครรภ์ = ไม่แสดง)</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">radiology</span></span><span class="tt" role="tooltip"><span class="tt-t">ฟิล์มออกแล้ว</span><span class="tt-s">รอบันทึกผล</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">radiology</span></span><span class="tt" role="tooltip"><span class="tt-t">ฟิล์มออกแล้ว</span><span class="tt-s">รอบันทึกผล</span></span></span></td>
   <td data-l="ชื่อ"><b>ฟิล์มออกแล้ว (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">เจ้าหน้าที่รังสีกดฟิล์มออก → xrayOrders.filmIssuedAt<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
   <td data-l="ค่าที่ทำให้แสดง">มีเวลาฟิล์มออกแล้ว (ใบยังรอบันทึกผล)</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">output</span></span><span class="tt" role="tooltip"><span class="tt-t">ส่งตรวจภายนอก (Referral)</span><span class="tt-s">ไม่ได้ตรวจในศูนย์ฯ</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">output</span></span><span class="tt" role="tooltip"><span class="tt-t">ส่งตรวจภายนอก (Referral)</span><span class="tt-s">ไม่ได้ตรวจในศูนย์ฯ</span></span></span></td>
   <td data-l="ชื่อ"><b>ส่งตรวจภายนอก (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">ใบส่งตรวจแบบส่งตรวจภายนอก → xrayOrders.referralOnly<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
   <td data-l="ค่าที่ทำให้แสดง">referralOnly = true (ไม่ได้ตรวจในศูนย์ฯ)</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">content_copy</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยถ่ายซ้ำในช่วงเวลาเตือน</span><span class="tt-s">รายการเดียวกันเคยถ่ายเมื่อเร็ว ๆ นี้</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">content_copy</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยถ่ายซ้ำในช่วงเวลาเตือน</span><span class="tt-s">รายการเดียวกันเคยถ่ายเมื่อเร็ว ๆ นี้</span></span></span></td>
   <td data-l="ชื่อ"><b>เคยถ่ายซ้ำ (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">ประวัติเอกซเรย์ของ HN (xrayHistoryFor) เทียบรายการเดียวกัน → duplicateWarning (TOR §1.12.5.9)<code class="sub">XrayQueuePage.jsx · duplicateWarning</code></td>
   <td data-l="ค่าที่ทำให้แสดง">เคยถ่ายรายการตรวจเดียวกันภายในช่วงเวลาเตือน · tooltip บอกวันที่ครั้งก่อน</td>
 </tr>
 <tr>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">edit</span></span><span class="tt" role="tooltip"><span class="tt-t">รังสีแพทย์แก้ไขรายละเอียดการส่งตรวจ</span><span class="tt-s">เวลา · ผู้แก้ · เหตุผล</span></span></span></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">edit</span></span><span class="tt" role="tooltip"><span class="tt-t">รังสีแพทย์แก้ไขรายละเอียดการส่งตรวจ</span><span class="tt-s">เวลา · ผู้แก้ · เหตุผล</span></span></span></td>
   <td data-l="ชื่อ"><b>รังสีแพทย์แก้ไขคำสั่ง (เอกซเรย์)</b></td>
   <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
   <td data-l="ข้อมูลมาจาก">รังสีแพทย์แก้ไขใบส่งตรวจ → xrayOrders.amendedByRadiology · amendments (TOR §1.12.5.6)<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
