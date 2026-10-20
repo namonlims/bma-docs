@@ -1470,7 +1470,7 @@ let tt; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add(
 // ---------- ข้อมูลกลาง (Google Sheet + Apps Script) — ทุกคนเห็นชุดเดียวกัน (ผู้ใช้เลือก ก. 21 ต.ค. 69) ----------
 // วาง URL ของ Web app (ลงท้าย /exec) ที่ SYNC_URL · ว่าง = เก็บในเบราว์เซอร์อย่างเดียวเหมือนเดิม
 // เก็บทีละรายการ (คณะ · งาน · นัด · ประวัติ · ตั้งค่า) · ใครบันทึกทีหลังชนะเฉพาะรายการนั้น · ดึงของคนอื่นทุก 15 วินาที
-const SYNC_URL = '';
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbw8sRGKyJBdJTgyGJsW65DxkIPI0tAtYMHmdF1jJ14TmxpsJFiW8ozPe0TXYIwV-dzK/exec';   // ชีต "UXUI Timeline – ข้อมูลกลาง" (Drive ของ pakkadinsaw) · Deploy 21 ต.ค. 69
 const SYNC = (()=>{
   const on = !!SYNC_URL;
   let since = 0, sent = new Map(), queue = Promise.resolve(), timer = null, pulling = false;
@@ -1502,7 +1502,7 @@ const SYNC = (()=>{
     records.forEach(r=>{
       const [kind, id] = [r.kind, r.id], key = kind+'|'+id;
       const listName = {committee:'committees', task:'tasks', event:'events', history:'history'}[kind];
-      if(kind==='meta'){ if(!r.deleted){ state.skipWeekend = !!r.data.skipWeekend; } }
+      if(kind==='meta'){ if(id==='settings' && !r.deleted){ state.skipWeekend = !!r.data.skipWeekend; } else return; }
       else if(listName){
         const L = (state[listName] ||= []), idx = L.findIndex(x=>(kind==='history'?x.hid:x.id)===id);
         if(r.deleted){ if(idx>=0){ L.splice(idx,1); } }
@@ -1521,8 +1521,20 @@ const SYNC = (()=>{
     if(!on || pulling) return; pulling = true;
     try {
       const res = await call('GET');
-      if(first && !res.records.length){ sent = new Map(); await api.push(true); }   // ชีตว่าง = ส่งข้อมูลชุดแรกขึ้นไป
-      else if(first){ state.committees = []; state.tasks = []; state.events = []; state.history = []; sent = new Map(); apply(res.records); }
+      const hasData = res.records.some(r=>!r.deleted && (r.kind==='committee' || r.kind==='task'));
+      if(first && !hasData){ sent = new Map(); await api.push(true); }   // ชีตยังไม่มีข้อมูล = ส่งข้อมูลชุดแรกขึ้นไป
+      else if(first){
+        // เบราว์เซอร์ที่เคยแก้ไว้ก่อนเปิดข้อมูลกลาง: ส่งรายการที่แก้ไว้ขึ้นไปรวมครั้งเดียว ไม่ทิ้งของเดิม
+        let mine = null; try { if(state.savedAt && !localStorage.getItem(STORE_KEY+':synced')) mine = JSON.parse(JSON.stringify(state)); } catch(e){}
+        state.committees = []; state.tasks = []; state.events = []; state.history = []; sent = new Map(); apply(res.records);
+        if(mine){
+          const up = (list, key) => (mine[list]||[]).forEach(x=>{ const L = state[list], i = L.findIndex(y=>y[key]===x[key]); if(i>=0) L[i] = x; else L.push(x); });
+          up('committees','id'); up('tasks','id'); up('events','id'); up('history','hid');
+          state.history.sort((a,b)=>b.at-a.at);
+          await api.push();
+        }
+        try { localStorage.setItem(STORE_KEY+':synced', '1'); } catch(e){}
+      }
       else if(apply(res.records) && !document.querySelector('dialog[open]')) render();
       since = res.now; api.last = Date.now(); api.err = '';
       if(first) render();
