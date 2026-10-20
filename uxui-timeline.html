@@ -528,7 +528,7 @@ a.btn{text-decoration:none}
   <div class="head wbox">
     <div class="ttl">
       <h1>UXUI Manday Timeline</h1>
-      <p class="sub">แยกตามคณะ › คลินิก/ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
+      <p class="sub">แยกตามคณะ › ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
       <div class="saved" id="saved"></div>
     </div>
     <div class="actions">
@@ -560,7 +560,7 @@ a.btn{text-decoration:none}
         <span><i class="lg-bar st-prog"></i>In progress</span>
         <span><i class="lg-bar st-done"></i>Done</span>
         <span><i class="lg-who"></i>จุดสี = ผู้รับผิดชอบ</span>
-        <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป</span>
+        <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป · <i class="rtag" style="margin-left:4px">ลิงก์</i>ส่งลิงก์</span>
         <span><span class="ms lg-doc">description</span>Document</span>
         <span><span class="ms lg-doc">draw</span>Figma</span>
       </div></div>
@@ -596,9 +596,9 @@ a.btn{text-decoration:none}
       <section class="fgrp">
         <h4 class="gh">งาน</h4>
         <!-- เปิดจากแถว/แถบงาน = คณะ + คลินิกเป็นข้อความ informative (ผู้ใช้สั่ง 21 ต.ค. 69) · เปิดจากปุ่ม "เพิ่มงาน" = เลือกเอง -->
-        <dl class="info" id="tInfo"><dt>คณะ</dt><dd id="tInfoC"></dd><dt>คลินิก / ระบบย่อย</dt><dd id="tInfoI"></dd></dl>
+        <dl class="info" id="tInfo"><dt>คณะ</dt><dd id="tInfoC"></dd><dt>ระบบย่อย</dt><dd id="tInfoI"></dd></dl>
         <div class="field" id="tCField"><label for="tC">คณะ</label><div class="selwrap"><select id="tC" autofocus></select><span class="ms">expand_more</span></div></div>
-        <div class="field" id="tItemsField"><span class="fl">คลินิก / ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
+        <div class="field" id="tItemsField"><span class="fl">ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
           <div class="addrow"><input type="text" id="tNewItem" placeholder="เพิ่มคลินิกย่อยใหม่ในคณะนี้"><button type="button" class="btn subdue" id="tAddItem"><span class="ms">add</span>เพิ่ม</button></div></div>
         <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
         <div class="field"><span class="fl">รอบ</span><div class="seg" id="tRound"></div></div>
@@ -672,8 +672,9 @@ const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
 // คณะที่ทำเครื่องหมาย Done = ทุกงานในคณะนั้นแสดงเป็น Done (สถานะเดิมของงานเก็บไว้ ยกเลิกได้) (ผู้ใช้สั่ง 21 ต.ค. 69)
 const TICON = {doc:'description', figma:'draw'};
 // รอบงาน (ผู้ใช้สั่ง 21 ต.ค. 69 "ติด tag ว่ารอบที่เท่าไหร่") · ยังไม่ตั้ง = อ่านจากหมายเหตุ "รอบ N" ไม่มี = รอบ 1
-const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4'};
-const roundOf = t => +t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1;
+const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4', link:'ส่งลิงก์'};   // ส่งลิงก์ = ผู้ใช้สั่ง 21 ต.ค. 69
+const roundOf = t => t.round==='link' ? 'link' : (+t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1);
+const roundTag = r => r==='link' ? 'ลิงก์' : 'R'+r;
 // สถานะรายคลินิก (ผู้ใช้สั่ง 21 ต.ค. 69 "เปลี่ยนสถานะเฉพาะงานที่เลือก"): t.itemStatus[คลินิก] ทับ t.status เฉพาะแถวนั้น
 const stAt = (t, it) => (it && STATUS[t.itemStatus?.[it]]) ? t.itemStatus[it] : t.status;   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
 const PMODE = {onsite:'ที่คณะ', online:'Pre-Online', video:'ส่ง Video'};   // รูปแบบ Present (ผู้ใช้สั่ง 21 ต.ค. 69)
@@ -890,7 +891,7 @@ function renderGantt(){
     const dk = iso(d), nev = evByDay[dk]?.length || 0;
     hd += `<span class="hd ${isWe(d)?'we':''} ${i===tIdx?'td':''}${nev?' hasev':''}" style="left:${px(i)}" data-day="${dk}" tabindex="0" aria-label="${esc(fmtD(dk))}${nev?` · นัด ${nev} รายการ`:''}">${TH_D1[d.getDay()]}<b>${d.getDate()}</b></span>`;
   }
-  let html = `<div class="lab h"><span class="nm">คณะ › คลินิก / ระบบย่อย</span><span>manday</span></div><div class="trk h">${hd}</div>`;
+  let html = `<div class="lab h"><span class="nm">คณะ › ระบบย่อย</span><span>manday</span></div><div class="trk h">${hd}</div>`;
 
   const markers = evs => {
     const cnt = {};
@@ -905,7 +906,7 @@ function renderGantt(){
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
     const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${roundOf(t)>1?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">R${roundOf(t)}</span>`:''}`;
+    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${roundOf(t)!==1?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundTag(roundOf(t))}</span>`:''}`;
   };
 
   // ภาพรวม
@@ -925,7 +926,7 @@ function renderGantt(){
       html += `<div class="lab sub ${its.length?'':'none'}"><span class="nm">${esc(it)}</span><span class="md">${its.length?n1(md):'—'}</span></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
-    html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มคลินิก / ระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
+    html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
   });
   g.innerHTML = html;
 
@@ -1023,13 +1024,13 @@ gEl.addEventListener('pointermove', ev=>{
 });
 gEl.addEventListener('pointerleave', ()=>{ hov.remove(); hov.dataset.i=''; hideTip(); });
 
-// ---------- เพิ่มคลินิก / ระบบย่อย จากรายชื่อด้านซ้าย (ผู้ใช้สั่ง 20 ต.ค. 69 "เพิ่มลิสได้") ----------
+// ---------- เพิ่มระบบย่อย จากรายชื่อด้านซ้าย (ผู้ใช้สั่ง 20 ต.ค. 69 "เพิ่มลิสได้") ----------
 gEl.addEventListener('click', ev=>{
   const tg = ev.target.closest('.ctog[data-tog]');
   if(tg){ const id = tg.dataset.tog; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); saveCollapsed(); render(); return; }
   const b = ev.target.closest('.additem'); if(!b) return;
   const cid = b.dataset.c, box = b.parentElement;
-  box.innerHTML = `<div class="addinput"><input type="text" placeholder="ชื่อคลินิก / ระบบย่อย" aria-label="ชื่อคลินิก / ระบบย่อยใหม่"><button type="button" aria-label="เพิ่ม"><span class="ms">check</span></button></div>`;
+  box.innerHTML = `<div class="addinput"><input type="text" placeholder="ชื่อระบบย่อย" aria-label="ชื่อระบบย่อยใหม่"><button type="button" aria-label="เพิ่ม"><span class="ms">check</span></button></div>`;
   const inp = box.querySelector('input'), ok = box.querySelector('button');
   const commit = ()=>{
     const v = inp.value.trim(), c = state.committees.find(x=>x.id===cid);
@@ -1279,11 +1280,11 @@ $('tAddItem').onclick = ()=>{
 $('taskForm').onsubmit = ev=>{
   ev.preventDefault();
   const items = checkedItems();
-  if(!items.length){ alert('เลือกคลินิก / ระบบย่อยอย่างน้อย 1 รายการ'); return; }
+  if(!items.length){ alert('เลือกระบบย่อยอย่างน้อย 1 รายการ'); return; }
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const md = $('tMd').value.trim();
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, round:+tRound, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
+    status:tStatus, type:tType, round: tRound==='link' ? 'link' : +tRound, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
   if(editT){
     const o = state.tasks.find(x=>x.id===editT);
     let extra = [];
