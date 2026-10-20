@@ -59,6 +59,8 @@
   td { vertical-align: top; padding: var(--dim-space-300, 12px) var(--dim-space-200, 8px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
   td.prev { white-space: nowrap; }
   td.prev .tip + .tip { margin-left: var(--dim-space-200, 8px); }
+  .sub.warn { color: var(--text-danger-default, #B91C1C); margin-top: var(--dim-space-100, 4px); }
+  code.sub { margin-top: var(--dim-space-100, 4px); }
   .sub { display: block; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); word-break: break-word; }
   /* สังคมฯ */
@@ -71,7 +73,17 @@
   .rules { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-600, 24px); margin: 0; }
   .rules dt { color: var(--text-content-tertiary, #858C92); }
   .rules dd { margin: 0; }
-  @media (max-width: 1023px) { .swwrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1023px) {
+    .swwrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* ตาราง 6 คอลัมน์ → การ์ดเรียงลง ตั้งแต่ iPad แนวตั้งลงไป */
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { padding: var(--dim-space-300, 12px) 0; border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E5E7E9); }
+    td { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: var(--dim-space-200, 8px); border: 0; padding: var(--dim-space-100, 4px) 0; }
+    td::before { content: attr(data-l); color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+    td[data-l="#"] { display: none; }
+    td.prev { white-space: normal; }
+  }
   @media (max-width: 767px) {
     .page { padding: var(--dim-space-400, 16px); }
     .card { padding: var(--dim-space-400, 16px); }
@@ -102,77 +114,85 @@
   <section class="card">
     <header><h2>ตัวอย่างแถวในรายชื่อ</h2><p>ข้อมูลตัวอย่าง — ไม่เข้าเงื่อนไข = ไม่แสดงและไม่เว้นช่อง</p></header>
     <div class="example"><span class="av"><span class="ms" style="font-size:28px;color:var(--icon-brandPrimary-default, #007549);font-variation-settings:'FILL' 1">person</span></span><div><div class="namerow"><span class="nm">มาลี อ่อนน้อม</span><span class="tip" tabindex="0"><span class="pref">(ลี)</span><span class="tt" role="tooltip"><span class="tt-t">ชื่อที่ต้องการให้เรียก: ลี</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--icon-neutral-tertiary, #ADB2B7);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">content_copy</span></span><span class="tt" role="tooltip"><span class="tt-t">คัดลอกชื่อ</span><span class="tt-s">กดแล้วเป็น ✓ &quot;คัดลอกแล้ว&quot; 1.5 วินาที</span></span></span><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-orange, #C2410C);background:var(--surface-colorfulbadge-orange, #FFEDD5)">ใหม่</span><span class="tt" role="tooltip"><span class="tt-t">ผู้รับบริการรายใหม่</span><span class="tt-s">มารับบริการครั้งแรก</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--surface-colorfulbadge-orange-bold, #F97316);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">payments</span></span><span class="tt" role="tooltip"><span class="tt-t">ยอดค้างชำระ</span><span class="tt-s">จากการมารับบริการครั้งก่อน · แจ้งชำระที่การเงิน</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">11 ต.ค. 69 · 69-00412</span><span class="tt-v">฿320</span><span class="tt-l">2 ต.ค. 69 · 69-00187</span><span class="tt-v">฿180</span><span class="tt-l">รวม 2 รายการ</span><span class="tt-v">฿500</span></span></span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-purple, #7E22CE);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">privacy_tip</span></span><span class="tt" role="tooltip"><span class="tt-t">B24</span><span class="tt-s">แสดงเฉพาะรหัส ICD-10 ไม่บอกชื่อโรค</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-triage-level1, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">e911_emergency</span></span><span class="tt" role="tooltip"><span class="tt-t">ฉุกเฉิน (Emergency)</span><span class="tt-s">ต้องได้รับการรักษาทันที</span><span class="tt-group"><span class="tt-gh">การจัดการ</span><span class="tt-rows"><span class="tt-l">พบแพทย์</span><span class="tt-v">ทันที</span><span class="tt-l">ดำเนินการ</span><span class="tt-v">แจ้งแพทย์ · ส่ง ER / โทร 1669</span></span></span><span class="tt-group"><span class="tt-rows"><span class="tt-l">ที่มา</span><span class="tt-v">ผลคัดกรองกลางครั้งนี้</span></span></span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-orange, #C2410C);font-size:14px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">psychology_alt</span></span><span class="tt" role="tooltip"><span class="tt-t">มีอาการทางจิต (OAS)</span><span class="tt-s">ระดับส้ม · 2 อาการ</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">อาการที่พบ</span><span class="tt-v">หูแว่ว · ไม่หลับไม่นอน</span><span class="tt-l">ที่มา</span><span class="tt-v">ผลคัดกรองกลางครั้งนี้</span></span></span><span class="tt-group"><span class="tt-gh">การเฝ้าระวัง</span><span class="tt-rows"><span class="tt-l">ขณะรอตรวจ</span><span class="tt-v">ต้องเฝ้าระวังขณะรอตรวจ</span></span></span></span></span></div><div class="hn">HN 67-00007 · ข้อมูลตัวอย่าง</div></div></div>
-    <div class="order"><b>ลำดับซ้าย → ขวา:</b><span>ชื่อ</span>·<span>(ชื่อเรียก)</span>·<span>คัดลอก</span>·<span>ใหม่</span>·<span>ค้างชำระ</span>·<span>นัดปรึกษา</span>·<span>โรคอ่อนไหว</span>·<span>ฉุกเฉิน/เร่งด่วน</span>·<span>อาการทางจิต</span>·<span>ไอคอนเฉพาะหน้า</span></div>
+    <div class="order"><b>ลำดับซ้าย → ขวา:</b><span>ชื่อ</span>·<span>(ชื่อเรียก)</span>·<span>คัดลอก</span>·<span>ใหม่</span>·<span>ค้างชำระ</span>·<span>นัดปรึกษา</span>·<span>โรคอ่อนไหว</span>·<span>ฉุกเฉิน (แดง) / เร่งด่วน (ส้ม)</span>·<span>อาการทางจิต</span>·<span>ไอคอนเฉพาะหน้า</span></div>
   </section>
 
   <section class="card">
     <header><h2>1. ไอคอนกลาง — ทุกหน้ารายชื่อ</h2><p>วาดโดย MaskedWorklistName (src/components/privacy) · ใช้ใน 71 ไฟล์</p></header>
     <table>
-      <thead><tr><th>#</th><th>ไอคอน</th><th>ชื่อ</th><th>แสดงเมื่อ</th><th>ไม่แสดงเมื่อ</th><th>โค้ด</th></tr></thead>
+      <thead><tr><th>#</th><th>ไอคอน</th><th>ชื่อ</th><th>ข้อมูลมาจาก (บันทึกที่ไหน · ฟิลด์)</th><th>ค่าที่ทำให้แสดง</th><th>ไม่แสดงเมื่อ</th></tr></thead>
       <tbody>
 <tr>
   <td data-l="#">1</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="pref">(ลี)</span><span class="tt" role="tooltip"><span class="tt-t">ชื่อที่ต้องการให้เรียก: ลี</span></span></span></td>
   <td data-l="ชื่อ"><b>ชื่อที่ต้องการให้เรียก</b><span class="sub">ตัวหนังสือในวงเล็บ สีแดง</span></td>
-  <td data-l="แสดงเมื่อ">เวชระเบียนกรอก &quot;ชื่อที่ต้องการให้เรียก&quot; (preferredName)</td>
+  <td data-l="ข้อมูลมาจาก">เวชระเบียน › ข้อมูลส่วนตัว ช่อง &quot;ชื่อที่ต้องการให้เรียก&quot; → patientProfiles.preferredName<code class="sub">getPreferredNameByHN · patientProfiles.js</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">ไม่ใช่ค่าว่าง (เช่น &quot;ลี&quot;) · ติ๊ก &quot;ต้องการให้เรียกนามแฝง&quot; (callByAlias) มีผลแค่ตอนเรียกคิว ไม่เปลี่ยนหน้าตา</td>
   <td data-l="ไม่แสดงเมื่อ">ไม่มีชื่อเรียก</td>
-  <td data-l="โค้ด"><code>getPreferredNameByHN · patientProfiles.js</code></td>
 </tr>
 <tr>
   <td data-l="#">2</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--icon-neutral-tertiary, #ADB2B7);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">content_copy</span></span><span class="tt" role="tooltip"><span class="tt-t">คัดลอกชื่อ</span><span class="tt-s">กดแล้วเป็น ✓ &quot;คัดลอกแล้ว&quot; 1.5 วินาที</span></span></span></td>
   <td data-l="ชื่อ"><b>คัดลอกชื่อ</b><span class="sub">content_copy 14px สีเทา</span></td>
-  <td data-l="แสดงเมื่อ">ทุกคน (ค่าเริ่มต้น)</td>
+  <td data-l="ข้อมูลมาจาก">ชื่อ-นามสกุลของแถวนั้น (prop name)<code class="sub">NameCopyButton</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">แสดงเสมอ เว้นหน้าที่ส่ง copyable = false</td>
   <td data-l="ไม่แสดงเมื่อ">หน้าส่ง copyable={false} — สุขภาพนักเรียน · ศูนย์เด็กเล็ก</td>
-  <td data-l="โค้ด"><code>NameCopyButton</code></td>
 </tr>
 <tr>
   <td data-l="#">3</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-orange, #C2410C);background:var(--surface-colorfulbadge-orange, #FFEDD5)">ใหม่</span><span class="tt" role="tooltip"><span class="tt-t">ผู้รับบริการรายใหม่</span><span class="tt-s">มารับบริการครั้งแรก</span></span></span></td>
   <td data-l="ชื่อ"><b>ผู้รับบริการรายใหม่</b><span class="sub">ป้าย &quot;ใหม่&quot; ส้ม xsmall</span></td>
-  <td data-l="แสดงเมื่อ">มาครั้งแรก หรือสมัครจากแอปมือถือแล้วมาครั้งแรก</td>
+  <td data-l="ข้อมูลมาจาก">เวชระเบียน › ประเภทผู้ป่วย → patientProfiles.patientType · รายชื่อสมัครผ่าน Mobile App (mobileAppSignups.js)<code class="sub">isNewPatientHn · NewPatientTag.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">patientType = &quot;ผู้ป่วยใหม่&quot; หรือ HN อยู่ในรายชื่อมาครั้งแรกจาก Mobile App · หน้าที่มีเกณฑ์เองส่ง isNew = true</td>
   <td data-l="ไม่แสดงเมื่อ">รายเก่า</td>
-  <td data-l="โค้ด"><code>isNewPatientHn · NewPatientTag.jsx</code></td>
 </tr>
 <tr>
   <td data-l="#">4</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--surface-colorfulbadge-orange-bold, #F97316);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">payments</span></span><span class="tt" role="tooltip"><span class="tt-t">ยอดค้างชำระ</span><span class="tt-s">จากการมารับบริการครั้งก่อน · แจ้งชำระที่การเงิน</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">11 ต.ค. 69 · 69-00412</span><span class="tt-v">฿320</span><span class="tt-l">2 ต.ค. 69 · 69-00187</span><span class="tt-v">฿180</span><span class="tt-l">รวม 2 รายการ</span><span class="tt-v">฿500</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>ค้างชำระ</b><span class="sub">payments filled 16px ส้ม</span></td>
-  <td data-l="แสดงเมื่อ">ยอดค้างจาก Visit ก่อน · priorDebts · เคสลดหย่อนที่ส่งแล้วแต่ยังไม่อนุมัติ / ไม่อนุมัติ (อนุมัติแล้ว = เหลือยอดหลังหัก)</td>
+  <td data-l="ข้อมูลมาจาก">คิวการเงิน /finance (financeLiveQueue) + คำขอลดหย่อน (financeApprovals)<code class="sub">outstandingDebtOf · OutstandingDebtMark</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">ยอดรวมค้าง &gt; 0 จาก: ① Visit ก่อนวันนี้ที่ยอดค้าง (outstandingOf) &gt; 0 ② priorDebts[].amount &gt; 0 ③ Visit วันนี้ที่ส่งเคสลดหย่อนแล้ว สถานะรอนักสังคม / รอ ผอ.ศูนย์ / ไม่อนุมัติ (อนุมัติแล้ว = ยอดหลังหัก &gt; 0)</td>
   <td data-l="ไม่แสดงเมื่อ">รายใหม่ · ชำระที่การเงินแล้ว (หายเอง) · showDebt={false}</td>
-  <td data-l="โค้ด"><code>outstandingDebtOf · OutstandingDebtMark</code></td>
 </tr>
 <tr>
   <td data-l="#">5</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-indigo, #4F46E5);background:var(--surface-colorfulbadge-indigo, #EEF2FF)">ขอคำปรึกษา</span><span class="tt" role="tooltip"><span class="tt-t">ขอคำปรึกษา</span><span class="tt-s">วันนี้ · 13:30–13:45</span><span class="tt-group"><span class="tt-gh">การนัดปรึกษา</span><span class="tt-rows"><span class="tt-l">ประเภท</span><span class="tt-v">Telemedicine</span><span class="tt-l">ผู้ให้คำปรึกษา</span><span class="tt-v">นพ.ตัวอย่าง</span></span></span></span></span><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-purple, #7E22CE);background:var(--surface-colorfulbadge-purple, #F3E8FF)">ให้คำปรึกษา</span><span class="tt" role="tooltip"><span class="tt-t">ให้คำปรึกษา</span><span class="tt-s">วันนี้ · 14:00–14:15</span><span class="tt-group"><span class="tt-gh">การนัดปรึกษา</span><span class="tt-rows"><span class="tt-l">ประเภท</span><span class="tt-v">Telemedicine</span><span class="tt-l">ผู้ขอคำปรึกษา</span><span class="tt-v">พว.ตัวอย่าง</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>นัดปรึกษาวันนี้</b><span class="sub">ป้าย ขอคำปรึกษา (คราม) / ให้คำปรึกษา (ม่วง)</span></td>
-  <td data-l="แสดงเมื่อ">หน้าที่เปิด showConsult และมีนัดปรึกษาวันนี้ (นัดเร็วสุด 1 ป้าย)</td>
+  <td data-l="ข้อมูลมาจาก">นัดปรึกษา Telemedicine (telemedConsults.js) ที่สร้างจากแท็บ/ปุ่ม &quot;ส่งปรึกษา&quot;<code class="sub">myConsultsForHnToday · ConsultKindTag.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">consult.hn = HN นี้ · consult.dateKey = วันนี้ · ผู้ใช้ปัจจุบันเป็นผู้ขอ (sent) หรือผู้ให้คำปรึกษา (received) · หน้านั้นเปิด showConsult</td>
   <td data-l="ไม่แสดงเมื่อ">ปิดเป็นค่าเริ่มต้นทุกหน้าคิว — ดูที่แท็บ &quot;ปรึกษา&quot;</td>
-  <td data-l="โค้ด"><code>myConsultsForHnToday · ConsultKindTag.jsx</code></td>
 </tr>
 <tr>
   <td data-l="#">6</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-purple, #7E22CE);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">privacy_tip</span></span><span class="tt" role="tooltip"><span class="tt-t">B24</span><span class="tt-s">แสดงเฉพาะรหัส ICD-10 ไม่บอกชื่อโรค</span></span></span></td>
   <td data-l="ชื่อ"><b>โรคที่อ่อนไหว</b><span class="sub">privacy_tip filled 16px ม่วง</span></td>
-  <td data-l="แสดงเมื่อ">HIV (B20–B24) · มะเร็งเต้านม (C50) จากโรคประจำตัว · Problem list · ระบบยา ARV</td>
+  <td data-l="ข้อมูลมาจาก">เวชระเบียน › โรคประจำตัว (mrPatients.chronicDiseases) · Problem list ของแพทย์ (treatmentProblemList) · ทะเบียนยา ARV (hivStiVisits)<code class="sub">sensitiveDiagnosesFor · SensitiveDiagnosisMark.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">รหัส B20–B24 หรือชื่อมีคำ HIV/เอชไอวี · รหัส C50 หรือชื่อมีคำ มะเร็งเต้านม · Problem list สถานะ active/watch · ARV สถานะ here/ltfu · และ role มีสิทธิ์ข้อมูลลับ (canSeeConfidential = true)</td>
   <td data-l="ไม่แสดงเมื่อ">role ไม่มีสิทธิ์ข้อมูลลับ</td>
-  <td data-l="โค้ด"><code>sensitiveDiagnosesFor · SensitiveDiagnosisMark.jsx</code></td>
 </tr>
 <tr>
   <td data-l="#">7</td>
-  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-triage-level1, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">e911_emergency</span></span><span class="tt" role="tooltip"><span class="tt-t">ฉุกเฉิน (Emergency)</span><span class="tt-s">ต้องได้รับการรักษาทันที</span><span class="tt-group"><span class="tt-gh">การจัดการ</span><span class="tt-rows"><span class="tt-l">พบแพทย์</span><span class="tt-v">ทันที</span><span class="tt-l">ดำเนินการ</span><span class="tt-v">แจ้งแพทย์ · ส่ง ER / โทร 1669</span></span></span><span class="tt-group"><span class="tt-rows"><span class="tt-l">ที่มา</span><span class="tt-v">ผลคัดกรองกลางครั้งนี้</span></span></span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-triage-level2, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">e911_emergency</span></span><span class="tt" role="tooltip"><span class="tt-t">เร่งด่วน (Urgent)</span><span class="tt-s">อาการไม่คงที่ หากรอนานอาจแย่ลง</span><span class="tt-group"><span class="tt-gh">การจัดการ</span><span class="tt-rows"><span class="tt-l">พบแพทย์</span><span class="tt-v">ภายใน 30 นาที</span><span class="tt-l">ดำเนินการ</span><span class="tt-v">จัดคิวก่อน · วัดสัญญาณชีพซ้ำ</span></span></span></span></span></td>
-  <td data-l="ชื่อ"><b>ฉุกเฉิน / เร่งด่วน</b><span class="sub">e911_emergency filled แดง / ส้ม</span></td>
-  <td data-l="แสดงเมื่อ">คัดกรองครั้งนี้ ESI ≤ 2 = ฉุกเฉิน · ESI 3 = เร่งด่วน · แถวขึ้นบนสุด</td>
-  <td data-l="ไม่แสดงเมื่อ">ESI 4–5 · ยังไม่คัดกรอง</td>
-  <td data-l="โค้ด"><code>urgentTriageOf · TriageMark.jsx</code></td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-triage-level1, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">e911_emergency</span></span><span class="tt" role="tooltip"><span class="tt-t">ฉุกเฉิน (Emergency)</span><span class="tt-s">ต้องได้รับการรักษาทันที</span><span class="tt-group"><span class="tt-gh">การจัดการ</span><span class="tt-rows"><span class="tt-l">พบแพทย์</span><span class="tt-v">ทันที</span><span class="tt-l">ดำเนินการ</span><span class="tt-v">แจ้งแพทย์ · ส่ง ER / โทร 1669</span></span></span><span class="tt-group"><span class="tt-rows"><span class="tt-l">ที่มา</span><span class="tt-v">ผลคัดกรองกลางครั้งนี้</span></span></span></span></span></td>
+  <td data-l="ชื่อ"><b>ฉุกเฉิน</b><span class="sub">e911_emergency filled สีแดง</span></td>
+  <td data-l="ข้อมูลมาจาก">จุดคัดกรอง OPD › ขั้น &quot;ซักประวัติ&quot; ช่อง ระดับการคัดแยก (Triage ESI) → screening.symptom.triage<code class="sub">urgentTriageOf · TriageMark.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">triage.level = 1 หรือ 2 → ฉุกเฉิน (แดง)</td>
+  <td data-l="ไม่แสดงเมื่อ">ESI 3–5 · ยังไม่คัดกรอง</td>
 </tr>
 <tr>
   <td data-l="#">8</td>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--surface-colorfulbadge-orange-bold, #F97316);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">e911_emergency</span></span><span class="tt" role="tooltip"><span class="tt-t">เร่งด่วน (Urgent)</span><span class="tt-s">อาการไม่คงที่ หากรอนานอาจแย่ลง</span><span class="tt-group"><span class="tt-gh">การจัดการ</span><span class="tt-rows"><span class="tt-l">พบแพทย์</span><span class="tt-v">ภายใน 30 นาที</span><span class="tt-l">ดำเนินการ</span><span class="tt-v">จัดคิวก่อน · วัดสัญญาณชีพซ้ำ</span></span></span></span></span></td>
+  <td data-l="ชื่อ"><b>เร่งด่วน</b><span class="sub">e911_emergency filled สีส้ม</span></td>
+  <td data-l="ข้อมูลมาจาก">จุดคัดกรอง OPD › ขั้น &quot;ซักประวัติ&quot; ช่อง ระดับการคัดแยก (Triage ESI) → screening.symptom.triage<code class="sub">urgentTriageOf · TriageMark.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">triage.level = 3 → เร่งด่วน (ส้ม)</td>
+  <td data-l="ไม่แสดงเมื่อ">ESI ≤ 2 (เป็นฉุกเฉิน) · ESI 4–5 · ยังไม่คัดกรอง</td>
+</tr>
+<tr>
+  <td data-l="#">9</td>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-orange, #C2410C);font-size:14px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">psychology_alt</span></span><span class="tt" role="tooltip"><span class="tt-t">มีอาการทางจิต (OAS)</span><span class="tt-s">ระดับส้ม · 2 อาการ</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">อาการที่พบ</span><span class="tt-v">หูแว่ว · ไม่หลับไม่นอน</span><span class="tt-l">ที่มา</span><span class="tt-v">ผลคัดกรองกลางครั้งนี้</span></span></span><span class="tt-group"><span class="tt-gh">การเฝ้าระวัง</span><span class="tt-rows"><span class="tt-l">ขณะรอตรวจ</span><span class="tt-v">ต้องเฝ้าระวังขณะรอตรวจ</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>มีอาการทางจิต (OAS)</b><span class="sub">psychology_alt filled เหลือง/ส้ม/แดง</span></td>
-  <td data-l="แสดงเมื่อ">พยาบาลคัดกรองแบบประเมิน OAS พบอาการ (ระดับไม่ใช่เขียว)</td>
+  <td data-l="ข้อมูลมาจาก">จุดคัดกรอง OPD › ขั้น &quot;แบบประเมิน&quot; แถว แบบประเมินพฤติกรรมก้าวร้าว (OAS) → screening.behaviour.oasDetail<code class="sub">psychSymptomsOf · PsychMark.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">oasDetail.status = &quot;has&quot; (มีอาการทางจิต) และระดับ = เหลือง / ส้ม / แดง (ไม่ระบุระดับ → คิดจากอาการที่ติ๊กสูงสุด) · เขียว/ไม่มีอาการ = ไม่แสดง</td>
   <td data-l="ไม่แสดงเมื่อ">ไม่มีอาการ · ยังไม่ประเมิน</td>
-  <td data-l="โค้ด"><code>psychSymptomsOf · PsychMark.jsx</code></td>
 </tr></tbody>
     </table>
   </section>
@@ -180,98 +200,98 @@
   <section class="card">
     <header><h2>2. ไอคอนเฉพาะหน้า</h2><p>วาดนอกชุดกลาง หรือส่งผ่าน extraMarks</p></header>
     <table>
-      <thead><tr><th>ไอคอน</th><th>ชื่อ</th><th>หน้า</th><th>แสดงเมื่อ</th><th>โค้ด</th></tr></thead>
+      <thead><tr><th>ไอคอน</th><th>ชื่อ</th><th>หน้า</th><th>ข้อมูลมาจาก (บันทึกที่ไหน · ฟิลด์)</th><th>ค่าที่ทำให้แสดง</th></tr></thead>
       <tbody>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-alert-error, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">warning</span></span><span class="tt" role="tooltip"><span class="tt-t">ก้าวร้าวพิเศษ — ต้องเฝ้าระวังขณะรอตรวจ</span><span class="tt-s">บันทึกโดย พยาบาลจุดคัดกรอง</span></span></span></td>
   <td data-l="ชื่อ"><b>ก้าวร้าวพิเศษ</b></td>
   <td data-l="หน้า">คิวห้องตรวจ /treat</td>
-  <td data-l="แสดงเมื่อ">คัดกรองหมวดพฤติกรรมติ๊ก &quot;ก้าวร้าวพิเศษ&quot;</td>
-  <td data-l="โค้ด"><code>SpecialAggressionIcon · VitalsTextRow.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">จุดคัดกรอง OPD › ขั้น &quot;แบบประเมิน&quot; → screening.behaviour.specialAggression<code class="sub">SpecialAggressionIcon · VitalsTextRow.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">specialAggression = true และหมวดไม่ถูกข้าม · ⚠ ช่องติ๊กถูกถอดจากหน้าคัดกรองแล้ว (16 ต.ค. 69) — ขึ้นเฉพาะข้อมูลเก่า</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-pink, #BE185D);font-size:18px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">pregnant_woman</span></span><span class="tt" role="tooltip"><span class="tt-t">ผู้ป่วยตั้งครรภ์</span><span class="tt-s">ระวังยาและหัตถการที่มีข้อห้ามในหญิงตั้งครรภ์</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">LMP</span><span class="tt-v">2026-07-01</span><span class="tt-l">อายุครรภ์</span><span class="tt-v">ประมาณ 15 สัปดาห์</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>ตั้งครรภ์</b></td>
   <td data-l="หน้า">คิวห้องตรวจ /treat</td>
-  <td data-l="แสดงเมื่อ">คัดกรองระบุ &quot;กำลังตั้งครรภ์&quot;</td>
-  <td data-l="โค้ด"><code>PregnancyIcon · VitalsTextRow.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">จุดคัดกรอง OPD › ขั้น &quot;ซักประวัติ&quot; ช่อง สถานะการตั้งครรภ์ + LMP → screening.pregnancyStatus · lmp<code class="sub">PregnancyIcon · VitalsTextRow.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">pregnancyStatus = &quot;กำลังตั้งครรภ์&quot; (อายุครรภ์คิดจาก LMP)</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-pill-yellow, #A16207);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">psychology</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยประเมินสุขภาพจิตแล้ว — เฝ้าระวัง</span><span class="tt-s">2Q plus + 9Q</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-pill-orange, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">psychology</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยประเมินสุขภาพจิตแล้ว — เสี่ยงปานกลาง</span><span class="tt-s">2Q plus + 9Q</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-pill-red, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">psychology</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยประเมินสุขภาพจิตแล้ว — เสี่ยงสูง — ส่งต่อด่วน</span><span class="tt-s">2Q plus + 9Q</span></span></span></td>
   <td data-l="ชื่อ"><b>ความเสี่ยงสุขภาพจิต</b></td>
   <td data-l="หน้า">เยี่ยมบ้าน: คิว · ติดตาม · ทะเบียน</td>
-  <td data-l="แสดงเมื่อ">เคยประเมิน 2Q plus / 9Q แล้วพบความเสี่ยง (เหลือง / ส้ม / แดง)</td>
-  <td data-l="โค้ด"><code>MentalRiskIcon · MentalRiskPanel.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">เยี่ยมบ้าน › หน้าบันทึกการเยี่ยม แบบประเมิน 2Q plus / 9Q → ประวัติ homevisitMentalRisk (ผลล่าสุด)<code class="sub">MentalRiskIcon · MentalRiskPanel.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">เหลือง = 2Q plus บวก หรือ 9Q 7–12 · ส้ม = 9Q 13–18 · แดง = 2Q plus ข้อ 3 &quot;มี&quot; หรือ 9Q ข้อ 9 หรือ 9Q ≥ 19 · ไม่พบความเสี่ยง = ไม่แสดง</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-teal);font-size:16px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">child_care</span></span><span class="tt" role="tooltip"><span class="tt-t">เด็ก</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-pink);font-size:16px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">pregnant_woman</span></span><span class="tt" role="tooltip"><span class="tt-t">หญิงตั้งครรภ์</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-purple);font-size:16px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">elderly</span></span><span class="tt" role="tooltip"><span class="tt-t">ผู้สูงอายุ</span></span></span></td>
   <td data-l="ชื่อ"><b>กลุ่มโภชนาการ</b></td>
   <td data-l="หน้า">คิวงานโภชนาการ</td>
-  <td data-l="แสดงเมื่อ">กลุ่มของแถว (ผู้ใหญ่ไม่มีไอคอน)</td>
-  <td data-l="โค้ด"><code>GroupMark · NutritionQueuePage.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">งานโภชนาการ › เคสที่รับส่งต่อ ช่องกลุ่มเป้าหมาย → row.group<code class="sub">GroupMark · NutritionQueuePage.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">child = เด็ก · pregnant = หญิงตั้งครรภ์ · elderly = ผู้สูงอายุ · adult = ไม่มีไอคอน</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-orange, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">vaccines</span></span><span class="tt" role="tooltip"><span class="tt-t">ไม่ได้รับวัคซีนตามช่วงวัย</span><span class="tt-s">เด็กเข้าข่ายเด็กเสี่ยง</span></span></span><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-teal, #196C65);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">no_meals</span></span><span class="tt" role="tooltip"><span class="tt-t">ขาดสารอาหาร</span><span class="tt-s">เหตุผลการส่งต่อ · ร่างกาย</span></span></span></td>
   <td data-l="ชื่อ"><b>เหตุผลการส่งต่อ (33 แบบ)</b></td>
   <td data-l="หน้า">งานสังคมสงเคราะห์</td>
-  <td data-l="แสดงเมื่อ">1 เหตุผล = 1 ไอคอน · ดูตารางด้านล่าง</td>
-  <td data-l="โค้ด"><code>SwRiskMarks · SocialWorkShared.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">ป๊อปอัปส่งต่อถึงงานสังคมสงเคราะห์ (ติ๊กเหตุผล) · เวชระเบียน/วัคซีน/คัดกรอง (เด็กเสี่ยง) → row.referralWatchTags · referralOtherReason · childAlerts<code class="sub">SwRiskMarks · SocialWorkShared.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">1 ค่าที่ติ๊ก = 1 ไอคอน · เด็กเสี่ยงเฉพาะอายุ &lt; 18 ปี: ไม่มีสิทธิการรักษา · ไม่ได้วัคซีนตามวัย · สงสัยถูกกระทำรุนแรง</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-orange, #C2410C);background:var(--surface-colorfulbadge-orange, #FFEDD5)">ใหม่</span><span class="tt" role="tooltip"><span class="tt-t">ผู้รับบริการรายใหม่</span><span class="tt-s">มารับบริการครั้งแรก</span></span></span></td>
   <td data-l="ชื่อ"><b>ป้าย &quot;ใหม่&quot;</b></td>
   <td data-l="หน้า">คิวเวชระเบียน</td>
-  <td data-l="แสดงเมื่อ">ใช้เกณฑ์ของหน้าเอง (isNewPatientRow)</td>
-  <td data-l="โค้ด"><code>RegistrationQueuePage.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">คิวเวชระเบียน › แถว walk-in ที่ยังไม่มี HN<code class="sub">RegistrationQueuePage.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">isNewPatientRow(row) = true</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-brandPrimary-default, #007549);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">schedule</span></span><span class="tt" role="tooltip"><span class="tt-t">อยู่ในการติดตามการดูแล</span></span></span></td>
   <td data-l="ชื่อ"><b>อยู่ในการติดตามการดูแล</b></td>
   <td data-l="หน้า">คิวคลินิกเบาหวาน · ความดัน · หอบหืด/COPD</td>
-  <td data-l="แสดงเมื่อ">ขึ้นทะเบียนโรคเฉพาะแล้ว หรือมีประวัติติดตามในระบบ (isChronicUnderFollowUp) · คนที่ไม่เข้าเกณฑ์ได้ป้าย &quot;ใหม่&quot; แทน</td>
-  <td data-l="โค้ด"><code>ChronicQueuePage.jsx:225</code></td>
+  <td data-l="ข้อมูลมาจาก">คลินิกโรคเรื้อรัง › ขึ้นทะเบียนผู้ป่วย (chronic registration) + ประวัติการมาคลินิก<code class="sub">ChronicQueuePage.jsx:225</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">มีทะเบียนแล้ว หรือจำนวนครั้งที่มาคลินิก &gt; 0</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-danger-default, #B91C1C);font-size:20px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">flag</span></span><span class="tt" role="tooltip"><span class="tt-t">Red Flag</span><span class="tt-s">พบความผิดปกติเด่นชัด / พัฒนาการล่าช้ารุนแรง</span><span class="tt-group"><span class="tt-rows"><span class="tt-l">เหตุผล</span><span class="tt-v">ตามผลประเมิน</span><span class="tt-l">ส่งต่อ</span><span class="tt-v">หน่วยฟื้นฟู / สุขภาพจิตเด็ก</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>Red Flag พัฒนาการ</b></td>
   <td data-l="หน้า">คิวคลินิกสร้างเสริมภูมิคุ้มกัน (/clinic/immunization)</td>
-  <td data-l="แสดงเมื่อ">ผลประเมินพัฒนาการ redFlag.active (developmentClinic.js) · ⚠ ตอนนี้ใช้ title ของเบราว์เซอร์ ไม่ใช่ Tooltip สีขาว · ไอคอน 20px ใหญ่กว่าชุดกลาง</td>
-  <td data-l="โค้ด"><code>RedFlagMark · ImmunizationQueuePage.jsx:170</code></td>
+  <td data-l="ข้อมูลมาจาก">คลินิกเด็กดี › แบบประเมินพัฒนาการ DSPM / DAIM (developmentClinic.js)<code class="sub">RedFlagMark · ImmunizationQueuePage.jsx:170</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">พบพัฒนาการล่าช้า และเข้าเกณฑ์ Red Flag (getDevRedFlag → active = true)<span class="sub warn">ตอนนี้ใช้ title ของเบราว์เซอร์ ไม่ใช่ Tooltip สีขาว · ไอคอน 20px ใหญ่กว่าชุดกลาง</span></td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-teal, #196C65);background:var(--surface-colorfulbadge-teal, #E6F7F5)">มาฟังผล</span><span class="tt" role="tooltip"><span class="tt-t">มาฟังผล</span><span class="tt-s">ไม่ต้องคัดกรอง · ไม่ซักประวัติ/ตรวจร่างกายซ้ำ</span><span class="tt-group"><span class="tt-gh">การส่งต่อ</span><span class="tt-rows"><span class="tt-l">ส่งจาก</span><span class="tt-v">จุดคัดกรอง</span><span class="tt-l">ผู้ส่ง</span><span class="tt-v">พยาบาลคัดกรอง</span><span class="tt-l">แพทย์</span><span class="tt-v">นพ.ตัวอย่าง</span></span></span></span></span></td>
   <td data-l="ชื่อ"><b>มาฟังผล</b></td>
   <td data-l="หน้า">คิว OPD · คิวห้องตรวจ /treat · ANC · วางแผนครอบครัว (เบาหวาน/ความดันเป็นคำ &quot;นัดฟังผล&quot; ใต้ชื่อ)</td>
-  <td data-l="แสดงเมื่อ">พยาบาลคัดกรองติ๊ก &quot;มาฟังผล&quot; — ส่งพบแพทย์โดยไม่คัดกรอง (resultsVisits.js)</td>
-  <td data-l="โค้ด"><code>ResultsVisitBadge.jsx</code></td>
+  <td data-l="ข้อมูลมาจาก">ป๊อปอัป &quot;ยืนยันรับผู้ป่วย&quot; ที่จุดคัดกรอง ติ๊ก &quot;มาฟังผล&quot; → resultsVisits.js<code class="sub">ResultsVisitBadge.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">มีแถว resultsVisit ของ HN วันนี้</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-red, #B91C1C);background:var(--surface-colorfulbadge-red, #FEE2E2)">ข้อมูลลับ</span><span class="tt" role="tooltip"><span class="tt-t">ข้อมูลลับ</span><span class="tt-s">นักเรียนรายนี้มีข้อมูลที่ต้องปกปิด</span></span></span></td>
   <td data-l="ชื่อ"><b>ข้อมูลลับ (นักเรียน)</b></td>
   <td data-l="หน้า">สุขภาพนักเรียน: คิว · ทะเบียนนักเรียน</td>
-  <td data-l="แสดงเมื่อ">แถวนักเรียน confidential = true</td>
-  <td data-l="โค้ด"><code>SchoolHealthQueuePage.jsx:377 · StudentRegistryPage.jsx:212</code></td>
+  <td data-l="ข้อมูลมาจาก">ทะเบียนนักเรียน › ข้อมูลนักเรียน → student.confidential<code class="sub">SchoolHealthQueuePage.jsx:377 · StudentRegistryPage.jsx:212</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">confidential = true</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-statusbadge-neutral, #4D5358);background:var(--surface-statusbadge-neutral, #F4F5F5)">เสียชีวิต</span><span class="tt" role="tooltip"><span class="tt-t">เสียชีวิต</span><span class="tt-s">TOR 1.1.1.2</span></span></span></td>
   <td data-l="ชื่อ"><b>เสียชีวิต</b></td>
   <td data-l="หน้า">คิวเวชระเบียน · ทะเบียน</td>
-  <td data-l="แสดงเมื่อ">lifeStatus = deceased</td>
-  <td data-l="โค้ด"><code>RegistrationQueuePage.jsx:255</code></td>
+  <td data-l="ข้อมูลมาจาก">เวชระเบียน › สถานะการมีชีวิต → patient.lifeStatus<code class="sub">RegistrationQueuePage.jsx:255</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">lifeStatus = &quot;deceased&quot;</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-green, #15803D);background:var(--surface-colorfulbadge-green, #DCFCE7)">กำลังดู</span><span class="tt" role="tooltip"><span class="tt-t">กำลังดู</span><span class="tt-s">แถวที่เปิดรายละเอียดอยู่</span></span></span></td>
   <td data-l="ชื่อ"><b>กำลังดู</b></td>
   <td data-l="หน้า">สุขภาพนักเรียน: หน้าวิเคราะห์</td>
-  <td data-l="แสดงเมื่อ">แถวที่กำลังเปิดแผงรายละเอียด</td>
-  <td data-l="โค้ด"><code>SchoolHealthAnalysisPage.jsx:961</code></td>
+  <td data-l="ข้อมูลมาจาก">สถานะหน้าจอ (ไม่ได้มาจากข้อมูลผู้ป่วย)<code class="sub">SchoolHealthAnalysisPage.jsx:961</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">แถวที่เปิดแผงรายละเอียดอยู่</td>
 </tr>
 <tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-grey, #4D5358);background:var(--surface-colorfulbadge-grey, #F4F5F5)">HN 67-00007</span><span class="tt" role="tooltip"><span class="tt-t">HN ของผู้รับบริการ</span></span></span></td>
   <td data-l="ชื่อ"><b>ป้าย HN</b></td>
   <td data-l="หน้า">การจัดการความยินยอม</td>
-  <td data-l="แสดงเมื่อ">ทุกแถว (แทนบรรทัด HN ใต้ชื่อ)</td>
-  <td data-l="โค้ด"><code>ConsentManagementPage.jsx:1024</code></td>
+  <td data-l="ข้อมูลมาจาก">HN ของแถว<code class="sub">ConsentManagementPage.jsx:1024</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">แสดงทุกแถว</td>
 </tr></tbody>
     </table>
   </section>
@@ -284,7 +304,7 @@
   <section class="card">
     <header><h2>4. การ์ดเขียวหัวแฟ้ม (PatientCard)</h2><p>ทุกหน้าบันทึก</p></header>
     <dl class="rules">
-      <dt>หลังชื่อ</dt><dd>(ชื่อเรียก) · โรคอ่อนไหว · อาการทางจิต — เกณฑ์และหน้าตาเดียวกับรายชื่อ (ไอคอนอย่างเดียว ไม่มีวงกลมพื้น)</dd>
+      <dt>หลังชื่อ</dt><dd>(ชื่อเรียก) · โรคอ่อนไหว · อาการทางจิต — เกณฑ์เดียวกับรายชื่อ · ไอคอนอย่างเดียว ไม่มีวงกลมพื้น · โล่โรคอ่อนไหวเป็นสีขาวให้อ่านออกบนสีเขียว</dd>
       <dt>แถว HN · VN</dt><dd>ป้าย "ค้างชำระ" · ป้ายไซเรน "ฉุกเฉิน / เร่งด่วน" · ป้าย "VIP / ผู้ป่วยพิเศษ" (ไม่ได้อยู่ต่อท้ายชื่อ)</dd>
     </dl>
   </section>
