@@ -511,6 +511,16 @@ a.btn{text-decoration:none}
 .additem{white-space:nowrap}
 @media (max-width:640px){ .additem{font-size:12px} }
 #tStatusFor:not(:empty){display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;background:var(--brand-p50);color:var(--brand-p700);font-size:12px;font-weight:500;line-height:20px}
+
+/* ป้ายรอบบนแถบ: R2 · R3 (รอบ 1 ไม่มีป้าย) */
+.rtag{display:inline-block;font-style:normal;font-size:10px;font-weight:700;line-height:14px;padding:0 4px;margin-right:4px;border-radius:4px;background:currentColor;vertical-align:1px}
+.bar .rtag{color:inherit}
+.rtag{background:none;box-shadow:inset 0 0 0 1.5px currentColor}
+.legend .rtag{color:var(--text-content-secondary)}
+
+/* ป้ายรอบอยู่นอกแถบ (มุมซ้ายบน) — แถบสั้น 1 วันก็ยังเห็น */
+.rtagx{position:absolute;top:0;z-index:3;pointer-events:none;font-size:9px;font-weight:700;line-height:12px;padding:0 3px;border-radius:4px;background:var(--card);color:var(--text-content-default);box-shadow:inset 0 0 0 1px currentColor}
+.rtagx.todo{color:var(--text-statusbadge-info)}.rtagx.prog{color:var(--text-statusbadge-warning)}.rtagx.done{color:var(--text-statusbadge-success)}
 </style>
 </head>
 <body>
@@ -550,6 +560,7 @@ a.btn{text-decoration:none}
         <span><i class="lg-bar st-prog"></i>In progress</span>
         <span><i class="lg-bar st-done"></i>Done</span>
         <span><i class="lg-who"></i>จุดสี = ผู้รับผิดชอบ</span>
+        <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป</span>
         <span><span class="ms lg-doc">description</span>Document</span>
         <span><span class="ms lg-doc">draw</span>Figma</span>
       </div></div>
@@ -590,6 +601,7 @@ a.btn{text-decoration:none}
         <div class="field" id="tItemsField"><span class="fl">คลินิก / ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
           <div class="addrow"><input type="text" id="tNewItem" placeholder="เพิ่มคลินิกย่อยใหม่ในคณะนี้"><button type="button" class="btn subdue" id="tAddItem"><span class="ms">add</span>เพิ่ม</button></div></div>
         <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
+        <div class="field"><span class="fl">รอบ</span><div class="seg" id="tRound"></div></div>
         <div class="field"><span class="fl">ลิงก์ไฟล์ <small class="cnt">Figma · Google Drive · เอกสาร</small></span><div class="links" id="tLinks"></div></div>
       </section>
       <div class="fcol">
@@ -659,6 +671,9 @@ const TYPE = {uxui:'UXUI', doc:'Document', figma:'Figma'};   // ประเภ�
 const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
 // คณะที่ทำเครื่องหมาย Done = ทุกงานในคณะนั้นแสดงเป็น Done (สถานะเดิมของงานเก็บไว้ ยกเลิกได้) (ผู้ใช้สั่ง 21 ต.ค. 69)
 const TICON = {doc:'description', figma:'draw'};
+// รอบงาน (ผู้ใช้สั่ง 21 ต.ค. 69 "ติด tag ว่ารอบที่เท่าไหร่") · ยังไม่ตั้ง = อ่านจากหมายเหตุ "รอบ N" ไม่มี = รอบ 1
+const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4'};
+const roundOf = t => +t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1;
 // สถานะรายคลินิก (ผู้ใช้สั่ง 21 ต.ค. 69 "เปลี่ยนสถานะเฉพาะงานที่เลือก"): t.itemStatus[คลินิก] ทับ t.status เฉพาะแถวนั้น
 const stAt = (t, it) => (it && STATUS[t.itemStatus?.[it]]) ? t.itemStatus[it] : t.status;   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
 const PMODE = {onsite:'ที่คณะ', online:'Pre-Online', video:'ส่ง Video'};   // รูปแบบ Present (ผู้ใช้สั่ง 21 ต.ค. 69)
@@ -889,8 +904,8 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
-    const tip = `${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>`;
+    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${roundOf(t)>1?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">R${roundOf(t)}</span>`:''}`;
   };
 
   // ภาพรวม
@@ -956,7 +971,7 @@ function tipHtml(el){
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
-    `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
+    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 
 // hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
@@ -1224,7 +1239,7 @@ const DSP = (()=>{
 DSP.time($('eT'));
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close', ()=>DSP.close(false)));
 
-let tType = 'uxui';
+let tType = 'uxui', tRound = '1';
 function openTask(id, preset, it){
   const t = id ? state.tasks.find(x=>x.id===id) : null;
   editT = t ? t.id : null;
@@ -1245,6 +1260,8 @@ function openTask(id, preset, it){
   tStatus = t ? stAt(t, tItem) : v.status;
   $('tStatusFor').textContent = tItem ? `เฉพาะ ${tItem}` : (t && t.items.length > 1 ? `ทุกคลินิกในงานนี้ (${t.items.length})` : '');
   tType = typeOf(v);
+  tRound = String(roundOf(v));
+  const pickR = k=>{ tRound=k; segs($('tRound'), ROUND, tRound, pickR); }; pickR(tRound);
   const pickT = k=>{ tType=k; segs($('tType'), TYPE, tType, pickT); }; pickT(tType);
   const pickS = k=>{ tStatus=k; segs($('tStatus'), STATUS, tStatus, pickS); }; segs($('tStatus'), STATUS, tStatus, pickS);
   $('tDel').style.display = t ? '' : 'none';
@@ -1266,7 +1283,7 @@ $('taskForm').onsubmit = ev=>{
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const md = $('tMd').value.trim();
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
+    status:tStatus, type:tType, round:+tRound, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
   if(editT){
     const o = state.tasks.find(x=>x.id===editT);
     let extra = [];
@@ -1276,7 +1293,7 @@ $('taskForm').onsubmit = ev=>{
       data.itemStatus = Object.keys(IS).length ? IS : undefined;
       if(before !== tStatus) extra = [{f:`สถานะ (${tItem})`, from:STATUS[before], to:STATUS[tStatus]}];
     } else if(o.itemStatus && tStatus !== o.status){ data.itemStatus = undefined; }   // เปลี่ยนทั้งงาน = ทุกคลินิกตามกัน
-    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o)}, data, TF), ...extra]);
+    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o), round:roundOf(o)}, data, TF), ...extra]);
     Object.assign(o, data); if(o.itemStatus === undefined) delete o.itemStatus;
   }
   else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
@@ -1386,7 +1403,7 @@ const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
+const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
 const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
@@ -1397,6 +1414,7 @@ const showV = (k, v, kind) => {
   if(k==='start'||k==='end'||k==='date') return fmtD(v);
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
+  if(k==='round') return ROUND[v]||('รอบ '+v);
   if(k==='kind') return kindOf(v)?.label||v;
   if(k==='mode') return PMODE[v]||v;
   if(k==='md') return n1(v)+' วัน';
