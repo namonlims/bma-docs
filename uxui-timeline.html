@@ -332,31 +332,7 @@ h1{font-weight:700}
 .menu button .ms{font-size:20px;margin-top:2px}
 .menu b{display:block;font-size:14px;font-weight:500}
 .menu small{display:block;font-size:12px;color:var(--text-content-tertiary)}
-.sumbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:20px 24px}
-.sumbox .sg{min-width:0;display:flex;flex-direction:column;gap:16px}
-.sumbox .sg + .sg{border-left:1px solid var(--border-neutral-tertiary);padding-left:24px}
 .gh{margin:0;font-size:12px;font-weight:500;color:var(--text-content-tertiary);letter-spacing:.2px}
-.gh small{font-weight:400}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.st{display:flex;flex-direction:column;gap:2px;min-width:0}
-.st .l{font-size:14px;color:var(--text-content-secondary)}
-.st .v{font-size:28px;font-weight:700;line-height:1.3;color:var(--text-content-default);font-variant-numeric:tabular-nums}
-.st .v.ok{color:var(--brand-p700)}
-.st .v small{font-size:14px;font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
-.st .s{font-size:12px;color:var(--text-content-tertiary)}
-.prog{height:8px;border-radius:999px;background:var(--surface-neutral-tertiary);overflow:hidden}
-.prog i{display:block;height:100%;background:var(--brand-p700);border-radius:999px}
-.who{display:flex;flex-direction:column;gap:8px}
-.wr{display:grid;grid-template-columns:72px minmax(0,1fr) max-content;gap:12px;align-items:center;min-height:24px}
-.wn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text-content-default)}
-.wb{height:10px;border-radius:999px;background:var(--surface-neutral-tertiary);overflow:hidden}
-.wb > i{display:block;height:100%;border-radius:999px;overflow:hidden}
-.wb > i > i{display:block;height:100%}
-.wv{font-size:14px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:var(--text-content-default);min-width:96px}
-.wv small{font-size:12px;font-weight:400;color:var(--text-content-tertiary);margin-left:4px}
-.wkey{margin:0;font-size:12px;color:var(--text-content-tertiary);display:flex;align-items:center;gap:6px}
-.wkey i{width:16px;height:8px;border-radius:999px;display:inline-block}
-.wkey .k1{background:var(--text-content-secondary)}.wkey .k2{background:color-mix(in srgb,var(--text-content-secondary) 22%,transparent);margin-left:8px}
 .empty{margin:0;font-size:14px;color:var(--text-content-tertiary)}
 .filters .toolbar{justify-content:space-between;margin-bottom:0;padding-bottom:16px;border-bottom:1px solid var(--border-neutral-tertiary)}
 .frow .lbl{font-size:12px;font-weight:500;color:var(--text-content-tertiary);margin-right:4px}
@@ -364,16 +340,7 @@ h1{font-weight:700}
 .lgroup{display:flex;flex-direction:column;gap:8px;min-width:0}
 .legends .legend{margin:0;font-size:13px;color:var(--text-content-secondary);gap:6px 16px}
 .lg-mk{font-style:normal;font-size:12px;width:14px;text-align:center}
-@media (max-width:1023px){
-  .sumbox{grid-template-columns:minmax(0,1fr)}
-  .sumbox .sg + .sg{border-left:0;padding-left:0;border-top:1px solid var(--border-neutral-tertiary);padding-top:20px}
-}
 @media (max-width:640px){
-  .sumbox{padding:16px}
-  .stats{gap:8px}
-  .st .v{font-size:22px}
-  .wr{grid-template-columns:56px minmax(0,1fr) max-content;gap:8px}
-  .wv{min-width:0}
   .head .actions{width:100%}
   .head .actions .btn{flex:1 1 auto;justify-content:center}
   .menuwrap{flex:1 1 auto;display:flex}
@@ -504,6 +471,18 @@ h1{font-weight:700}
 @media (max-width:640px){ .lrow{grid-template-columns:minmax(0,1fr) 36px 36px} .lrow > .ms{display:none} .lrow .lname{grid-column:1;grid-row:2} }
 @media (pointer:coarse){ .lopen,.ldel{width:44px;height:44px} .lrow{grid-template-columns:20px minmax(0,1.6fr) minmax(0,1fr) 44px 44px} }
 @media (pointer:coarse) and (max-width:640px){ .lrow{grid-template-columns:minmax(0,1fr) 44px 44px} }
+
+/* นัดจาก Google Calendar: วงแหวน (ประชุม) · ธง (กำหนดส่งเอกสาร) */
+.mk.cal::before{border-radius:50%;background:var(--card);border:3px solid var(--k);inset:3px}
+.mk.due::before{border-radius:2px 2px 2px 0;clip-path:polygon(0 0,100% 0,100% 70%,30% 70%,0 100%);border:0}
+
+/* แถบงานใช้สีสถานะ (ผู้ใช้สั่ง 21 ต.ค. 69): To do ฟ้า · In progress ส้ม · Done เขียว success · จุดหน้าแถบ = สีผู้รับผิดชอบ */
+.bar.todo,.lg-bar.st-todo{background:var(--surface-statusbadge-info);border:1px solid var(--text-statusbadge-info);color:var(--text-statusbadge-info)}
+.bar.prog,.lg-bar.st-prog{background:var(--surface-statusbadge-warning);background-image:none;border:1px solid var(--text-statusbadge-warning);color:var(--text-statusbadge-warning)}
+.bar.done,.lg-bar.st-done{background:var(--surface-statusbadge-success);border:1px solid var(--text-statusbadge-success);color:var(--text-statusbadge-success)}
+.bar{font-weight:500;padding-left:16px}
+.bar::before{content:"";position:absolute;left:5px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px var(--card)}
+.lg-who{width:8px;height:8px;border-radius:50%;background:var(--kae);display:inline-block;box-shadow:3px 0 0 0 transparent}
 </style>
 </head>
 <body>
@@ -538,9 +517,10 @@ h1{font-weight:700}
     </div>
     <div class="legends">
       <div class="lgroup"><span class="gh">สถานะงาน</span><div class="legend">
-        <span><i class="lg-bar" style="background:color-mix(in srgb,var(--kae) 18%,var(--card));border:1px solid var(--kae)"></i>To do</span>
-        <span><i class="lg-bar" style="background:var(--kae);background-image:repeating-linear-gradient(135deg,transparent 0,transparent 4px,rgba(255,255,255,.3) 4px,rgba(255,255,255,.3) 8px)"></i>In progress</span>
-        <span><i class="lg-bar" style="background:var(--kae)"></i>Done</span>
+        <span><i class="lg-bar st-todo"></i>To do</span>
+        <span><i class="lg-bar st-prog"></i>In progress</span>
+        <span><i class="lg-bar st-done"></i>Done</span>
+        <span><i class="lg-who"></i>จุดสี = ผู้รับผิดชอบ</span>
         <span><span class="ms lg-doc">description</span>Document</span>
         <span><span class="ms lg-doc">draw</span>Figma</span>
       </div></div>
@@ -549,6 +529,8 @@ h1{font-weight:700}
         <span><i class="lg-mk" style="color:var(--ev-ba)">●</i>ส่งที่แก้ / BA Pre</span>
         <span><i class="lg-mk" style="color:var(--ev-meet)">■</i>นัด / ส่งลิงก์</span>
         <span><i class="lg-mk" style="color:var(--ev-ms)">▲</i>วันสำคัญ</span>
+        <span><i class="lg-mk" style="color:#2563EB">◯</i>ประชุมสำนักอนามัย</span>
+        <span><i class="lg-mk" style="color:#DC2626">⚑</i>กำหนดส่งเอกสาร</span>
         <span><i class="lg-bar" style="width:2px;background:var(--today)"></i>วันนี้</span>
       </div></div>
     </div>
@@ -786,14 +768,14 @@ const visTask = t => (fWho==='ทั้งหมด' || t.who===fWho) && (fType=
 const people = () => PEOPLE;
 
 function range(){
-  const ds = [...state.tasks.flatMap(t=>[t.start,t.end]), ...state.events.map(e=>e.date)].map(pd);
+  const ds = [...state.tasks.flatMap(t=>[t.start,t.end]), ...allEvents().map(e=>e.date)].map(pd);
   let a = new Date(Math.min(...ds)), b = new Date(Math.max(...ds));
   a = new Date(today);   // ตารางเริ่มที่วันนี้ (ผู้ใช้สั่ง 20 ต.ค. 69 "วันแรกคือ 20 Oct") · งานก่อนหน้าไม่แสดงในตาราง แต่ยังนับ manday
   b = new Date(b.getTime() + (7-((b.getDay()+6)%7)-1)*DAY);     // จบวันอาทิตย์
   return {a, n: Math.max(60, Math.round((b-a)/DAY)+1)};   // อย่างน้อย 60 วัน ให้เต็มกรอบและเพิ่มงานล่วงหน้าได้
 }
 function committeeStart(c){
-  const ds = state.tasks.filter(t=>t.c===c.id).map(t=>t.start).concat(state.events.filter(e=>e.c===c.id).map(e=>e.date)).sort();
+  const ds = state.tasks.filter(t=>t.c===c.id).map(t=>t.start).concat(allEvents().filter(e=>e.c===c.id).map(e=>e.date)).sort();
   return ds[0] || '9999';
 }
 
@@ -848,7 +830,7 @@ function renderGantt(){
   let bg = '';
   for(let i=0;i<n;i++){ const d=new Date(a.getTime()+i*DAY); if(isWe(d)) bg += `<i class="wk" style="left:${px(i)};width:var(--DW)"></i>`; }
   if(tIdx>=0 && tIdx<n) bg += `<i class="todayline" style="left:calc(${tIdx} * var(--DW) + var(--DW) / 2 - 1px)"></i>`;
-  state.events.filter(e=>!e.c && e.kind==='ms' && xi(e.date)>=0).forEach(e=>{ bg += `<i class="msline" style="left:calc(${xi(e.date)} * var(--DW) + var(--DW) / 2)"></i>`; });
+  allEvents().filter(e=>!e.c && e.kind==='ms' && xi(e.date)>=0).forEach(e=>{ bg += `<i class="msline" style="left:calc(${xi(e.date)} * var(--DW) + var(--DW) / 2)"></i>`; });
 
   // หัวตาราง
   let hd = '', lastM = -1;
@@ -864,8 +846,8 @@ function renderGantt(){
     return evs.filter(e=>xi(e.date)>=0).map(e=>{
       const k = e.date; cnt[k]=(cnt[k]||0)+1;
       const off = cnt[k]>1 ? `margin-left:calc((var(--DW) - 20px) / 2 + ${(cnt[k]-1)*8}px);` : '';
-      const tip = `${fmt(pd(e.date))}${e.time?' '+e.time+' น.':''} · ${KIND[e.kind]?.label||''}${e.kind==='present'?' · '+PMODE[modeOf(e)]:''}\n${e.text}${e.links?.length?'\nลิงก์ '+e.links.length:''}`;
-      return `<button type="button" class="mk ${e.kind}" style="left:${px(xi(e.date))};--k:${KIND[e.kind]?.color||'var(--other)'};${off}" data-ev="${esc(e.id)}" aria-label="${esc(tip)}">${e.links?.length?'<i class="mkl"></i>':''}</button>`;
+      const tip = `${fmt(pd(e.date))}${e.time?' '+e.time+' น.':''} · ${kindOf(e.kind)?.label||''}${e.kind==='present'?' · '+PMODE[modeOf(e)]:''}\n${e.text}${e.links?.length?'\nลิงก์ '+e.links.length:''}`;
+      return `<button type="button" class="mk ${e.kind}" style="left:${px(xi(e.date))};--k:${kindOf(e.kind)?.color||'var(--other)'};${off}" data-ev="${esc(e.id)}" aria-label="${esc(tip)}">${e.links?.length && e.src!=='gcal'?'<i class="mkl"></i>':''}</button>`;
     }).join('');
   };
   const bar = (t, label, it) => {
@@ -876,13 +858,13 @@ function renderGantt(){
   };
 
   // ภาพรวม
-  const gen = state.events.filter(e=>!e.c);
+  const gen = allEvents().filter(e=>!e.c);
   html += `<div class="lab c gen"><span class="ctog sp"></span><span class="nm">ภาพรวม / วันสำคัญ</span><span class="md"></span></div><div class="trk c" data-ec=""><span class="addhit ev"></span>${bg}${markers(gen)}</div>`;
 
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
     const tot = ts.reduce((s,t)=>s+mdOf(t),0);
-    const evs = state.events.filter(e=>e.c===c.id);
+    const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
     html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length} คลินิก</small>`:''}</span><span class="md">${n1(tot)} md</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
@@ -901,7 +883,7 @@ function renderGantt(){
     b.insertAdjacentHTML('beforeend','<span class="rz l" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันเริ่ม"></span><span class="rz r" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันสิ้นสุด"></span>');
     b.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',ev=>startResize(ev,b,h.classList.contains('l')?'start':'end',a,n)));
   });
-  g.querySelectorAll('.mk').forEach(b=>b.onclick=()=>openEvent(b.dataset.ev));
+  g.querySelectorAll('.mk').forEach(b=>b.onclick=()=>{ const e = allEvents().find(x=>x.id===b.dataset.ev); if(e?.src==='gcal'){ window.open(e.links.at(-1).url, '_blank', 'noopener'); return; } openEvent(b.dataset.ev); });
   g.querySelectorAll('.addhit').forEach(h=>h.onclick=ev=>{
     const trk = h.parentElement, dw = trk.getBoundingClientRect().width / n;
     const i = Math.max(0, Math.min(n-1, Math.floor((ev.clientX - trk.getBoundingClientRect().left)/dw)));
@@ -927,12 +909,12 @@ const tipEl = document.getElementById('tipcard');
 const cName = id => state.committees.find(c=>c.id===id)?.name || 'ภาพรวม';
 function tipHtml(el){
   if(el.dataset.ev){
-    const e = state.events.find(x=>x.id===el.dataset.ev); if(!e) return '';
-    const k = KIND[e.kind] || {label:'นัด', color:'var(--other)'};
+    const e = allEvents().find(x=>x.id===el.dataset.ev); if(!e) return '';
+    const k = kindOf(e.kind) || {label:'นัด', color:'var(--other)'};
     // รายการเป็นหัวข้อเด่น · ประเภท + วันเวลาเป็นบรรทัดรอง (ผู้ใช้สั่ง 21 ต.ค. 69 "ให้รายการเป็นตัวเด่น")
     return `<div class="tt-t tt-big">${esc(e.text||'—')}</div>`+
       `<div class="tt-s tt-kind"><i class="tt-k" style="background:${k.color}"></i>${esc(k.label)} · ${esc(fmt(pd(e.date)))} ${pd(e.date).getFullYear()+543}${e.time?' · '+esc(e.time)+' น.':''}</div>`+
-      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span></div>`+linksTip(e.links);
+      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span>${e.place?`<span>สถานที่</span><span>${esc(e.place)}</span>`:''}${e.src==='gcal'?'<span>ที่มา</span><span>Google Calendar · คลิกเพื่อเปิด</span>':''}</div>`+linksTip(e.links);
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[t.status])}</div>`+
@@ -1282,6 +1264,48 @@ $('skipWe').onchange = ev=>{ state.skipWeekend = ev.target.checked; persist(); r
 
 
 
+
+// ---------- นัดจาก Google Calendar "สำนักอนามัยกทม." (ผู้ใช้สั่ง 21 ต.ค. 69) ----------
+// เฉพาะนัดที่ prapatsorn.ch735@gmail.com สร้าง · ดึงครั้งเดียวผ่าน Claude (หน้าเว็บอ่านปฏิทินเองไม่ได้ เพราะปฏิทินไม่สาธารณะ)
+// แถว = [id, วันที่, เวลา, หัวข้อ, สถานที่, Google Meet, eid] · ซิงก์ใหม่ = แทนที่ GCAL ทั้งก้อน
+const GCAL_SYNCED = '2026-10-21T00:45';
+const GCAL = [
+  ["5ai8k9vrim3hc6lmmfpoblllei", "2026-09-21", "", "ประชุมคณะที่ 13 (ครั้งที่ 1)", "สำนักอนามัย กรุงเทพมหานคร ณ ห้องประชุมชั้น 11 กทม. 2", "", "NWFpOGs5dnJpbTNoYzZsbW1mcG9ibGxsZWkgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["3pebm723e02u6oe2e4bg4tmcc2", "2026-10-14", "09:00", "ประชุมคณะที่ 10: ด้านการสงเคราะห์ทางการแพทย์และสาธารณสุข (1)", "", "https://meet.google.com/puy-qxev-rgs", "M3BlYm03MjNlMDJ1Nm9lMmU0Ymc0dG1jYzIgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["3758np2ile77airndqj00qunmt", "2026-10-15", "09:00", "ประชุมคณะที่ 9: ด้านการส่งเสริม ป้องกันและฟื้นฟูสุขภาพ (2)", "", "", "Mzc1OG5wMmlsZTc3YWlybmRxajAwcXVubXQgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["4jq5ama0q04tkqh21tgqi5t5l4", "2026-10-19", "", "ส่งเอกสารสรุปความต้องการและ UX/UI [คณะที่ 13, 6, 7 และ 4]", "", "", "NGpxNWFtYTBxMDR0a3FoMjF0Z3FpNXQ1bDQgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["4fpobr5o4udc7cc1iu693tbhig", "2026-10-19", "09:00", "ประชุมคณะที่ 12: ด้านการพัฒนาแอปพลิเคชัน (1)", "", "", "NGZwb2JyNW80dWRjN2NjMWl1NjkzdGJoaWcgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["70nas0sbi8r5t2g2or58sprjcs", "2026-10-19", "09:00", "ประชุมคณะที่ 8: ด้านการบริหารจัดการด้านการเงินและการเบิกจ่าย (1)", "", "", "NzBuYXMwc2JpOHI1dDJnMm9yNThzcHJqY3MgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["1v3hq3a2jbc0munmgdpko6f7fn", "2026-10-20", "", "ทดสอบ Health Link", "", "", "MXYzaHEzYTJqYmMwbXVubWdkcGtvNmY3Zm4gYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["4fdctsj7vbvfunbf2b6hp4a7qp", "2026-10-20", "09:00", "ประชุมคณะที่ 2: ด้านการสร้างเสริมสุขภาพและครอบครัว", "", "https://meet.google.com/nyx-ngyv-nez", "NGZkY3Rzajd2YnZmdW5iZjJiNmhwNGE3cXAgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["4mf0nap1114tb5a3veab8rqo8f", "2026-10-20", "09:00", "ประชุมคณะที่ 3: ด้านการให้บริการกลุ่มโรคเฉพาะและการตรวจสุขภาพ (3)", "", "https://meet.google.com/rnu-ueep-vge", "NG1mMG5hcDExMTR0YjVhM3ZlYWI4cnFvOGYgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["6va71avhcfpsuhn98hqssgkf76", "2026-10-21", "09:00", "ประชุมคณะที่ 5: ด้านการส่งเสริมและพัฒนางานอนามัยโรงเรียน (2)", "", "https://meet.google.com/cmo-svgc-kph", "NnZhNzFhdmhjZnBzdWhuOThocXNzZ2tmNzYgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["1rk5r15910ef8vcmf9ifo2jpv6", "2026-10-21", "22:00", "คณะ 9 รังสีแพทย์ [ออนไลน์]", "", "", "MXJrNXIxNTkxMGVmOHZjbWY5aWZvMmpwdjYgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["336aqddnu6qg4v6ji5199lk7ao", "2026-10-22", "09:00", "ประชุมคณะที่ 12: ด้านการพัฒนาแอปพลิเคชัน (2)", "", "https://meet.google.com/cmm-wshx-aea", "MzM2YXFkZG51NnFnNHY2amk1MTk5bGs3YW8gYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["53g4qc54qtqiur1lo6ipjcbv1b", "2026-10-22", "09:00", "ประชุมคณะที่ 1: ด้านการบริหารจัดการแพทย์และสาธารณสุข (1)", "", "https://meet.google.com/wjr-onaq-uyf", "NTNnNHFjNTRxdHFpdXIxbG82aXBqY2J2MWIgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["7cp4jo0a8qs3qtdsreiprj753p", "2026-10-26", "", "ส่งเอกสารสรุปความต้องการและ UX/UI [คณะที่ 2, 3, 5, 8, 9, 10 และ 12]", "", "", "N2NwNGpvMGE4cXMzcXRkc3JlaXByajc1M3AgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["11r1nmr0c6l96df2v2og31l3bt", "2026-10-26", "09:00", "ประชุมคณะที่ 1: ด้านการบริหารจัดการแพทย์และสาธารณสุข (2)", "", "", "MTFyMW5tcjBjNmw5NmRmMnYyb2czMWwzYnQgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["1boftivgd6p1bat2iguga1gr2a", "2026-10-26", "09:00", "ประชุมคณะที่ 12: DEV [คุยออนไลน์]", "MIH", "", "MWJvZnRpdmdkNnAxYmF0MmlndWdhMWdyMmEgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["7rg14i0omt08vcjnub7h2dev9t", "2026-10-27", "09:00", "ประชุมคณะที่ 11: ด้านการพัฒนาสารสนเทศการแพทย์และสาธารณสุข (2)", "สำนักอนามัย กรุงเทพมหานคร ห้องประชุม 19 กทม. 2", "", "N3JnMTRpMG9tdDA4dmNqbnViN2gyZGV2OXQgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
+  ["18fas9hfnut8js76l5lo3ml7tk", "2026-10-29", "", "ส่งเอกสารสรุปความต้องการและ UX/UI [คณะที่ 1 และ 11]", "", "", "MThmYXM5aGZudXQ4anM3Nmw1bG8zbWw3dGsgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"]
+];
+const GKIND = {cal:{label:'ประชุม · ปฏิทินสำนักอนามัย', color:'#2563EB'}, due:{label:'กำหนดส่งเอกสาร · ปฏิทินสำนักอนามัย', color:'#DC2626'}};
+const kindOf = k => KIND[k] || GKIND[k];
+function gcalEvents(){
+  const out = [];
+  GCAL.forEach(([gid, date, time, text, place, meet, eid])=>{
+    const m = text.match(/\[คณะที่\s*([^\]]+)\]/), single = text.match(/คณะ(?:ที่)?\s*(\d+)/);
+    const nums = m ? m[1].split(/[,\s]|และ/).map(x=>x.trim()).filter(x=>/^\d+$/.test(x)) : single ? [single[1]] : [''];
+    const kind = /ส่งเอกสาร/.test(text) ? 'due' : 'cal';
+    const links = [...(meet?[{url:meet, name:'Google Meet'}]:[]), {url:'https://www.google.com/calendar/event?eid='+eid, name:'Google Calendar'}];
+    nums.forEach(n=>{ const c = n && state.committees.some(x=>x.id==='c'+n) ? 'c'+n : '';
+      out.push({id:`g-${gid}-${c||'all'}`, c, date, time, kind, text, place, links, src:'gcal'}); });
+  });
+  return out;
+}
+// นัดจากปฏิทินไม่เก็บใน state (แก้ในหน้านี้ไม่ได้ · แก้ที่ Google Calendar) · แสดงรวมกับนัดของทีมผ่าน allEvents()
+const allEvents = () => [...state.events, ...gcalEvents()];
+
 // ---------- ลิงก์ไฟล์ (ผู้ใช้สั่ง 21 ต.ค. 69 "แนบลิงก์ไฟล์ได้") ----------
 const normUrl = u => { u = (u||'').trim(); if(!u) return ''; return /^[a-z][a-z0-9+.-]*:/i.test(u) ? u : 'https://'+u; };
 const linkName = l => l.name || (()=>{ try { const h = new URL(l.url).hostname.replace(/^www\./,''); return /figma/.test(h)?'Figma':/docs\.google/.test(h)?'Google Docs':/drive\.google/.test(h)?'Google Drive':h; } catch(e){ return l.url; } })();
@@ -1313,7 +1337,7 @@ const showV = (k, v, kind) => {
   if(k==='start'||k==='end'||k==='date') return fmtD(v);
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
-  if(k==='kind') return KIND[v]?.label||v;
+  if(k==='kind') return kindOf(v)?.label||v;
   if(k==='mode') return PMODE[v]||v;
   if(k==='md') return n1(v)+' วัน';
   return String(v);
