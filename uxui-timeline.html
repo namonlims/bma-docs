@@ -483,6 +483,18 @@ h1{font-weight:700}
 .bar{font-weight:500;padding-left:16px}
 .bar::before{content:"";position:absolute;left:5px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px var(--card)}
 .lg-who{width:8px;height:8px;border-radius:50%;background:var(--kae);display:inline-block;box-shadow:3px 0 0 0 transparent}
+
+/* หัววัน: ชี้ดูนัดของวัน · จุดใต้วันที่ = มีนัด */
+.hd[data-day]{cursor:default;border-radius:6px;padding-bottom:6px;outline:none}
+.hd[data-day]:hover,.hd[data-day]:focus-visible{background:var(--brand-p50);color:var(--brand-p700)}
+.hd.hasev::after{content:"";position:absolute;left:50%;bottom:0;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--brand-p700)}
+.tipcard .tt-day{grid-template-columns:max-content minmax(0,1fr);gap:8px 12px;align-items:start}
+.tipcard .tt-day > span:nth-child(odd){font-variant-numeric:tabular-nums;padding-top:1px}
+.tipcard .tt-day > span:nth-child(even){display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:6px;color:var(--text-content-default)}
+.tipcard .tt-day .tt-k{margin-top:4px}
+.tipcard .tt-day b{font-weight:500}
+.tipcard .tt-day small{grid-column:2;color:var(--text-content-tertiary);font-size:11px}
+.tipcard{max-width:min(360px,calc(100vw - 24px))}
 </style>
 </head>
 <body>
@@ -834,10 +846,12 @@ function renderGantt(){
 
   // หัวตาราง
   let hd = '', lastM = -1;
+  const evByDay = {}; allEvents().forEach(e=>{ (evByDay[e.date] ||= []).push(e); });
   for(let i=0;i<n;i++){
     const d = new Date(a.getTime()+i*DAY);
     if(d.getMonth()!==lastM){ lastM=d.getMonth(); hd += `<span class="mo" style="left:${px(i)}">${TH_MON[d.getMonth()]} ${d.getFullYear()+543}</span>`; }
-    hd += `<span class="hd ${isWe(d)?'we':''} ${i===tIdx?'td':''}" style="left:${px(i)}">${TH_D1[d.getDay()]}<b>${d.getDate()}</b></span>`;
+    const dk = iso(d), nev = evByDay[dk]?.length || 0;
+    hd += `<span class="hd ${isWe(d)?'we':''} ${i===tIdx?'td':''}${nev?' hasev':''}" style="left:${px(i)}" data-day="${dk}" tabindex="0" aria-label="${esc(fmtD(dk))}${nev?` · นัด ${nev} รายการ`:''}">${TH_D1[d.getDay()]}<b>${d.getDate()}</b></span>`;
   }
   let html = `<div class="lab h"><span class="nm">คณะ › คลินิก / ระบบย่อย</span><span>manday</span></div><div class="trk h">${hd}</div>`;
 
@@ -908,6 +922,7 @@ function renderTable(){
 const tipEl = document.getElementById('tipcard');
 const cName = id => state.committees.find(c=>c.id===id)?.name || 'ภาพรวม';
 function tipHtml(el){
+  if(el.dataset.day) return dayHtml(el.dataset.day);
   if(el.dataset.ev){
     const e = allEvents().find(x=>x.id===el.dataset.ev); if(!e) return '';
     const k = kindOf(e.kind) || {label:'นัด', color:'var(--other)'};
@@ -921,6 +936,16 @@ function tipHtml(el){
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
     `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
+
+// hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
+function dayHtml(dk){
+  const d = pd(dk), evs = allEvents().filter(e=>e.date===dk).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  const ts = state.tasks.filter(t=>visTask(t) && t.start<=dk && t.end>=dk);
+  let h = `<div class="tt-t tt-big">${TH_D1[d.getDay()]} ${esc(fmtD(dk))}</div><div class="tt-s">${evs.length?`นัด ${evs.length} รายการ`:'ไม่มีนัด'} · งานที่ทำอยู่ ${ts.length} งาน</div>`;
+  if(evs.length) h += `<div class="tt-g tt-day">${evs.map(e=>{ const k = kindOf(e.kind)||{color:'var(--other)'};
+    return `<span>${e.time?esc(e.time):'ทั้งวัน'}</span><span><i class="tt-k" style="background:${k.color}"></i><b>${esc(e.text)}</b><small>${esc(cName(e.c))}</small></span>`; }).join('')}</div>`;
+  return h;
+}
 function showTip(el){
   const h = tipHtml(el); if(!h) return;
   tipEl.innerHTML = h; tipEl.classList.add('show');
@@ -931,9 +956,9 @@ function showTip(el){
 }
 const hideTip = () => tipEl.classList.remove('show');
 const gEl = document.getElementById('gantt');
-gEl.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el && !document.querySelector('.bar.resizing')) showTip(el); });
-gEl.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
-gEl.addEventListener('focusin', ev=>{ const el = ev.target.closest('.mk,.bar'); if(el) showTip(el); });
+gEl.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el && !document.querySelector('.bar.resizing')) showTip(el); });
+gEl.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
+gEl.addEventListener('focusin', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el) showTip(el); });
 gEl.addEventListener('focusout', hideTip);
 document.getElementById('scroller').addEventListener('scroll', hideTip, {passive:true});
 window.addEventListener('scroll', hideTip, {passive:true});
