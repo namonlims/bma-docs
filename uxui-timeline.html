@@ -1497,10 +1497,12 @@ const SYNC = (()=>{
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
   }
-  function apply(records){
+  function apply(records, guard){
     let changed = false;
+    const cur = guard ? snap(state) : null;   // รายการที่แก้ในเครื่องนี้แต่ยังส่งไม่ถึง = ไม่เอาค่าจากชีตมาทับ
     records.forEach(r=>{
       const [kind, id] = [r.kind, r.id], key = kind+'|'+id;
+      if(cur && (cur.get(key) ?? null) !== (sent.get(key) ?? null)) return;
       const listName = {committee:'committees', task:'tasks', event:'events', history:'history'}[kind];
       if(kind==='meta'){ if(id==='settings' && !r.deleted){ state.skipWeekend = !!r.data.skipWeekend; } else return; }
       else if(listName){
@@ -1518,7 +1520,7 @@ const SYNC = (()=>{
     return changed;
   }
   async function pull(first){
-    if(!on || pulling) return; pulling = true;
+    if(!on || pulling || api.busy) return; pulling = true;
     try {
       const res = await call('GET');
       const hasData = res.records.some(r=>!r.deleted && (r.kind==='committee' || r.kind==='task'));
@@ -1535,7 +1537,7 @@ const SYNC = (()=>{
         }
         try { localStorage.setItem(STORE_KEY+':synced', '1'); } catch(e){}
       }
-      else if(apply(res.records) && !document.querySelector('dialog[open]')) render();
+      else if(apply(res.records, true) && !document.querySelector('dialog[open]')) render();
       since = res.now; api.last = Date.now(); api.err = '';
       if(first) render();
     } catch(e){ api.err = 'เชื่อมข้อมูลกลางไม่ได้ · ข้อมูลยังอยู่ในเบราว์เซอร์นี้ จะส่งให้เมื่อเชื่อมได้'; }
