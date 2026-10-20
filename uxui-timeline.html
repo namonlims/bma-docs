@@ -546,6 +546,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .rsb:focus{outline:none}.rsb:focus-visible{box-shadow:0 0 0 2px currentColor}
 @media (max-width:640px){ table.rs th:first-child,table.rs td:first-child{min-width:150px} .phd{flex-wrap:wrap} .rs-total{width:100%} }
 @media (pointer:coarse){ .rsb{min-height:36px} }
+.lab.c .cn{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -950,7 +951,7 @@ function renderGantt(){
     const tot = ts.reduce((s,t)=>s+mdOf(t),0);
     const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
-    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length} คลินิก</small>`:''}</span><span class="md">${n1(tot)} md</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
+    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span><span class="md">${n1(tot)} md</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     c.items.forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it));
