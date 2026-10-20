@@ -310,6 +310,62 @@
   <td data-l="ค่าที่ทำให้แสดง">patientType = &quot;anc&quot; (ผู้ป่วยฝากครรภ์)</td>
 </tr>
 <tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-error, #B91C1C);font-size:14px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">flag</span></span><span class="tt" role="tooltip"><span class="tt-t">แพ้สารทึบรังสี</span><span class="tt-s">ตรวจที่ใช้ contrast · ระบุสารที่แพ้และอาการ</span></span></span></td>
+  <td data-l="ชื่อ"><b>แพ้สารทึบรังสี (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">ใบส่งตรวจเอกซเรย์ (แพทย์สั่ง CPOE) ช่องประวัติแพ้สารทึบรังสี → xrayOrders.allergy · contrast<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">รายการตรวจใช้สารทึบรังสี (contrast = true) และ allergy.has = true · tooltip: แพ้&lt;สาร&gt; — &lt;อาการ&gt;</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">pregnant_woman</span></span><span class="tt" role="tooltip"><span class="tt-t">ตั้งครรภ์</span><span class="tt-s">LMP · ระวังการฉายรังสี</span></span></span></td>
+  <td data-l="ชื่อ"><b>ตั้งครรภ์ (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">ใบส่งตรวจเอกซเรย์ ช่องสถานะการตั้งครรภ์ + LMP → xrayOrders.pregnancy<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">pregnancy.status = &quot;ตั้งครรภ์&quot; (หมดประจำเดือน / ไม่ตั้งครรภ์ = ไม่แสดง)</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">radiology</span></span><span class="tt" role="tooltip"><span class="tt-t">ฟิล์มออกแล้ว</span><span class="tt-s">รอบันทึกผล</span></span></span></td>
+  <td data-l="ชื่อ"><b>ฟิล์มออกแล้ว (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">เจ้าหน้าที่รังสีกดฟิล์มออก → xrayOrders.filmIssuedAt<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">มีเวลาฟิล์มออกแล้ว (ใบยังรอบันทึกผล)</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">output</span></span><span class="tt" role="tooltip"><span class="tt-t">ส่งตรวจภายนอก (Referral)</span><span class="tt-s">ไม่ได้ตรวจในศูนย์ฯ</span></span></span></td>
+  <td data-l="ชื่อ"><b>ส่งตรวจภายนอก (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">ใบส่งตรวจแบบส่งตรวจภายนอก → xrayOrders.referralOnly<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">referralOnly = true (ไม่ได้ตรวจในศูนย์ฯ)</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-warning, #C2410C);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">content_copy</span></span><span class="tt" role="tooltip"><span class="tt-t">เคยถ่ายซ้ำในช่วงเวลาเตือน</span><span class="tt-s">รายการเดียวกันเคยถ่ายเมื่อเร็ว ๆ นี้</span></span></span></td>
+  <td data-l="ชื่อ"><b>เคยถ่ายซ้ำ (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">ประวัติเอกซเรย์ของ HN (xrayHistoryFor) เทียบรายการเดียวกัน → duplicateWarning (TOR §1.12.5.9)<code class="sub">XrayQueuePage.jsx · duplicateWarning</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">เคยถ่ายรายการตรวจเดียวกันภายในช่วงเวลาเตือน · tooltip บอกวันที่ครั้งก่อน</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-statusbadge-info, #1D4ED8);font-size:14px;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24">edit</span></span><span class="tt" role="tooltip"><span class="tt-t">รังสีแพทย์แก้ไขรายละเอียดการส่งตรวจ</span><span class="tt-s">เวลา · ผู้แก้ · เหตุผล</span></span></span></td>
+  <td data-l="ชื่อ"><b>รังสีแพทย์แก้ไขคำสั่ง (เอกซเรย์)</b></td>
+  <td data-l="หน้า">คิวเอกซเรย์ /xray/queue</td>
+  <td data-l="ข้อมูลมาจาก">รังสีแพทย์แก้ไขใบส่งตรวจ → xrayOrders.amendedByRadiology · amendments (TOR §1.12.5.6)<code class="sub">XrayQueuePage.jsx · RowWarnGlyphs</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">amendedByRadiology = true · tooltip: เวลา ผู้แก้ — เหตุผล ทุกครั้ง</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-danger-default, #B91C1C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">flag</span></span><span class="tt" role="tooltip"><span class="tt-t">พัฒนาการล่าช้า (red flag)</span><span class="tt-s">ส่งต่อหน่วยฟื้นฟู/สุขภาพจิตเด็กได้ทันที</span></span></span></td>
+  <td data-l="ชื่อ"><b>Red Flag (งานพัฒนาการ)</b></td>
+  <td data-l="หน้า">คิวคัดกรองงานพัฒนาการ /clinic/mental-health/screening</td>
+  <td data-l="ข้อมูลมาจาก">คลินิกเด็กดี/งานพัฒนาการ › แบบประเมิน DSPM / DAIM → developmentClinic.js (getDevRedFlag)<code class="sub">DevSpecialMarks.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">ล่าช้า ≥ 2 ด้าน หรือผู้ตรวจติ๊กอาการเด่นชัด (redFlag = true)</td>
+</tr>
+<tr>
+  <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="ic"><span class="ms" style="color:var(--text-colorfulbadge-orange, #C2410C);font-size:16px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24">monitor_weight</span></span><span class="tt" role="tooltip"><span class="tt-t">น้ำหนักแรกเกิดน้อย</span><span class="tt-s">น้อยกว่า 2,500 กรัม</span></span></span></td>
+  <td data-l="ชื่อ"><b>น้ำหนักแรกเกิดน้อย (งานพัฒนาการ)</b></td>
+  <td data-l="หน้า">คิวคัดกรองงานพัฒนาการ /clinic/mental-health/screening</td>
+  <td data-l="ข้อมูลมาจาก">ข้อมูลเด็ก น้ำหนักแรกเกิด → developmentClinic.js birthWeight<code class="sub">DevSpecialMarks.jsx</code></td>
+  <td data-l="ค่าที่ทำให้แสดง">birthWeight &lt; 2.5 กก. (เด็กกลุ่มเสี่ยงตามคู่มือ DAIM)</td>
+</tr>
+<tr>
   <td data-l="ไอคอน" class="prev"><span class="tip" tabindex="0"><span class="badge" style="color:var(--text-colorfulbadge-grey, #4D5358);background:var(--surface-colorfulbadge-grey, #F4F5F5)">HN 67-00007</span><span class="tt" role="tooltip"><span class="tt-t">HN ของผู้รับบริการ</span></span></span></td>
   <td data-l="ชื่อ"><b>ป้าย HN</b></td>
   <td data-l="หน้า">การจัดการความยินยอม</td>
@@ -319,6 +375,8 @@
     </table>
     <span class="figlabel">ภาพจากระบบจริง — คิวทันตกรรม /clinic/dental (🔒 ข้อมูลลับ · หญิงตั้งครรภ์)</span>
     <img class="shot" src="name-icons-shots/dental-rows.png" alt="คิวทันตกรรม แถว D-005 และ D-008 มีไอคอนแม่กุญแจสีม่วง แถว D-002 มีไอคอนหญิงตั้งครรภ์สีชมพู" loading="lazy" />
+    <span class="figlabel">ภาพจากระบบจริง — คิวเอกซเรย์ /xray/queue (แพ้สารทึบรังสี · ส่งตรวจภายนอก + คำอธิบายสัญลักษณ์ใต้ตาราง)</span>
+    <img class="shot" src="name-icons-shots/xray-queue.png" alt="คิวเอกซเรย์ แถวภูริ ใจกล้า มีธงแดงแพ้สารทึบรังสีและไอคอนส่งตรวจภายนอกหลังชื่อ และแถบคำอธิบายสัญลักษณ์ 6 ตัวใต้ตาราง" loading="lazy" />
   </section>
 
   <section class="card">
