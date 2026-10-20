@@ -23,6 +23,10 @@
   h1 { font-size: var(--type-size-xl, 20px); }
   h2 { font-size: var(--type-size-base, 16px); }
   h3 { font-size: var(--type-size-sm, 14px); display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--dim-space-400, 16px); flex-wrap: wrap; }
+  .dl { display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-1100, 44px); padding: 0 var(--dim-space-500, 20px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimaryButton-default, #007549); color: var(--icon-brandPrimaryButton-on-brand, #FFFFFF); font-weight: var(--type-weight-medium, 500); text-decoration: none; white-space: nowrap; }
+  .dl:hover { background: var(--surface-brandPrimaryButton-default-hover, #005E3A); }
+  .dl:focus-visible { outline: 2px solid var(--border-brandPrimary-default, #007549); outline-offset: 2px; }
   .lede { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); }
   .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E5E7E9); border-radius: var(--dim-radius-300, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
   .card > header p { margin: var(--dim-space-050, 2px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
@@ -81,15 +85,18 @@
     .rules { grid-template-columns: 1fr; gap: var(--dim-space-050, 2px); }
     .rules dd { margin-bottom: var(--dim-space-200, 8px); }
     td[data-l="#"] { display: none; }
-    td.prev .tip { min-width: 44px; min-height: 44px; justify-content: center; }
+    td.prev .tip { min-width: 44px; min-height: 44px; justify-content: flex-start; }
   }
 </style>
 </head>
 <body>
 <main class="page">
-  <header>
-    <h1>ไอคอนหลังชื่อผู้รับบริการ</h1>
-    <p class="lede">มีอะไรบ้าง · แสดงเมื่อไร · ใช้ที่หน้าไหน — ชี้หรือแตะไอคอนเพื่อดูคำอธิบาย · ถอดจากโค้ด Kae-Branch 20 ต.ค. 69</p>
+  <header class="top">
+    <div>
+      <h1>ไอคอนหลังชื่อผู้รับบริการ</h1>
+      <p class="lede">มีอะไรบ้าง · แสดงเมื่อไร · ใช้ที่หน้าไหน — ชี้หรือแตะไอคอนเพื่อดูคำอธิบาย · ถอดจากโค้ด Kae-Branch 20 ต.ค. 69</p>
+    </div>
+    <a class="dl" href="worklist-name-icons.xlsx" download="ไอคอนหลังชื่อผู้รับบริการ.xlsx"><span class="ms" style="font-size:20px">download</span>ดาวน์โหลด Excel</a>
   </header>
 
   <section class="card">
