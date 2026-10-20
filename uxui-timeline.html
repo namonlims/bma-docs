@@ -487,6 +487,23 @@ h1{font-weight:700}
 .hd2 s{color:var(--text-content-tertiary)}
 .hd2 .ms{font-size:14px;color:var(--text-content-tertiary)}
 @media (max-width:640px){ #histDlg .hbar,#histDlg .hbody{padding-left:16px;padding-right:16px} .hrow{grid-template-columns:40px minmax(0,1fr);gap:8px} }
+
+/* ลิงก์ไฟล์ */
+.links{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.lrows{display:flex;flex-direction:column;gap:8px;width:100%}
+.lrows:empty{display:none}
+.lrow{display:grid;grid-template-columns:20px minmax(0,1.6fr) minmax(0,1fr) 36px 36px;gap:8px;align-items:center;width:100%}
+.lrow > .ms{font-size:20px;color:var(--text-content-tertiary)}
+.lrow input{min-height:40px !important}
+.lopen,.ldel{width:36px;height:36px;border:0;border-radius:var(--dim-radius-200);background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-content-secondary);text-decoration:none}
+.lopen{color:var(--brand-p700)}
+.lopen:hover{background:var(--brand-p50)}.ldel:hover{background:var(--surface-alert-error);color:var(--text-danger-default)}
+.lopen[hidden]{display:inline-flex;visibility:hidden}
+.ladd{margin-left:-8px}
+.mkl{position:absolute;right:-2px;top:-2px;width:8px;height:8px;border-radius:50%;background:var(--brand-p700);border:1.5px solid var(--card);z-index:1}
+@media (max-width:640px){ .lrow{grid-template-columns:minmax(0,1fr) 36px 36px} .lrow > .ms{display:none} .lrow .lname{grid-column:1;grid-row:2} }
+@media (pointer:coarse){ .lopen,.ldel{width:44px;height:44px} .lrow{grid-template-columns:20px minmax(0,1.6fr) minmax(0,1fr) 44px 44px} }
+@media (pointer:coarse) and (max-width:640px){ .lrow{grid-template-columns:minmax(0,1fr) 44px 44px} }
 </style>
 </head>
 <body>
@@ -562,6 +579,7 @@ h1{font-weight:700}
         <div class="field" id="tItemsField"><span class="fl">คลินิก / ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
           <div class="addrow"><input type="text" id="tNewItem" placeholder="เพิ่มคลินิกย่อยใหม่ในคณะนี้"><button type="button" class="btn subdue" id="tAddItem"><span class="ms">add</span>เพิ่ม</button></div></div>
         <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
+        <div class="field"><span class="fl">ลิงก์ไฟล์ <small class="cnt">Figma · Google Drive · เอกสาร</small></span><div class="links" id="tLinks"></div></div>
       </section>
       <div class="fcol">
         <section class="fgrp">
@@ -594,6 +612,7 @@ h1{font-weight:700}
     <div class="body">
       <div class="field full"><label for="eC">คณะ</label><div class="selwrap"><select id="eC" autofocus></select><span class="ms">expand_more</span></div></div>
       <div class="field full"><label for="eText">รายการ</label><input type="text" id="eText" required></div>
+      <div class="field full"><span class="fl">ลิงก์ไฟล์ <small class="cnt">สไลด์ · วิดีโอ · เอกสาร</small></span><div class="links" id="eLinks"></div></div>
       <div class="field"><label for="eD">วันที่</label><input type="date" id="eD" required></div>
       <div class="field"><label for="eT">เวลา (ไม่บังคับ)</label><input type="time" id="eT"></div>
       <div class="field full"><span class="fl">ประเภท</span><div class="seg" id="eKind"></div></div>
@@ -845,15 +864,15 @@ function renderGantt(){
     return evs.filter(e=>xi(e.date)>=0).map(e=>{
       const k = e.date; cnt[k]=(cnt[k]||0)+1;
       const off = cnt[k]>1 ? `margin-left:calc((var(--DW) - 20px) / 2 + ${(cnt[k]-1)*8}px);` : '';
-      const tip = `${fmt(pd(e.date))}${e.time?' '+e.time+' น.':''} · ${KIND[e.kind]?.label||''}${e.kind==='present'?' · '+PMODE[modeOf(e)]:''}\n${e.text}`;
-      return `<button type="button" class="mk ${e.kind}" style="left:${px(xi(e.date))};--k:${KIND[e.kind]?.color||'var(--other)'};${off}" data-ev="${esc(e.id)}" aria-label="${esc(tip)}"></button>`;
+      const tip = `${fmt(pd(e.date))}${e.time?' '+e.time+' น.':''} · ${KIND[e.kind]?.label||''}${e.kind==='present'?' · '+PMODE[modeOf(e)]:''}\n${e.text}${e.links?.length?'\nลิงก์ '+e.links.length:''}`;
+      return `<button type="button" class="mk ${e.kind}" style="left:${px(xi(e.date))};--k:${KIND[e.kind]?.color||'var(--other)'};${off}" data-ev="${esc(e.id)}" aria-label="${esc(tip)}">${e.links?.length?'<i class="mkl"></i>':''}</button>`;
     }).join('');
   };
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
     const tip = `${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[t.status]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${t.status}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${esc(label)}</button>`;
+    return `<button type="button" class="bar ${t.status}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>`;
   };
 
   // ภาพรวม
@@ -913,12 +932,12 @@ function tipHtml(el){
     // รายการเป็นหัวข้อเด่น · ประเภท + วันเวลาเป็นบรรทัดรอง (ผู้ใช้สั่ง 21 ต.ค. 69 "ให้รายการเป็นตัวเด่น")
     return `<div class="tt-t tt-big">${esc(e.text||'—')}</div>`+
       `<div class="tt-s tt-kind"><i class="tt-k" style="background:${k.color}"></i>${esc(k.label)} · ${esc(fmt(pd(e.date)))} ${pd(e.date).getFullYear()+543}${e.time?' · '+esc(e.time)+' น.':''}</div>`+
-      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span></div>`;
+      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span></div>`+linksTip(e.links);
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[t.status])}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
-    `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`;
+    `<div class="tt-g"><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 function showTip(el){
   const h = tipHtml(el); if(!h) return;
@@ -1188,7 +1207,7 @@ function openTask(id, preset){
   const who0 = PEOPLE.includes(v.who) ? v.who : 'Kae';
   const pickW = k=>{ $('tWho').value = k; segs($('tWhoSeg'), Object.fromEntries(PEOPLE.map(p=>[p,p])), k, pickW); };
   pickW(who0);
-  $('tNote').value = v.note || '';
+  $('tNote').value = v.note || ''; renderLinks($('tLinks'), v.links);
   const ctx = !!t || !!(preset?.c && preset?.items?.length);
   $('tInfo').hidden = !ctx; $('tCField').hidden = ctx; $('tItemsField').hidden = ctx;
   $('tInfoC').textContent = state.committees.find(c=>c.id===v.c)?.name || '—';
@@ -1216,7 +1235,7 @@ $('taskForm').onsubmit = ev=>{
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const md = $('tMd').value.trim();
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, md: md===''?null:Number(md), note:$('tNote').value.trim()};
+    status:tStatus, type:tType, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
   if(editT){ const o = state.tasks.find(x=>x.id===editT); logHist('แก้ไข','งาน', tTitle(data), cName(data.c), diff({...o, type:typeOf(o)}, data, TF)); Object.assign(o, data); }
   else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
   persist(); $('taskDlg').close(); render(); toast('บันทึกแล้ว');
@@ -1234,7 +1253,7 @@ function openEvent(id, preset){
   $('eTitle').textContent = e ? 'แก้ไขนัด' : 'เพิ่มนัด / Present';
   $('eC').innerHTML = `<option value="">ภาพรวม / วันสำคัญ</option>` + state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
   $('eC').value = e ? e.c : (preset?.c || '');
-  $('eText').value = e ? e.text : ''; $('eD').value = e ? e.date : (preset?.date || iso(today)); $('eT').value = e ? e.time : '';
+  $('eText').value = e ? e.text : ''; $('eD').value = e ? e.date : (preset?.date || iso(today)); $('eT').value = e ? e.time : ''; renderLinks($('eLinks'), e?.links);
   eKind = e ? e.kind : 'present';
   eMode = e ? modeOf(e) : 'onsite';
   const pickM = k=>{ eMode=k; segs($('eMode'), PMODE, eMode, pickM); }; pickM(eMode);
@@ -1244,7 +1263,7 @@ function openEvent(id, preset){
 }
 $('evForm').onsubmit = ev=>{
   ev.preventDefault();
-  const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, ...(eKind==='present' ? {mode:eMode} : {})};
+  const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, links:readLinks($('eLinks')), ...(eKind==='present' ? {mode:eMode} : {})};
   if(eKind!=='present' && editE) delete state.events.find(x=>x.id===editE).mode;
   if(!data.text || !data.date) return;
   if(editE){ const o = state.events.find(x=>x.id===editE); logHist('แก้ไข','นัด', data.text, cName(data.c), diff(o, data, EF)); Object.assign(o, data); }
@@ -1262,17 +1281,35 @@ $('addEvent').onclick = ()=>openEvent(null);
 $('skipWe').onchange = ev=>{ state.skipWeekend = ev.target.checked; persist(); render(); };
 
 
+
+// ---------- ลิงก์ไฟล์ (ผู้ใช้สั่ง 21 ต.ค. 69 "แนบลิงก์ไฟล์ได้") ----------
+const normUrl = u => { u = (u||'').trim(); if(!u) return ''; return /^[a-z][a-z0-9+.-]*:/i.test(u) ? u : 'https://'+u; };
+const linkName = l => l.name || (()=>{ try { const h = new URL(l.url).hostname.replace(/^www\./,''); return /figma/.test(h)?'Figma':/docs\.google/.test(h)?'Google Docs':/drive\.google/.test(h)?'Google Drive':h; } catch(e){ return l.url; } })();
+const safeHref = u => /^https?:\/\//i.test(u) ? u : '#';
+function renderLinks(box, links){
+  const row = l => `<div class="lrow"><span class="ms">link</span><input type="text" inputmode="url" class="lurl" placeholder="วางลิงก์ เช่น figma.com/… หรือ drive.google.com/…" value="${esc(l?.url||'')}" aria-label="ลิงก์"><input type="text" class="lname" placeholder="ชื่อ (ไม่บังคับ)" value="${esc(l?.name||'')}" aria-label="ชื่อลิงก์">`+
+    `<a class="lopen" target="_blank" rel="noopener" href="${esc(safeHref(l?.url||''))}" aria-label="เปิดลิงก์"${l?.url?'':' hidden'}><span class="ms">open_in_new</span></a><button type="button" class="ldel" aria-label="ลบลิงก์"><span class="ms">close</span></button></div>`;
+  box.innerHTML = `<div class="lrows">${(links||[]).map(row).join('')}</div><button type="button" class="additem ladd"><span class="ms">add</span>เพิ่มลิงก์</button>`;
+  const rows = box.querySelector('.lrows');
+  box.querySelector('.ladd').onclick = ()=>{ rows.insertAdjacentHTML('beforeend', row(null)); rows.lastElementChild.querySelector('.lurl').focus(); };
+  box.oninput = ev=>{ const r = ev.target.closest('.lrow'); if(!r || !ev.target.classList.contains('lurl')) return; const u = normUrl(ev.target.value), a = r.querySelector('.lopen'); a.href = safeHref(u); a.hidden = !u; };
+  box.onclick = ev=>{ const d = ev.target.closest('.ldel'); if(d) d.closest('.lrow').remove(); };
+}
+const readLinks = box => [...box.querySelectorAll('.lrow')].map(r=>({url:normUrl(r.querySelector('.lurl').value), name:r.querySelector('.lname').value.trim()})).filter(l=>l.url).map(l=>l.name?l:{url:l.url});
+const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span><span>${L.map(l=>esc(linkName(l))).join(' · ')}</span></div>` : '';
+
 // ---------- ประวัติการแก้ไข (ผู้ใช้สั่ง 21 ต.ค. 69 "มีปุ่มดูประวัติการแก้ไขได้") ----------
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', md:'Manday', note:'หมายเหตุ'};
-const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present'};
+const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
+const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
   if(v==null || v==='' || (Array.isArray(v) && !v.length)) return k==='md' ? 'อัตโนมัติ' : '—';
   if(k==='c') return cName(v);
   if(k==='items') return v.join(' · ');
+  if(k==='links') return v.map(linkName).join(' · ');
   if(k==='start'||k==='end'||k==='date') return fmtD(v);
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
@@ -1281,7 +1318,8 @@ const showV = (k, v, kind) => {
   if(k==='md') return n1(v)+' วัน';
   return String(v);
 };
-const diff = (a, b, F) => Object.keys(F).filter(k => JSON.stringify(a?.[k] ?? null) !== JSON.stringify(b?.[k] ?? null))
+const nz = v => (Array.isArray(v) && !v.length) ? null : (v ?? null);
+const diff = (a, b, F) => Object.keys(F).filter(k => JSON.stringify(nz(a?.[k])) !== JSON.stringify(nz(b?.[k])))
   .map(k => ({f:F[k], from:showV(k, a?.[k]), to:showV(k, b?.[k])}));
 const tTitle = t => `${t.items.join(' · ')} · ${t.who}`;
 function logHist(action, kind, title, where, changes){
