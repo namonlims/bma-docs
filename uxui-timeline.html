@@ -1484,6 +1484,7 @@ const SYNC = (()=>{
     m.set('meta|settings', {skipWeekend:!!st.skipWeekend});
     return m;
   };
+  const saveSent = () => { try { localStorage.setItem(STORE_KEY+':sent', JSON.stringify([...sent])); } catch(e){} };
   const snap = st => new Map([...recs(st)].map(([k,v])=>[k, JSON.stringify(v)]));
   const fmtT = t => new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
   api.label = () => api.err ? `<span class="ms sy">cloud_off</span>${esc(api.err)}`
@@ -1493,7 +1494,7 @@ const SYNC = (()=>{
   async function call(method, body){
     const r = method==='GET'
       ? await fetch(SYNC_URL + '?since=' + since, {cache:'no-store'})
-      : await fetch(SYNC_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body)});
+      : await (b => fetch(SYNC_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:b, keepalive: b.length < 60000}))(JSON.stringify(body));   // keepalive = ปิดแท็บทันทีหลังบันทึก คำขอยังส่งต่อจนจบ
     if(!r.ok) throw new Error('HTTP '+r.status);
     return r.json();
   }
@@ -1526,19 +1527,29 @@ const SYNC = (()=>{
       const hasData = res.records.some(r=>!r.deleted && (r.kind==='committee' || r.kind==='task'));
       if(first && !hasData){ sent = new Map(); await api.push(true); }   // ชีตยังไม่มีข้อมูล = ส่งข้อมูลชุดแรกขึ้นไป
       else if(first){
-        // เบราว์เซอร์ที่เคยแก้ไว้ก่อนเปิดข้อมูลกลาง: ส่งรายการที่แก้ไว้ขึ้นไปรวมครั้งเดียว ไม่ทิ้งของเดิม
-        let mine = null; try { if(state.savedAt && !localStorage.getItem(STORE_KEY+':synced')) mine = JSON.parse(JSON.stringify(state)); } catch(e){}
+        // รายการที่แก้ในเบราว์เซอร์นี้แต่ยังส่งไม่ถึง (ปิดแท็บเร็ว · ออฟไลน์ · แก้ไว้ก่อนเปิดข้อมูลกลาง) = ส่งขึ้นไปใหม่ ไม่ทิ้ง
+        let pend = new Map(), gone = [];
+        if(state.savedAt){
+          let prev = new Map();
+          try { if(localStorage.getItem(STORE_KEY+':synced')) prev = new Map(JSON.parse(localStorage.getItem(STORE_KEY+':sent')||'[]')); } catch(e){}
+          const mineRecs = recs(state);
+          mineRecs.forEach((v,k)=>{ if(JSON.stringify(v) !== prev.get(k)) pend.set(k, JSON.parse(JSON.stringify(v))); });
+          prev.forEach((v,k)=>{ if(!mineRecs.has(k)) gone.push(k); });
+        }
         state.committees = []; state.tasks = []; state.events = []; state.history = []; sent = new Map(); apply(res.records);
-        if(mine){
-          const up = (list, key) => (mine[list]||[]).forEach(x=>{ const L = state[list], i = L.findIndex(y=>y[key]===x[key]); if(i>=0) L[i] = x; else L.push(x); });
-          up('committees','id'); up('tasks','id'); up('events','id'); up('history','hid');
+        if(pend.size || gone.length){
+          const LIST = {committee:['committees','id'], task:['tasks','id'], event:['events','id'], history:['history','hid']};
+          pend.forEach((v,k)=>{ const [kind,...r] = k.split('|'), id = r.join('|');
+            if(kind==='meta'){ state.skipWeekend = !!v.skipWeekend; return; }
+            const [list,key] = LIST[kind]||[]; if(!list) return; const L = state[list], at = L.findIndex(x=>x[key]===id); if(at>=0) L[at] = v; else L.push(v); });
+          gone.forEach(k=>{ const [kind,...r] = k.split('|'), id = r.join('|'), [list,key] = LIST[kind]||[]; if(list) state[list] = state[list].filter(x=>x[key]!==id); });
           state.history.sort((a,b)=>b.at-a.at);
           await api.push();
         }
         try { localStorage.setItem(STORE_KEY+':synced', '1'); } catch(e){}
       }
       else if(apply(res.records, true) && !document.querySelector('dialog[open]')) render();
-      since = res.now; api.last = Date.now(); api.err = '';
+      since = res.now; api.last = Date.now(); api.err = ''; saveSent();
       if(first) render();
     } catch(e){ api.err = 'เชื่อมข้อมูลกลางไม่ได้ · ข้อมูลยังอยู่ในเบราว์เซอร์นี้ จะส่งให้เมื่อเชื่อมได้'; }
     pulling = false; status();
@@ -1551,7 +1562,7 @@ const SYNC = (()=>{
     if(!ops.length) return queue;
     api.busy = true; status();
     queue = queue.then(async ()=>{
-      try { const res = await call('POST', {ops}); ops.forEach(o=>{ const k=o.kind+'|'+o.id; if(o.deleted) sent.delete(k); else sent.set(k, JSON.stringify(o.data)); }); api.last = Date.now(); api.err = ''; since = Math.max(since, res.now ? res.now - 1 : since); }
+      try { const res = await call('POST', {ops}); ops.forEach(o=>{ const k=o.kind+'|'+o.id; if(o.deleted) sent.delete(k); else sent.set(k, JSON.stringify(o.data)); }); api.last = Date.now(); api.err = ''; since = Math.max(since, res.now ? res.now - 1 : since); saveSent(); }
       catch(e){ api.err = 'ส่งข้อมูลกลางไม่สำเร็จ · จะลองใหม่อัตโนมัติ'; clearTimeout(timer); timer = setTimeout(()=>api.push(), 10000); }
       api.busy = false; status();
     });
