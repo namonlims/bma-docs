@@ -553,6 +553,18 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .bar.moving{cursor:grabbing;z-index:8;opacity:.92;box-shadow:0 8px 20px rgba(17,19,20,.25);transition:none}
 .trk.droptarget{background-color:var(--brand-p50);box-shadow:inset 0 0 0 2px var(--brand-p600)}
 @media (pointer:coarse){ .bar{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none} }
+
+/* จุดจับสลับลำดับระบบย่อย: อยู่ในช่องเยื้องหน้าชื่อ (ไม่ดันชื่อ) · โผล่เมื่อชี้แถว · จอสัมผัสเห็นตลอด */
+.gantt{position:relative}
+.grip{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:24px;height:28px;padding:0;border:0;border-radius:var(--dim-radius-150);background:transparent;color:var(--text-content-tertiary);display:inline-flex;align-items:center;justify-content:center;cursor:grab;opacity:0;touch-action:none;transition:opacity .12s}
+.grip .ms{font-size:18px}
+.lab.sub:hover .grip,.grip:focus-visible,.lab.sub.dragging .grip{opacity:1}
+.grip:hover{background:var(--brand-p100);color:var(--brand-p700)}
+.grip:focus{outline:none}.grip:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+.lab.sub.dragging{z-index:12;background:var(--surface-card-100);box-shadow:0 6px 16px rgba(17,19,20,.18);cursor:grabbing}
+.dropline{position:absolute;left:0;height:2px;background:var(--brand-p600);z-index:13;pointer-events:none;border-radius:2px}
+@media (pointer:coarse){ .grip{opacity:.7;width:32px;height:36px;left:8px} }
+@media (max-width:640px){ .grip{left:6px;width:22px} }
 </style>
 </head>
 <body>
@@ -962,7 +974,7 @@ function renderGantt(){
     c.items.forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it));
       const md = its.reduce((s,t)=>s+mdOf(t)/t.items.length,0);
-      html += `<div class="lab sub ${its.length?'':'none'}"><span class="nm">${esc(it)}</span><span class="md">${its.length?n1(md):'—'}</span></div>`+
+      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span><span class="md">${its.length?n1(md):'—'}</span></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
@@ -1116,6 +1128,51 @@ gEl.addEventListener('click', ev=>{
 });
 
 // ---------- ลากยืด-หดแถบงาน (ผู้ใช้สั่ง 20 ต.ค. 69 "กล่องสีสามารถยืดได้") ----------
+
+
+// สลับลำดับระบบย่อย (ผู้ใช้สั่ง 21 ต.ค. 69 "ต้องสามารถสลับลำดับได้"): ลากที่จุดจับ ⋮⋮ หน้าชื่อ · หรือโฟกัสจุดจับแล้วกดลูกศรขึ้น/ลง
+function reorderItem(cid, it, to){
+  const c = state.committees.find(x=>x.id===cid); if(!c) return;
+  const from = c.items.indexOf(it); if(from<0 || to===from || to<0 || to>=c.items.length) return;
+  const before = [...c.items]; c.items.splice(from,1); c.items.splice(to,0,it);
+  logHist('แก้ไข','ลำดับ', it, c.name, [{f:'ลำดับระบบย่อย', from:before.join(' · '), to:c.items.join(' · ')}]);
+  persist(); render();
+  requestAnimationFrame(()=>gEl.querySelector(`.grip[data-c="${CSS.escape(cid)}"][data-item="${CSS.escape(it)}"]`)?.focus());
+}
+gEl.addEventListener('keydown', ev=>{
+  const g = ev.target.closest?.('.grip'); if(!g || (ev.key!=='ArrowUp' && ev.key!=='ArrowDown')) return;
+  ev.preventDefault();
+  const c = state.committees.find(x=>x.id===g.dataset.c), i = c.items.indexOf(g.dataset.item);
+  reorderItem(c.id, g.dataset.item, i + (ev.key==='ArrowUp' ? -1 : 1));
+});
+gEl.addEventListener('pointerdown', ev=>{
+  const g = ev.target.closest('.grip'); if(!g || ev.button>0) return;
+  ev.preventDefault();
+  const cid = g.dataset.c, it = g.dataset.item, lab = g.closest('.lab');
+  const labs = [...gEl.querySelectorAll(`.lab.sub[data-c="${CSS.escape(cid)}"][data-item]`)];
+  const rects = labs.map(l=>l.getBoundingClientRect());
+  const y0 = ev.clientY; let to = labs.indexOf(lab), moved = false;
+  const line = document.createElement('div'); line.className = 'dropline';
+  lab.classList.add('dragging'); hideTip();
+  const move = m => {
+    if(Math.abs(m.clientY - y0) > 4) moved = true; if(!moved) return;
+    to = rects.findIndex(r=>m.clientY < r.top + r.height/2); if(to<0) to = rects.length;
+    const ref = to < labs.length ? labs[to] : labs[labs.length-1];
+    const pr = gEl.getBoundingClientRect(), rr = ref.getBoundingClientRect();
+    line.style.top = ((to < labs.length ? rr.top : rr.bottom) - pr.top - 1)+'px'; line.style.width = rr.width+'px';
+    if(!line.parentElement) gEl.appendChild(line);
+    lab.style.transform = `translateY(${m.clientY - y0}px)`;
+  };
+  const up = () => {
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+    moveTouchBlock = null; line.remove(); lab.classList.remove('dragging'); lab.style.transform = '';
+    if(!moved) return;
+    const from = labs.indexOf(lab); const dest = to > from ? to - 1 : to;
+    reorderItem(cid, it, dest);
+  };
+  moveTouchBlock = true;
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+});
 
 // ลากย้ายแถบ (ผู้ใช้สั่ง 21 ต.ค. 69 "กดค้างที่กล่องแล้วย้ายช่องได้"): ซ้าย–ขวา = เลื่อนวัน (ช่วงงานเท่าเดิม) · ขึ้น–ลง = ย้ายไประบบย่อยอื่นในคณะเดียวกัน
 // เมาส์: กดแล้วลากได้เลย · นิ้ว: แตะค้าง 0.35 วินาทีแล้วลาก
