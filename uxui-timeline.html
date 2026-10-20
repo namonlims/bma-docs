@@ -547,6 +547,12 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 @media (max-width:640px){ table.rs th:first-child,table.rs td:first-child{min-width:150px} .phd{flex-wrap:wrap} .rs-total{width:100%} }
 @media (pointer:coarse){ .rsb{min-height:36px} }
 .lab.c .cn{white-space:nowrap}
+
+/* ลากย้ายแถบ */
+.bar{cursor:grab}
+.bar.moving{cursor:grabbing;z-index:8;opacity:.92;box-shadow:0 8px 20px rgba(17,19,20,.25);transition:none}
+.trk.droptarget{background-color:var(--brand-p50);box-shadow:inset 0 0 0 2px var(--brand-p600)}
+@media (pointer:coarse){ .bar{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none} }
 </style>
 </head>
 <body>
@@ -967,6 +973,7 @@ function renderGantt(){
     b.onclick=()=>{ if(b.dataset.dragged){ delete b.dataset.dragged; return; } openTask(b.dataset.t, null, b.dataset.it); };
     b.insertAdjacentHTML('beforeend','<span class="rz l" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันเริ่ม"></span><span class="rz r" aria-hidden="true" title="ลากเพื่อเปลี่ยนวันสิ้นสุด"></span>');
     b.querySelectorAll('.rz').forEach(h=>h.addEventListener('pointerdown',ev=>startResize(ev,b,h.classList.contains('l')?'start':'end',a,n)));
+    b.addEventListener('pointerdown', ev=>{ if(!ev.target.closest('.rz')) startMove(ev, b, a, n); });
   });
   g.querySelectorAll('.mk').forEach(b=>b.onclick=()=>{ const e = allEvents().find(x=>x.id===b.dataset.ev); if(e?.src==='gcal'){ window.open(e.links.at(-1).url, '_blank', 'noopener'); return; } openEvent(b.dataset.ev); });
   g.querySelectorAll('.addhit').forEach(h=>h.onclick=ev=>{
@@ -1037,7 +1044,7 @@ function tipHtml(el){
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
-    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>คลินิก</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
+    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 
 // hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
@@ -1059,7 +1066,7 @@ function showTip(el){
 }
 const hideTip = () => tipEl.classList.remove('show');
 const gEl = document.getElementById('gantt');
-gEl.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el && !document.querySelector('.bar.resizing')) showTip(el); });
+gEl.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el && !document.querySelector('.bar.resizing,.bar.moving')) showTip(el); });
 gEl.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
 gEl.addEventListener('focusin', ev=>{ const el = ev.target.closest('.mk,.bar,.hd[data-day]'); if(el) showTip(el); });
 gEl.addEventListener('focusout', hideTip);
@@ -1110,6 +1117,57 @@ gEl.addEventListener('click', ev=>{
 });
 
 // ---------- ลากยืด-หดแถบงาน (ผู้ใช้สั่ง 20 ต.ค. 69 "กล่องสีสามารถยืดได้") ----------
+
+// ลากย้ายแถบ (ผู้ใช้สั่ง 21 ต.ค. 69 "กดค้างที่กล่องแล้วย้ายช่องได้"): ซ้าย–ขวา = เลื่อนวัน (ช่วงงานเท่าเดิม) · ขึ้น–ลง = ย้ายไประบบย่อยอื่นในคณะเดียวกัน
+// เมาส์: กดแล้วลากได้เลย · นิ้ว: แตะค้าง 0.35 วินาทีแล้วลาก
+let moveTouchBlock = null;
+document.addEventListener('touchmove', e=>{ if(moveTouchBlock) e.preventDefault(); }, {passive:false});
+function startMove(ev, bar, a, n){
+  if(ev.button > 0) return;
+  const t = state.tasks.find(x=>x.id===bar.dataset.t); if(!t) return;
+  const trk = bar.parentElement, dw = trk.getBoundingClientRect().width / n;
+  const x0 = ev.clientX, y0 = ev.clientY, touch = ev.pointerType !== 'mouse';
+  let active = false, dd = 0, target = null, holdT = null;
+  const fromIt = bar.dataset.it;
+  const rows = [...gEl.querySelectorAll(`.trk[data-c="${CSS.escape(t.c)}"][data-item]`)];
+  const begin = () => { active = true; moveTouchBlock = touch; bar.classList.add('moving'); hideTip(); if(navigator.vibrate && touch) navigator.vibrate(15); };
+  if(touch) holdT = setTimeout(begin, 350);
+  const move = m => {
+    const dx = m.clientX - x0, dy = m.clientY - y0;
+    if(!active){
+      if(touch){ if(Math.hypot(dx,dy) > 8){ clearTimeout(holdT); cleanup(); } return; }
+      if(Math.hypot(dx,dy) < 5) return; begin();
+    }
+    dd = Math.round(dx / dw);
+    target = rows.find(r=>{ const rr = r.getBoundingClientRect(); return m.clientY >= rr.top && m.clientY < rr.bottom; }) || null;
+    rows.forEach(r=>r.classList.toggle('droptarget', r===target && r.dataset.item!==fromIt));
+    const ty = target ? target.getBoundingClientRect().top - trk.getBoundingClientRect().top : 0;
+    bar.style.transform = `translate(${dd*dw}px, ${ty}px)`;
+  };
+  const cleanup = () => {
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', cancel);
+    moveTouchBlock = null; bar.classList.remove('moving'); bar.style.transform = ''; rows.forEach(r=>r.classList.remove('droptarget'));
+  };
+  const cancel = () => { clearTimeout(holdT); cleanup(); };
+  const up = () => {
+    clearTimeout(holdT);
+    const wasActive = active; cleanup();
+    if(!wasActive) return;
+    bar.dataset.dragged = '1';
+    const toIt = target?.dataset.item;
+    const moveIt = toIt && fromIt && toIt !== fromIt;
+    if(!dd && !moveIt) return;
+    const before = {start:t.start, end:t.end, items:[...t.items]};
+    if(dd){ const sh = d => iso(new Date(pd(d).getTime() + dd*DAY)); t.start = sh(t.start); t.end = sh(t.end); }
+    if(moveIt){
+      t.items = [...new Set(t.items.map(x=>x===fromIt ? toIt : x))];
+      if(t.itemStatus?.[fromIt]){ t.itemStatus[toIt] = t.itemStatus[fromIt]; delete t.itemStatus[fromIt]; }
+    }
+    logHist('แก้ไข','งาน', tTitle(t), cName(t.c), diff(before, t, {start:TF.start, end:TF.end, items:TF.items}));
+    persist(); render(); toast(moveIt ? `ย้ายไป ${toIt}${dd?` · เลื่อน ${dd>0?'+':''}${dd} วัน`:''}` : `เลื่อน ${dd>0?'+':''}${dd} วัน`);
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', cancel);
+}
 function startResize(ev, bar, edge, a, n){
   ev.preventDefault(); ev.stopPropagation();
   const t = state.tasks.find(x=>x.id===bar.dataset.t); if(!t) return;
@@ -1469,7 +1527,7 @@ const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'คลินิก', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
+const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
 const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
