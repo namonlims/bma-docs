@@ -499,10 +499,12 @@ h1{font-weight:700}
 a.btn{text-decoration:none}
 .btn .ext{font-size:16px;margin-left:-2px;opacity:.7}
 
-/* หัววันที่ติดด้านบนเมื่อเลื่อน (ผู้ใช้สั่ง 21 ต.ค. 69): ตาราง timeline เลื่อนในกรอบตัวเองทั้งแนวตั้ง/แนวนอน สูงไม่เกินจอ */
-.scroller{overflow:auto;max-height:calc(100dvh - 32px);overscroll-behavior:contain}
-.lab.h,.trk.h{position:sticky;top:0;z-index:7;background:var(--card);box-shadow:0 1px 0 var(--line)}
-.lab.h{left:0;z-index:9}
+/* หัววันที่ลอยติดขอบจอบนเมื่อเลื่อนหน้าผ่าน (ผู้ใช้สั่ง 21 ต.ค. 69 "stick เมื่อ scroll จนวันที่ชิดขอบจอบน") · หน้าเลื่อนปกติ ตารางเลื่อนแนวนอนในกรอบ */
+.fh{position:fixed;top:0;z-index:30;overflow:hidden;background:var(--card);box-shadow:0 1px 0 var(--line),0 6px 12px rgba(17,19,20,.08);display:none}
+.fh.show{display:block}
+.fh .fh-lab{position:absolute;left:0;top:0;bottom:0;z-index:2;background:var(--card);border-right:1px solid var(--line);display:flex}
+.fh .fh-lab .lab{position:static;border:0;width:100%}
+.fh .fh-trk{position:relative;will-change:transform}
 .trk.h{height:60px}
 .mo{top:6px}
 .hd{bottom:6px}
@@ -848,6 +850,7 @@ function renderTogAll(){
 }
 function renderGantt(){
   renderTogAll();
+  if(window.FH) requestAnimationFrame(()=>window.FH.build());
   const {a, n} = range();
   const g = document.getElementById('gantt');
   g.style.setProperty('--days', n);
@@ -1547,6 +1550,38 @@ const SYNC = (()=>{
     window.addEventListener('online', ()=>api.push());
   }
   return api;
+})();
+
+// หัววันที่ลอย: โคลนแถวหัวตาราง วางติดขอบจอบนเมื่อหัวจริงเลื่อนพ้นจอ · เลื่อนแนวนอนตามตาราง
+window.FH = (()=>{
+  const fh = document.createElement('div'); fh.className = 'fh'; fh.setAttribute('aria-hidden','true');
+  document.body.appendChild(fh);
+  const sc = document.getElementById('scroller');
+  let lab, trk, labW = 0, h = 0;
+  const build = ()=>{
+    const L = gEl.querySelector('.lab.h'), T = gEl.querySelector('.trk.h'); if(!L || !T) return;
+    labW = L.offsetWidth; h = T.offsetHeight;
+    fh.innerHTML = `<div class="fh-lab" style="width:${labW}px"></div><div class="fh-trk" style="margin-left:${labW}px;height:${h}px"></div>`;
+    lab = fh.firstChild; trk = fh.lastChild;
+    lab.appendChild(L.cloneNode(true)); const tc = T.cloneNode(true); tc.style.width = T.offsetWidth+'px'; trk.appendChild(tc);
+    trk.querySelectorAll('[tabindex]').forEach(x=>x.removeAttribute('tabindex'));
+    place();
+  };
+  const place = ()=>{
+    const L = gEl.querySelector('.lab.h'); if(!L || !trk) return;
+    const r = sc.getBoundingClientRect(), hr = L.getBoundingClientRect(), gr = gEl.getBoundingClientRect();
+    const on = hr.top < 0 && gr.bottom > h + 40 && !document.querySelector('dialog[open]');
+    fh.classList.toggle('show', on);
+    if(!on) return;
+    fh.style.left = r.left+'px'; fh.style.width = sc.clientWidth+'px'; fh.style.height = h+'px';
+    trk.style.transform = `translateX(${-sc.scrollLeft}px)`;
+  };
+  window.addEventListener('scroll', place, {passive:true});
+  window.addEventListener('resize', ()=>build());
+  sc.addEventListener('scroll', place, {passive:true});
+  fh.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.hd[data-day]'); if(el) showTip(el); });
+  fh.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.hd[data-day]'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
+  return { build, place };
 })();
 
 render();
