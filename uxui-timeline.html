@@ -587,6 +587,20 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .itdel:hover{background:var(--surface-alert-error);color:var(--text-danger-default)}
 .itdel:focus{outline:none}.itdel:focus-visible{box-shadow:0 0 0 2px var(--text-danger-default)}
 @media (pointer:coarse){ .itdel{opacity:.6;width:36px;height:36px} }
+
+/* รายการย่อย (subtask) */
+.lab.sub.kid .nm{padding-left:34px;font-size:12px}
+.kidmk{font-size:14px;color:var(--text-content-tertiary);vertical-align:-2px;margin-right:2px}
+.lab.sub .cn{font-size:11px;color:var(--text-content-tertiary);font-weight:400}
+.itsub{flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dim-radius-150);background:transparent;color:var(--brand-p700);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .12s}
+.itsub .ms{font-size:18px}
+.lab.sub:hover .itsub,.itsub:focus-visible{opacity:1}
+.itsub:hover{background:var(--brand-p100)}
+.itsub:focus{outline:none}.itsub:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+.lab.sub.subadd{padding-left:58px}
+@media (pointer:coarse){ .itsub{opacity:.7;width:36px;height:36px} }
+table.rs .rs-it.kid{padding-left:48px;font-size:13px}
+.checks label.kid{font-size:13px}
 </style>
 </head>
 <body>
@@ -879,6 +893,10 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const isWe = d => d.getDay()===0 || d.getDay()===6;
 function daysOf(t){ return Math.round((pd(t.end) - pd(t.start))/DAY) + 1; }   // นับทุกวันตามปฏิทิน (ผู้ใช้ 21 ต.ค. 69 เอาติ๊กไม่นับเสาร์–อาทิตย์ออก)
 const mdOf = t => daysOf(t);
+// รายการย่อย (subtask) ใต้ระบบย่อย 1 ชั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "เพิ่ม subtask ได้") · c.parents = {รายการย่อย: ระบบย่อยแม่}
+const parentOf = (c, it) => { const p = c.parents?.[it]; return p && c.items.includes(p) ? p : ''; };
+const orderedItems = c => { const out = []; c.items.filter(x=>!parentOf(c,x)).forEach(r=>{ out.push(r); c.items.filter(x=>parentOf(c,x)===r).forEach(k=>out.push(k)); }); return out; };
+const siblingsOf = (c, it) => orderedItems(c).filter(x=>parentOf(c,x)===parentOf(c,it));
 // manday = คน-วัน: คนเดียวทำหลายงาน/หลายระบบย่อยในวันเดียว = 1 (ผู้ใช้ 21 ต.ค. 69) · ภาระงานลบออกแล้ว (ผู้ใช้ 21 ต.ค. 69)
 function personDays(tasks){ const S = new Set(); tasks.forEach(t=>{ for(let d=pd(t.start); d<=pd(t.end); d=new Date(d.getTime()+DAY)) S.add(t.who+'|'+iso(d)); }); return S.size; }
 const n1 = v => (Math.round(v*10)/10).toLocaleString('th-TH',{maximumFractionDigits:1});
@@ -1001,9 +1019,9 @@ function renderGantt(){
     const col = collapsed.has(c.id);
     html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
-    c.items.forEach(it=>{
-      const its = ts.filter(t=>t.items.includes(it));
-      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span><button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
+    orderedItems(c).forEach(it=>{
+      const its = ts.filter(t=>t.items.includes(it)), par = parentOf(c, it), kids = c.items.filter(x=>parentOf(c,x)===it).length;
+      html += `<div class="lab sub ${its.length?'':'none'}${par?' kid':''}" data-c="${esc(c.id)}" data-item="${esc(it)}" data-par="${esc(par)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${par?'<span class="ms kidmk">subdirectory_arrow_right</span>':''}${esc(it)}${kids?` <small class="cn">${kids}</small>`:''}</span>${par?'':`<button type="button" class="itsub" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="เพิ่มรายการย่อยใต้ ${esc(it)}" title="เพิ่มรายการย่อย"><span class="ms">add</span></button>`}<button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
@@ -1047,7 +1065,7 @@ function renderRoundSum(){
   let totDone = 0, totAll = 0;
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
-    const rows = c.items.map(it=>{
+    const rows = orderedItems(c).map(it=>{
       const mine = ts.filter(t=>t.items.includes(it));
       const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r).sort((x,y)=>(y.end+y.start).localeCompare(x.end+x.start)); byR[r] = {st:L[0] ? stAt(L[0], it) : null, id:L[0]?.id, m:L[0] ? methodOf(L[0]) : ''}; });   // ใช้งานล่าสุดของรอบนั้น (ผู้ใช้ 21 ต.ค. 69: ปรับ Done แล้วสรุปต้องตาม)
       const last = [...rounds].reverse().find(r=>byR[r].st);
@@ -1057,7 +1075,7 @@ function renderRoundSum(){
     const done = rows.filter(r=>r.byR[r.last].st==='done').length; totDone += done; totAll += rows.length;
     h += `<tbody><tr class="rs-c"><th scope="rowgroup">${esc(c.name)}</th>${rounds.map(r=>{ const n = rows.filter(x=>x.byR[r].st).length, d = rows.filter(x=>x.byR[r].st==='done').length; return `<td>${n?`<span class="rs-frac${d===n?' all':''}">${d}/${n}</span>`:''}</td>`; }).join('')}<td><span class="rs-frac${done===rows.length?' all':''}">เสร็จ ${done}/${rows.length}</span></td></tr>`;
     rows.forEach(r=>{
-      h += `<tr><td class="rs-it">${esc(r.it)}</td>${rounds.map(x=>`<td>${cell(r.byR[x].st, [r.byR[x].id, r.it])}${r.byR[x].m?`<span class="rs-m"><span class="ms">${METHOD_I[r.byR[x].m]}</span>${METHOD_S[r.byR[x].m]}</span>`:''}</td>`).join('')}<td class="rs-last">${esc(ROUND[r.last])}${r.byR[r.last].m?' · '+METHOD_S[r.byR[r.last].m]:''} · ${RS_ST[r.byR[r.last].st].t}</td></tr>`;
+      h += `<tr><td class="rs-it${parentOf(c,r.it)?' kid':''}">${parentOf(c,r.it)?'↳ ':''}${esc(r.it)}</td>${rounds.map(x=>`<td>${cell(r.byR[x].st, [r.byR[x].id, r.it])}${r.byR[x].m?`<span class="rs-m"><span class="ms">${METHOD_I[r.byR[x].m]}</span>${METHOD_S[r.byR[x].m]}</span>`:''}</td>`).join('')}<td class="rs-last">${esc(ROUND[r.last])}${r.byR[r.last].m?' · '+METHOD_S[r.byR[r.last].m]:''} · ${RS_ST[r.byR[r.last].st].t}</td></tr>`;
     });
     h += '</tbody>';
   });
@@ -1139,6 +1157,27 @@ gEl.addEventListener('pointerleave', ()=>{ hov.remove(); hov.dataset.i=''; hideT
 gEl.addEventListener('click', ev=>{
   const tg = ev.target.closest('.ctog[data-tog]');
   if(tg){ const id = tg.dataset.tog; collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id); saveCollapsed(); render(); return; }
+  const sb = ev.target.closest('.itsub');
+  if(sb){
+    const c = state.committees.find(x=>x.id===sb.dataset.c), par = sb.dataset.item, row = sb.closest('.lab');
+    const box = document.createElement('div'); box.className = 'lab sub kid addl subadd';
+    box.innerHTML = `<div class="addinput"><input type="text" placeholder="ชื่อรายการย่อยใต้ ${esc(par)}" aria-label="ชื่อรายการย่อยใหม่"><button type="button" aria-label="เพิ่ม"><span class="ms">check</span></button></div>`;
+    const trk = document.createElement('div'); trk.className = 'trk addl';
+    let after = row.nextElementSibling;   // ต่อท้ายลูกตัวสุดท้ายของแม่
+    while(after?.nextElementSibling?.classList.contains('kid') && after.nextElementSibling.dataset.par===par) after = after.nextElementSibling.nextElementSibling;
+    after.after(box, trk);
+    const inp = box.querySelector('input'), ok = box.querySelector('button');
+    const commit = ()=>{
+      const v = inp.value.trim();
+      if(v && !c.items.includes(v)){ c.items.push(v); (c.parents ||= {})[v] = par; logHist('เพิ่ม','รายการย่อย', v, `${c.name} › ${par}`); persist(); toast(`เพิ่ม "${v}" ใต้ ${par} แล้ว`); }
+      else if(v) toast(`มี "${v}" อยู่แล้ว`);
+      render();
+    };
+    inp.addEventListener('keydown', k=>{ if(k.key==='Enter'){ k.preventDefault(); commit(); } if(k.key==='Escape') render(); });
+    ok.addEventListener('mousedown', k=>k.preventDefault()); ok.addEventListener('click', commit);
+    inp.addEventListener('blur', ()=>{ if(!inp.value.trim()) render(); });
+    inp.focus(); return;
+  }
   const b = ev.target.closest('.additem'); if(!b) return;
   const cid = b.dataset.c, box = b.parentElement;
   box.innerHTML = `<div class="addinput"><input type="text" placeholder="ชื่อระบบย่อย" aria-label="ชื่อระบบย่อยใหม่"><button type="button" aria-label="เพิ่ม"><span class="ms">check</span></button></div>`;
@@ -1164,6 +1203,10 @@ gEl.addEventListener('click', ev=>{
 gEl.addEventListener('click', ev=>{
   const d = ev.target.closest('.itdel'); if(!d) return;
   const c = state.committees.find(x=>x.id===d.dataset.c), it = d.dataset.item; if(!c) return;
+  const kids = c.items.filter(x=>parentOf(c,x)===it);
+  if(kids.length && !confirm(`"${it}" มีรายการย่อย ${kids.length} รายการ (${kids.join(' · ')})\nรายการย่อยจะถูกลบไปด้วย`)) return;
+  kids.forEach(k=>{ c.items = c.items.filter(x=>x!==k); delete c.parents[k]; state.tasks = state.tasks.filter(t=>!(t.c===c.id && t.items.length===1 && t.items[0]===k)); state.tasks.forEach(t=>{ if(t.c===c.id) t.items = t.items.filter(x=>x!==k); }); });
+  if(c.parents){ delete c.parents[it]; if(!Object.keys(c.parents).length) delete c.parents; }
   const ts = state.tasks.filter(t=>t.c===c.id && t.items.includes(it));
   const only = ts.filter(t=>t.items.length===1).length, multi = ts.length - only;
   const msg = `ลบ "${it}" ออกจาก ${c.name}?` + (ts.length ? `\n\nมีงาน ${ts.length} งาน` + (only?`\n· ${only} งานที่มีแค่ระบบย่อยนี้ จะถูกลบ`:'') + (multi?`\n· ${multi} งานที่ทำหลายระบบย่อย จะเอา "${it}" ออกจากงาน`:'') : '');
@@ -1178,23 +1221,26 @@ gEl.addEventListener('click', ev=>{
 // สลับลำดับระบบย่อย (ผู้ใช้สั่ง 21 ต.ค. 69 "ต้องสามารถสลับลำดับได้"): ลากที่จุดจับ ⋮⋮ หน้าชื่อ · หรือโฟกัสจุดจับแล้วกดลูกศรขึ้น/ลง
 function reorderItem(cid, it, to){
   const c = state.committees.find(x=>x.id===cid); if(!c) return;
-  const from = c.items.indexOf(it); if(from<0 || to===from || to<0 || to>=c.items.length) return;
-  const before = [...c.items]; c.items.splice(from,1); c.items.splice(to,0,it);
-  logHist('แก้ไข','ลำดับ', it, c.name, [{f:'ลำดับระบบย่อย', from:before.join(' · '), to:c.items.join(' · ')}]);
+  const sib = siblingsOf(c, it), from = sib.indexOf(it); if(from<0 || to===from || to<0 || to>=sib.length) return;   // สลับเฉพาะในระดับเดียวกัน (ระบบย่อย ↔ ระบบย่อย · รายการย่อยใต้แม่เดียวกัน)
+  const before = orderedItems(c); sib.splice(from,1); sib.splice(to,0,it);
+  const par = parentOf(c, it);
+  if(par){ const others = c.items.filter(x=>parentOf(c,x)!==par); c.items = [...others, ...sib]; }
+  else { const kidsOf = r => c.items.filter(x=>parentOf(c,x)===r); c.items = sib.flatMap(r=>[r, ...kidsOf(r)]); }
+  logHist('แก้ไข','ลำดับ', it, c.name, [{f:'ลำดับระบบย่อย', from:before.join(' · '), to:orderedItems(c).join(' · ')}]);
   persist(); render();
   requestAnimationFrame(()=>gEl.querySelector(`.grip[data-c="${CSS.escape(cid)}"][data-item="${CSS.escape(it)}"]`)?.focus());
 }
 gEl.addEventListener('keydown', ev=>{
   const g = ev.target.closest?.('.grip'); if(!g || (ev.key!=='ArrowUp' && ev.key!=='ArrowDown')) return;
   ev.preventDefault();
-  const c = state.committees.find(x=>x.id===g.dataset.c), i = c.items.indexOf(g.dataset.item);
+  const c = state.committees.find(x=>x.id===g.dataset.c), i = siblingsOf(c, g.dataset.item).indexOf(g.dataset.item);
   reorderItem(c.id, g.dataset.item, i + (ev.key==='ArrowUp' ? -1 : 1));
 });
 gEl.addEventListener('pointerdown', ev=>{
   const g = ev.target.closest('.grip'); if(!g || ev.button>0) return;
   ev.preventDefault();
   const cid = g.dataset.c, it = g.dataset.item, lab = g.closest('.lab');
-  const labs = [...gEl.querySelectorAll(`.lab.sub[data-c="${CSS.escape(cid)}"][data-item]`)];
+  const labs = [...gEl.querySelectorAll(`.lab.sub[data-c="${CSS.escape(cid)}"][data-item][data-par="${CSS.escape(lab.dataset.par||'')}"]`)];   // ลากได้เฉพาะในระดับเดียวกัน
   const rects = labs.map(l=>l.getBoundingClientRect());
   const y0 = ev.clientY; let to = labs.indexOf(lab), moved = false;
   const line = document.createElement('div'); line.className = 'dropline';
@@ -1308,7 +1354,7 @@ const segs = (el, map, cur, pick) => {
 const fillCommittees = sel => { sel.innerHTML = state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join(''); };
 function renderItems(checked){
   const c = state.committees.find(x=>x.id===$('tC').value);
-  $('tItems').innerHTML = (c?.items||[]).map(it=>`<label><input type="checkbox" value="${esc(it)}" ${checked.includes(it)?'checked':''}>${esc(it)}</label>`).join('');
+  $('tItems').innerHTML = (c ? orderedItems(c) : []).map(it=>`<label${parentOf(c,it)?' class="kid"':''}><input type="checkbox" value="${esc(it)}" ${checked.includes(it)?'checked':''}>${parentOf(c,it)?'↳ ':''}${esc(it)}</label>`).join('');
   updItemsCnt();
 }
 const updItemsCnt = ()=>{ const n=$('tItems').querySelectorAll('input:checked').length, all=$('tItems').querySelectorAll('input').length; $('tItemsCnt').textContent = all ? `เลือก ${n} จาก ${all}` : ''; };
