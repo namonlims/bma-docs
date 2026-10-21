@@ -565,6 +565,14 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .dropline{position:absolute;left:0;height:2px;background:var(--brand-p600);z-index:13;pointer-events:none;border-radius:2px}
 @media (pointer:coarse){ .grip{opacity:.7;width:32px;height:36px;left:8px} }
 @media (max-width:640px){ .grip{left:6px;width:22px} }
+
+/* วิธีส่ง: ไอคอนในป้ายรอบ + ใต้สถานะในตารางสรุป · ปุ่มลบ 2 แบบ */
+.rtagx{display:inline-flex;align-items:center;gap:1px}
+.rtagx .ms{font-size:10px}
+.rs-m{display:flex;align-items:center;justify-content:center;gap:2px;margin-top:2px;font-size:11px;color:var(--text-content-tertiary)}
+.rs-m .ms{font-size:13px}
+.dels{display:flex;flex-wrap:wrap;gap:4px}
+@media (max-width:640px){ .dels{width:100%} .dels .btn{flex:1;justify-content:center} }
 </style>
 </head>
 <body>
@@ -604,7 +612,10 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
         <span><i class="lg-bar st-prog"></i>In progress</span>
         <span><i class="lg-bar st-done"></i>Done</span>
         <span><i class="lg-who"></i>จุดสี = ผู้รับผิดชอบ</span>
-        <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป · <i class="rtag" style="margin-left:4px">ลิงก์</i>ส่งลิงก์</span>
+        <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป</span>
+        <span><span class="ms lg-doc">apartment</span>Present ที่สำนัก</span>
+        <span><span class="ms lg-doc">videocam</span>Present Online</span>
+        <span><span class="ms lg-doc">link</span>ส่ง Link</span>
         <span><span class="ms lg-doc">description</span>Document</span>
         <span><span class="ms lg-doc">draw</span>Figma</span>
       </div></div>
@@ -622,14 +633,14 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 
   <section class="panel">
     <div class="phd"><h2>Timeline รายคณะ</h2><div class="phd-r"><a class="btn subdue sm" href="#roundSum"><span class="ms">checklist</span><span>สรุปรอบงาน</span></a><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div></div>
-    <p class="hint">เรียงคณะตามวันเริ่มงาน · ตัวเลขด้านขวาของชื่อ = manday · งานที่ทำหลายคลินิกพร้อมกัน manday แบ่งเท่ากันให้แต่ละคลินิก</p>
+    <p class="hint">เรียงคณะตามวันเริ่มงาน · ตัวเลขด้านขวาของชื่อ = manday · แต่ละระบบย่อยนับตามจำนวนวันของงาน</p>
     <div class="scroller" id="scroller"><div class="gantt" id="gantt"></div></div>
   </section>
 
   <!-- สรุปรอบงานตามคณะ › ระบบย่อย (ผู้ใช้สั่ง 21 ต.ค. 69 "สรุปว่าอะไรรอบสอง รอบสาม ส่งลิงก์ อะไรเสร็จแล้ว") -->
   <section class="panel" id="roundSum">
     <div class="phd"><h2>สรุปรอบงาน</h2><span class="rs-total" id="rsTotal"></span></div>
-    <p class="hint">แต่ละระบบย่อยอยู่รอบไหน และเสร็จหรือยัง · ตามตัวกรองผู้รับผิดชอบและประเภทงานด้านบน · คลิกสถานะเพื่อเปิดงาน</p>
+    <p class="hint">แต่ละระบบย่อยอยู่รอบไหน ส่งแบบไหน และเสร็จหรือยัง · ตามตัวกรองผู้รับผิดชอบและประเภทงานด้านบน · คลิกสถานะเพื่อเปิดงาน</p>
     <div class="tblwrap"><table class="rs" id="rsTable"></table></div>
   </section>
 
@@ -653,6 +664,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
           <div class="addrow"><input type="text" id="tNewItem" placeholder="เพิ่มคลินิกย่อยใหม่ในคณะนี้"><button type="button" class="btn subdue" id="tAddItem"><span class="ms">add</span>เพิ่ม</button></div></div>
         <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
         <div class="field"><span class="fl">รอบ</span><div class="seg" id="tRound"></div></div>
+        <div class="field"><span class="fl">วิธีส่ง</span><div class="seg" id="tMethod"></div></div>
         <div class="field"><span class="fl">ลิงก์ไฟล์ <small class="cnt">Figma · Google Drive · เอกสาร</small></span><div class="links" id="tLinks"></div></div>
       </section>
       <div class="fcol">
@@ -673,7 +685,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
       </div>
     </div>
     <div class="bar2">
-      <button type="button" class="btn danger" id="tDel"><span class="ms">delete</span>ลบงาน</button>
+      <div class="dels"><button type="button" class="btn danger" id="tDelIt"><span class="ms">remove_circle</span><span id="tDelItL">ลบเฉพาะระบบย่อยนี้</span></button><button type="button" class="btn danger" id="tDel"><span class="ms">delete</span><span id="tDelL">ลบงาน</span></button></div>
       <div class="r"><button type="button" class="btn" data-close>ยกเลิก</button><button type="submit" class="btn primary">บันทึก</button></div>
     </div>
   </form>
@@ -723,9 +735,13 @@ const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
 // คณะที่ทำเครื่องหมาย Done = ทุกงานในคณะนั้นแสดงเป็น Done (สถานะเดิมของงานเก็บไว้ ยกเลิกได้) (ผู้ใช้สั่ง 21 ต.ค. 69)
 const TICON = {doc:'description', figma:'draw'};
 // รอบงาน (ผู้ใช้สั่ง 21 ต.ค. 69 "ติด tag ว่ารอบที่เท่าไหร่") · ยังไม่ตั้ง = อ่านจากหมายเหตุ "รอบ N" ไม่มี = รอบ 1
-const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4', link:'ส่งลิงก์'};   // ส่งลิงก์ = ผู้ใช้สั่ง 21 ต.ค. 69
-const roundOf = t => t.round==='link' ? 'link' : (+t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1);
-const roundTag = r => r==='link' ? 'ลิงก์' : 'R'+r;
+const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4'};
+const roundOf = t => +t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1;   // round 'link' เดิม = วิธีส่ง ส่ง Link
+// วิธีส่ง แยกจากรอบ (ผู้ใช้สั่ง 21 ต.ค. 69 "แยกรอบ และวิธีการส่ง")
+const METHOD = {'':'ไม่ระบุ', onsite:'Present ที่สำนัก', online:'Present Online', link:'ส่ง Link'};
+const METHOD_S = {onsite:'ที่สำนัก', online:'Online', link:'Link'};
+const METHOD_I = {onsite:'apartment', online:'videocam', link:'link'};
+const methodOf = t => METHOD_I[t.method] ? t.method : (t.round==='link' ? 'link' : '');
 // สถานะรายคลินิก (ผู้ใช้สั่ง 21 ต.ค. 69 "เปลี่ยนสถานะเฉพาะงานที่เลือก"): t.itemStatus[คลินิก] ทับ t.status เฉพาะแถวนั้น
 const stAt = (t, it) => (it && STATUS[t.itemStatus?.[it]]) ? t.itemStatus[it] : t.status;   // ไอคอนนำหน้าแถบ (UXUI ไม่มี)
 const PMODE = {onsite:'ที่คณะ', online:'Pre-Online', video:'ส่ง Video'};   // รูปแบบ Present (ผู้ใช้สั่ง 21 ต.ค. 69)
@@ -848,7 +864,7 @@ const fmt = d => d.getDate()+' '+TH_MON[d.getMonth()];
 const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const isWe = d => d.getDay()===0 || d.getDay()===6;
-function daysOf(t){ let n=0; for(let d=pd(t.start); d<=pd(t.end); d=new Date(d.getTime()+DAY)) if(!(state.skipWeekend && isWe(d))) n++; return n; }
+function daysOf(t){ let n=0, all=0; for(let d=pd(t.start); d<=pd(t.end); d=new Date(d.getTime()+DAY)){ all++; if(!(state.skipWeekend && isWe(d))) n++; } return n || all; }   // งานที่อยู่แต่เสาร์–อาทิตย์ = นับตามจำนวนวันจริง ไม่เป็น 0 (ผู้ใช้ 21 ต.ค. 69)
 const mdOf = t => (t.md!=null && t.md!=='' && !isNaN(t.md)) ? Number(t.md) : daysOf(t);
 const n1 = v => (Math.round(v*10)/10).toLocaleString('th-TH',{maximumFractionDigits:1});
 
@@ -956,8 +972,8 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = mdOf(t);
-    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${roundOf(t)!==1?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundTag(roundOf(t))}</span>`:''}`;
+    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${n1(md)} manday\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
   };
 
   // ภาพรวม
@@ -966,14 +982,14 @@ function renderGantt(){
 
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
-    const tot = ts.reduce((s,t)=>s+mdOf(t),0);
+    const tot = ts.reduce((s,t)=>s+mdOf(t)*t.items.filter(x=>c.items.includes(x)).length,0);   // ทุกระบบย่อยนับ manday เต็มจำนวนวัน (ผู้ใช้ 21 ต.ค. 69)
     const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
     html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span><span class="md">${n1(tot)} md</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     c.items.forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it));
-      const md = its.reduce((s,t)=>s+mdOf(t)/t.items.length,0);
+      const md = its.reduce((s,t)=>s+mdOf(t),0);
       html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span><span class="md">${its.length?n1(md):'—'}</span></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
@@ -1012,8 +1028,7 @@ function renderTable(){
 // ---------- สรุปรอบงาน ----------
 const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ', i:''}, todo:{t:'To do', i:''}};   // ไอคอนเฉพาะ Done (ผู้ใช้ 21 ต.ค. 69)
 function renderRoundSum(){
-  const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[]), 'link'];
-  const rank = r => r==='link' ? 9 : r;
+  const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[])];
   const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}">${RS_ST[st].i?`<span class="ms">${RS_ST[st].i}</span>`:''}${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
   let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
   let totDone = 0, totAll = 0;
@@ -1021,7 +1036,7 @@ function renderRoundSum(){
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
     const rows = c.items.map(it=>{
       const mine = ts.filter(t=>t.items.includes(it));
-      const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r).sort((x,y)=>(y.end+y.start).localeCompare(x.end+x.start)); byR[r] = {st:L[0] ? stAt(L[0], it) : null, id:L[0]?.id}; });   // ใช้งานล่าสุดของรอบนั้น (ผู้ใช้ 21 ต.ค. 69: ปรับ Done แล้วสรุปต้องตาม)
+      const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r).sort((x,y)=>(y.end+y.start).localeCompare(x.end+x.start)); byR[r] = {st:L[0] ? stAt(L[0], it) : null, id:L[0]?.id, m:L[0] ? methodOf(L[0]) : ''}; });   // ใช้งานล่าสุดของรอบนั้น (ผู้ใช้ 21 ต.ค. 69: ปรับ Done แล้วสรุปต้องตาม)
       const last = [...rounds].reverse().find(r=>byR[r].st);
       return {it, byR, last};
     }).filter(r=>r.last!==undefined);
@@ -1029,7 +1044,7 @@ function renderRoundSum(){
     const done = rows.filter(r=>r.byR[r.last].st==='done').length; totDone += done; totAll += rows.length;
     h += `<tbody><tr class="rs-c"><th scope="rowgroup">${esc(c.name)}</th>${rounds.map(r=>{ const n = rows.filter(x=>x.byR[r].st).length, d = rows.filter(x=>x.byR[r].st==='done').length; return `<td>${n?`<span class="rs-frac${d===n?' all':''}">${d}/${n}</span>`:''}</td>`; }).join('')}<td><span class="rs-frac${done===rows.length?' all':''}">เสร็จ ${done}/${rows.length}</span></td></tr>`;
     rows.forEach(r=>{
-      h += `<tr><td class="rs-it">${esc(r.it)}</td>${rounds.map(x=>`<td>${cell(r.byR[x].st, [r.byR[x].id, r.it])}</td>`).join('')}<td class="rs-last">${esc(ROUND[r.last])} · ${RS_ST[r.byR[r.last].st].t}</td></tr>`;
+      h += `<tr><td class="rs-it">${esc(r.it)}</td>${rounds.map(x=>`<td>${cell(r.byR[x].st, [r.byR[x].id, r.it])}${r.byR[x].m?`<span class="rs-m"><span class="ms">${METHOD_I[r.byR[x].m]}</span>${METHOD_S[r.byR[x].m]}</span>`:''}</td>`).join('')}<td class="rs-last">${esc(ROUND[r.last])}${r.byR[r.last].m?' · '+METHOD_S[r.byR[r.last].m]:''} · ${RS_ST[r.byR[r.last].st].t}</td></tr>`;
     });
     h += '</tbody>';
   });
@@ -1055,7 +1070,7 @@ function tipHtml(el){
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${n1(mdOf(t))} manday</div>`+
-    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span><span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
+    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 
 // hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
@@ -1419,7 +1434,7 @@ const DSP = (()=>{
 DSP.time($('eT'));
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close', ()=>DSP.close(false)));
 
-let tType = 'uxui', tRound = '1';
+let tType = 'uxui', tRound = '1', tMethod = '';
 function openTask(id, preset, it){
   const t = id ? state.tasks.find(x=>x.id===id) : null;
   editT = t ? t.id : null;
@@ -1442,9 +1457,14 @@ function openTask(id, preset, it){
   tType = typeOf(v);
   tRound = String(roundOf(v));
   const pickR = k=>{ tRound=k; segs($('tRound'), ROUND, tRound, pickR); }; pickR(tRound);
+  tMethod = methodOf(v);
+  const pickM2 = k=>{ tMethod=k; segs($('tMethod'), METHOD, tMethod, pickM2); }; pickM2(tMethod);
   const pickT = k=>{ tType=k; segs($('tType'), TYPE, tType, pickT); }; pickT(tType);
   const pickS = k=>{ tStatus=k; segs($('tStatus'), STATUS, tStatus, pickS); }; segs($('tStatus'), STATUS, tStatus, pickS);
   $('tDel').style.display = t ? '' : 'none';
+  $('tDelIt').style.display = tItem ? '' : 'none';
+  $('tDelItL').textContent = tItem ? `ลบเฉพาะ ${tItem}` : '';
+  $('tDelL').textContent = tItem ? `ลบทั้งงาน (${t.items.length} ระบบย่อย)` : 'ลบงาน';
   updMdHelp((v.md!=null && v.md!=='') ? String(v.md) : ''); $('taskDlg').showModal();
 }
 $('tC').onchange = ()=>renderItems([]);
@@ -1463,7 +1483,7 @@ $('taskForm').onsubmit = ev=>{
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const md = $('tMd').value.trim();
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, round: tRound==='link' ? 'link' : +tRound, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
+    status:tStatus, type:tType, round: +tRound, method: tMethod || undefined, md: md===''?null:Number(md), note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
   if(editT){
     const o = state.tasks.find(x=>x.id===editT);
     let extra = [];
@@ -1473,11 +1493,18 @@ $('taskForm').onsubmit = ev=>{
       data.itemStatus = Object.keys(IS).length ? IS : undefined;
       if(before !== tStatus) extra = [{f:`สถานะ (${tItem})`, from:STATUS[before], to:STATUS[tStatus]}];
     } else if(o.itemStatus && tStatus !== o.status){ data.itemStatus = undefined; }   // เปลี่ยนทั้งงาน = ทุกคลินิกตามกัน
-    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o), round:roundOf(o)}, data, TF), ...extra]);
+    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o), round:roundOf(o), method:methodOf(o)||undefined}, data, TF), ...extra]);
     Object.assign(o, data); if(o.itemStatus === undefined) delete o.itemStatus;
   }
   else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
   persist(); $('taskDlg').close(); render(); toast('บันทึกแล้ว');
+};
+$('tDelIt').onclick = ()=>{   // ลบงานออกจากระบบย่อยที่เปิดมาเท่านั้น (ผู้ใช้ 21 ต.ค. 69 "ลบ task ได้")
+  if(!editT || !tItem || !confirm(`ลบงานนี้ออกจาก ${tItem}? (ระบบย่อยอื่นยังอยู่)`)) return;
+  const o = state.tasks.find(x=>x.id===editT), before = [...o.items];
+  o.items = o.items.filter(x=>x!==tItem); if(o.itemStatus){ delete o.itemStatus[tItem]; if(!Object.keys(o.itemStatus).length) delete o.itemStatus; }
+  logHist('แก้ไข','งาน', tTitle(o), cName(o.c), [{f:'ระบบย่อย', from:before.join(' · '), to:o.items.join(' · ')}]);
+  persist(); $('taskDlg').close(); render(); toast(`ลบออกจาก ${tItem} แล้ว`);
 };
 $('tDel').onclick = ()=>{
   if(!editT || !confirm('ลบงานนี้?')) return;
@@ -1583,7 +1610,7 @@ const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
+const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
 const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
@@ -1595,6 +1622,7 @@ const showV = (k, v, kind) => {
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
   if(k==='round') return ROUND[v]||('รอบ '+v);
+  if(k==='method') return METHOD[v]||v;
   if(k==='kind') return kindOf(v)?.label||v;
   if(k==='mode') return PMODE[v]||v;
   if(k==='md') return n1(v)+' วัน';
