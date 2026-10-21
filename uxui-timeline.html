@@ -601,6 +601,35 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 @media (pointer:coarse){ .itsub{opacity:.7;width:36px;height:36px} }
 table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 .checks label.kid{font-size:13px}
+
+/* ใครกำลังดูอยู่ */
+.metarow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:2px}
+.metarow .saved{margin-top:0}
+.viewers{position:relative;display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--text-content-secondary)}
+.viewers[hidden]{display:none}
+.vlab{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.vdot{width:8px;height:8px;border-radius:50%;background:var(--text-statusbadge-success);box-shadow:0 0 0 3px color-mix(in srgb,var(--text-statusbadge-success) 20%,transparent)}
+.vstack{display:inline-flex;align-items:center}
+.vw{width:26px;height:26px;border-radius:50%;margin-left:-6px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;background:var(--vc);box-shadow:0 0 0 2px var(--surface-card-100);line-height:1}
+.vstack .vw:first-child{margin-left:0}
+.vw .ms{font-size:16px}
+.vw.more{background:var(--surface-neutral-tertiary);color:var(--text-content-secondary)}
+.vw.me{cursor:pointer;box-shadow:0 0 0 2px var(--surface-card-100),0 0 0 3.5px var(--brand-p600)}
+.vw.me:focus{outline:none}.vw.me:focus-visible{box-shadow:0 0 0 2px var(--surface-card-100),0 0 0 4px var(--brand-p700)}
+.vtip{display:none;position:absolute;left:0;top:calc(100% + 8px);z-index:45;min-width:240px;max-width:min(280px,calc(100vw - 32px));background:var(--surface-card-100);border:1px solid var(--border-neutral-tertiary);border-radius:var(--dim-radius-200);box-shadow:0 8px 24px rgba(17,19,20,.16);padding:12px;flex-direction:column;gap:6px;color:var(--text-content-default)}
+.viewers:hover .vtip,.viewers:focus-within .vtip{display:flex}
+.viewers:has(.vmenu) .vtip{display:none}
+.vtip .tt-t{font-size:14px;font-weight:500}
+.vtip .tt-s{font-size:12px;color:var(--text-content-secondary)}
+.vlist{display:flex;flex-direction:column;gap:4px;padding-top:6px;border-top:1px solid var(--border-neutral-tertiary);font-size:13px}
+.vlist span{display:flex;align-items:center;gap:6px}
+.vlist i,.vmenu i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.vlist small{color:var(--text-content-tertiary)}
+.vmenu{position:absolute;left:0;top:calc(100% + 8px);z-index:46;min-width:180px;background:var(--surface-dropdown-default);border:1px solid var(--border-dropdown-default);border-radius:var(--dim-radius-500);box-shadow:var(--shadow-dropdown);padding:4px;display:flex;flex-direction:column}
+.vmenu .tt-s{padding:6px 12px 2px;font-size:12px;color:var(--text-content-tertiary)}
+.vmenu button{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border:0;border-radius:var(--dim-radius-150);background:transparent;font:inherit;font-size:14px;color:var(--text-list-default);text-align:left;cursor:pointer}
+.vmenu button:hover,.vmenu button[aria-pressed="true"]{background:var(--surface-list-hover);color:var(--text-list-hover)}
+@media (pointer:coarse){ .vw{width:32px;height:32px} }
 </style>
 </head>
 <body>
@@ -609,7 +638,7 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
     <div class="ttl">
       <h1>UXUI Manday Timeline</h1>
       <p class="sub">แยกตามคณะ › ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
-      <div class="saved" id="saved"></div>
+      <div class="metarow"><div class="saved" id="saved"></div><div class="viewers" id="viewers" hidden></div></div>
     </div>
     <div class="actions">
       <a class="btn subdue" id="driveBtn" href="https://drive.google.com/drive/folders/1mKA6SXSueYuEvfkCUAovPak5YHfmDxL2" target="_blank" rel="noopener"><span class="ms">folder_shared</span>รวมลิงก์ Drive<span class="ms ext">open_in_new</span></a>
@@ -1720,7 +1749,7 @@ function logHist(action, kind, title, where, changes){
 function renderHist(){
   const H = state.history || [];
   $('hHint').textContent = H.length ? `${H.length} รายการ · ล่าสุดอยู่บนสุด` : 'ยังไม่มีการแก้ไข';
-  const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} segs($('hMe'), Object.fromEntries(['—',...PEOPLE].map(p=>[p,p==='—'?'ไม่ระบุ':p])), me||'—', pickMe); };
+  const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} if(typeof PRESENCE!=='undefined') PRESENCE.refresh(); segs($('hMe'), Object.fromEntries(['—',...PEOPLE].map(p=>[p,p==='—'?'ไม่ระบุ':p])), me||'—', pickMe); };
   pickMe(me||'—');
   let day = '', h = '';
   H.forEach(e=>{
@@ -1931,6 +1960,43 @@ window.FH = (()=>{
   fh.addEventListener('pointerover', ev=>{ const el = ev.target.closest('.hd[data-day]'); if(el) showTip(el); });
   fh.addEventListener('pointerout', ev=>{ const el = ev.target.closest('.hd[data-day]'); if(el && !el.contains(ev.relatedTarget)) hideTip(); });
   return { build, place };
+})();
+
+// ---------- ใครกำลังดูอยู่ (ไม่ต้อง login) — ส่งสัญญาณทุก 20 วินาที · ชื่อ = ที่เลือกไว้ใน "บันทึกการแก้ไขในชื่อ" (ผู้ใช้ 21 ต.ค. 69) ----------
+const PRESENCE = (()=>{
+  if(typeof SYNC_URL === 'undefined' || !SYNC_URL) return { refresh(){} };
+  let sid = ''; try { sid = sessionStorage.getItem(STORE_KEY+':sid') || ''; } catch(e){}
+  if(!sid){ sid = 's'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); try{ sessionStorage.setItem(STORE_KEY+':sid', sid); }catch(e){} }
+  const box = document.getElementById('viewers');
+  let viewers = [], menuOpen = false;
+  const send = (leave) => fetch(SYNC_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({presence:{sid, name:me||'', leave:!!leave}}), keepalive:true})
+    .then(r=>r.json()).then(j=>{ if(Array.isArray(j.viewers)){ viewers = j.viewers; draw(); } }).catch(()=>{});
+  const initials = n => n ? n.slice(0,2) : '';
+  function draw(){
+    // คนเดียวกันเปิดหลายแท็บ = นับครั้งเดียว · คนที่ไม่ระบุชื่อนับแยกตามแท็บ
+    const seen = new Set(), list = [];
+    viewers.slice().sort((a,b)=>(a.sid===sid?-1:b.sid===sid?1:0)).forEach(v=>{ const k = v.name ? 'n:'+v.name : 's:'+v.sid; if(seen.has(k)) return; seen.add(k); list.push(v); });
+    if(!list.some(v=>v.sid===sid)) list.unshift({sid, name:me});
+    box.hidden = false;
+    const MAX = 5, shown = list.slice(0, MAX), more = list.length - shown.length;
+    const av = v => { const mine = v.sid===sid, col = v.name && WHO_COLOR[v.name] ? WHO_COLOR[v.name] : 'var(--text-content-tertiary)';
+      return `<span class="vw${mine?' me':''}" style="--vc:${col}" ${mine?'role="button" tabindex="0" data-me="1"':''}>${v.name?esc(initials(v.name)):'<span class="ms">person</span>'}</span>`; };
+    const anon = list.filter(v=>!v.name).length;
+    box.innerHTML = `<span class="vlab"><span class="vdot"></span>กำลังดู ${list.length}</span><span class="vstack">${shown.map(av).join('')}${more>0?`<span class="vw more">+${more}</span>`:''}</span>`
+      + `<div class="vtip" role="tooltip"><div class="tt-t">กำลังดูหน้านี้ ${list.length} คน</div><div class="tt-s">อัปเดตทุก 20 วินาที · ไม่ต้องเข้าสู่ระบบ</div><div class="vlist">${list.map(v=>`<span><i style="background:${v.name&&WHO_COLOR[v.name]?WHO_COLOR[v.name]:'var(--text-content-tertiary)'}"></i>${v.name?esc(v.name):'ไม่ระบุชื่อ'}${v.sid===sid?' <small>(คุณ)</small>':''}</span>`).join('')}</div>${!me?'<div class="tt-s">กดวงกลมของคุณเพื่อระบุชื่อ</div>':''}</div>`
+      + (menuOpen ? `<div class="vmenu" role="menu"><div class="tt-s">คุณคือ</div>${['', ...PEOPLE].map(p=>`<button type="button" role="menuitem" data-who="${esc(p)}"${(me||'')===p?' aria-pressed="true"':''}>${p?`<i style="background:${WHO_COLOR[p]}"></i>${esc(p)}`:'ไม่ระบุชื่อ'}</button>`).join('')}</div>` : '');
+  }
+  box.addEventListener('click', ev=>{
+    const w = ev.target.closest('[data-who]');
+    if(w){ me = w.dataset.who; try{ localStorage.setItem(STORE_KEY+':me', me); }catch(e){} menuOpen = false; send(); draw(); return; }
+    if(ev.target.closest('[data-me]')){ menuOpen = !menuOpen; draw(); }
+  });
+  box.addEventListener('keydown', ev=>{ if((ev.key==='Enter'||ev.key===' ') && ev.target.closest('[data-me]')){ ev.preventDefault(); menuOpen = !menuOpen; draw(); } if(ev.key==='Escape' && menuOpen){ menuOpen=false; draw(); } });
+  document.addEventListener('pointerdown', ev=>{ if(menuOpen && !box.contains(ev.target)){ menuOpen=false; draw(); } });
+  send(); setInterval(()=>{ if(!document.hidden) send(); }, 20000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) send(); });
+  window.addEventListener('pagehide', ()=>send(true));
+  return { refresh: ()=>send() };
 })();
 
 render();
