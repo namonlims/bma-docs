@@ -630,6 +630,10 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 .vmenu button{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border:0;border-radius:var(--dim-radius-150);background:transparent;font:inherit;font-size:14px;color:var(--text-list-default);text-align:left;cursor:pointer}
 .vmenu button:hover,.vmenu button[aria-pressed="true"]{background:var(--surface-list-hover);color:var(--text-list-hover)}
 @media (pointer:coarse){ .vw{width:32px;height:32px} }
+.chip.has-sub{flex-direction:column;justify-content:center;gap:0;line-height:1.25;min-height:48px;padding-top:4px;padding-bottom:4px}
+.chsub{display:block;font-size:11px;font-weight:400;color:var(--text-content-tertiary)}
+.chip[aria-pressed="true"] .chsub{color:var(--brand-p700)}
+.thsub{display:block;font-size:11px;font-weight:400;color:var(--text-content-tertiary)}
 </style>
 </head>
 <body>
@@ -792,6 +796,8 @@ const typeOf = t => TYPE[t.type] ? t.type : 'uxui';
 const TICON = {doc:'description', figma:'draw'};
 // รอบงาน (ผู้ใช้สั่ง 21 ต.ค. 69 "ติด tag ว่ารอบที่เท่าไหร่") · ยังไม่ตั้ง = อ่านจากหมายเหตุ "รอบ N" ไม่มี = รอบ 1
 const ROUND = {1:'รอบ 1', 2:'รอบ 2', 3:'รอบ 3', 4:'รอบ 4'};
+const ROUND_SUB = {1:'TOR', 2:'UXUI', 3:'BA', 4:'Other'};   // ความหมายของแต่ละรอบ (ผู้ใช้ 21 ต.ค. 69)
+const roundFull = r => (ROUND[r]||'รอบ '+r) + (ROUND_SUB[r] ? ` (${ROUND_SUB[r]})` : '');
 const roundOf = t => +t.round || +((t.note||'').match(/รอบ\s*(\d)/)?.[1]) || 1;   // round 'link' เดิม = วิธีส่ง ส่ง Link
 // วิธีส่ง แยกจากรอบ (ผู้ใช้สั่ง 21 ต.ค. 69 "แยกรอบ และวิธีการส่ง")
 const METHOD = {'':'ไม่ระบุ', onsite:'Present ที่สำนัก', online:'Present Online', link:'ส่ง Link'};
@@ -1034,7 +1040,7 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = daysOf(t);
-    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    const tip = `${roundFull(roundOf(t))}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
     return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
   };
 
@@ -1090,7 +1096,7 @@ const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ
 function renderRoundSum(){
   const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[])];
   const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}">${RS_ST[st].i?`<span class="ms">${RS_ST[st].i}</span>`:''}${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
-  let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
+  let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}${ROUND_SUB[r]?`<small class="thsub">${esc(ROUND_SUB[r])}</small>`:''}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
   let totDone = 0, totAll = 0;
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
@@ -1130,7 +1136,7 @@ function tipHtml(el){
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${daysOf(t)} วัน</div>`+
-    `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
+    `<div class="tt-g"><span>รอบ</span><span>${esc(roundFull(roundOf(t)))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 
 // hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
@@ -1377,7 +1383,7 @@ function startResize(ev, bar, edge, a, n){
 const $ = id => document.getElementById(id);
 let editT = null, tItem = null, tStatus = 'todo', eKind = 'present', eMode = 'onsite', editE = null;
 const segs = (el, map, cur, pick) => {
-  el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}</button>`).join('');
+  el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip${v?.sub?' has-sub':''}" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}${v?.sub?`<small class="chsub">${esc(v.sub)}</small>`:''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>pick(b.dataset.k));
 };
 const fillCommittees = sel => { sel.innerHTML = state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join(''); };
@@ -1555,7 +1561,7 @@ function openTask(id, preset, it){
   $('tStatusFor').textContent = tItem ? `เฉพาะ ${tItem}` : (t && t.items.length > 1 ? `ทุกคลินิกในงานนี้ (${t.items.length})` : '');
   tType = typeOf(v);
   tRound = String(roundOf(v));
-  const pickR = k=>{ tRound=k; segs($('tRound'), ROUND, tRound, pickR); }; pickR(tRound);
+  const pickR = k=>{ tRound=k; segs($('tRound'), Object.fromEntries(Object.entries(ROUND).map(([k,v])=>[k,{label:v, sub:ROUND_SUB[k]}])), tRound, pickR); }; pickR(tRound);
   tMethod = methodOf(v);
   const pickM2 = k=>{ tMethod=k; segs($('tMethod'), METHOD, tMethod, pickM2); }; pickM2(tMethod);
   const pickT = k=>{ tType=k; segs($('tType'), TYPE, tType, pickT); }; pickT(tType);
@@ -1730,7 +1736,7 @@ const showV = (k, v, kind) => {
   if(k==='start'||k==='end'||k==='date') return fmtD(v);
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
-  if(k==='round') return ROUND[v]||('รอบ '+v);
+  if(k==='round') return roundFull(v);
   if(k==='method') return METHOD[v]||v;
   if(k==='kind') return kindOf(v)?.label||v;
   if(k==='mode') return PMODE[v]||v;
