@@ -1620,8 +1620,8 @@ $('addEvent').onclick = ()=>openEvent(null);
 // ---------- นัดจาก Google Calendar "สำนักอนามัยกทม." (ผู้ใช้สั่ง 21 ต.ค. 69) ----------
 // เฉพาะนัดที่ prapatsorn.ch735@gmail.com สร้าง · ดึงครั้งเดียวผ่าน Claude (หน้าเว็บอ่านปฏิทินเองไม่ได้ เพราะปฏิทินไม่สาธารณะ)
 // แถว = [id, วันที่, เวลา, หัวข้อ, สถานที่, Google Meet, eid] · ซิงก์ใหม่ = แทนที่ GCAL ทั้งก้อน
-const GCAL_SYNCED = '2026-10-21T00:45';
-const GCAL = [
+let GCAL_SYNCED = '2026-10-21T00:45';
+let GCAL = [
   ["5ai8k9vrim3hc6lmmfpoblllei", "2026-09-21", "", "ประชุมคณะที่ 13 (ครั้งที่ 1)", "สำนักอนามัย กรุงเทพมหานคร ณ ห้องประชุมชั้น 11 กทม. 2", "", "NWFpOGs5dnJpbTNoYzZsbW1mcG9ibGxsZWkgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
   ["3pebm723e02u6oe2e4bg4tmcc2", "2026-10-14", "09:00", "ประชุมคณะที่ 10: ด้านการสงเคราะห์ทางการแพทย์และสาธารณสุข (1)", "", "https://meet.google.com/puy-qxev-rgs", "M3BlYm03MjNlMDJ1Nm9lMmU0Ymc0dG1jYzIgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
   ["3758np2ile77airndqj00qunmt", "2026-10-15", "09:00", "ประชุมคณะที่ 9: ด้านการส่งเสริม ป้องกันและฟื้นฟูสุขภาพ (2)", "", "", "Mzc1OG5wMmlsZTc3YWlybmRxajAwcXVubXQgYjNkMTRjZDMxOWQwMWFmYzkxZjZkZDA3NWNkN2I2MGM0NTdmOTc2MjM0MzE4NTFiMmIxM2I0Yzg2NWJlMTYwMUBn"],
@@ -1657,6 +1657,18 @@ function gcalEvents(){
 }
 // นัดจากปฏิทินไม่เก็บใน state (แก้ในหน้านี้ไม่ได้ · แก้ที่ Google Calendar) · แสดงรวมกับนัดของทีมผ่าน allEvents()
 const allEvents = () => [...state.events, ...gcalEvents()];
+// ดึงปฏิทินสดผ่าน Apps Script (?cal=1) ตอนเปิดหน้า + ทุก 5 นาที · ดึงไม่ได้ = ใช้ชุดที่ฝังในไฟล์ (ผู้ใช้ 21 ต.ค. 69 "ปฏิทินอัปเดทจะ sync ใช่มั้ย")
+let gcalLive = false;
+async function pullCal(){
+  if(typeof SYNC_URL === 'undefined' || !SYNC_URL) return;
+  try {
+    const r = await fetch(SYNC_URL + '?cal=1', {cache:'no-store'}); const j = await r.json();
+    if(!Array.isArray(j.cal)) return;
+    const changed = JSON.stringify(j.cal) !== JSON.stringify(GCAL);
+    GCAL = j.cal; GCAL_SYNCED = new Date(j.now).toISOString().slice(0,16); gcalLive = true;
+    if(changed && !document.querySelector('dialog[open]')) render();
+  } catch(e){}
+}
 
 // ---------- ลิงก์ไฟล์ (ผู้ใช้สั่ง 21 ต.ค. 69 "แนบลิงก์ไฟล์ได้") ----------
 const normUrl = u => { u = (u||'').trim(); if(!u) return ''; return /^[a-z][a-z0-9+.-]*:/i.test(u) ? u : 'https://'+u; };
@@ -1879,6 +1891,7 @@ const SYNC = (()=>{
     return queue;
   };
   if(on){
+    pullCal(); setInterval(()=>{ if(!document.hidden) pullCal(); }, 5*60*1000); window.addEventListener('focus', ()=>pullCal());
     const fn = document.getElementById('footNote'); if(fn) fn.textContent = 'บันทึกลงข้อมูลกลางอัตโนมัติ · ทุกคนที่เปิดลิงก์นี้เห็นข้อมูลชุดเดียวกัน · ประวัติการแก้ไขดูได้ที่ปุ่มด้านบน';
     pull(true);
     setInterval(()=>{ if(!document.hidden) pull(); }, 15000);
