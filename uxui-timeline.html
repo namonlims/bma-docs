@@ -579,6 +579,14 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .mdinfo b{font-size:16px}
 .mdinfo small{color:var(--text-content-tertiary);font-size:12px}
 .chip .cmd{font-size:11px;color:var(--text-content-tertiary);font-weight:400}
+
+/* ปุ่มลบระบบย่อย: ชิดขวาของชื่อ โผล่เมื่อชี้แถว · จอสัมผัสเห็นตลอด */
+.itdel{flex:none;width:28px;height:28px;padding:0;border:0;border-radius:var(--dim-radius-150);background:transparent;color:var(--text-content-tertiary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity .12s}
+.itdel .ms{font-size:18px}
+.lab.sub:hover .itdel,.itdel:focus-visible{opacity:1}
+.itdel:hover{background:var(--surface-alert-error);color:var(--text-danger-default)}
+.itdel:focus{outline:none}.itdel:focus-visible{box-shadow:0 0 0 2px var(--text-danger-default)}
+@media (pointer:coarse){ .itdel{opacity:.6;width:36px;height:36px} }
 </style>
 </head>
 <body>
@@ -995,7 +1003,7 @@ function renderGantt(){
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     c.items.forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it));
-      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span></div>`+
+      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span><button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
@@ -1149,6 +1157,23 @@ gEl.addEventListener('click', ev=>{
 
 // ---------- ลากยืด-หดแถบงาน (ผู้ใช้สั่ง 20 ต.ค. 69 "กล่องสีสามารถยืดได้") ----------
 
+
+
+// ลบระบบย่อยออกจากรายการ (ผู้ใช้สั่ง 21 ต.ค. 69 "ให้ลบรายการตรงนี้ออกได้ด้วย")
+// งานที่มีระบบย่อยนี้อย่างเดียว = ลบงานด้วย · งานหลายระบบย่อย = เอาระบบย่อยนี้ออกจากงาน
+gEl.addEventListener('click', ev=>{
+  const d = ev.target.closest('.itdel'); if(!d) return;
+  const c = state.committees.find(x=>x.id===d.dataset.c), it = d.dataset.item; if(!c) return;
+  const ts = state.tasks.filter(t=>t.c===c.id && t.items.includes(it));
+  const only = ts.filter(t=>t.items.length===1).length, multi = ts.length - only;
+  const msg = `ลบ "${it}" ออกจาก ${c.name}?` + (ts.length ? `\n\nมีงาน ${ts.length} งาน` + (only?`\n· ${only} งานที่มีแค่ระบบย่อยนี้ จะถูกลบ`:'') + (multi?`\n· ${multi} งานที่ทำหลายระบบย่อย จะเอา "${it}" ออกจากงาน`:'') : '');
+  if(!confirm(msg)) return;
+  c.items = c.items.filter(x=>x!==it);
+  state.tasks = state.tasks.filter(t=>!(t.c===c.id && t.items.length===1 && t.items[0]===it));
+  state.tasks.forEach(t=>{ if(t.c===c.id && t.items.includes(it)){ t.items = t.items.filter(x=>x!==it); if(t.itemStatus){ delete t.itemStatus[it]; if(!Object.keys(t.itemStatus).length) delete t.itemStatus; } } });
+  logHist('ลบ','ระบบย่อย', it, c.name, ts.length ? [{f:'งานที่เกี่ยวข้อง', from:`${ts.length} งาน`, to:`ลบ ${only} · เอาออก ${multi}`}] : []);
+  persist(); render(); toast(`ลบ ${it} แล้ว`);
+});
 
 // สลับลำดับระบบย่อย (ผู้ใช้สั่ง 21 ต.ค. 69 "ต้องสามารถสลับลำดับได้"): ลากที่จุดจับ ⋮⋮ หน้าชื่อ · หรือโฟกัสจุดจับแล้วกดลูกศรขึ้น/ลง
 function reorderItem(cid, it, to){
