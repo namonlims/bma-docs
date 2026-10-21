@@ -574,16 +574,11 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .dels{display:flex;flex-wrap:wrap;gap:4px}
 @media (max-width:640px){ .dels{width:100%} .dels .btn{flex:1;justify-content:center} }
 
-/* md · ภาระงาน ในคอลัมน์ชื่อ */
-.lab .md,.lab .wl{width:36px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
-.lab .wl{font-size:11px;color:var(--text-content-tertiary)}
-.lab.c .wl{font-weight:500;color:var(--text-content-secondary)}
-.lab.h .md,.lab.h .wl{font-size:11px;color:var(--text3);font-weight:500}
+/* จำนวนวันในป๊อปอัป */
 .mdinfo{min-height:40px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;border-radius:var(--dim-radius-200);background:var(--surface-neutral-tertiary);font-size:14px;color:var(--text-content-default)}
 .mdinfo b{font-size:16px}
 .mdinfo small{color:var(--text-content-tertiary);font-size:12px}
 .chip .cmd{font-size:11px;color:var(--text-content-tertiary);font-weight:400}
-@media (max-width:640px){ .lab .md,.lab .wl{width:26px} }
 </style>
 </head>
 <body>
@@ -643,7 +638,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 
   <section class="panel">
     <div class="phd"><h2>Timeline รายคณะ</h2><div class="phd-r"><a class="btn subdue sm" href="#roundSum"><span class="ms">checklist</span><span>สรุปรอบงาน</span></a><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div></div>
-    <p class="hint">เรียงคณะตามวันเริ่มงาน · md = คน-วัน (คนเดียวทำหลายงานในวันเดียว = 1) · ภาระ = วัน × ระบบย่อย</p>
+    <p class="hint">เรียงคณะตามวันเริ่มงาน · md บนปุ่มผู้รับผิดชอบ = คน-วัน (คนเดียวทำหลายงานในวันเดียว = 1)</p>
     <div class="scroller" id="scroller"><div class="gantt" id="gantt"></div></div>
   </section>
 
@@ -685,7 +680,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
             <div class="field"><label for="tS">วันเริ่ม</label><input type="date" id="tS" required></div>
             <div class="field"><label for="tE">วันสิ้นสุด</label><input type="date" id="tE" required></div>
           </div>
-          <div class="field"><span class="fl">Manday · ภาระงาน</span><div class="mdinfo" id="tMdInfo"></div><span class="help">manday นับต่อคนต่อวัน (หลายงานในวันเดียว = 1) · ภาระงาน = วัน × จำนวนระบบย่อย</span></div>
+          <div class="field"><span class="fl">จำนวนวัน</span><div class="mdinfo" id="tMdInfo"></div><span class="help">manday ของแต่ละคนนับต่อวัน (หลายงานในวันเดียว = 1)</span></div>
         </section>
         <section class="fgrp">
           <h4 class="gh">ความคืบหน้า</h4>
@@ -876,9 +871,8 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const isWe = d => d.getDay()===0 || d.getDay()===6;
 function daysOf(t){ return Math.round((pd(t.end) - pd(t.start))/DAY) + 1; }   // นับทุกวันตามปฏิทิน (ผู้ใช้ 21 ต.ค. 69 เอาติ๊กไม่นับเสาร์–อาทิตย์ออก)
 const mdOf = t => daysOf(t);
-// manday = คน-วัน: คนเดียวทำหลายงาน/หลายระบบย่อยในวันเดียว = 1 · ภาระงาน = วัน × จำนวนระบบย่อย (ผู้ใช้ 21 ต.ค. 69 "Kae ทำงาน A 6 รายการใน 1 วัน นับ 1 manday workload 6")
+// manday = คน-วัน: คนเดียวทำหลายงาน/หลายระบบย่อยในวันเดียว = 1 (ผู้ใช้ 21 ต.ค. 69) · ภาระงานลบออกแล้ว (ผู้ใช้ 21 ต.ค. 69)
 function personDays(tasks){ const S = new Set(); tasks.forEach(t=>{ for(let d=pd(t.start); d<=pd(t.end); d=new Date(d.getTime()+DAY)) S.add(t.who+'|'+iso(d)); }); return S.size; }
-const workload = (tasks, scope) => tasks.reduce((s,t)=>s + daysOf(t) * (scope ? t.items.filter(x=>scope.includes(x)).length : t.items.length), 0);
 const n1 = v => (Math.round(v*10)/10).toLocaleString('th-TH',{maximumFractionDigits:1});
 
 // ---------- ตัวกรอง ----------
@@ -971,7 +965,7 @@ function renderGantt(){
     const dk = iso(d), nev = evByDay[dk]?.length || 0;
     hd += `<span class="hd ${isWe(d)?'we':''} ${i===tIdx?'td':''}${nev?' hasev':''}" style="left:${px(i)}" data-day="${dk}" tabindex="0" aria-label="${esc(fmtD(dk))}${nev?` · นัด ${nev} รายการ`:''}">${TH_D1[d.getDay()]}<b>${d.getDate()}</b></span>`;
   }
-  let html = `<div class="lab h"><span class="nm">คณะ › ระบบย่อย</span><span class="md" title="">md</span><span class="wl">ภาระ</span></div><div class="trk h">${hd}</div>`;
+  let html = `<div class="lab h"><span class="nm">คณะ › ระบบย่อย</span></div><div class="trk h">${hd}</div>`;
 
   const markers = evs => {
     const cnt = {};
@@ -985,25 +979,23 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = daysOf(t);
-    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน · ภาระงาน ${md*t.items.length}\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    const tip = `${ROUND[roundOf(t)]||'รอบ '+roundOf(t)}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
     return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
   };
 
   // ภาพรวม
   const gen = allEvents().filter(e=>!e.c);
-  html += `<div class="lab c gen"><span class="ctog sp"></span><span class="nm">ภาพรวม / วันสำคัญ</span><span class="md"></span><span class="wl"></span></div><div class="trk c" data-ec=""><span class="addhit ev"></span>${bg}${markers(gen)}</div>`;
+  html += `<div class="lab c gen"><span class="ctog sp"></span><span class="nm">ภาพรวม / วันสำคัญ</span></div><div class="trk c" data-ec=""><span class="addhit ev"></span>${bg}${markers(gen)}</div>`;
 
   [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
-    const tot = personDays(ts), wl = workload(ts, c.items);
     const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
-    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span><span class="md">${tot}</span><span class="wl">${wl}</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
+    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     c.items.forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it));
-      const md = personDays(its), wl = workload(its, [it]);
-      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span><span class="md">${its.length?md:'—'}</span><span class="wl">${its.length?wl:''}</span></div>`+
+      html += `<div class="lab sub ${its.length?'':'none'}" data-c="${esc(c.id)}" data-item="${esc(it)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${esc(it)}</span></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
@@ -1082,7 +1074,7 @@ function tipHtml(el){
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
-    `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${daysOf(t)} วัน · ภาระงาน ${daysOf(t)*t.items.length}</div>`+
+    `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${daysOf(t)} วัน</div>`+
     `<div class="tt-g"><span>รอบ</span><span>${esc(ROUND[roundOf(t)]||'รอบ '+roundOf(t))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
 }
 
@@ -1297,11 +1289,10 @@ function renderItems(checked){
 const updItemsCnt = ()=>{ const n=$('tItems').querySelectorAll('input:checked').length, all=$('tItems').querySelectorAll('input').length; $('tItemsCnt').textContent = all ? `เลือก ${n} จาก ${all}` : ''; };
 $('tItems').addEventListener('change', ()=>{ updItemsCnt(); updMdHelp(); });
 const checkedItems = () => [...$('tItems').querySelectorAll('input:checked')].map(i=>i.value);
-// Manday · ภาระงาน ของงานนี้ (แสดงอย่างเดียว คิดจากช่วงวัน × ระบบย่อย)
+// จำนวนวันของงานนี้ (แสดงอย่างเดียว คิดจากช่วงวัน)
 function updMdHelp(){
   const st=$('tS').value, en=$('tE').value, n = (st && en) ? daysOf({start:st, end:en}) : 0;
-  const k = $('tInfo').hidden ? checkedItems().length : (state.tasks.find(x=>x.id===editT)?.items.length || 1);
-  $('tMdInfo').innerHTML = `<b>${n}</b> วัน <span>·</span> ภาระงาน <b>${n*Math.max(1,k)}</b> <small>(${n} วัน × ${Math.max(1,k)} ระบบย่อย)</small>`;
+  $('tMdInfo').innerHTML = `<b>${n}</b> วัน`;
 }
 /* ===== Select · DatePicker · TimePicker ตาม Design system — ช่องเดิมเก็บค่า ตัวนี้เป็นหน้าตา (ผู้ใช้สั่ง 21 ต.ค. 69) ===== */
 const DSP = (()=>{
@@ -1448,7 +1439,7 @@ function openTask(id, preset, it){
   editT = t ? t.id : null;
   const v = t || {c:state.committees[0].id, items:[], who:fWho!=='ทั้งหมด'?fWho:'Kae', start:iso(today), end:iso(today), status:'todo', md:null, note:'', ...preset};
   $('tTitle').textContent = t ? 'แก้ไขงาน' : 'เพิ่มงาน';
-  $('tHint').textContent = t ? `${fmt(pd(t.start))} – ${fmt(pd(t.end))} · ${daysOf(t)} วัน · ภาระงาน ${daysOf(t)*t.items.length}` : 'เลือกคณะ คลินิก ผู้รับผิดชอบ และช่วงวัน';
+  $('tHint').textContent = t ? `${fmt(pd(t.start))} – ${fmt(pd(t.end))} · ${daysOf(t)} วัน` : 'เลือกคณะ คลินิก ผู้รับผิดชอบ และช่วงวัน';
   fillCommittees($('tC')); $('tC').value = v.c; renderItems(v.items);
   $('tS').value = v.start; $('tE').value = v.end;
   const who0 = PEOPLE.includes(v.who) ? v.who : 'Kae';
