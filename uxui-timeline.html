@@ -634,6 +634,23 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 .chsub{display:block;font-size:11px;font-weight:400;color:var(--text-content-tertiary)}
 .chip[aria-pressed="true"] .chsub{color:var(--brand-p700)}
 .thsub{display:block;font-size:11px;font-weight:400;color:var(--text-content-tertiary)}
+
+/* ปุ่ม + ป๊อปอัปประวัติการเข้าดู */
+.vhist{width:28px;height:28px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--text-content-tertiary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.vhist[hidden]{display:none}
+.vhist .ms{font-size:18px}
+.vhist:hover{background:var(--brand-p100);color:var(--brand-p700)}
+.vhist:focus{outline:none}.vhist:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+#visitDlg{width:min(560px,calc(100vw - 32px))}
+#visitDlg .hbody{overflow:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:20px}
+.vrow{display:grid;grid-template-columns:26px minmax(0,1fr) max-content 72px;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border-neutral-tertiary);font-size:14px}
+.vrow b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vrow .vw{margin:0}
+.vt{color:var(--text-content-secondary);font-variant-numeric:tabular-nums}
+.vd{color:var(--text-content-tertiary);font-size:12px;text-align:right}
+.vlive{color:var(--text-statusbadge-success);font-weight:500}
+@media (pointer:coarse){ .vhist{width:36px;height:36px} }
+@media (max-width:640px){ #visitDlg .hbody{padding:8px 16px 16px} .vrow{grid-template-columns:26px minmax(0,1fr) max-content;} .vd{grid-column:2/4;text-align:left;margin-top:-6px} }
 </style>
 </head>
 <body>
@@ -642,7 +659,7 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
     <div class="ttl">
       <h1>UXUI Manday Timeline</h1>
       <p class="sub">แยกตามคณะ › ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
-      <div class="metarow"><div class="saved" id="saved"></div><div class="viewers" id="viewers" hidden></div></div>
+      <div class="metarow"><div class="saved" id="saved"></div><div class="viewers" id="viewers" hidden></div><button type="button" class="vhist" id="vhistBtn" hidden aria-label="ประวัติการเข้าดู"><span class="ms">manage_history</span></button></div>
     </div>
     <div class="actions">
       <a class="btn subdue" id="driveBtn" href="https://drive.google.com/drive/folders/1mKA6SXSueYuEvfkCUAovPak5YHfmDxL2" target="_blank" rel="noopener"><span class="ms">folder_shared</span>รวมลิงก์ Drive<span class="ms ext">open_in_new</span></a>
@@ -776,6 +793,13 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
       <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
     <div class="hbar"><span class="fl">บันทึกการแก้ไขในชื่อ</span><div class="seg" id="hMe"></div></div>
     <div class="hbody" id="hList"></div>
+  </div>
+</dialog>
+<dialog id="visitDlg">
+  <div class="dlg">
+    <div class="ph"><div><h3>ประวัติการเข้าดู</h3><p class="hint" id="vHint">กำลังโหลด…</p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="hbody" id="vList"></div>
   </div>
 </dialog>
 <datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"></datalist>
@@ -1383,7 +1407,7 @@ function startResize(ev, bar, edge, a, n){
 const $ = id => document.getElementById(id);
 let editT = null, tItem = null, tStatus = 'todo', eKind = 'present', eMode = 'onsite', editE = null;
 const segs = (el, map, cur, pick) => {
-  el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip${v?.sub?' has-sub':''}" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}${v?.sub?`<small class="chsub">${esc(v.sub)}</small>`:''}</button>`).join('');
+  el.innerHTML = Object.entries(map).map(([k,v])=>`<button type="button" class="chip${typeof v==='object'&&v.sub?' has-sub':''}" data-k="${k}" aria-pressed="${k===cur}">${esc(typeof v==='string'?v:v.label)}${typeof v==='object'&&v.sub?`<small class="chsub">${esc(v.sub)}</small>`:''}</button>`).join('');
   el.querySelectorAll('button').forEach(b=>b.onclick=()=>pick(b.dataset.k));
 };
 const fillCommittees = sel => { sel.innerHTML = state.committees.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join(''); };
@@ -2003,6 +2027,33 @@ const PRESENCE = (()=>{
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) send(); });
   window.addEventListener('pagehide', ()=>send(true));
   return { refresh: ()=>send() };
+})();
+
+// ประวัติการเข้าดู (ผู้ใช้ 21 ต.ค. 69 "อยากดูประวัติการเข้าดู เป็นปุ่มเล็กๆ") — อ่านจากชีต visits ผ่าน ?visits=1
+(()=>{
+  const btn = document.getElementById('vhistBtn');
+  if(typeof SYNC_URL === 'undefined' || !SYNC_URL) return;
+  btn.hidden = false;
+  const tm = t => new Date(t).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  const dur = ms => { const m = Math.max(1, Math.round(ms/60000)); return m < 60 ? `${m} นาที` : `${Math.floor(m/60)} ชม. ${m%60} นาที`; };
+  btn.onclick = async ()=>{
+    $('vList').innerHTML = ''; $('vHint').textContent = 'กำลังโหลด…'; $('visitDlg').showModal();
+    try {
+      const j = await (await fetch(SYNC_URL + '?visits=1', {cache:'no-store'})).json();
+      const V = (j.visits||[]).filter(v=>!/^zz/.test(v.sid));   // zz… = เซสชันทดสอบระบบ
+      const people = new Set(V.map(v=>v.name||'ไม่ระบุชื่อ'));
+      $('vHint').textContent = V.length ? `${V.length} ครั้ง · ${people.size} คน · ล่าสุดอยู่บนสุด · เก็บ 300 ครั้งล่าสุด` : 'ยังไม่มีประวัติ';
+      let day = '', h = '';
+      V.forEach(v=>{
+        const d = new Date(v.start), dk = iso(d), live = Date.now() - v.last < 70000;
+        if(dk!==day){ if(day) h += '</div>'; day = dk; h += `<div class="hday"><h4 class="gh">${dk===iso(today)?'วันนี้ · ':''}${esc(fmtD(dk))}</h4>`; }
+        const col = v.name && WHO_COLOR[v.name] ? WHO_COLOR[v.name] : 'var(--text-content-tertiary)';
+        h += `<div class="vrow"><span class="vw" style="--vc:${col}">${v.name?esc(v.name.slice(0,2)):'<span class="ms">person</span>'}</span><b>${v.name?esc(v.name):'ไม่ระบุชื่อ'}</b><span class="vt">${tm(v.start)} – ${live?'<span class="vlive">กำลังดู</span>':tm(v.last)}</span><span class="vd">${dur(v.last - v.start)}</span></div>`;
+      });
+      if(day) h += '</div>';
+      $('vList').innerHTML = h || '<p class="empty">ยังไม่มีประวัติการเข้าดู</p>';
+    } catch(e){ $('vHint').textContent = 'โหลดไม่สำเร็จ · ลองใหม่อีกครั้ง'; }
+  };
 })();
 
 render();
