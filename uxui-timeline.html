@@ -29,7 +29,8 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Sarabun",system-ui,sans-serif}
-.wrap{max-width:1600px;margin:0 auto;padding:28px 16px 64px}
+.wrap{margin:0 auto;padding:28px 16px 64px}   /* เต็มจอทุกขนาด (ผู้ใช้ 23 ต.ค. 69 "จอใหญ่ ขยายได้เต็มๆ จอ") */
+@media (min-width:1280px){ .wrap{padding-left:24px;padding-right:24px} }
 .head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
 h1{margin:0;font-size:24px;color:var(--brand)}
 .sub{color:var(--text2);margin:4px 0 0}
@@ -371,9 +372,15 @@ h1{font-weight:700}
 #taskDlg .addrow{margin-top:4px}
 #taskDlg .addrow .btn{min-width:96px;justify-content:center}
 #taskDlg textarea{min-height:88px;resize:vertical}
+/* ไฟล์และโน้ต: Drive คณะทำงาน · Figma · BA Note · Design Note — แต่ละช่องมีข้อความ + แนบลิงก์ (ผู้ใช้ 23 ต.ค. 69) */
+#taskDlg .fref{grid-column:1 / -1;border-top:1px solid var(--border-neutral-tertiary)}
+#taskDlg .rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+#taskDlg .rgrid textarea{min-height:64px}
+#taskDlg .fl .ms{font-size:18px;vertical-align:-4px;margin-right:4px;color:var(--text-content-tertiary)}
 @media (max-width:1023px){
   #taskDlg .tbody{grid-template-columns:minmax(0,1fr)}
   #taskDlg .fcol{border-left:0;border-top:1px solid var(--border-neutral-tertiary)}
+  #taskDlg .rgrid{grid-template-columns:minmax(0,1fr);gap:16px}
 }
 @media (max-width:640px){
   #taskDlg .fgrp{padding:20px 16px}
@@ -572,7 +579,7 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .rs-m{display:flex;align-items:center;justify-content:center;gap:2px;margin-top:2px;font-size:11px;color:var(--text-content-tertiary)}
 .rs-m .ms{font-size:13px}
 .dels{display:flex;flex-wrap:wrap;gap:4px}
-@media (max-width:640px){ .dels{width:100%} .dels .btn{flex:1;justify-content:center} }
+@media (max-width:640px){ .dels{width:100%} .dels .btn{flex:1 1 100%;justify-content:center;white-space:normal;text-align:center} }
 
 /* จำนวนวันในป๊อปอัป */
 .mdinfo{min-height:40px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;border-radius:var(--dim-radius-200);background:var(--surface-neutral-tertiary);font-size:14px;color:var(--text-content-default)}
@@ -742,7 +749,6 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
         <div class="field"><span class="fl">ประเภทงาน</span><div class="seg" id="tType"></div></div>
         <div class="field"><span class="fl">รอบ</span><div class="seg" id="tRound"></div></div>
         <div class="field"><span class="fl">วิธีส่ง</span><div class="seg" id="tMethod"></div></div>
-        <div class="field"><span class="fl">ลิงก์ไฟล์ <small class="cnt">Figma · Google Drive · เอกสาร</small></span><div class="links" id="tLinks"></div></div>
       </section>
       <div class="fcol">
         <section class="fgrp">
@@ -757,9 +763,13 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
         <section class="fgrp">
           <h4 class="gh">ความคืบหน้า</h4>
           <div class="field"><span class="fl">สถานะ <small class="cnt" id="tStatusFor"></small></span><div class="seg" id="tStatus"></div></div>
-          <div class="field"><label for="tNote">หมายเหตุ</label><textarea id="tNote" rows="3"></textarea></div>
+          <div class="field"><label for="tNote">หมายเหตุ</label><textarea id="tNote" rows="3"></textarea><div class="links" id="tNoteLinks"></div></div>
         </section>
       </div>
+      <section class="fgrp fref">
+        <h4 class="gh">ไฟล์และโน้ต</h4>
+        <div class="rgrid" id="tRefs"></div>
+      </section>
     </div>
     <div class="bar2">
       <div class="dels"><button type="button" class="btn danger" id="tDelIt"><span class="ms">remove_circle</span><span id="tDelItL">ลบเฉพาะระบบย่อยนี้</span></button><button type="button" class="btn danger" id="tDel"><span class="ms">delete</span><span id="tDelL">ลบงาน</span></button></div>
@@ -1065,7 +1075,7 @@ function renderGantt(){
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = daysOf(t);
     const tip = `${roundFull(roundOf(t))}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
-    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${t.links?.length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
+    return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${allLinks(t).length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
   };
 
   // ภาพรวม
@@ -1160,7 +1170,7 @@ function tipHtml(el){
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${daysOf(t)} วัน</div>`+
-    `<div class="tt-g"><span>รอบ</span><span>${esc(roundFull(roundOf(t)))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+linksTip(t.links);
+    `<div class="tt-g"><span>รอบ</span><span>${esc(roundFull(roundOf(t)))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+refsTip(t);
 }
 
 // hover หัววัน = นัดทั้งหมดของวันนั้น (ผู้ใช้สั่ง 21 ต.ค. 69 "hover แต่ละวัน แสดงว่ามี meeting อะไรบ้าง")
@@ -1575,7 +1585,7 @@ function openTask(id, preset, it){
   const who0 = PEOPLE.includes(v.who) ? v.who : 'Kae';
   const pickW = k=>{ $('tWho').value = k; segs($('tWhoSeg'), Object.fromEntries(PEOPLE.map(p=>[p,p])), k, pickW); };
   pickW(who0);
-  $('tNote').value = v.note || ''; renderLinks($('tLinks'), v.links);
+  $('tNote').value = v.note || ''; renderLinks($('tNoteLinks'), v.noteLinks); renderRefs(v);
   const ctx = !!t || !!(preset?.c && preset?.items?.length);
   $('tInfo').hidden = !ctx; $('tCField').hidden = ctx; $('tItemsField').hidden = ctx;
   $('tInfoC').textContent = state.committees.find(c=>c.id===v.c)?.name || '—';
@@ -1611,7 +1621,7 @@ $('taskForm').onsubmit = ev=>{
   if(!items.length){ alert('เลือกระบบย่อยอย่างน้อย 1 รายการ'); return; }
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, round: +tRound, method: tMethod || undefined, md: null, note:$('tNote').value.trim(), links:readLinks($('tLinks'))};
+    status:tStatus, type:tType, round: +tRound, method: tMethod || undefined, md: null, note:$('tNote').value.trim(), noteLinks:readLinks($('tNoteLinks')), ...readRefs(), links:undefined};
   if(editT){
     const o = state.tasks.find(x=>x.id===editT);
     let extra = [];
@@ -1621,7 +1631,7 @@ $('taskForm').onsubmit = ev=>{
       data.itemStatus = Object.keys(IS).length ? IS : undefined;
       if(before !== tStatus) extra = [{f:`สถานะ (${tItem})`, from:STATUS[before], to:STATUS[tStatus]}];
     } else if(o.itemStatus && tStatus !== o.status){ data.itemStatus = undefined; }   // เปลี่ยนทั้งงาน = ทุกคลินิกตามกัน
-    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, type:typeOf(o), round:roundOf(o), method:methodOf(o)||undefined}, data, TF), ...extra]);
+    logHist('แก้ไข','งาน', tTitle(data), cName(data.c), [...diff({...o, ...refsOf(o), links:undefined, type:typeOf(o), round:roundOf(o), method:methodOf(o)||undefined}, data, TF), ...extra]);
     Object.assign(o, data); if(o.itemStatus === undefined) delete o.itemStatus;
   }
   else { state.tasks.push({id:'u'+Date.now(), ...data}); logHist('เพิ่ม','งาน', tTitle(data), cName(data.c), [{f:'ช่วงวัน', from:'—', to:`${fmtD(data.start)} – ${fmtD(data.end)}`}]); }
@@ -1745,18 +1755,52 @@ function renderLinks(box, links){
 const readLinks = box => [...box.querySelectorAll('.lrow')].map(r=>({url:normUrl(r.querySelector('.lurl').value), name:r.querySelector('.lname').value.trim()})).filter(l=>l.url).map(l=>l.name?l:{url:l.url});
 const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span><span>${L.map(l=>esc(linkName(l))).join(' · ')}</span></div>` : '';
 
+// ---------- ไฟล์และโน้ตของงาน (ผู้ใช้ 23 ต.ค. 69 "Drive คณะทำงาน · Figma · BA Note · Design Note ทุกช่องแนบลิงก์ได้") ----------
+// เก็บเป็น t.drive / t.figma / t.ba / t.design = {text, links} · ลิงก์หมายเหตุ = t.noteLinks · t.links เดิมย้ายเข้า Figma (figma.com) / Drive (ที่เหลือ) ตอนเปิดแก้
+const REFS = [
+  {k:'drive',  label:'Drive คณะทำงาน', icon:'folder_shared', ph:'โฟลเดอร์ / ไฟล์ของคณะทำงาน'},
+  {k:'figma',  label:'Figma',          icon:'draw',          ph:'หน้า · frame ที่เกี่ยวข้อง'},
+  {k:'ba',     label:'BA Note',        icon:'assignment',    ph:'โน้ตจาก BA'},
+  {k:'design', label:'Design Note',    icon:'palette',       ph:'โน้ตการออกแบบ'},
+];
+const isFigma = l => /figma\.com/i.test(l.url||'');
+function refsOf(t){
+  const out = {}; REFS.forEach(r=>{ out[r.k] = t?.[r.k] ? {text:t[r.k].text||'', links:[...(t[r.k].links||[])]} : undefined; });
+  (t?.links||[]).forEach(l=>{ const k = isFigma(l) ? 'figma' : 'drive'; (out[k] ||= {text:'', links:[]}).links.push(l); });
+  REFS.forEach(r=>{ const o = out[r.k]; if(o && !o.text && !o.links.length) out[r.k] = undefined; else if(o && !o.text) delete o.text; else if(o && !o.links.length) delete o.links; });
+  return out;
+}
+function renderRefs(v){
+  const R = refsOf(v);
+  $('tRefs').innerHTML = REFS.map(r=>`<div class="field"><label class="fl" for="tR_${r.k}"><span class="ms">${r.icon}</span>${esc(r.label)}</label><textarea id="tR_${r.k}" rows="2" placeholder="${esc(r.ph)}">${esc(R[r.k]?.text||'')}</textarea><div class="links" id="tRL_${r.k}"></div></div>`).join('');
+  REFS.forEach(r=>renderLinks($('tRL_'+r.k), R[r.k]?.links));
+}
+function readRefs(){
+  const out = {}; REFS.forEach(r=>{ const text = $('tR_'+r.k).value.trim(), links = readLinks($('tRL_'+r.k));
+    out[r.k] = (text || links.length) ? {...(text?{text}:{}), ...(links.length?{links}:{})} : undefined; });
+  return out;
+}
+const allLinks = t => { const R = refsOf(t); return [...(t.noteLinks||[]), ...REFS.flatMap(r=>R[r.k]?.links||[])]; };
+const refVal = o => [o.text ? (o.text.length > 60 ? o.text.slice(0,60)+'…' : o.text) : '', ...(o.links||[]).map(linkName)].filter(Boolean).join(' · ');
+function refsTip(t){
+  const R = refsOf(t), rows = REFS.filter(r=>R[r.k]).map(r=>`<span>${esc(r.label)}</span><span>${esc(refVal(R[r.k]))}</span>`);
+  if(t.noteLinks?.length) rows.push(`<span>ลิงก์หมายเหตุ</span><span>${esc(t.noteLinks.map(linkName).join(' · '))}</span>`);
+  return rows.length ? `<div class="tt-g">${rows.join('')}</div>` : '';
+}
+
 // ---------- ประวัติการแก้ไข (ผู้ใช้สั่ง 21 ต.ค. 69 "มีปุ่มดูประวัติการแก้ไขได้") ----------
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', links:'ลิงก์ไฟล์'};
+const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', noteLinks:'ลิงก์หมายเหตุ', drive:'Drive คณะทำงาน', figma:'Figma', ba:'BA Note', design:'Design Note', links:'ลิงก์ไฟล์'};
 const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
   if(v==null || v==='' || (Array.isArray(v) && !v.length)) return k==='md' ? 'อัตโนมัติ' : '—';
   if(k==='c') return cName(v);
   if(k==='items') return v.join(' · ');
-  if(k==='links') return v.map(linkName).join(' · ');
+  if(k==='links' || k==='noteLinks') return v.map(linkName).join(' · ');
+  if(REFS.some(r=>r.k===k)) return refVal(v) || '—';
   if(k==='start'||k==='end'||k==='date') return fmtD(v);
   if(k==='status') return STATUS[v]||v;
   if(k==='type') return TYPE[v]||v;
