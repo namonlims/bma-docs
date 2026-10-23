@@ -1231,8 +1231,7 @@ function renderFilters(){
   ['ทั้งหมด', ...people()].forEach(p=>{
     const b = document.createElement('button'); b.type='button'; b.className='chip';
     b.setAttribute('aria-pressed', p===fWho);
-    const pts = state.tasks.filter(t=>(p==='ทั้งหมด'||t.who===p) && (fType==='all'||typeOf(t)===fType));
-    b.innerHTML = (p==='ทั้งหมด'?'':`<span class="dot" style="background:${whoColor(p)}"></span>`)+esc(p)+(p!=='ทั้งหมด' && pts.length?` <small class="cmd">${personDays(pts)} md</small>`:'');
+    b.innerHTML = (p==='ทั้งหมด'?'':`<span class="dot" style="background:${whoColor(p)}"></span>`)+esc(p);   // ไม่แสดง md บนชิปผู้รับผิดชอบ (ผู้ใช้ 24 ต.ค. 69)
     b.onclick = ()=>{ fWho=p; try{localStorage.setItem(STORE_KEY+':who',p);}catch(e){} render(); };
     el.appendChild(b);
   });
