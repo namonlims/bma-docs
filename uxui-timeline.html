@@ -12,7 +12,7 @@
   --bg:#F6F8F7; --card:#FFFFFF; --text:#1B2420; --text2:#55625C; --text3:#86928C;
   --line:#E3E8E5; --line2:#F0F3F1; --weekend:#F7F9F8; --brand:#007549; --brand-soft:#E6F4EE;
   --today:#F08C00; --today-soft:#FFF4E5;
-  --kae:#007549; --mel:#4F46E5; --prang:#C2410C; --oat:#BE185D; --mink:#0E7490; --aim:#A16207; --pim:#475569; --dev:#0E7490; --other:#6B7280;
+  --kae:#007549; --mel:#4F46E5; --prang:#C2410C; --oat:#BE185D; --mink:#0E7490; --aim:#A16207; --pim:#475569; --mon:#9333EA; --dev:#0E7490; --other:#6B7280;
   --ev-present:#007549; --ev-ba:#9333EA; --ev-meet:#0E7490; --ev-ms:#DC2626; --ev-rec:#BE185D;
   --s-delay:#B91C1C; --s-delay-bg:#FDECEC;
   --DW:32px; --LW:360px;
@@ -22,7 +22,7 @@
     --bg:#111614; --card:#1A211E; --text:#E8EEEB; --text2:#AAB6B0; --text3:#7D8A84;
     --line:#2A3430; --line2:#222A27; --weekend:#151B18; --brand:#3DD39A; --brand-soft:#16302A;
     --today:#F5A524; --today-soft:#33270F;
-    --kae:#2FB884; --mel:#8B86FF; --prang:#F08A4B; --oat:#F472B6; --mink:#22B8D6; --aim:#EAB308; --pim:#A3B1C6; --dev:#22B8D6; --other:#9CA3AF;
+    --kae:#2FB884; --mel:#8B86FF; --prang:#F08A4B; --oat:#F472B6; --mink:#22B8D6; --aim:#EAB308; --pim:#A3B1C6; --mon:#C084FC; --dev:#22B8D6; --other:#9CA3AF;
     --ev-present:#3DD39A; --ev-ba:#C88BFF; --ev-meet:#22D3EE; --ev-ms:#F87171; --ev-rec:#F472B6;
     --s-delay:#F87171; --s-delay-bg:#3A1818;
   }
@@ -809,15 +809,40 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 .vlive{color:var(--text-statusbadge-success);font-weight:500}
 @media (pointer:coarse){ .vhist{width:36px;height:36px} }
 @media (max-width:640px){ #visitDlg .hbody{padding:8px 16px 16px} .vrow{grid-template-columns:26px minmax(0,1fr) max-content;} .vd{grid-column:2/4;text-align:left;margin-top:-6px} }
+.appbar{position:sticky;top:0;z-index:44;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;padding:8px 16px;background:var(--surface-card-100);border-bottom:1px solid var(--border-neutral-quaternary)}
+@media (min-width:1280px){ .appbar{padding-left:24px;padding-right:24px} }
+.appbar .abt{display:inline-flex;align-items:center;gap:8px;min-width:0;font-weight:600;font-size:14px;color:var(--text-content-default);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .abt .ms{color:var(--brand-p700);font-size:20px}
+.appbar .abr{display:inline-flex;align-items:center;gap:8px;flex:none}
+.appbar .vtip,.appbar .vmenu{left:auto;right:0}
+.appbar .vw.me{width:36px;height:36px}
+.wrap{padding-top:20px}
+html{scroll-padding-top:72px}
+/* ปุ่มโฟลเดอร์อยู่ท้ายแถวเสมอ = ตรงกันทุกแถว (ผู้ใช้ 24 ต.ค. 69) · ปุ่มเพิ่ม/ลบที่โผล่ตอน hover อยู่ทางซ้ายของโฟลเดอร์ */
+.lab .itinfo{order:9;justify-content:flex-end}
+.frows .frow.fddrow{align-items:center}
+.fdd .fddb{min-height:40px;min-width:200px;justify-content:flex-start;gap:8px;font-size:14px;font-weight:500}
+.fdd .fddb .fddv{flex:1;text-align:left}
+.fdd .fddb.on{border-color:var(--brand-p700);color:var(--brand-p700);background:var(--brand-p50)}
+.fdd .fddb .chev{margin-left:auto}
+.fdd .menu{left:0;right:auto;min-width:220px;max-height:min(360px,60vh);overflow:auto}
+.fdd .menu button{align-items:center;min-height:44px}
+.fdd .fdi{width:20px;flex:none;text-align:center;font-size:18px}
+.fdd .dot.fdi{width:10px;height:10px;margin:0 5px;border-radius:50%;display:inline-block}
+.fdd .fdc{margin-left:auto;color:var(--brand-p700);font-size:18px}
+@media (max-width:640px){ .fdd,.fdd .fddb{width:100%} }
+@media (max-width:480px){ .appbar .abt{font-size:13px} .appbar .vlab{display:none} }
 </style>
 </head>
 <body>
+<!-- แถบบนติดหัวจอ: รูปโปรไฟล์ + ใครกำลังดู + ประวัติการเข้าดู (ผู้ใช้ 24 ต.ค. 69) -->
+<header class="appbar"><span class="abt"><span class="ms">view_timeline</span>UXUI Manday Timeline</span><div class="abr"><div class="viewers" id="viewers" hidden></div><button type="button" class="vhist" id="vhistBtn" hidden aria-label="ประวัติการเข้าดู"><span class="ms">manage_history</span></button></div></header>
 <div class="wrap">
   <div class="head wbox">
     <div class="ttl">
       <h1>UXUI Manday Timeline</h1>
       <p class="sub">แยกตามคณะ › ระบบย่อย · คลิกแถบเพื่อแก้ · คลิกช่องว่างในแถวเพื่อเพิ่มงาน</p>
-      <div class="metarow"><div class="saved" id="saved"></div><div class="viewers" id="viewers" hidden></div><button type="button" class="vhist" id="vhistBtn" hidden aria-label="ประวัติการเข้าดู"><span class="ms">manage_history</span></button></div>
+      <div class="metarow"><div class="saved" id="saved"></div></div>
     </div>
     <div class="actions">
       <a class="btn subdue" id="docsBtn" href="https://namonlims.github.io/bma-docs/" target="_blank" rel="noopener"><span class="ms">menu_book</span>ดูเอกสาร<span class="ms ext">open_in_new</span></a>   <!-- ลิงก์ไป bma-docs (ผู้ใช้ 24 ต.ค. 69) -->
@@ -843,8 +868,8 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
     <section class="fsec">
       <h3 class="fgh">ตัวกรอง</h3>
       <div class="frows">
-        <div class="frow" id="fWho"><span class="lbl">ผู้รับผิดชอบ</span></div>
-        <div class="frow" id="fType"><span class="lbl">ประเภทงาน</span></div>
+        <div class="frow fddrow" id="fWho"><span class="lbl">ผู้รับผิดชอบ</span></div>
+        <div class="frow fddrow" id="fType"><span class="lbl">ประเภทงาน</span></div>
       </div>
     </section>
     <section class="fsec">
@@ -1031,7 +1056,7 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
     <div class="dbody" id="dList"></div>
   </div>
 </dialog>
-<datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"></datalist>
+<datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"><option value="Mon"></datalist>
 <div class="toast" id="toast"></div>
 <div class="tipcard" id="tipcard" role="tooltip"></div>
 
@@ -1039,8 +1064,8 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 <script id="embedded-data" type="application/json">null</script>
 <script>
 const STORE_KEY = 'uxui-manday-v2';
-const PEOPLE = ['Kae','Mel','Prang','Oat','Mink','Aim','Pim'];   // ผู้รับผิดชอบ 7 คน (ผู้ใช้สั่ง 20 ต.ค. 69 เอา Dev ออก · 21 ต.ค. 69 เพิ่ม Oat Mink Aim Pim)
-const WHO_COLOR = {Kae:'var(--kae)', Mel:'var(--mel)', Prang:'var(--prang)', Oat:'var(--oat)', Mink:'var(--mink)', Aim:'var(--aim)', Pim:'var(--pim)'};
+const PEOPLE = ['Kae','Mel','Prang','Oat','Mink','Aim','Pim','Mon'];   // ผู้รับผิดชอบ 8 คน (24 ต.ค. 69 เพิ่ม Mon) (ผู้ใช้สั่ง 20 ต.ค. 69 เอา Dev ออก · 21 ต.ค. 69 เพิ่ม Oat Mink Aim Pim)
+const WHO_COLOR = {Kae:'var(--kae)', Mel:'var(--mel)', Prang:'var(--prang)', Oat:'var(--oat)', Mink:'var(--mink)', Aim:'var(--aim)', Pim:'var(--pim)', Mon:'var(--mon)'};
 const whoColor = w => WHO_COLOR[w] || 'var(--other)';
 const STATUS = {todo:'To do', prog:'In progress', done:'Done'};   // ลบ "เลื่อน" (ผู้ใช้สั่ง 21 ต.ค. 69) · งานเดิมที่เลื่อน = To do
 const TYPE = {uxui:'UXUI', doc:'Document', figma:'Figma'};   // ประเภทงาน (ผู้ใช้สั่ง 21 ต.ค. 69) · ไม่ระบุ = UXUI
@@ -1227,25 +1252,31 @@ function renderSaved(){
   el.style.color='';
   el.textContent = state.savedAt ? 'บันทึกล่าสุด '+new Date(state.savedAt).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}) : 'ข้อมูลตั้งต้นจากชีต (ยังไม่มีการแก้ไข)';
 }
+// ตัวกรองเป็น dropdown (ผู้ใช้ 24 ต.ค. 69 "ทั้งหมดนี้ทำเป็น dropdown") — ปุ่มแสดงค่าที่เลือก · เมนูเลือกได้ 1 ค่า
+function filterDD(el, label, opts, cur, pick){
+  el.querySelectorAll('.fdd').forEach(n=>n.remove());
+  const id = el.id+'Menu', sel = opts.find(o=>o.k===cur) || opts[0];
+  const w = document.createElement('div'); w.className = 'menuwrap fdd';
+  w.innerHTML = `<button type="button" class="btn subdue fddb${sel.k!==opts[0].k?' on':''}" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" aria-label="${esc(label)}: ${esc(sel.v)}">${sel.ic||''}<span class="fddv">${esc(sel.v)}</span><span class="ms chev">expand_more</span></button>`
+    + `<div class="menu fddm" id="${id}" role="menu" hidden>${opts.map(o=>`<button type="button" role="menuitemradio" aria-checked="${o.k===cur}" data-k="${esc(o.k)}">${o.ic||'<span class="ms fdi"></span>'}<span>${esc(o.v)}</span>${o.k===cur?'<span class="ms fdc">check</span>':''}</button>`).join('')}</div>`;
+  el.appendChild(w);
+  const b = w.firstChild, m = w.lastChild;
+  const set = open => { m.hidden = !open; b.setAttribute('aria-expanded', open); if(open) (m.querySelector('[aria-checked="true"]')||m.firstChild).focus(); };
+  b.onclick = ev => { ev.stopPropagation(); set(m.hidden); };
+  m.onclick = ev => { const o = ev.target.closest('[data-k]'); if(o){ set(false); pick(o.dataset.k); } };
+  w.onkeydown = ev => {
+    if(ev.key==='Escape' && !m.hidden){ set(false); b.focus(); }
+    if((ev.key==='ArrowDown'||ev.key==='ArrowUp') && !m.hidden){ ev.preventDefault(); const it = [...m.children], i = it.indexOf(document.activeElement); it[(i + (ev.key==='ArrowDown'?1:-1) + it.length) % it.length].focus(); }
+  };
+}
+document.addEventListener('pointerdown', ev=>{ document.querySelectorAll('.fdd').forEach(w=>{ const m = w.querySelector('.fddm'); if(!m.hidden && !w.contains(ev.target)){ m.hidden = true; w.firstChild.setAttribute('aria-expanded', false); } }); });
 function renderFilters(){
-  const el = document.getElementById('fWho');
-  el.querySelectorAll('.chip').forEach(n=>n.remove());
-  ['ทั้งหมด', ...people()].forEach(p=>{
-    const b = document.createElement('button'); b.type='button'; b.className='chip';
-    b.setAttribute('aria-pressed', p===fWho);
-    b.innerHTML = (p==='ทั้งหมด'?'':`<span class="dot" style="background:${whoColor(p)}"></span>`)+esc(p);   // ไม่แสดง md บนชิปผู้รับผิดชอบ (ผู้ใช้ 24 ต.ค. 69)
-    b.onclick = ()=>{ fWho=p; try{localStorage.setItem(STORE_KEY+':who',p);}catch(e){} render(); };
-    el.appendChild(b);
-  });
-  const tl = document.getElementById('fType');
-  tl.querySelectorAll('.chip').forEach(n=>n.remove());
-  Object.entries({all:'ทั้งหมด', ...TYPE}).forEach(([k,v])=>{
-    const b = document.createElement('button'); b.type='button'; b.className='chip';
-    b.setAttribute('aria-pressed', k===fType);
-    b.innerHTML = (TICON[k]?`<span class="ms">${TICON[k]}</span>`:'')+esc(v);
-    b.onclick = ()=>{ fType=k; try{localStorage.setItem(STORE_KEY+':type',k);}catch(e){} render(); };
-    tl.appendChild(b);
-  });
+  filterDD(document.getElementById('fWho'), 'ผู้รับผิดชอบ',
+    ['ทั้งหมด', ...people()].map(p=>({k:p, v:p, ic: p==='ทั้งหมด' ? '<span class="ms fdi">group</span>' : `<span class="dot fdi" style="background:${whoColor(p)}"></span>`})),
+    fWho, p=>{ fWho=p; try{localStorage.setItem(STORE_KEY+':who',p);}catch(e){} render(); });
+  filterDD(document.getElementById('fType'), 'ประเภทงาน',
+    Object.entries({all:'ทั้งหมด', ...TYPE}).map(([k,v])=>({k, v, ic:`<span class="ms fdi">${TICON[k]||'category'}</span>`})),
+    fType, k=>{ fType=k; try{localStorage.setItem(STORE_KEY+':type',k);}catch(e){} render(); });
 }
 function renderTogAll(){
   const all = state.committees.length && state.committees.every(c=>collapsed.has(c.id));
@@ -2394,15 +2425,21 @@ const AUTH = (()=>{
   const on = !!GOOGLE_CLIENT_ID;
   const A = { on, tk:'', exp:0, user:null, ready: on ? null : Promise.resolve(), _res:null };
   const b64 = s => decodeURIComponent(atob(s.replace(/-/g,'+').replace(/_/g,'/')).split('').map(ch=>'%'+('00'+ch.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  // ล็อกอินแล้วคงอยู่ตลอดไป (ผู้ใช้ 24 ต.ค. 69): Google token (อายุ 1 ชม.) แลกเป็นเซสชันของสคริปต์ 'S.…' ที่ไม่หมดอายุ · เก็บใน localStorage ปิดแท็บแล้วยังอยู่ · หลุดเฉพาะกด "ออกจากระบบ"
+  const rawFetch = window.fetch.bind(window);
+  const SESS_KEY = STORE_KEY+':sess';
+  function setUser(u){ A.user = u; me = u.name; try { localStorage.setItem(STORE_KEY+':me', me); } catch(e){} }
   function setTk(tk){
     try { const p = JSON.parse(b64(tk.split('.')[1]));
-      A.tk = tk; A.exp = p.exp; A.user = {email:p.email, name:p.name || p.email.split('@')[0], picture:p.picture || ''};
-      try { sessionStorage.setItem(STORE_KEY+':tk', tk); } catch(e){}
-      me = A.user.name; try { localStorage.setItem(STORE_KEY+':me', me); } catch(e){}
+      A.tk = tk; A.exp = p.exp; setUser({email:p.email, name:p.name || p.email.split('@')[0], picture:p.picture || ''});
       return true;
     } catch(e){ return false; }
   }
-  const valid = () => A.tk && A.exp*1000 - Date.now() > 60000;
+  function setSess(st, user){
+    A.tk = st; A.exp = Infinity; setUser(user);
+    try { localStorage.setItem(SESS_KEY, JSON.stringify({st, user})); } catch(e){}
+  }
+  const valid = () => A.tk && (A.exp === Infinity || A.exp*1000 - Date.now() > 60000);
   function gate(show, msg){
     let g = document.getElementById('authGate');
     if(!g){ g = document.createElement('div'); g.id = 'authGate'; g.innerHTML = `<div class="agc"><span class="ms agi">lock</span><h2>UXUI Manday Timeline</h2><p>เข้าสู่ระบบด้วยบัญชี Google เพื่อดูและแก้ไข</p><div id="agBtn"></div><p class="agm" id="agMsg" role="status"></p><p class="agn">ระบบเก็บชื่อและอีเมลไว้ในประวัติการเข้าดูและประวัติการแก้ไข</p></div>`; document.body.appendChild(g); }
@@ -2412,7 +2449,11 @@ const AUTH = (()=>{
   }
   function onCred(r){
     if(!r?.credential || !setTk(r.credential)){ gate(true, 'เข้าสู่ระบบไม่สำเร็จ · ลองใหม่อีกครั้ง'); return; }
-    gate(false, ''); const res = A._res; A._res = null; res?.(); if(typeof PRESENCE !== 'undefined') PRESENCE.refresh();
+    const done = () => { gate(false, ''); const res = A._res; A._res = null; res?.(); if(typeof PRESENCE !== 'undefined') PRESENCE.refresh(); };
+    gate(true, 'กำลังเข้าสู่ระบบ…');
+    rawFetch(SYNC_URL + '?session=1&tk=' + encodeURIComponent(r.credential)).then(x=>x.json())
+      .then(j=>{ if(j && j.ok && j.st) setSess(j.st, j.user || A.user); })   // สคริปต์ยังไม่ deploy รุ่นนี้ = ใช้ Google token ต่อ (1 ชม.)
+      .catch(()=>{}).finally(done);
   }
   A.renew = (msg) => {
     if(!on) return;
@@ -2420,11 +2461,11 @@ const AUTH = (()=>{
     gate(true, msg ?? '');
     if(window.google?.accounts?.id) google.accounts.id.prompt();   // บัญชีเดิม = เข้าเองโดยไม่ต้องกด (auto_select)
   };
-  A.signOut = () => { try { sessionStorage.removeItem(STORE_KEY+':tk'); } catch(e){} try { google.accounts.id.disableAutoSelect(); } catch(e){} location.reload(); };
+  A.signOut = () => { try { localStorage.removeItem(SESS_KEY); sessionStorage.removeItem(STORE_KEY+':tk'); } catch(e){} try { google.accounts.id.disableAutoSelect(); } catch(e){} location.reload(); };
   if(on){
     A.ready = new Promise(r=>A._res = r);
-    let saved = ''; try { saved = sessionStorage.getItem(STORE_KEY+':tk') || ''; } catch(e){}
-    if(saved && setTk(saved) && valid()){ const res = A._res; A._res = null; res(); } else { A.tk = ''; gate(true, 'กำลังโหลด…'); }
+    let saved = null; try { saved = JSON.parse(localStorage.getItem(SESS_KEY) || 'null'); sessionStorage.removeItem(STORE_KEY+':tk'); } catch(e){}
+    if(saved?.st && saved.user){ setSess(saved.st, saved.user); const res = A._res; A._res = null; res(); } else { A.tk = ''; gate(true, 'กำลังโหลด…'); }
     const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
     s.onload = ()=>{ google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID, callback:onCred, auto_select:true, cancel_on_tap_outside:false, use_fedcm_for_prompt:true});
       if(!valid()){ gate(true, ''); google.accounts.id.prompt(); } };
@@ -2439,7 +2480,7 @@ const AUTH = (()=>{
         if((opt.method||'GET').toUpperCase()==='POST' && typeof opt.body==='string' && opt.body[0]==='{')
           o = {...opt, body:'{"tk":'+JSON.stringify(A.tk)+(opt.body.length>2?','+opt.body.slice(1):'}')};
         else u = url + (url.includes('?')?'&':'?') + 'tk=' + encodeURIComponent(A.tk);
-        return raw(u, o).then(r=>{ r.clone().json().then(j=>{ if(j && j.auth){ A.tk = ''; A.renew('เซสชันหมดอายุ · เข้าสู่ระบบอีกครั้ง'); } }).catch(()=>{}); return r; });
+        return raw(u, o).then(r=>{ r.clone().json().then(j=>{ if(j && j.auth){ A.tk = ''; try { localStorage.removeItem(SESS_KEY); } catch(e){} A.renew('เซสชันหมดอายุ · เข้าสู่ระบบอีกครั้ง'); } }).catch(()=>{}); return r; });
       });
     };
   }
@@ -2573,10 +2614,11 @@ window.FH = (()=>{
   const place = ()=>{
     const L = gEl.querySelector('.lab.h'); if(!L || !trk) return;
     const r = sc.getBoundingClientRect(), hr = L.getBoundingClientRect(), gr = gEl.getBoundingClientRect();
-    const on = hr.top < 0 && gr.bottom > h + 40 && !document.querySelector('dialog[open]');
+    const ab = document.querySelector('.appbar')?.offsetHeight || 0;   // หัวตารางลอยอยู่ใต้แถบบน
+    const on = hr.top < ab && gr.bottom > ab + h + 40 && !document.querySelector('dialog[open]');
     fh.classList.toggle('show', on);
     if(!on) return;
-    fh.style.left = r.left+'px'; fh.style.width = sc.clientWidth+'px'; fh.style.height = h+'px';
+    fh.style.top = ab+'px'; fh.style.left = r.left+'px'; fh.style.width = sc.clientWidth+'px'; fh.style.height = h+'px';
     trk.style.transform = `translateX(${-sc.scrollLeft}px)`;
   };
   window.addEventListener('scroll', place, {passive:true});
