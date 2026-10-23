@@ -412,6 +412,21 @@ h1{font-weight:700}
   .frows .frow .lbl{position:static;width:100%}
   .lrowx .legend{gap:6px 16px}
 }
+/* ถอดเสียงด้วย Gemini */
+#gemDlg{width:min(760px,calc(100vw - 32px))}
+#gemDlg .gbody{display:block;padding:8px 24px 24px}
+.gsteps{margin:0;padding:0;list-style:none;counter-reset:g;display:flex;flex-direction:column}
+.gsteps li{counter-increment:g;position:relative;padding:16px 0 16px 44px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.gsteps li + li{border-top:1px solid var(--border-neutral-tertiary)}
+.gsteps li::before{content:counter(g);position:absolute;left:0;top:14px;width:28px;height:28px;border-radius:50%;background:var(--brand-p50);color:var(--brand-p700);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.gsteps b{font-size:14px;font-weight:500;color:var(--text-content-default)}
+.gsteps li > span{font-size:13px;color:var(--text-content-tertiary);margin-top:-6px}
+.gprompt{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%}
+.gsteps textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border-input-default);border-radius:var(--dim-radius-200);background:var(--surface-input-default);color:var(--text-content-default);font:inherit;font-size:14px;resize:vertical}
+#gPrompt{background:var(--brand-p50);border-color:var(--brand-p100, var(--border-input-default));color:var(--text-content-secondary)}
+.gsteps textarea:focus{outline:none;border-color:var(--brand-p700);box-shadow:0 0 0 3px var(--brand-p100)}
+.dent .v.clamp{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+@media (max-width:640px){ #gemDlg .gbody{padding:8px 16px 16px} .gsteps li{padding-left:40px} }
 /* บันทึกเสียงประชุม */
 .mk.rec::before{border-radius:50%;box-shadow:inset 0 0 0 3px var(--card)}
 #recDlg{width:min(640px,calc(100vw - 32px))}
@@ -476,6 +491,8 @@ dialog.drawer .dlg{height:100%;max-height:100dvh}
 .dgh b{color:var(--text-content-default);font-weight:500}
 .dgh .dot{width:8px;height:8px;border-radius:50%;flex:none}
 .dgh .edit{margin-left:auto}
+.dgh .dgem{margin-left:auto;color:var(--brand-p700)}
+.dgh .dgem + .edit{margin-left:0}
 .dgh .st{font-size:12px;padding:0 8px;border-radius:999px;background:var(--surface-card-200, #F3F4F6);color:var(--text-content-secondary)}
 .dent{display:grid;grid-template-columns:136px minmax(0,1fr) 36px;gap:8px;align-items:start;padding:6px 8px;border-radius:var(--dim-radius-200)}
 .dent:hover{background:var(--surface-card-200, #F7F8F9)}
@@ -922,6 +939,8 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
       <div class="field"><label for="eT">เวลา (ไม่บังคับ)</label><input type="time" id="eT"></div>
       <div class="field full"><span class="fl">ประเภท</span><div class="seg" id="eKind"></div></div>
       <div class="field full" id="eModeF"><span class="fl">รูปแบบ Present</span><div class="seg" id="eMode"></div></div>
+      <div class="field full" id="eNoteF"><label for="eNote">ถอดเสียง / สรุปการประชุม <small class="cnt">วางผลจาก Gemini</small></label><textarea id="eNote" rows="6" placeholder="วางบทถอดเสียงหรือสรุปจาก Gemini ที่นี่"></textarea>
+        <button type="button" class="additem" id="eGem"><span class="ms">auto_awesome</span>ถอดเสียงด้วย Gemini ใน Drive</button></div>
     </div>
     <div class="bar2">
       <button type="button" class="btn danger" id="eDel"><span class="ms">delete</span>ลบ</button>
@@ -967,6 +986,23 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
         <p class="rmsg" id="rMsg" role="status"></p>
       </section>
     </div>
+  </div>
+</dialog>
+<!-- ถอดเสียงด้วย Gemini ใน Google Drive (ผู้ใช้ 23 ต.ค. 69 เลือก ข · ไม่ใช้ API key) -->
+<dialog id="gemDlg">
+  <div class="dlg">
+    <div class="ph"><div><h3>ถอดเสียงด้วย Gemini</h3><p class="hint" id="gHint"></p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="body gbody">
+      <ol class="gsteps">
+        <li><b>เปิดไฟล์ใน Drive</b><span>เปิดแท็บใหม่ · คำสั่งด้านล่างคัดลอกให้แล้ว</span><a class="btn primary" id="gOpen" target="_blank" rel="noopener"><span class="ms">open_in_new</span>เปิดไฟล์ใน Drive</a></li>
+        <li><b>กดปุ่ม Gemini ✦ มุมขวาบนของ Drive แล้ววางคำสั่ง</b><span>⌘V แล้วกดส่ง</span>
+          <div class="gprompt"><textarea id="gPrompt" rows="4" readonly aria-label="คำสั่งสำหรับ Gemini"></textarea><button type="button" class="btn subdue" id="gCopy"><span class="ms">content_copy</span>คัดลอกคำสั่ง</button></div></li>
+        <li><b>คัดลอกผลจาก Gemini มาวางที่นี่</b><span>เก็บไว้กับนัดบันทึกเสียงนี้ · ดูได้ในแผงรายละเอียด</span>
+          <textarea id="gNote" rows="8" placeholder="วางบทถอดเสียง / สรุปการประชุมจาก Gemini"></textarea></li>
+      </ol>
+    </div>
+    <div class="bar2"><span></span><div class="r"><button type="button" class="btn" data-close>ปิด</button><button type="button" class="btn primary" id="gSave"><span class="ms">save</span>บันทึกผลถอดเสียง</button></div></div>
   </div>
 </dialog>
 <!-- รายละเอียดคณะ/ระบบย่อย: ไฟล์ Figma · Drive · BA Note · Design Note · หมายเหตุ · นัด เรียงตาม timeline + ปักธง (ผู้ใช้ 23 ต.ค. 69) -->
@@ -1337,7 +1373,7 @@ function tipHtml(el){
     // รายการเป็นหัวข้อเด่น · ประเภท + วันเวลาเป็นบรรทัดรอง (ผู้ใช้สั่ง 21 ต.ค. 69 "ให้รายการเป็นตัวเด่น")
     return `<div class="tt-t tt-big">${esc(e.text||'—')}</div>`+
       `<div class="tt-s tt-kind"><i class="tt-k" style="background:${k.color}"></i>${esc(k.label)} · ${esc(fmt(pd(e.date)))} ${pd(e.date).getFullYear()+543}${e.time?' · '+esc(e.time)+' น.':''}</div>`+
-      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span>${e.place?`<span>สถานที่</span><span>${esc(e.place)}</span>`:''}<span>ที่มา</span><span>${e.src==='gcal'?'ดึงจาก Google Calendar · คลิกเพื่อเปิด':'เพิ่มเองในหน้านี้'}</span>${e.flags?.length?`<span>ปักธง</span><span>${e.flags.length} รายการ</span>`:''}</div>`+linksTip(e.links);
+      `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span>${e.place?`<span>สถานที่</span><span>${esc(e.place)}</span>`:''}<span>ที่มา</span><span>${e.src==='gcal'?'ดึงจาก Google Calendar · คลิกเพื่อเปิด':'เพิ่มเองในหน้านี้'}</span>${e.flags?.length?`<span>ปักธง</span><span>${e.flags.length} รายการ</span>`:''}${e.kind==='rec'?`<span>ถอดเสียง</span><span>${e.note?'มีแล้ว · ดูในแผงรายละเอียด':'ยังไม่มี'}</span>`:''}</div>`+linksTip(e.links);
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
   return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
@@ -1833,14 +1869,16 @@ function openEvent(id, preset){
   eKind = e ? e.kind : 'present';
   eMode = e ? modeOf(e) : 'onsite';
   const pickM = k=>{ eMode=k; segs($('eMode'), PMODE, eMode, pickM); }; pickM(eMode);
-  const pick = k=>{ eKind=k; segs($('eKind'), KIND, eKind, pick); $('eModeF').hidden = eKind!=='present'; }; pick(eKind);
+  $('eNote').value = e?.note || '';
+  const pick = k=>{ eKind=k; segs($('eKind'), KIND, eKind, pick); $('eModeF').hidden = eKind!=='present'; $('eNoteF').hidden = eKind!=='rec'; $('eGem').hidden = !(e?.links?.length); }; pick(eKind);
   $('eDel').style.display = e ? '' : 'none';
   $('evDlg').showModal();
 }
 $('evForm').onsubmit = ev=>{
   ev.preventDefault();
-  const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, links:readLinks($('eLinks')), ...(eKind==='present' ? {mode:eMode} : {})};
+  const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, links:readLinks($('eLinks')), ...(eKind==='present' ? {mode:eMode} : {}), ...(eKind==='rec' && $('eNote').value.trim() ? {note:$('eNote').value.trim()} : {})};
   if(eKind!=='present' && editE) delete state.events.find(x=>x.id===editE).mode;
+  if(editE && !data.note) delete state.events.find(x=>x.id===editE).note;
   if(!data.text || !data.date) return;
   if(editE){ const o = state.events.find(x=>x.id===editE); logHist('แก้ไข','นัด', data.text, cName(data.c), diff(o, data, EF)); Object.assign(o, data); }
   else { state.events.push({id:'v'+Date.now(), ...data}); logHist('เพิ่ม','นัด', data.text, cName(data.c), [{f:'วันที่', from:'—', to:fmtD(data.date)+(data.time?' '+data.time:'')}]); }
@@ -1965,7 +2003,7 @@ function refsTip(t){
 const DKIND = {
   figma:{label:'Figma', icon:'draw'}, drive:{label:'Drive คณะทำงาน', icon:'folder_shared'},
   ba:{label:'BA Note', icon:'assignment'}, design:{label:'Design Note', icon:'palette'},
-  note:{label:'หมายเหตุ', icon:'sticky_note_2'}, event:{label:'นัด', icon:'event'},
+  note:{label:'หมายเหตุ', icon:'sticky_note_2'}, event:{label:'นัด', icon:'event'}, tr:{label:'ถอดเสียง', icon:'subject'},
 };
 let det = null, dFil = 'all';
 function taskEntries(t){
@@ -1979,7 +2017,7 @@ function detGroups(){
   const {c, it} = det, G = [];
   state.tasks.filter(t=>t.c===c && (!it || t.items.includes(it))).forEach(t=>G.push({type:'task', id:t.id, date:t.start, src:t, entries:taskEntries(t)}));
   allEvents().filter(e=>e.c===c && (!it || (e.items||[]).includes(it))).forEach(e=>G.push({type:'event', id:e.id, date:e.date, src:e, gcal:e.src==='gcal',
-    entries:[{kind:'event', key:'event:text', text:e.text}, ...(e.links||[]).map(l=>({kind:'event', key:'event:'+l.url, link:l}))]}));
+    entries:[{kind:'event', key:'event:text', text:e.text}, ...(e.links||[]).map(l=>({kind:'event', key:'event:'+l.url, link:l})), ...(e.note ? [{kind:'tr', key:'tr:text', text:e.note}] : [])]}));
   G.sort((p,q)=>p.date.localeCompare(q.date) || (p.type==='event'?-1:1));   // เรียงตาม timeline เก่า → ใหม่
   G.forEach(g=>g.entries.forEach(x=>x.flag = (g.src.flags||[]).includes(x.key)));
   return G;
@@ -1996,20 +2034,20 @@ function renderDetail(){
   const nT = G.filter(g=>g.type==='task').length, nE = G.length - nT, nF = all.filter(x=>x.flag).length;
   $('dHint').textContent = [it ? cn : null, `${nT} งาน`, nE ? `${nE} นัด` : null, nF ? `ปักธง ${nF}` : null].filter(Boolean).join(' · ');
   const cnt = k => all.filter(x=>x.kind===k && (k!=='event' || x.link)).length;
-  const F = {all:{label:'ทั้งหมด'}, flag:{label:'ปักธง', n:nF}, figma:{label:'Figma', n:cnt('figma')}, drive:{label:'Drive', n:cnt('drive')}, ba:{label:'BA Note', n:cnt('ba')}, design:{label:'Design Note', n:cnt('design')}, note:{label:'หมายเหตุ', n:cnt('note')}, ...(it && !nE ? {} : {event:{label:'นัด', n:nE}})};
+  const F = {all:{label:'ทั้งหมด'}, flag:{label:'ปักธง', n:nF}, figma:{label:'Figma', n:cnt('figma')}, drive:{label:'Drive', n:cnt('drive')}, ba:{label:'BA Note', n:cnt('ba')}, design:{label:'Design Note', n:cnt('design')}, note:{label:'หมายเหตุ', n:cnt('note')}, tr:{label:'ถอดเสียง', n:cnt('tr')}, ...(it && !nE ? {} : {event:{label:'นัด', n:nE}})};
   $('dFilter').innerHTML = Object.entries(F).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===dFil}">${esc(v.label)}${v.n!=null?` <small>${v.n}</small>`:''}</button>`).join('');
   $('dFilter').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ dFil = b.dataset.k; renderDetail(); });
 
   const ent = (x, g) => {
-    const K = DKIND[x.kind], canFlag = true;
+    const K = (x.kind==='event' && x.link && g.src.kind==='rec') ? {label:'ไฟล์เสียง', icon:'graphic_eq'} : DKIND[x.kind], canFlag = true;
     const v = x.link ? `<a href="${esc(safeHref(x.link.url))}" target="_blank" rel="noopener"><span class="ms">open_in_new</span><span class="u">${esc(x.link.name || linkName(x.link))}</span></a><small>${esc(x.link.url.replace(/^https?:\/\//,''))}</small>` : esc(x.text);
-    return `<div class="dent${x.flag?' flag':''}"><span class="k"><span class="ms">${K.icon}</span>${esc(K.label)}</span><div class="v">${v}</div>`+
+    return `<div class="dent${x.flag?' flag':''}"><span class="k"><span class="ms">${K.icon}</span>${esc(K.label)}</span><div class="v${x.kind==='tr'?' clamp':''}"${x.kind==='tr'?' title="กดเพื่อดูทั้งหมด"':''}>${v}</div>`+
       (canFlag ? `<button type="button" class="dflag" data-g="${g.gcal?'gcal':esc(g.type)}" data-id="${esc(g.id)}" data-key="${esc(x.key)}" aria-pressed="${x.flag}" aria-label="${x.flag?'เอาธงออก':'ปักธง ใช้อันนี้'}" title="${x.flag?'เอาธงออก':'ปักธง · ใช้อันนี้'}"><span class="ms">flag</span></button>` : '<span></span>')+`</div>`;
   };
   const head = g => {
     const s = g.src;
     if(g.type==='event'){ const k = kindOf(s.kind) || {label:'นัด', color:'var(--other)'};
-      return `<div class="dgh"><i class="dot" style="background:${k.color}"></i><b>${esc(fmtD(s.date))}</b>${s.time?` ${esc(s.time)} น.`:''} · ${esc(k.label)} <span class="st src">${g.gcal?'ดึงจาก Google Calendar':'เพิ่มเองในหน้านี้'}</span>${g.gcal?'':`<button type="button" class="dedit edit" data-ev="${esc(s.id)}" aria-label="แก้ไขนัด" title="แก้ไขนัด"><span class="ms">edit</span></button>`}</div>`; }
+      return `<div class="dgh"><i class="dot" style="background:${k.color}"></i><b>${esc(fmtD(s.date))}</b>${s.time?` ${esc(s.time)} น.`:''} · ${esc(k.label)} <span class="st src">${g.gcal?'ดึงจาก Google Calendar':'เพิ่มเองในหน้านี้'}</span>${g.gcal?'':`${s.kind==='rec' && s.links?.length ? `<button type="button" class="dedit dgem" data-gem="${esc(s.id)}" aria-label="ถอดเสียงด้วย Gemini" title="ถอดเสียงด้วย Gemini"><span class="ms">auto_awesome</span></button>` : ''}<button type="button" class="dedit edit" data-ev="${esc(s.id)}" aria-label="แก้ไขนัด" title="แก้ไขนัด"><span class="ms">edit</span></button>`}</div>`; }
     return `<div class="dgh"><i class="dot" style="background:${whoColor(s.who)}"></i><b>${esc(fmt(pd(s.start)))} – ${esc(fmtD(s.end))}</b> · ${esc(s.who)} · ${esc(roundFull(roundOf(s)))} · ${esc(TYPE[typeOf(s)])}${it?'':` · ${esc(s.items.join(' · '))}`} <span class="st">${esc(STATUS[stAt(s, it)])}</span><button type="button" class="dedit edit" data-t="${esc(s.id)}" aria-label="แก้ไขงาน" title="แก้ไขงาน"><span class="ms">edit</span></button></div>`;
   };
   const pick = x => dFil==='all' ? true : dFil==='flag' ? x.flag : dFil==='event' ? x.kind==='event' : x.kind===dFil;
@@ -2041,10 +2079,41 @@ $('dList').onclick = ev=>{
     persist(); renderDetail(); render(); toast(on ? 'ปักธงแล้ว · ใช้อันนี้' : 'เอาธงออกแล้ว');
     return;
   }
-  const e = ev.target.closest('.dedit');
+  const cl = ev.target.closest('.v.clamp'); if(cl){ cl.classList.remove('clamp'); return; }
+  const gm = ev.target.closest('.dgem'); if(gm){ closeDrawer($('detDlg'), ()=>openGem(gm.dataset.gem)); return; }
+  const e = ev.target.closest('.dedit:not(.dgem)');
   if(e){ const it = det.it; closeDrawer($('detDlg'), ()=>{ if(e.dataset.t) openTask(e.dataset.t, null, it); else openEvent(e.dataset.ev); }); }
 };
 $('detDlg').addEventListener('close', ()=>{ det = null; });
+
+// ---------- ถอดเสียงด้วย Gemini ใน Drive (ผู้ใช้ 23 ต.ค. 69 เลือก ข) ----------
+// Gemini ใน Drive ไม่มี API ให้สคริปต์เรียก → เปิดไฟล์ + คัดลอกคำสั่งให้ · คนวางผลกลับมาเก็บใน e.note ของนัดบันทึกเสียง
+const GEM_PROMPT = 'ถอดเสียงการประชุมนี้เป็นภาษาไทยทั้งหมด แยกผู้พูด (ถ้าไม่รู้ชื่อให้ใช้ ผู้พูด 1, ผู้พูด 2) พร้อมเวลาโดยประมาณ\nจากนั้นสรุปเป็นหัวข้อ:\n1) ประเด็นสำคัญ ไม่เกิน 5 ข้อ\n2) ข้อตัดสินใจ\n3) สิ่งที่ต้องทำต่อ พร้อมผู้รับผิดชอบและกำหนดส่ง (ถ้ามีพูดถึง)';
+let gemEv = null;
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){ const x = $('gPrompt'); x.focus(); x.select(); try { return document.execCommand('copy'); } catch(_){ return false; } }
+}
+function openGem(id){
+  const e = state.events.find(x=>x.id===id); if(!e) return;
+  gemEv = id;
+  const f = (e.links||[]).find(l=>/drive\.google/.test(l.url)) || e.links?.[0];
+  $('gHint').textContent = `${e.text} · ${fmtD(e.date)}${e.time?' '+e.time+' น.':''}`;
+  $('gOpen').href = safeHref(f?.url || '#'); $('gOpen').toggleAttribute('hidden', !f);
+  $('gPrompt').value = GEM_PROMPT; $('gNote').value = e.note || '';
+  $('gemDlg').showModal();
+}
+$('gOpen').addEventListener('click', ()=>{ copyText(GEM_PROMPT).then(ok=>toast(ok ? 'คัดลอกคำสั่ง Gemini แล้ว · วางในแท็บ Drive' : 'คัดลอกไม่ได้ · กดคัดลอกคำสั่งเอง')); });
+$('gCopy').onclick = ()=>copyText(GEM_PROMPT).then(ok=>toast(ok ? 'คัดลอกคำสั่งแล้ว' : 'คัดลอกไม่ได้ · เลือกข้อความแล้ว ⌘C'));
+$('gSave').onclick = ()=>{
+  const e = state.events.find(x=>x.id===gemEv); if(!e) return;
+  const v = $('gNote').value.trim(), before = e.note || '';
+  if(v === before){ $('gemDlg').close(); return; }
+  if(v) e.note = v; else delete e.note;
+  logHist('แก้ไข','นัด', e.text, cName(e.c), [{f:'ถอดเสียง / สรุป', from:before ? 'มีแล้ว' : '—', to:v ? `${v.length.toLocaleString()} ตัวอักษร` : '—'}]);
+  persist(); render(); $('gemDlg').close(); toast('บันทึกผลถอดเสียงแล้ว');
+};
+$('eGem').onclick = ()=>{ const id = editE; $('evDlg').close(); openGem(id); };
 // ปิดลิ้นชักแบบเลื่อนออก: ปุ่มปิด · Esc · คลิกนอกแผง
 function closeDrawer(d, after){
   if(!d.open || d.classList.contains('closing')) return;
@@ -2083,7 +2152,7 @@ function recUI(){
     rec:    B('pause','pause','หยุดชั่วคราว') + B('stop','stop_circle','หยุดและบันทึกลง Drive','primary'),
     pause:  B('resume','play_arrow','บันทึกต่อ') + B('stop','stop_circle','หยุดและบันทึกลง Drive','primary'),
     saving: `<button type="button" class="btn" disabled><span class="ms">cloud_upload</span>กำลังอัปโหลด…</button>`,
-    done:   B('new','mic','บันทึกครั้งใหม่') + (REC.res?.url ? `<a class="btn primary" href="${esc(safeHref(REC.res.url))}" target="_blank" rel="noopener"><span class="ms">open_in_new</span>เปิดใน Drive</a>` : ''),
+    done:   B('new','mic','บันทึกครั้งใหม่') + B('gem','auto_awesome','ถอดเสียงด้วย Gemini') + (REC.res?.url ? `<a class="btn primary" href="${esc(safeHref(REC.res.url))}" target="_blank" rel="noopener"><span class="ms">open_in_new</span>เปิดใน Drive</a>` : ''),
     failed: B('retry','cloud_upload','ลองอัปโหลดอีกครั้ง','primary') + B('download','download','ดาวน์โหลดไฟล์เก็บไว้') + B('discard','delete','ทิ้งและเริ่มใหม่'),
   }[s];
   const busy = s==='rec' || s==='pause' || s==='saving';
@@ -2159,7 +2228,7 @@ async function recUpload(){
     const st = REC.startAt, text = `บันทึกเสียง ครั้งที่ ${res.n}${topic ? ' · '+topic : ''}`;
     const ev = {id:'r'+Date.now(), c, ...(it ? {items:[it]} : {}), date:iso(st), time:`${String(st.getHours()).padStart(2,'0')}:${String(st.getMinutes()).padStart(2,'0')}`,
       kind:'rec', text, links:[{url:res.url, name:res.name}], dur:recSecs()};
-    state.events.push(ev); logHist('เพิ่ม','นัด', text, cName(c) + (it ? ' · '+it : ''), [{f:'ไฟล์', from:'—', to:res.name}]);
+    REC.evId = ev.id; state.events.push(ev); logHist('เพิ่ม','นัด', text, cName(c) + (it ? ' · '+it : ''), [{f:'ไฟล์', from:'—', to:res.name}]);
     persist(); render();
     REC.state = 'done'; REC.blob = null; recMsg(`บันทึกเป็น <b>${esc(res.name)}</b> · ขึ้นในแถวคณะและแผงรายละเอียดแล้ว`);
   } catch(e){
@@ -2177,6 +2246,7 @@ $('rActs').onclick = ev=>{
   else if(k==='retry') recUpload();
   else if(k==='download'){ const a = document.createElement('a'); a.href = URL.createObjectURL(REC.blob); a.download = `${$('rName').textContent}.${recExt()}`; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 5000); }
   else if(k==='discard'){ if(!confirm('ทิ้งเสียงที่บันทึกไว้?')) return; REC.blob = null; REC.state = 'idle'; REC.acc = 0; REC.startAt = null; recMsg(''); updRecName(); recUI(); }
+  else if(k==='gem'){ $('recDlg').close(); openGem(REC.evId); }
   else if(k==='new'){ REC.state = 'idle'; REC.res = null; REC.acc = 0; REC.startAt = null; recMsg(''); updRecName(); recUI(); }
 };
 $('rC').addEventListener('change', ()=>{ fillRecItems(); updRecName(); });
@@ -2191,7 +2261,7 @@ window.addEventListener('beforeunload', ev=>{ if(['rec','pause','saving','failed
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
 const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', noteLinks:'ลิงก์หมายเหตุ', drive:'Drive คณะทำงาน', figma:'Figma', ba:'BA Note', design:'Design Note', links:'ลิงก์ไฟล์'};
-const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์'};
+const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์', note:'ถอดเสียง / สรุป'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
   if(v==null || v==='' || (Array.isArray(v) && !v.length)) return k==='md' ? 'อัตโนมัติ' : '—';
