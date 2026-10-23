@@ -412,6 +412,21 @@ h1{font-weight:700}
   .frows .frow .lbl{position:static;width:100%}
   .lrowx .legend{gap:6px 16px}
 }
+/* หน้าเข้าสู่ระบบ */
+html.authlock body{overflow:hidden}
+#authGate{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
+#authGate[hidden]{display:none}
+#authGate .agc{width:min(420px,100%);background:var(--surface-card-100);border:1px solid var(--border-neutral-tertiary);border-radius:var(--dim-radius-500);padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+#authGate .agi{font-size:32px;color:var(--brand-p700);width:56px;height:56px;border-radius:50%;background:var(--brand-p50);display:flex;align-items:center;justify-content:center}
+#authGate h2{margin:4px 0 0;font-size:20px;color:var(--brand-p700)}
+#authGate p{margin:0;font-size:14px;color:var(--text-content-secondary)}
+#authGate #agBtn{min-height:44px;display:flex;justify-content:center;margin-top:8px}
+#authGate .agm{color:var(--text-danger-default);min-height:20px}
+#authGate .agn{font-size:12px;color:var(--text-content-tertiary)}
+.vw img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.vmenu .vme{display:flex;flex-direction:column;gap:2px;padding:4px 8px 8px;border-bottom:1px solid var(--border-neutral-tertiary);margin-bottom:4px}
+.vmenu .vme b{font-size:14px}.vmenu .vme small{font-size:12px;color:var(--text-content-tertiary)}
+.vrow .vem{display:block;font-size:12px;font-weight:400;color:var(--text-content-tertiary);overflow:hidden;text-overflow:ellipsis}
 /* ถอดเสียงด้วย Gemini */
 #gemDlg{width:min(760px,calc(100vw - 32px))}
 #gemDlg .gbody{display:block;padding:8px 24px 24px}
@@ -2285,7 +2300,7 @@ const diff = (a, b, F) => Object.keys(F).filter(k => JSON.stringify(nz(a?.[k])) 
 const tTitle = t => `${t.items.join(' · ')} · ${t.who}`;
 function logHist(action, kind, title, where, changes){
   if(action==='แก้ไข' && changes && !changes.length) return;
-  (state.history ||= []).unshift({at:Date.now(), by:me, action, kind, title, where, changes:changes||[]});
+  (state.history ||= []).unshift({at:Date.now(), by:me, ...(typeof AUTH!=='undefined' && AUTH.user ? {email:AUTH.user.email} : {}), action, kind, title, where, changes:changes||[]});
   if(state.history.length > HIST_MAX) state.history.length = HIST_MAX;
 }
 function renderHist(){
@@ -2293,6 +2308,7 @@ function renderHist(){
   $('hHint').textContent = H.length ? `${H.length} รายการ · ล่าสุดอยู่บนสุด` : 'ยังไม่มีการแก้ไข';
   const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} if(typeof PRESENCE!=='undefined') PRESENCE.refresh(); segs($('hMe'), Object.fromEntries(PEOPLE.map(p=>[p,p])), me, pickMe); };   // เอา "ไม่ระบุ" ออก (ผู้ใช้ 23 ต.ค. 69) · ยังไม่เลือก = ไม่มีปุ่มกดอยู่
   pickMe(me||'—');
+  $('hMe').closest('.hbar').hidden = AUTH.on;   // ล็อกอิน Google แล้ว = ชื่อมาจากบัญชี ไม่ต้องเลือก
   let day = '', h = '';
   H.forEach(e=>{
     const d = new Date(e.at), dk = iso(d);
@@ -2364,6 +2380,66 @@ let tt; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add(
 // วาง URL ของ Web app (ลงท้าย /exec) ที่ SYNC_URL · ว่าง = เก็บในเบราว์เซอร์อย่างเดียวเหมือนเดิม
 // เก็บทีละรายการ (คณะ · งาน · นัด · ประวัติ · ตั้งค่า) · ใครบันทึกทีหลังชนะเฉพาะรายการนั้น · ดึงของคนอื่นทุก 15 วินาที
 const SYNC_URL = 'https://script.google.com/macros/s/AKfycbw8sRGKyJBdJTgyGJsW65DxkIPI0tAtYMHmdF1jJ14TmxpsJFiW8ozPe0TXYIwV-dzK/exec';   // ชีต "UXUI Timeline – ข้อมูลกลาง" (Drive ของ pakkadinsaw) · Deploy 21 ต.ค. 69
+// ---------- เข้าสู่ระบบด้วย Google (ผู้ใช้ 24 ต.ค. 69 เลือก ค · ก = ทุกบัญชี Google) ----------
+// GOOGLE_CLIENT_ID ว่าง = ปิด (ทำงานแบบเดิม ไม่ต้องล็อกอิน) · ใส่แล้ว = ต้องล็อกอินก่อน · ทุกคำขอไปสคริปต์แนบ id token ให้สคริปต์ตรวจ
+// ใช้วิธีห่อ fetch: คำขอที่ไป SYNC_URL รอจนล็อกอินเสร็จ แล้วแนบ tk (GET = ?tk= · POST = ฟิลด์ tk ใน body)
+const GOOGLE_CLIENT_ID = '';
+const AUTH = (()=>{
+  const on = !!GOOGLE_CLIENT_ID;
+  const A = { on, tk:'', exp:0, user:null, ready: on ? null : Promise.resolve(), _res:null };
+  const b64 = s => decodeURIComponent(atob(s.replace(/-/g,'+').replace(/_/g,'/')).split('').map(ch=>'%'+('00'+ch.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  function setTk(tk){
+    try { const p = JSON.parse(b64(tk.split('.')[1]));
+      A.tk = tk; A.exp = p.exp; A.user = {email:p.email, name:p.name || p.email.split('@')[0], picture:p.picture || ''};
+      try { sessionStorage.setItem(STORE_KEY+':tk', tk); } catch(e){}
+      me = A.user.name; try { localStorage.setItem(STORE_KEY+':me', me); } catch(e){}
+      return true;
+    } catch(e){ return false; }
+  }
+  const valid = () => A.tk && A.exp*1000 - Date.now() > 60000;
+  function gate(show, msg){
+    let g = document.getElementById('authGate');
+    if(!g){ g = document.createElement('div'); g.id = 'authGate'; g.innerHTML = `<div class="agc"><span class="ms agi">lock</span><h2>UXUI Manday Timeline</h2><p>เข้าสู่ระบบด้วยบัญชี Google เพื่อดูและแก้ไข</p><div id="agBtn"></div><p class="agm" id="agMsg" role="status"></p><p class="agn">ระบบเก็บชื่อและอีเมลไว้ในประวัติการเข้าดูและประวัติการแก้ไข</p></div>`; document.body.appendChild(g); }
+    g.hidden = !show; document.documentElement.classList.toggle('authlock', !!show);
+    if(msg != null) document.getElementById('agMsg').textContent = msg;
+    if(show && window.google?.accounts?.id) google.accounts.id.renderButton(document.getElementById('agBtn'), {theme:'outline', size:'large', text:'signin_with', shape:'pill', locale:'th', width:280});
+  }
+  function onCred(r){
+    if(!r?.credential || !setTk(r.credential)){ gate(true, 'เข้าสู่ระบบไม่สำเร็จ · ลองใหม่อีกครั้ง'); return; }
+    gate(false, ''); const res = A._res; A._res = null; res?.(); if(typeof PRESENCE !== 'undefined') PRESENCE.refresh();
+  }
+  A.renew = (msg) => {
+    if(!on) return;
+    if(!A._res) A.ready = new Promise(r=>A._res = r);
+    gate(true, msg ?? '');
+    if(window.google?.accounts?.id) google.accounts.id.prompt();   // บัญชีเดิม = เข้าเองโดยไม่ต้องกด (auto_select)
+  };
+  A.signOut = () => { try { sessionStorage.removeItem(STORE_KEY+':tk'); } catch(e){} try { google.accounts.id.disableAutoSelect(); } catch(e){} location.reload(); };
+  if(on){
+    A.ready = new Promise(r=>A._res = r);
+    let saved = ''; try { saved = sessionStorage.getItem(STORE_KEY+':tk') || ''; } catch(e){}
+    if(saved && setTk(saved) && valid()){ const res = A._res; A._res = null; res(); } else { A.tk = ''; gate(true, 'กำลังโหลด…'); }
+    const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = ()=>{ google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID, callback:onCred, auto_select:true, cancel_on_tap_outside:false, use_fedcm_for_prompt:true});
+      if(!valid()){ gate(true, ''); google.accounts.id.prompt(); } };
+    s.onerror = ()=>gate(true, 'โหลดระบบเข้าสู่ระบบของ Google ไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช');
+    document.head.appendChild(s);
+    const raw = window.fetch.bind(window);
+    window.fetch = (url, opt={}) => {
+      if(typeof url !== 'string' || !url.startsWith(SYNC_URL)) return raw(url, opt);
+      if(!valid()) A.renew();
+      return A.ready.then(()=>{
+        let o = opt, u = url;
+        if((opt.method||'GET').toUpperCase()==='POST' && typeof opt.body==='string' && opt.body[0]==='{')
+          o = {...opt, body:'{"tk":'+JSON.stringify(A.tk)+(opt.body.length>2?','+opt.body.slice(1):'}')};
+        else u = url + (url.includes('?')?'&':'?') + 'tk=' + encodeURIComponent(A.tk);
+        return raw(u, o).then(r=>{ r.clone().json().then(j=>{ if(j && j.auth){ A.tk = ''; A.renew('เซสชันหมดอายุ · เข้าสู่ระบบอีกครั้ง'); } }).catch(()=>{}); return r; });
+      });
+    };
+  }
+  return A;
+})();
+
 const SYNC = (()=>{
   const on = !!SYNC_URL;
   let since = 0, sent = new Map(), queue = Promise.resolve(), timer = null, pulling = false;
@@ -2522,15 +2598,17 @@ const PRESENCE = (()=>{
     if(!list.some(v=>v.sid===sid)) list.unshift({sid, name:me});
     box.hidden = false;
     const MAX = 5, shown = list.slice(0, MAX), more = list.length - shown.length;
-    const av = v => { const mine = v.sid===sid, col = v.name && WHO_COLOR[v.name] ? WHO_COLOR[v.name] : 'var(--text-content-tertiary)';
-      return `<span class="vw${mine?' me':''}" style="--vc:${col}" ${mine?'role="button" tabindex="0" data-me="1"':''}>${v.name?esc(initials(v.name)):'<span class="ms">person</span>'}</span>`; };
+    const av = v => { const mine = v.sid===sid, col = v.name && WHO_COLOR[v.name] ? WHO_COLOR[v.name] : 'var(--brand-p700)', pic = v.picture || (mine && AUTH.user?.picture);
+      return `<span class="vw${mine?' me':''}" style="--vc:${col}" ${mine?'role="button" tabindex="0" data-me="1"':''} title="${esc(v.name||'')}${v.email?' · '+esc(v.email):''}">${pic?`<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">`:v.name?esc(initials(v.name)):'<span class="ms">person</span>'}</span>`; };
     const anon = list.filter(v=>!v.name).length;
     box.innerHTML = `<span class="vlab"><span class="vdot"></span>กำลังดู ${list.length}</span><span class="vstack">${shown.map(av).join('')}${more>0?`<span class="vw more">+${more}</span>`:''}</span>`
-      + `<div class="vtip" role="tooltip"><div class="tt-t">กำลังดูหน้านี้ ${list.length} คน</div><div class="tt-s">อัปเดตทุก 20 วินาที · ไม่ต้องเข้าสู่ระบบ</div><div class="vlist">${list.map(v=>`<span><i style="background:${v.name&&WHO_COLOR[v.name]?WHO_COLOR[v.name]:'var(--text-content-tertiary)'}"></i>${v.name?esc(v.name):'ไม่ระบุชื่อ'}${v.sid===sid?' <small>(คุณ)</small>':''}</span>`).join('')}</div>${!me?'<div class="tt-s">กดวงกลมของคุณเพื่อระบุชื่อ</div>':''}</div>`
-      + (menuOpen ? `<div class="vmenu" role="menu"><div class="tt-s">คุณคือ</div>${PEOPLE.map(p=>`<button type="button" role="menuitem" data-who="${esc(p)}"${(me||'')===p?' aria-pressed="true"':''}>${p?`<i style="background:${WHO_COLOR[p]}"></i>${esc(p)}`:'ไม่ระบุชื่อ'}</button>`).join('')}</div>` : '');
+      + `<div class="vtip" role="tooltip"><div class="tt-t">กำลังดูหน้านี้ ${list.length} คน</div><div class="tt-s">อัปเดตทุก 20 วินาที${AUTH.on?'':' · ไม่ต้องเข้าสู่ระบบ'}</div><div class="vlist">${list.map(v=>`<span><i style="background:${v.name&&WHO_COLOR[v.name]?WHO_COLOR[v.name]:'var(--text-content-tertiary)'}"></i>${v.name?esc(v.name):'ไม่ระบุชื่อ'}${v.email?` <small>${esc(v.email)}</small>`:''}${v.sid===sid?' <small>(คุณ)</small>':''}</span>`).join('')}</div>${!me && !AUTH.on?'<div class="tt-s">กดวงกลมของคุณเพื่อระบุชื่อ</div>':''}</div>`
+      + (menuOpen && AUTH.on ? `<div class="vmenu" role="menu"><div class="vme"><b>${esc(AUTH.user?.name||'')}</b><small>${esc(AUTH.user?.email||'')}</small></div><button type="button" role="menuitem" data-signout="1"><span class="ms">logout</span>ออกจากระบบ</button></div>` : '')
+      + (menuOpen && !AUTH.on ? `<div class="vmenu" role="menu"><div class="tt-s">คุณคือ</div>${PEOPLE.map(p=>`<button type="button" role="menuitem" data-who="${esc(p)}"${(me||'')===p?' aria-pressed="true"':''}>${p?`<i style="background:${WHO_COLOR[p]}"></i>${esc(p)}`:'ไม่ระบุชื่อ'}</button>`).join('')}</div>` : '');
   }
   box.addEventListener('click', ev=>{
     const w = ev.target.closest('[data-who]');
+    if(ev.target.closest('[data-signout]')){ AUTH.signOut(); return; }
     if(w){ me = w.dataset.who; try{ localStorage.setItem(STORE_KEY+':me', me); }catch(e){} menuOpen = false; send(); draw(); return; }
     if(ev.target.closest('[data-me]')){ menuOpen = !menuOpen; draw(); }
   });
@@ -2554,14 +2632,14 @@ const PRESENCE = (()=>{
     try {
       const j = await (await fetch(SYNC_URL + '?visits=1', {cache:'no-store'})).json();
       const V = (j.visits||[]).filter(v=>!/^zz/.test(v.sid));   // zz… = เซสชันทดสอบระบบ
-      const people = new Set(V.map(v=>v.name||'ไม่ระบุชื่อ'));
+      const people = new Set(V.map(v=>v.email||v.name||'ไม่ระบุชื่อ'));
       $('vHint').textContent = V.length ? `${V.length} ครั้ง · ${people.size} คน · ล่าสุดอยู่บนสุด · เก็บ 300 ครั้งล่าสุด` : 'ยังไม่มีประวัติ';
       let day = '', h = '';
       V.forEach(v=>{
         const d = new Date(v.start), dk = iso(d), live = Date.now() - v.last < 70000;
         if(dk!==day){ if(day) h += '</div>'; day = dk; h += `<div class="hday"><h4 class="gh">${dk===iso(today)?'วันนี้ · ':''}${esc(fmtD(dk))}</h4>`; }
         const col = v.name && WHO_COLOR[v.name] ? WHO_COLOR[v.name] : 'var(--text-content-tertiary)';
-        h += `<div class="vrow"><span class="vw" style="--vc:${col}">${v.name?esc(v.name.slice(0,2)):'<span class="ms">person</span>'}</span><b>${v.name?esc(v.name):'ไม่ระบุชื่อ'}</b><span class="vt">${tm(v.start)} – ${live?'<span class="vlive">กำลังดู</span>':tm(v.last)}</span><span class="vd">${dur(v.last - v.start)}</span></div>`;
+        h += `<div class="vrow"><span class="vw" style="--vc:${col}">${v.picture?`<img src="${esc(v.picture)}" alt="" referrerpolicy="no-referrer">`:v.name?esc(v.name.slice(0,2)):'<span class="ms">person</span>'}</span><b>${v.name?esc(v.name):'ไม่ระบุชื่อ'}${v.email?`<span class="vem">${esc(v.email)}</span>`:''}</b><span class="vt">${tm(v.start)} – ${live?'<span class="vlive">กำลังดู</span>':tm(v.last)}</span><span class="vd">${dur(v.last - v.start)}</span></div>`;
       });
       if(day) h += '</div>';
       $('vList').innerHTML = h || '<p class="empty">ยังไม่มีประวัติการเข้าดู</p>';
