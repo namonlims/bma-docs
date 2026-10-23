@@ -394,6 +394,48 @@ h1{font-weight:700}
   #taskDlg .rgrid .lrow .ldel{grid-column:4;grid-row:1}
   #taskDlg .rgrid .lrow > .ms{grid-column:1;grid-row:1}
 }
+/* ปุ่มรายละเอียดในแถวคณะ/ระบบย่อย · ลิ้นชักรายละเอียด */
+.itinfo{flex:none;min-width:28px;height:28px;padding:0 6px;border:0;border-radius:var(--dim-radius-150);background:transparent;color:var(--text-content-tertiary);display:inline-flex;align-items:center;justify-content:center;gap:2px;cursor:pointer;font:inherit;font-size:12px;font-weight:500;opacity:0;transition:opacity .12s}
+.itinfo .ms{font-size:18px}
+.itinfo.has{opacity:1;color:var(--brand-p700)}
+.itinfo .fg{color:var(--text-danger-default);font-size:16px}
+.lab:hover .itinfo,.itinfo:focus-visible{opacity:1}
+.itinfo:hover{background:var(--brand-p50);color:var(--brand-p700)}
+.itinfo:focus{outline:none}.itinfo:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
+@media (pointer:coarse){ .itinfo{opacity:1;min-width:36px;height:36px} }
+dialog.drawer{margin:0 auto 0 0;width:min(600px,100vw);max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0 var(--dim-radius-500) var(--dim-radius-500) 0}
+dialog.drawer .dlg{height:100%;max-height:100dvh}
+.dbar{padding:12px 24px;border-bottom:1px solid var(--border-neutral-tertiary)}
+.dbar .chip{min-height:36px;font-size:13px}
+.dbar .chip small{color:var(--text-content-tertiary);font-weight:400}
+.dbody{flex:1;min-height:0;overflow:auto;padding:8px 24px 24px;display:flex;flex-direction:column;gap:24px}
+.dsec{display:flex;flex-direction:column;gap:8px}
+.dsec > .gh{padding-top:16px}
+.dgrp{display:flex;flex-direction:column;gap:4px;padding-top:16px;border-top:1px solid var(--border-neutral-quaternary, var(--border-neutral-tertiary))}
+.dsec .dgrp:first-of-type{border-top:0;padding-top:4px}
+.dgh{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:13px;color:var(--text-content-secondary)}
+.dgh b{color:var(--text-content-default);font-weight:500}
+.dgh .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dgh .edit{margin-left:auto}
+.dgh .st{font-size:12px;padding:0 8px;border-radius:999px;background:var(--surface-card-200, #F3F4F6);color:var(--text-content-secondary)}
+.dent{display:grid;grid-template-columns:112px minmax(0,1fr) 36px;gap:8px;align-items:start;padding:6px 8px;border-radius:var(--dim-radius-200)}
+.dent:hover{background:var(--surface-card-200, #F7F8F9)}
+.dent.flag{background:var(--surface-alert-error);box-shadow:inset 3px 0 0 var(--text-danger-default)}
+.dent .k{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-content-tertiary);padding-top:4px}
+.dent .k .ms{font-size:16px}
+.dent .v{min-width:0;font-size:14px;color:var(--text-content-default);white-space:pre-wrap;overflow-wrap:anywhere;padding-top:2px}
+.dent .v a{color:var(--brand-p700);text-decoration:none;display:inline-flex;align-items:center;gap:4px;max-width:100%}
+.dent .v a:hover{text-decoration:underline}
+.dent .v a .ms{font-size:16px;flex:none}
+.dent .v a span.u{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dent .v small{display:block;color:var(--text-content-tertiary);font-size:12px}
+.dflag,.dedit{width:36px;height:36px;border:0;border-radius:var(--dim-radius-200);background:transparent;color:var(--text-content-tertiary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.dflag:hover,.dedit:hover{background:var(--brand-p50);color:var(--brand-p700)}
+.dflag[aria-pressed="true"]{color:var(--text-danger-default)}
+.dflag[aria-pressed="true"] .ms{font-variation-settings:'FILL' 1}
+.dempty{color:var(--text-content-tertiary);font-size:13px;padding:4px 8px}
+@media (pointer:coarse){ .dflag,.dedit{width:44px;height:44px} .dent{grid-template-columns:96px minmax(0,1fr) 44px} }
+@media (max-width:640px){ .dbar{padding:12px 16px} .dbody{padding:8px 16px 24px} .dent{grid-template-columns:minmax(0,1fr) 44px} .dent .k{grid-column:1 / -1;padding-top:0} .dent .v{grid-column:1} dialog.drawer{border-radius:0} }
 #taskDlg .fl .ms{font-size:18px;vertical-align:-4px;margin-right:4px;color:var(--text-content-tertiary)}
 @media (max-width:1023px){
   #taskDlg .tbody{grid-template-columns:minmax(0,1fr);grid-template-areas:"task" "side" "ref";grid-template-rows:auto}
@@ -830,6 +872,15 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
     <div class="hbody" id="vList"></div>
   </div>
 </dialog>
+<!-- รายละเอียดคณะ/ระบบย่อย: ไฟล์ Figma · Drive · BA Note · Design Note · หมายเหตุ · นัด เรียงตาม timeline + ปักธง (ผู้ใช้ 23 ต.ค. 69) -->
+<dialog id="detDlg" class="drawer">
+  <div class="dlg">
+    <div class="ph"><div><h3 id="dTitle"></h3><p class="hint" id="dHint"></p></div>
+      <button type="button" class="xclose" data-close aria-label="ปิด"><span class="ms">close</span></button></div>
+    <div class="dbar"><div class="seg" id="dFilter"></div></div>
+    <div class="dbody" id="dList"></div>
+  </div>
+</dialog>
 <datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"></datalist>
 <div class="toast" id="toast"></div>
 <div class="tipcard" id="tipcard" role="tooltip"></div>
@@ -1054,6 +1105,11 @@ function renderTogAll(){
   b.querySelector('span:last-child').textContent = all ? 'ขยายทั้งหมด' : 'ย่อทั้งหมด';
   b.onclick = ()=>{ collapsed = all ? new Set() : new Set(state.committees.map(c=>c.id)); saveCollapsed(); render(); };
 }
+// ปุ่มรายละเอียดท้ายชื่อแถว: มีไฟล์/โน้ต = แสดงตลอดพร้อมจำนวน · ปักธง = ธงแดง · ไม่มี = โผล่ตอน hover
+function infoBtn(c, it){
+  const {n, f} = detCount(c, it), nm = it || cName(c);
+  return `<button type="button" class="itinfo${n?' has':''}" data-c="${esc(c)}"${it?` data-item="${esc(it)}"`:''} aria-label="ดูรายละเอียด ${esc(nm)}${n?` · ${n} รายการ`:''}${f?` · ปักธง ${f}`:''}" title="ดูรายละเอียด · ไฟล์ · โน้ต">${f?'<span class="ms fg" style="font-variation-settings:\'FILL\' 1">flag</span>':''}<span class="ms">${n?'folder_open':'info'}</span>${n?n:''}</button>`;
+}
 function renderGantt(){
   renderTogAll();
   if(window.FH) requestAnimationFrame(()=>window.FH.build());
@@ -1104,16 +1160,17 @@ function renderGantt(){
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
     const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
-    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span></div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
+    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span>${infoBtn(c.id)}</div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     orderedItems(c).forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it)), par = parentOf(c, it), kids = c.items.filter(x=>parentOf(c,x)===it).length;
-      html += `<div class="lab sub ${its.length?'':'none'}${par?' kid':''}" data-c="${esc(c.id)}" data-item="${esc(it)}" data-par="${esc(par)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${par?'<span class="ms kidmk">subdirectory_arrow_right</span>':''}${esc(it)}${kids?` <small class="cn">${kids}</small>`:''}</span>${par?'':`<button type="button" class="itsub" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="เพิ่มรายการย่อยใต้ ${esc(it)}" title="เพิ่มรายการย่อย"><span class="ms">add</span></button>`}<button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
+      html += `<div class="lab sub ${its.length?'':'none'}${par?' kid':''}" data-c="${esc(c.id)}" data-item="${esc(it)}" data-par="${esc(par)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${par?'<span class="ms kidmk">subdirectory_arrow_right</span>':''}${esc(it)}${kids?` <small class="cn">${kids}</small>`:''}</span>${infoBtn(c.id, it)}${par?'':`<button type="button" class="itsub" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="เพิ่มรายการย่อยใต้ ${esc(it)}" title="เพิ่มรายการย่อย"><span class="ms">add</span></button>`}<button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
         `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
   });
   g.innerHTML = html;
+  g.querySelectorAll('.itinfo').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); openDetail(b.dataset.c, b.dataset.item || null); });
 
   g.querySelectorAll('.bar').forEach(b=>{
     b.onclick=()=>{ if(b.dataset.dragged){ delete b.dataset.dragged; return; } openTask(b.dataset.t, null, b.dataset.it); };
@@ -1805,6 +1862,89 @@ function refsTip(t){
   if(t.noteLinks?.length) rows.push(`<span>ลิงก์หมายเหตุ</span><span>${esc(t.noteLinks.map(linkName).join(' · '))}</span>`);
   return rows.length ? `<div class="tt-g">${rows.join('')}</div>` : '';
 }
+
+// ---------- รายละเอียดคณะ/ระบบย่อย (ผู้ใช้ 23 ต.ค. 69 "ปุ่มดูรายละเอียด · Figma/Drive/BA ทั้งหมด · เรียงตาม timeline · ปักธงว่าใช้อันนี้") ----------
+// ธงเก็บในงาน/นัดนั้น (t.flags / e.flags = key ของรายการ) → ซิงก์ข้อมูลกลางเหมือนช่องอื่น · นัดจาก Google Calendar ปักธงไม่ได้
+const DKIND = {
+  figma:{label:'Figma', icon:'draw'}, drive:{label:'Drive คณะทำงาน', icon:'folder_shared'},
+  ba:{label:'BA Note', icon:'assignment'}, design:{label:'Design Note', icon:'palette'},
+  note:{label:'หมายเหตุ', icon:'sticky_note_2'}, event:{label:'นัด', icon:'event'},
+};
+let det = null, dFil = 'all';
+function taskEntries(t){
+  const R = refsOf(t), out = [];
+  const push = (kind, text, links) => { if(text) out.push({kind, key:kind+':text', text}); (links||[]).forEach(l=>out.push({kind, key:kind+':'+l.url, link:l})); };
+  ['figma','drive','ba','design'].forEach(k=>push(k, R[k]?.text, R[k]?.links));
+  push('note', t.note, t.noteLinks);
+  return out;
+}
+function detGroups(){
+  const {c, it} = det, G = [];
+  state.tasks.filter(t=>t.c===c && (!it || t.items.includes(it))).forEach(t=>G.push({type:'task', id:t.id, date:t.start, src:t, entries:taskEntries(t)}));
+  if(!it) allEvents().filter(e=>e.c===c).forEach(e=>G.push({type:'event', id:e.id, date:e.date, src:e, gcal:e.src==='gcal',
+    entries:[{kind:'event', key:'event:text', text:e.text}, ...(e.links||[]).map(l=>({kind:'event', key:'event:'+l.url, link:l}))]}));
+  G.sort((p,q)=>p.date.localeCompare(q.date) || (p.type==='event'?-1:1));   // เรียงตาม timeline เก่า → ใหม่
+  G.forEach(g=>g.entries.forEach(x=>x.flag = (g.src.flags||[]).includes(x.key)));
+  return G;
+}
+const detCount = (c, it) => { const prev = det; det = {c, it}; const G = detGroups(); det = prev;
+  return {n: G.reduce((s,g)=>s+g.entries.filter(x=>x.kind!=='event' || x.link).length, 0), f: G.reduce((s,g)=>s+g.entries.filter(x=>x.flag).length, 0)}; };
+function openDetail(c, it){
+  det = {c, it}; dFil = 'all'; renderDetail(); $('detDlg').showModal();
+}
+function renderDetail(){
+  const {c, it} = det, G = detGroups(), all = G.flatMap(g=>g.entries.map(x=>({...x, g})));
+  const cn = cName(c);
+  $('dTitle').textContent = it || cn;
+  const nT = G.filter(g=>g.type==='task').length, nE = G.length - nT, nF = all.filter(x=>x.flag).length;
+  $('dHint').textContent = [it ? cn : null, `${nT} งาน`, nE ? `${nE} นัด` : null, nF ? `ปักธง ${nF}` : null].filter(Boolean).join(' · ');
+  const cnt = k => all.filter(x=>x.kind===k && (k!=='event' || x.link)).length;
+  const F = {all:{label:'ทั้งหมด'}, flag:{label:'ปักธง', n:nF}, figma:{label:'Figma', n:cnt('figma')}, drive:{label:'Drive', n:cnt('drive')}, ba:{label:'BA Note', n:cnt('ba')}, design:{label:'Design Note', n:cnt('design')}, note:{label:'หมายเหตุ', n:cnt('note')}, ...(it ? {} : {event:{label:'นัด', n:nE}})};
+  $('dFilter').innerHTML = Object.entries(F).map(([k,v])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===dFil}">${esc(v.label)}${v.n!=null?` <small>${v.n}</small>`:''}</button>`).join('');
+  $('dFilter').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{ dFil = b.dataset.k; renderDetail(); });
+
+  const ent = (x, g) => {
+    const K = DKIND[x.kind], canFlag = !g.gcal;
+    const v = x.link ? `<a href="${esc(safeHref(x.link.url))}" target="_blank" rel="noopener"><span class="ms">open_in_new</span><span class="u">${esc(x.link.name || linkName(x.link))}</span></a><small>${esc(x.link.url.replace(/^https?:\/\//,''))}</small>` : esc(x.text);
+    return `<div class="dent${x.flag?' flag':''}"><span class="k"><span class="ms">${K.icon}</span>${esc(K.label)}</span><div class="v">${v}</div>`+
+      (canFlag ? `<button type="button" class="dflag" data-g="${esc(g.type)}" data-id="${esc(g.id)}" data-key="${esc(x.key)}" aria-pressed="${x.flag}" aria-label="${x.flag?'เอาธงออก':'ปักธง ใช้อันนี้'}" title="${x.flag?'เอาธงออก':'ปักธง · ใช้อันนี้'}"><span class="ms">flag</span></button>` : '<span></span>')+`</div>`;
+  };
+  const head = g => {
+    const s = g.src;
+    if(g.type==='event'){ const k = kindOf(s.kind) || {label:'นัด', color:'var(--other)'};
+      return `<div class="dgh"><i class="dot" style="background:${k.color}"></i><b>${esc(fmtD(s.date))}</b>${s.time?` ${esc(s.time)} น.`:''} · ${esc(k.label)}${g.gcal?' · Google Calendar':`<button type="button" class="dedit edit" data-ev="${esc(s.id)}" aria-label="แก้ไขนัด" title="แก้ไขนัด"><span class="ms">edit</span></button>`}</div>`; }
+    return `<div class="dgh"><i class="dot" style="background:${whoColor(s.who)}"></i><b>${esc(fmt(pd(s.start)))} – ${esc(fmtD(s.end))}</b> · ${esc(s.who)} · ${esc(roundFull(roundOf(s)))} · ${esc(TYPE[typeOf(s)])}${it?'':` · ${esc(s.items.join(' · '))}`} <span class="st">${esc(STATUS[stAt(s, it)])}</span><button type="button" class="dedit edit" data-t="${esc(s.id)}" aria-label="แก้ไขงาน" title="แก้ไขงาน"><span class="ms">edit</span></button></div>`;
+  };
+  const pick = x => dFil==='all' ? true : dFil==='flag' ? x.flag : dFil==='event' ? x.kind==='event' : x.kind===dFil;
+  let html = '';
+  // ปักธงไว้ขึ้นก่อน (ตอนดูทั้งหมด) = อันที่ทีมตกลงใช้
+  if(dFil==='all' && nF){
+    html += `<section class="dsec"><h4 class="gh">ปักธงไว้ · ใช้อันนี้</h4>${G.map(g=>{ const E = g.entries.filter(x=>x.flag); return E.length ? `<div class="dgrp">${head(g)}${E.map(x=>ent(x,g)).join('')}</div>` : ''; }).join('')}</section>`;
+  }
+  const body = G.map(g=>{
+    const E = g.entries.filter(pick);
+    if(!E.length && dFil!=='all') return '';
+    if(g.type==='event' && dFil!=='all' && dFil!=='event' && !E.some(x=>x.link)) return '';
+    return `<div class="dgrp">${head(g)}${E.length ? E.map(x=>ent(x,g)).join('') : '<div class="dempty">ยังไม่มีไฟล์หรือโน้ต</div>'}</div>`;
+  }).join('');
+  html += `<section class="dsec"><h4 class="gh">ตาม timeline</h4>${body || '<div class="dempty">ไม่มีรายการ</div>'}</section>`;
+  $('dList').innerHTML = html;
+}
+$('dList').onclick = ev=>{
+  const f = ev.target.closest('.dflag');
+  if(f){
+    const isT = f.dataset.g==='task', o = (isT ? state.tasks : state.events).find(x=>x.id===f.dataset.id); if(!o) return;
+    const k = f.dataset.key, F = new Set(o.flags||[]), on = !F.has(k);
+    on ? F.add(k) : F.delete(k); if(F.size) o.flags = [...F]; else delete o.flags;
+    const kind = DKIND[k.split(':')[0]]?.label || '';
+    logHist(on?'ปักธง':'เอาธงออก', isT?'งาน':'นัด', isT ? tTitle(o) : o.text, cName(o.c), [{f:'ธง', from:on?'—':kind, to:on?kind:'—'}]);
+    persist(); renderDetail(); render(); toast(on ? 'ปักธงแล้ว · ใช้อันนี้' : 'เอาธงออกแล้ว');
+    return;
+  }
+  const e = ev.target.closest('.dedit');
+  if(e){ $('detDlg').close(); if(e.dataset.t) openTask(e.dataset.t, null, det.it); else openEvent(e.dataset.ev); }
+};
+$('detDlg').addEventListener('close', ()=>{ det = null; });
 
 // ---------- ประวัติการแก้ไข (ผู้ใช้สั่ง 21 ต.ค. 69 "มีปุ่มดูประวัติการแก้ไขได้") ----------
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
