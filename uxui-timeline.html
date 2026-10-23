@@ -98,11 +98,11 @@ h1{margin:0;font-size:24px;color:var(--brand)}
 .mk.ms::before{clip-path:polygon(50% 0,100% 100%,0 100%);border:0}
 .mk.stack2{top:2px}.mk.stack2+.mk{top:14px}
 .addhit{position:absolute;inset:0;z-index:1;cursor:copy}
-.bar .rz{position:absolute;top:0;bottom:0;width:10px;cursor:ew-resize;touch-action:none;z-index:3}
+.bar .rz{position:absolute;top:0;bottom:0;width:clamp(4px,18%,10px);cursor:ew-resize;touch-action:none;z-index:3}
 .bar .rz.l{left:-1px;border-radius:6px 0 0 6px}
 .bar .rz.r{right:-1px;border-radius:0 6px 6px 0}
 .bar .rz::after{content:"";position:absolute;top:7px;bottom:7px;width:2px;border-radius:1px;background:currentColor;opacity:0;transition:opacity .15s}
-.bar .rz.l::after{left:3px}.bar .rz.r::after{right:3px}
+.bar .rz.l::after{left:min(3px,30%)}.bar .rz.r::after{right:min(3px,30%)}
 .bar:hover .rz::after,.bar.resizing .rz::after{opacity:.6}
 .bar.resizing{z-index:4;outline:2px solid var(--text);outline-offset:1px}
 @media (pointer:coarse){.bar .rz{width:16px}.bar .rz::after{opacity:.6}}
@@ -1568,7 +1568,8 @@ function startMove(ev, bar, a, n){
   const x0 = ev.clientX, y0 = ev.clientY, touch = ev.pointerType !== 'mouse';
   let active = false, dd = 0, target = null, holdT = null;
   const fromIt = bar.dataset.it;
-  const rows = [...gEl.querySelectorAll(`.trk[data-c="${CSS.escape(t.c)}"][data-item]`)];
+  // ลากขึ้นลงย้ายระบบย่อยได้ทุกคณะ (ผู้ใช้ 24 ต.ค. 69 "คลิกค้างแล้ว move row กับคอลัมน์ได้") · ข้ามคณะได้เฉพาะงานที่มีระบบย่อยเดียว
+  const rows = [...gEl.querySelectorAll('.trk[data-c][data-item]')].filter(r=>r.dataset.c===t.c || (t.items.length===1 && fromIt));
   const begin = () => { active = true; moveTouchBlock = touch; bar.classList.add('moving'); hideTip(); if(navigator.vibrate && touch) navigator.vibrate(15); };
   if(touch) holdT = setTimeout(begin, 350);
   const move = m => {
@@ -1579,7 +1580,7 @@ function startMove(ev, bar, a, n){
     }
     dd = Math.round(dx / dw);
     target = rows.find(r=>{ const rr = r.getBoundingClientRect(); return m.clientY >= rr.top && m.clientY < rr.bottom; }) || null;
-    rows.forEach(r=>r.classList.toggle('droptarget', r===target && r.dataset.item!==fromIt));
+    rows.forEach(r=>r.classList.toggle('droptarget', r===target && (r.dataset.item!==fromIt || r.dataset.c!==t.c)));
     const ty = target ? target.getBoundingClientRect().top - trk.getBoundingClientRect().top : 0;
     bar.style.transform = `translate(${dd*dw}px, ${ty}px)`;
   };
@@ -1593,17 +1594,18 @@ function startMove(ev, bar, a, n){
     const wasActive = active; cleanup();
     if(!wasActive) return;
     bar.dataset.dragged = '1';
-    const toIt = target?.dataset.item;
-    const moveIt = toIt && fromIt && toIt !== fromIt;
+    const toIt = target?.dataset.item, toC = target?.dataset.c || t.c;
+    const moveIt = toIt && fromIt && (toIt !== fromIt || toC !== t.c);
     if(!dd && !moveIt) return;
-    const before = {start:t.start, end:t.end, items:[...t.items]};
+    const before = {c:t.c, start:t.start, end:t.end, items:[...t.items]};
+    if(moveIt && toC !== t.c) t.c = toC;
     if(dd){ const sh = d => iso(new Date(pd(d).getTime() + dd*DAY)); t.start = sh(t.start); t.end = sh(t.end); }
     if(moveIt){
       t.items = [...new Set(t.items.map(x=>x===fromIt ? toIt : x))];
       if(t.itemStatus?.[fromIt]){ t.itemStatus[toIt] = t.itemStatus[fromIt]; delete t.itemStatus[fromIt]; }
     }
-    logHist('แก้ไข','งาน', tTitle(t), cName(t.c), diff(before, t, {start:TF.start, end:TF.end, items:TF.items}));
-    persist(); render(); toast(moveIt ? `ย้ายไป ${toIt}${dd?` · เลื่อน ${dd>0?'+':''}${dd} วัน`:''}` : `เลื่อน ${dd>0?'+':''}${dd} วัน`);
+    logHist('แก้ไข','งาน', tTitle(t), cName(t.c), diff(before, t, {c:TF.c, start:TF.start, end:TF.end, items:TF.items}));
+    persist(); render(); toast(moveIt ? `ย้ายไป ${toC!==before.c ? cName(toC)+' › ' : ''}${toIt}${dd?` · เลื่อน ${dd>0?'+':''}${dd} วัน`:''}` : `เลื่อน ${dd>0?'+':''}${dd} วัน`);
   };
   window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', cancel);
 }
