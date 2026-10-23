@@ -882,7 +882,7 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 
   <section class="panel">
     <div class="phd"><h2>Timeline รายคณะ</h2><div class="phd-r"><a class="btn subdue sm" href="#roundSum"><span class="ms">checklist</span><span>สรุปรอบงาน</span></a><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div></div>
-    <p class="hint">เรียงคณะตามวันเริ่มงาน · md บนปุ่มผู้รับผิดชอบ = คน-วัน (คนเดียวทำหลายงานในวันเดียว = 1)</p>
+    <p class="hint">เรียงคณะตามวันเริ่มงาน · แถบงานแสดง ผู้รับผิดชอบ-หัวข้อ</p>
     <div class="scroller" id="scroller"><div class="gantt" id="gantt"></div></div>
   </section>
 
@@ -907,6 +907,7 @@ table.rs .rs-it.kid{padding-left:48px;font-size:13px}
       <section class="fgrp">
         <h4 class="gh">งาน</h4>
         <!-- เปิดจากแถว/แถบงาน = คณะ + คลินิกเป็นข้อความ informative (ผู้ใช้สั่ง 21 ต.ค. 69) · เปิดจากปุ่ม "เพิ่มงาน" = เลือกเอง -->
+        <div class="field"><label for="tTopic">หัวข้อ <small class="cnt">ไม่บังคับ · แถบงานแสดงเป็น ชื่อ-หัวข้อ</small></label><input type="text" id="tTopic" maxlength="60" placeholder="เช่น แก้ปุ่มส่งต่อ หน้าคัดกรอง"></div>
         <dl class="info" id="tInfo"><dt>คณะ</dt><dd id="tInfoC"></dd><dt>ระบบย่อย</dt><dd id="tInfoI"></dd></dl>
         <div class="field" id="tCField"><label for="tC">คณะ</label><div class="selwrap"><select id="tC" autofocus></select><span class="ms">expand_more</span></div></div>
         <div class="field" id="tItemsField"><span class="fl">ระบบย่อย <small class="cnt" id="tItemsCnt"></small></span><div class="checks" id="tItems"></div>
@@ -1296,7 +1297,7 @@ function renderGantt(){
   const bar = (t, label, it) => {
     if(xi(t.end) < 0) return '';
     const s = Math.max(0, xi(t.start)), w = xi(t.end)-s+1, md = daysOf(t);
-    const tip = `${roundFull(roundOf(t))}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${t.who} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
+    const tip = `${roundFull(roundOf(t))}${methodOf(t)?' · '+METHOD[methodOf(t)]:''} · ${TYPE[typeOf(t)]} · ${barLabel(t)} · ${STATUS[stAt(t,it)]} · ${md} วัน\n${fmt(pd(t.start))} – ${fmt(pd(t.end))}\n${t.items.join(' · ')}${t.note?'\n'+t.note:''}`;
     return `<button type="button" class="bar ${stAt(t,it)}" style="--c:${whoColor(t.who)};left:calc(${s} * var(--DW) + 2px);width:calc(${w} * var(--DW) - 4px)" data-t="${esc(t.id)}"${it?` data-it="${esc(it)}"`:''} aria-label="${esc(tip)}">${TICON[typeOf(t)]?`<span class="ms">${TICON[typeOf(t)]}</span>`:''}${allLinks(t).length?'<span class="ms">link</span>':''}${esc(label)}</button>${(roundOf(t)>1||methodOf(t))?`<span class="rtagx ${stAt(t,it)}" style="left:calc(${s} * var(--DW) - 2px)" aria-hidden="true">${roundOf(t)>1?'R'+roundOf(t):''}${methodOf(t)?`<span class="ms">${METHOD_I[methodOf(t)]}</span>`:''}</span>`:''}`;
   };
 
@@ -1308,12 +1309,12 @@ function renderGantt(){
     const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
     const evs = allEvents().filter(e=>e.c===c.id);
     const col = collapsed.has(c.id);
-    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span>${infoBtn(c.id)}</div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`)).join(''):''}${markers(evs)}</div>`;
+    html += `<div class="lab c"><button type="button" class="ctog" data-tog="${esc(c.id)}" aria-expanded="${!col}" aria-label="${col?'ขยาย':'ย่อ'} ${esc(c.name)}"><span class="ms">expand_more</span></button><span class="nm">${esc(c.name)}${col?` <small class="cn">${c.items.length}</small>`:''}</span>${infoBtn(c.id)}</div><div class="trk c" data-ec="${esc(c.id)}"><span class="addhit ev"></span>${bg}${col?ts.map(t=>bar(t, barLabel(t))).join(''):''}${markers(evs)}</div>`;
     if(col) return;   // ย่อแล้ว = แถบงานทั้งคณะอยู่บนแถวคณะ
     orderedItems(c).forEach(it=>{
       const its = ts.filter(t=>t.items.includes(it)), par = parentOf(c, it), kids = c.items.filter(x=>parentOf(c,x)===it).length;
       html += `<div class="lab sub ${its.length?'':'none'}${par?' kid':''}" data-c="${esc(c.id)}" data-item="${esc(it)}" data-par="${esc(par)}"><button type="button" class="grip" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ย้ายลำดับ ${esc(it)} (ลาก หรือกดลูกศรขึ้น/ลง)"><span class="ms">drag_indicator</span></button><span class="nm">${par?'<span class="ms kidmk">subdirectory_arrow_right</span>':''}${esc(it)}${kids?` <small class="cn">${kids}</small>`:''}</span>${infoBtn(c.id, it)}${par?'':`<button type="button" class="itsub" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="เพิ่มรายการย่อยใต้ ${esc(it)}" title="เพิ่มรายการย่อย"><span class="ms">add</span></button>`}<button type="button" class="itdel" data-c="${esc(c.id)}" data-item="${esc(it)}" aria-label="ลบระบบย่อย ${esc(it)}"><span class="ms">delete</span></button></div>`+
-        `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, `${t.who} ${n1(mdOf(t))}`, it)).join('')}</div>`;
+        `<div class="trk" data-c="${esc(c.id)}" data-item="${esc(it)}"><span class="addhit"></span>${bg}${its.map(t=>bar(t, barLabel(t), it)).join('')}</div>`;
     });
     html += `<div class="lab sub addl"><button type="button" class="additem" data-c="${esc(c.id)}"><span class="ms">add</span>เพิ่มระบบย่อย</button></div><div class="trk addl">${bg}</div>`;
   });
@@ -1391,7 +1392,7 @@ function tipHtml(el){
       `<div class="tt-g">${e.kind==='present'?`<span>รูปแบบ</span><span>${esc(PMODE[modeOf(e)])}</span>`:''}<span>คณะ</span><span>${esc(cName(e.c))}</span>${e.place?`<span>สถานที่</span><span>${esc(e.place)}</span>`:''}<span>ที่มา</span><span>${e.src==='gcal'?'ดึงจาก Google Calendar · คลิกเพื่อเปิด':'เพิ่มเองในหน้านี้'}</span>${e.flags?.length?`<span>ปักธง</span><span>${e.flags.length} รายการ</span>`:''}${e.kind==='rec'?`<span>ถอดเสียง</span><span>${e.note?'มีแล้ว · ดูในแผงรายละเอียด':'ยังไม่มี'}</span>`:''}</div>`+linksTip(e.links);
   }
   const t = state.tasks.find(x=>x.id===el.dataset.t); if(!t) return '';
-  return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(t.who)} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
+  return `<div class="tt-t"><i class="tt-k" style="background:${whoColor(t.who)}"></i>${esc(barLabel(t))} · ${esc(STATUS[stAt(t, el.dataset.it)])}${el.dataset.it && t.items.length>1?` <small>(${esc(el.dataset.it)})</small>`:''}</div>`+
     `<div class="tt-s">${esc(fmt(pd(t.start)))} – ${esc(fmt(pd(t.end)))} · ${daysOf(t)} วัน</div>`+
     `<div class="tt-g"><span>รอบ</span><span>${esc(roundFull(roundOf(t)))}</span>${methodOf(t)?`<span>วิธีส่ง</span><span>${esc(METHOD[methodOf(t)])}</span>`:''}<span>ประเภทงาน</span><span>${esc(TYPE[typeOf(t)])}</span><span>ระบบย่อย</span><span>${esc(t.items.join(' · '))}</span><span>คณะ</span><span>${esc(cName(t.c))}</span>${t.note?`<span>หมายเหตุ</span><span>${esc(t.note)}</span>`:''}</div>`+refsTip(t);
 }
@@ -1810,6 +1811,7 @@ function openTask(id, preset, it){
   const who0 = PEOPLE.includes(v.who) ? v.who : 'Kae';
   const pickW = k=>{ $('tWho').value = k; segs($('tWhoSeg'), Object.fromEntries(PEOPLE.map(p=>[p,p])), k, pickW); };
   pickW(who0);
+  $('tTopic').value = v.topic || '';
   $('tNote').value = v.note || ''; renderLinks($('tNoteLinks'), v.noteLinks); renderRefs(v);
   const ctx = !!t || !!(preset?.c && preset?.items?.length);
   $('tInfo').hidden = !ctx; $('tCField').hidden = ctx; $('tItemsField').hidden = ctx;
@@ -1846,7 +1848,7 @@ $('taskForm').onsubmit = ev=>{
   if(!items.length){ alert('เลือกระบบย่อยอย่างน้อย 1 รายการ'); return; }
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
   const data = {c:$('tC').value, items, who:$('tWho').value.trim()||'Kae', start:$('tS').value, end:$('tE').value,
-    status:tStatus, type:tType, round: +tRound, method: tMethod || undefined, md: null, note:$('tNote').value.trim(), noteLinks:readLinks($('tNoteLinks')), ...readRefs(), links:undefined};
+    status:tStatus, type:tType, round: +tRound, method: tMethod || undefined, md: null, topic:$('tTopic').value.trim() || undefined, note:$('tNote').value.trim(), noteLinks:readLinks($('tNoteLinks')), ...readRefs(), links:undefined};
   if(editT){
     const o = state.tasks.find(x=>x.id===editT);
     let extra = [];
@@ -2065,7 +2067,7 @@ function renderDetail(){
     const s = g.src;
     if(g.type==='event'){ const k = kindOf(s.kind) || {label:'นัด', color:'var(--other)'};
       return `<div class="dgh"><i class="dot" style="background:${k.color}"></i><b>${esc(fmtD(s.date))}</b>${s.time?` ${esc(s.time)} น.`:''} · ${esc(k.label)} <span class="st src">${g.gcal?'ดึงจาก Google Calendar':'เพิ่มเองในหน้านี้'}</span>${g.gcal?'':`${s.kind==='rec' && s.links?.length ? `<button type="button" class="dedit dgem" data-gem="${esc(s.id)}" aria-label="ถอดเสียงด้วย Gemini" title="ถอดเสียงด้วย Gemini"><span class="ms">auto_awesome</span></button>` : ''}<button type="button" class="dedit edit" data-ev="${esc(s.id)}" aria-label="แก้ไขนัด" title="แก้ไขนัด"><span class="ms">edit</span></button>`}</div>`; }
-    return `<div class="dgh"><i class="dot" style="background:${whoColor(s.who)}"></i><b>${esc(fmt(pd(s.start)))} – ${esc(fmtD(s.end))}</b> · ${esc(s.who)} · ${esc(roundFull(roundOf(s)))} · ${esc(TYPE[typeOf(s)])}${it?'':` · ${esc(s.items.join(' · '))}`} <span class="st">${esc(STATUS[stAt(s, it)])}</span><button type="button" class="dedit edit" data-t="${esc(s.id)}" aria-label="แก้ไขงาน" title="แก้ไขงาน"><span class="ms">edit</span></button></div>`;
+    return `<div class="dgh"><i class="dot" style="background:${whoColor(s.who)}"></i><b>${esc(fmt(pd(s.start)))} – ${esc(fmtD(s.end))}</b> · ${esc(barLabel(s))} · ${esc(roundFull(roundOf(s)))} · ${esc(TYPE[typeOf(s)])}${it?'':` · ${esc(s.items.join(' · '))}`} <span class="st">${esc(STATUS[stAt(s, it)])}</span><button type="button" class="dedit edit" data-t="${esc(s.id)}" aria-label="แก้ไขงาน" title="แก้ไขงาน"><span class="ms">edit</span></button></div>`;
   };
   const pick = x => dFil==='all' ? true : dFil==='flag' ? x.flag : dFil==='event' ? x.kind==='event' : x.kind===dFil;
   let html = '';
@@ -2277,7 +2279,7 @@ window.addEventListener('beforeunload', ev=>{ if(['rec','pause','saving','failed
 // เก็บใน state.history (ไปกับไฟล์ HTML/JSON ด้วย) · ล่าสุดก่อน · เก็บ 500 รายการ · ชื่อผู้แก้ = เลือกครั้งเดียวต่อเบราว์เซอร์
 const HIST_MAX = 500;
 let me = ''; try { me = localStorage.getItem(STORE_KEY+':me') || ''; } catch(e){}
-const TF = {c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', noteLinks:'ลิงก์หมายเหตุ', drive:'Drive คณะทำงาน', figma:'Figma', ba:'BA Note', design:'Design Note', links:'ลิงก์ไฟล์'};
+const TF = {topic:'หัวข้อ', c:'คณะ', items:'ระบบย่อย', who:'ผู้รับผิดชอบ', start:'วันเริ่ม', end:'วันสิ้นสุด', status:'สถานะ', type:'ประเภทงาน', round:'รอบ', method:'วิธีส่ง', md:'Manday', note:'หมายเหตุ', noteLinks:'ลิงก์หมายเหตุ', drive:'Drive คณะทำงาน', figma:'Figma', ba:'BA Note', design:'Design Note', links:'ลิงก์ไฟล์'};
 const EF = {c:'คณะ', text:'รายการ', date:'วันที่', time:'เวลา', kind:'ประเภท', mode:'รูปแบบ Present', links:'ลิงก์ไฟล์', note:'ถอดเสียง / สรุป'};
 const fmtD = v => v ? `${fmt(pd(v))} ${pd(v).getFullYear()+543}` : '—';
 const showV = (k, v, kind) => {
@@ -2299,7 +2301,9 @@ const showV = (k, v, kind) => {
 const nz = v => (Array.isArray(v) && !v.length) ? null : (v ?? null);
 const diff = (a, b, F) => Object.keys(F).filter(k => JSON.stringify(nz(a?.[k])) !== JSON.stringify(nz(b?.[k])))
   .map(k => ({f:F[k], from:showV(k, a?.[k]), to:showV(k, b?.[k])}));
-const tTitle = t => `${t.items.join(' · ')} · ${t.who}`;
+const tTitle = t => `${barLabel(t)} · ${t.items.join(' · ')}`;
+// ชื่อบนแถบงาน = [ผู้รับผิดชอบ]-[หัวข้อ] · ไม่มีหัวข้อ = ชื่ออย่างเดียว (ผู้ใช้ 24 ต.ค. 69)
+function barLabel(t){ return t.topic ? `${t.who}-${t.topic}` : t.who; }
 function logHist(action, kind, title, where, changes){
   if(action==='แก้ไข' && changes && !changes.length) return;
   (state.history ||= []).unshift({at:Date.now(), by:me, ...(typeof AUTH!=='undefined' && AUTH.user ? {email:AUTH.user.email} : {}), action, kind, title, where, changes:changes||[]});
