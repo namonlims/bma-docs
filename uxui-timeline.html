@@ -377,12 +377,26 @@ h1{font-weight:700}
 #taskDlg .addrow .btn{min-width:96px;justify-content:center}
 #taskDlg textarea{min-height:88px;resize:vertical}
 /* ไฟล์และโน้ต: Drive คณะทำงาน · Figma · BA Note · Design Note — แต่ละช่องมีข้อความ + แนบลิงก์ (ผู้ใช้ 23 ต.ค. 69) */
-#taskDlg .fref{grid-column:1 / -1;border-top:1px solid var(--border-neutral-tertiary)}
-#taskDlg .rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+/* จอ ≥1024: "ไฟล์และโน้ต" อยู่ใต้กลุ่มงานในคอลัมน์ซ้าย ทุกช่องอยู่ในจอเดียว (ผู้ใช้ 23 ต.ค. 69 เลือก ก) · จอแคบเรียง งาน → ผู้รับผิดชอบ/ความคืบหน้า → ไฟล์และโน้ต */
+#taskDlg .tbody{grid-template-areas:"task side" "ref side";grid-template-rows:auto 1fr;align-content:start}
+#taskDlg .tbody > .fgrp:first-child{grid-area:task}
+#taskDlg .fcol{grid-area:side}
+#taskDlg .fref{grid-area:ref;border-top:1px solid var(--border-neutral-tertiary)}
+#taskDlg .rgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:1280px){ #taskDlg .rgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px} }
 #taskDlg .rgrid textarea{min-height:64px}
+/* 2 คอลัมน์แคบ: ชื่อลิงก์ลงบรรทัดที่ 2 ใต้ URL */
+@media (min-width:1280px){
+  #taskDlg .rgrid .lrow{grid-template-columns:20px minmax(0,1fr) 36px 36px;row-gap:8px}
+  #taskDlg .rgrid .lrow .lurl{grid-column:2;grid-row:1}
+  #taskDlg .rgrid .lrow .lname{grid-column:2;grid-row:2}
+  #taskDlg .rgrid .lrow .lopen{grid-column:3;grid-row:1}
+  #taskDlg .rgrid .lrow .ldel{grid-column:4;grid-row:1}
+  #taskDlg .rgrid .lrow > .ms{grid-column:1;grid-row:1}
+}
 #taskDlg .fl .ms{font-size:18px;vertical-align:-4px;margin-right:4px;color:var(--text-content-tertiary)}
 @media (max-width:1023px){
-  #taskDlg .tbody{grid-template-columns:minmax(0,1fr)}
+  #taskDlg .tbody{grid-template-columns:minmax(0,1fr);grid-template-areas:"task" "side" "ref";grid-template-rows:auto}
   #taskDlg .fcol{border-left:0;border-top:1px solid var(--border-neutral-tertiary)}
   #taskDlg .rgrid{grid-template-columns:minmax(0,1fr);gap:16px}
 }
