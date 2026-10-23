@@ -274,6 +274,7 @@
   .band-info { padding: 0; width: var(--dim-size-700, 36px); justify-content: center; }
   .band-collapse .material-symbols-outlined, .band-info .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
   .band-collapse:hover, .band-info:hover { border-color: var(--border-brandPrimary-default, #007549); }
+  @media (max-width: 1279px), (pointer: coarse) { .band-collapse, .band-info { min-height: var(--dim-size-900, 44px); } .band-info { width: var(--dim-size-900, 44px); } }
   .add-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--dim-space-400, 16px) var(--dim-space-600, 24px); }
   .add-info .grp, .panel.add-info .grp:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
   .add-info { align-items: start; }
@@ -328,6 +329,37 @@
   .sw.cust { border-radius: var(--dim-radius-200, 8px); border-color: var(--text-colorfulbadge-blue, #1D4ED8); background: var(--surface-colorfulbadge-blue, #DBEAFE); }
   .sw.tp { height: 0; border: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--text-colorfulbadge-blue, #1D4ED8); background: transparent; }
 
+  /* แก้ flow ในหน้า (prompt · logic) */
+  .uf-node.edited::after { content: ''; position: absolute; top: calc(var(--dim-space-100, 4px) * -1); right: calc(var(--dim-space-100, 4px) * -1); width: var(--dim-size-200, 12px); height: var(--dim-size-200, 12px); border-radius: var(--dim-radius-full, 9999px); background: var(--icon-warning-tertiary, #EA580C); border: var(--dim-stroke-200, 2px) solid var(--surface-card-100, #FFFFFF); }
+  .uf-node.dec.edited::after { top: var(--dim-space-300, 12px); right: var(--dim-space-300, 12px); }
+  .ed-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .ed-bar .ed-sum { flex: 1 1 220px; min-width: 0; }
+  .ed-btn {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F);
+    font: inherit; font-size: var(--type-size-xs, 12px); white-space: nowrap; cursor: pointer;
+  }
+  .ed-btn .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  .ed-btn:hover:not(:disabled) { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
+  .ed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ed-btn.primary { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-content, #FFFFFF); }
+  .ed-btn.primary:hover { color: var(--text-content-on-content, #FFFFFF); }
+  .detail .ed { border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEF0F1); padding-top: var(--dim-space-400, 16px); }
+  .ed-chip { min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) dashed var(--border-brandPrimary-tertiary, #C5EDDA); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font: inherit; font-size: var(--type-size-xs, 12px); cursor: pointer; }
+  .ed-l { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .ed-form { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: var(--dim-space-200, 8px) var(--dim-space-300, 12px); }
+  .mih-uf-prompt-input { width: 100%; min-height: var(--dim-size-900, 44px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font: inherit; font-size: var(--type-size-sm, 14px); }
+  textarea.mih-uf-prompt-input { resize: vertical; line-height: 1.5; }
+  .mih-uf-prompt-input:focus, .mih-uf-prompt-input:focus-visible { outline: none; border-color: var(--border-brandPrimary-default, #007549); box-shadow: 0 0 0 var(--dim-stroke-200, 2px) var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .mih-uf-prompt-input::placeholder { color: var(--text-content-tertiary, #858C92); opacity: 1; }
+  .ed-act { display: flex; justify-content: flex-end; }
+  .ed-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); }
+  .ed-list li { display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .ed-list li span:first-child { flex: 1 1 auto; min-width: 0; }
+  .ed-x { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent; color: var(--icon-neutral-secondary, #636B72); cursor: pointer; }
+  .ed-x:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
   /* เส้น: หักมุมโค้ง · ป้ายเป็นแถบบนเส้น · ชี้กล่องแล้วเส้นที่เกี่ยวข้องเด่น ที่เหลือจาง */
   .uf-edges text { stroke: none; dominant-baseline: central; }
   .uf-edges rect.lb { fill: var(--surface-card-100, #FFFFFF); stroke: var(--border-neutral-tertiary, #E2E4E6); stroke-width: var(--dim-stroke-100, 1px); }
@@ -350,7 +382,7 @@
     background: inherit; border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
     font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92);
   }
-  .lane-l .badge { align-self: flex-start; }
+  .lane-l .badge { align-self: flex-start; max-width: 100%; white-space: normal; }
   .lane-l .ln { position: absolute; top: var(--dim-space-100, 4px); left: var(--dim-space-300, 12px); font-size: var(--type-size-xxs, 10px); }
   .uf-canvas.bp .band { background: transparent; }
   .uf-canvas.bp .band-h { z-index: 2; }
@@ -462,6 +494,7 @@
         </div>
         <button type="button" class="full-btn" id="full-btn" aria-pressed="false" title="ขยายเต็มจอ"><span class="material-symbols-outlined" aria-hidden="true">open_in_full</span><span class="fb-t">เต็มจอ</span></button>
       </div>
+      <div class="ed-bar" id="ed-bar" aria-live="polite"></div>
       <div class="chart-box" id="chart-main"></div>
     </div>
   </section>
@@ -532,12 +565,20 @@
         </div>
       </div>
       <div class="panel">
-        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">help</span><div><h3>รอยืนยันกับคณะทำงาน</h3><p>จุดบนบอร์ดที่อ่านได้มากกว่า 1 แบบ</p></div></div>
-        <ul class="cw-list">
-          <li>"แม้ว่านัดก็ต้องเข้าคัดแยกเสมอ" แต่มีเส้นนัด OPD / นัดคลินิกพิเศษ จาก Kiosk ตรงไปคัดกรอง — คนมีนัดต้องผ่านคัดแยกไหม</li>
-          <li>"VN จะเปิดที่คัดแยก กรณี…" ข้อความไม่จบ — ตอนนี้ใช้กรณี Kiosk พัง</li>
-          <li>"เดี๋ยวคุณหมอลิสให้ - คุณหมอโน๊ต" — รอรายการจากคุณหมอ</li>
-        </ul>
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">fact_check</span><div><h3>ตัดสินใจแล้ว · รอข้อมูล</h3><p>จุดบนบอร์ดที่อ่านได้มากกว่า 1 แบบ (ผู้ใช้ยืนยัน 23 ต.ค. 69)</p></div></div>
+        <div class="grp">
+          <span class="grp-h">ตัดสินใจแล้ว</span>
+          <dl class="kv">
+            <dt>มีนัดหมาย</dt><dd>ข้ามคัดแยก ไปจุดที่นัดเลย</dd>
+            <dt>VN เปิดที่คัดแยก</dt><dd>เฉพาะกรณี Kiosk พัง</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">รอข้อมูล</span>
+          <dl class="kv">
+            <dt>รายการจากคุณหมอ</dt><dd>"เดี๋ยวคุณหมอลิสให้ - คุณหมอโน๊ต" · รอคุณหมอส่ง</dd>
+          </dl>
+        </div>
       </div>
     </div>
   </section>
@@ -1072,7 +1113,7 @@ function render() {
     const [w, h] = SIZE[type];
     const el = document.createElement('button');
     el.type = 'button';
-    el.className = `uf-node ${type}${n.target ? ' target' : ''}`;
+    el.className = `uf-node ${type}${n.target ? ' target' : ''}${n.edited ? ' edited' : ''}`;
     el.dataset.key = type === 'cust' ? n.ofs[0] : id; el.id = 'node-' + id;
     el.style.left = cx(id) - w / 2 + 'px'; el.style.top = cy(id) - h / 2 + 'px';
     el.style.width = w + 'px'; el.style.height = h + 'px';
@@ -1177,13 +1218,15 @@ function tipHtml(id) {
   const sub = n.children ? n.children.map((c) => c.t) : null;
   const status = (n.groups || []).find((g) => g.html);
   const flags = [n.target ? '<span class="badge b-purple">เป้าหมาย · เดโมยังไม่เชื่อม</span>' : '', n.unknown ? '<span class="badge b-grey">ยังไม่มีในเอกสาร</span>' : ''].join('');
-  if (!n.sum && !rows.length && !sub && !status && !flags) return '';
+  const crit = critTipHtml(id);
+  if (!n.sum && !rows.length && !sub && !status && !flags && !crit) return '';
   const type = typeOf(id);
   let h = `<span class="t-k">${KIND[type]}${parentOf[id] ? ' · ใน ' + esc(index[parentOf[id]].t) : ''}</span><span class="t-h">${esc((n.n ? n.n + ' · ' : '') + n.t)}</span>`;
   if (n.sum) h += `<span class="t-s">${esc(n.sum)}</span>`;
   if (rows.length) h += `<div class="grp"><span class="grp-h">หน้าและบทบาท</span><dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>`;
   if (sub) h += `<div class="grp"><span class="grp-h">ขั้นย่อย (${sub.length})</span><dl class="kv"><dt>ลำดับ</dt><dd>${esc(sub.join(' · '))}</dd></dl></div>`;
   if (status) h += `<div class="grp"><span class="grp-h">${esc(status.h)}</span><div class="chips">${status.html}</div></div>`;
+  h += crit;
   if (flags) h += `<div class="chips">${flags}</div>`;
   h += `<span class="t-f">${type === 'group' ? 'กดเพื่อขยายขั้นย่อย' : 'กดเพื่อดูรายละเอียดทั้งหมด'}</span>`;
   return h;
@@ -1231,6 +1274,7 @@ function show(key, push = true) {
   if (r.link) body += `<div class="grp"><a href="${r.link[1]}" data-close>${esc(r.link[0])}</a></div>`;
   if (r.target) body += '<div class="grp"><span class="badge b-purple">เป้าหมาย · เดโมยังไม่เชื่อม</span></div>';
   if (r.unknown) body += `<div class="grp"><span class="badge b-grey">ยังไม่มีในเอกสาร</span> <span class="d-sum">${esc(r.unknown)}</span></div>`;
+  body += critDetailHtml(key) + editorHtml(key);
   detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[typeOf(key)]}${parentOf[key] ? ' · ใน ' + esc(index[parentOf[key]].t) : ''}</span><h3>${esc((r.n ? r.n + ' · ' : '') + r.t)}</h3>${r.sum ? `<p class="d-sum">${esc(r.sum)}</p>` : ''}</div><button type="button" class="x" aria-label="ปิด" data-close><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>${body}`;
   detail.classList.add('open'); scrim.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
   if (push) setHash(key);
@@ -1248,13 +1292,196 @@ function toggle(id) {
   target?.focus({ preventScroll: true });
 }
 
+/* ---------- แก้ flow ในหน้า: prompt สั้น + ฟอร์มเงื่อนไข · เก็บในเบราว์เซอร์นี้ · ส่งออก/นำเข้า JSON ----------
+   op: { id, at, op: step|logic|crit|rename|note|del, t?, cond?, to?, text? } · ข้อมูลต้นฉบับ (CLINICS) ไม่ถูกแก้ */
+const EDIT_KEY = 'uf-edits:v1';
+const BASE = structuredClone(CLINICS);
+let EDITS = {};
+try { EDITS = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}') || {}; } catch { EDITS = {}; }
+const saveEdits = () => { try { localStorage.setItem(EDIT_KEY, JSON.stringify(EDITS)); } catch {} };
+const uid = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+const editsOf = (key) => EDITS[key] || [];
+
+function withEdits(base) {
+  const c = structuredClone(base);
+  const lists = () => [{ list: c.flow, edges: c.edges, g: null }, ...c.flow.filter((g) => g.children).map((g) => ({ list: g.children, edges: g.edges, g }))];
+  const find = (id) => { for (const L of lists()) { const i = L.list.findIndex((n) => n.id === id); if (i >= 0) return { ...L, i, n: L.list[i] }; } return null; };
+  const allEdges = () => lists().map((L) => L.edges);
+  const mark = (n, op) => { n.edited = true; (n.ops ??= []).push(op); };
+  editsOf(c.key).forEach((op) => {
+    const at = find(op.at); if (!at) return;
+    if (op.op === 'rename') { at.n.t = op.t; mark(at.n, op); }
+    else if (op.op === 'crit') { (at.n.crit ??= []).push(op.text); mark(at.n, op); }
+    else if (op.op === 'note') { (at.n.notes ??= []).push(op.text); mark(at.n, op); }
+    else if (op.op === 'step') {
+      const n = { id: op.id, t: op.t, row: at.n.row, added: true, edited: true, ops: [op] };
+      at.list.splice(at.i + 1, 0, n);
+      if (at.n.type !== 'dec') allEdges().forEach((E) => E.forEach((e) => { if (e[0] === op.at && e[3] !== 'back') e[0] = op.id; }));
+      at.edges.push([op.at, op.id]);
+      if (at.g && at.g.exit === op.at) at.g.exit = op.id;
+    } else if (op.op === 'logic') {
+      let to = op.to && find(op.to) ? op.to : null;
+      if (!to) {
+        const used = new Set(at.list.filter((x) => x === at.n || x.same).map((x) => x.row ?? 1));
+        const row = [2, 3, 0, 4].find((r) => !used.has(r)) ?? 4;
+        at.list.splice(at.i + 1, 0, { id: op.id, type: 'option', same: true, row, t: op.toNew || 'ขั้นใหม่', added: true, edited: true, ops: [op] });
+        to = op.id;
+      }
+      const T = find(to);
+      ((T && T.g === at.g) ? at.edges : c.edges).push([op.at, to, op.cond]);
+      mark(at.n, op);
+    } else if (op.op === 'del') {
+      const ins = [], outs = [];
+      allEdges().forEach((E) => { for (let k = E.length - 1; k >= 0; k--) { const e = E[k]; if (e[1] === op.at) { ins.push(e); E.splice(k, 1); } else if (e[0] === op.at) { outs.push(e); E.splice(k, 1); } } });
+      ins.forEach((a) => outs.forEach((b) => at.edges.push([a[0], b[1], a[2] || b[2]])));
+      at.list.splice(at.i, 1);
+      if (at.g) { if (at.g.entry === op.at) at.g.entry = at.list[0]?.id; if (at.g.exit === op.at) at.g.exit = at.list[at.list.length - 1]?.id; }
+    }
+  });
+  return c;
+}
+
+/* prompt สั้น: 1 บรรทัด = 1 คำสั่ง */
+const norm = (s) => String(s || '').replace(/\s+/g, '').toLowerCase();
+function matchNode(txt) {
+  const q = norm(txt); if (q.length < 2) return null;
+  const ids = Object.keys(index).filter((k) => !k.startsWith('cu:'));
+  return ids.find((k) => norm(index[k].t) === q) || ids.find((k) => norm(index[k].t).includes(q)) || ids.find((k) => q.includes(norm(index[k].t)) && norm(index[k].t).length >= 3) || null;
+}
+function parsePrompt(at, text) {
+  return String(text).split(/\n+/).map((l) => l.trim()).filter(Boolean).map((line) => {
+    let m;
+    if (/^(ลบ|ลบขั้นนี้|ลบจุดนี้)$/.test(line)) return { op: 'del', at };
+    if ((m = line.match(/^(?:เปลี่ยนชื่อ|ชื่อ)\s*(?:เป็น)?\s*[:：]?\s*(.+)$/))) return { op: 'rename', at, t: m[1] };
+    if ((m = line.match(/^(?:criteria|เกณฑ์|เงื่อนไขเข้า)\s*[:：]?\s*(.+)$/i))) return { op: 'crit', at, text: m[1] };
+    if ((m = line.match(/^ถ้า\s*(.+?)\s*(?:→|->|=>|ให้ไปที่|ไปที่|ให้ไป|ไป)\s*(.+)$/))) {
+      const to = matchNode(m[2]);
+      return { op: 'logic', at, cond: m[1], ...(to ? { to } : { toNew: m[2] }) };
+    }
+    if ((m = line.match(/^(?:เพิ่มขั้น|เพิ่ม|แทรก)\s*(.+?)(?:\s*(?:หลัง|ต่อจาก)(?:นี้|จุดนี้)?)?$/))) return { op: 'step', at, t: m[1] };
+    return { op: 'note', at, text: line };
+  });
+}
+const OP_TXT = { step: (o) => `เพิ่มขั้น "${o.t}"`, logic: (o) => `ถ้า ${o.cond} → ${o.to ? (index[o.to]?.t || o.to) : o.toNew}`, crit: (o) => `criteria: ${o.text}`, rename: (o) => `เปลี่ยนชื่อเป็น "${o.t}"`, note: (o) => `บันทึก: ${o.text}`, del: () => 'ลบจุดนี้' };
+
+function applyOps(ops) {
+  if (!ops.length) return;
+  const list = (EDITS[clinic.key] ??= []);
+  ops.forEach((o) => list.push({ id: uid(), ...o }));
+  saveEdits(); refreshEdits();
+  const last = list[list.length - 1];
+  const focus = last.op === 'del' ? null : (last.op === 'step' ? last.id : last.at);
+  if (focus && index[focus]) { document.getElementById('node-' + focus)?.scrollIntoView({ block: 'nearest', inline: 'center' }); show(focus, false); } else closeSheet();
+}
+function undoOp(opId) {
+  EDITS[clinic.key] = editsOf(clinic.key).filter((o) => o.id !== opId && o.at !== opId && o.to !== opId);
+  saveEdits(); const k = activeKey; refreshEdits(); if (k && index[k]) show(k, false); else closeSheet();
+}
+function refreshEdits() {
+  clinic = withEdits(BASE.find((c) => c.key === clinic.key));
+  if (expanded && !clinic.flow.some((g) => g.id === expanded)) expanded = null;
+  indexClinic(clinic); render(); edBar();
+}
+
+/* criteria ของแต่ละจุด: เข้าเมื่อ (เส้นเข้า) · ถ้า… → ไปที่ (เส้นออก) · เกณฑ์ที่ใส่เพิ่ม */
+function critOf(id) {
+  const all = [...clinic.edges]; clinic.flow.forEach((g) => (g.edges || []).forEach((e) => all.push(e)));
+  const name = (k) => index[k]?.t || k;
+  const ins = all.filter((e) => e[1] === id).map((e) => name(e[0]) + (e[2] ? ` · ${e[2]}` : ''));
+  const outs = all.filter((e) => e[0] === id).map((e) => [e[2] ? `ถ้า ${e[2]}` : 'ต่อไป', name(e[1])]);
+  const n = index[id] || {};
+  const cond = (n.groups || []).filter((g) => /เงื่อนไข/.test(g.h) && g.list).flatMap((g) => g.list);
+  return { ins: [...new Set(ins)], outs, crit: [...(n.crit || []), ...cond], notes: n.notes || [] };
+}
+function critTipHtml(id) {
+  const c = critOf(id); const rows = [];
+  if (c.ins.length) rows.push(['เข้าเมื่อ', c.ins.slice(0, 3).join(' · ') + (c.ins.length > 3 ? ` · +${c.ins.length - 3}` : '')]);
+  c.outs.slice(0, 4).forEach(([k, v]) => rows.push([k, v]));
+  if (c.outs.length > 4) rows.push(['', `+${c.outs.length - 4} ทาง`]);
+  c.crit.slice(0, 3).forEach((x, i) => rows.push([i ? '' : 'เกณฑ์', x]));
+  if (!rows.length && !c.notes.length) return '';
+  let h = rows.length ? `<div class="grp"><span class="grp-h">Criteria</span><dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>` : '';
+  if (c.notes.length) h += `<div class="grp"><span class="grp-h">Prompt ที่บันทึก</span><dl class="kv">${c.notes.slice(0, 2).map((x) => `<dt>✎</dt><dd>${esc(x)}</dd>`).join('')}</dl></div>`;
+  return h;
+}
+function critDetailHtml(id) {
+  const c = critOf(id);
+  const rows = [...(c.ins.length ? [['เข้าเมื่อ', c.ins.join(' · ')]] : []), ...c.outs];
+  let h = '';
+  if (rows.length || c.crit.length) h += `<div class="grp"><span class="grp-h">Criteria</span>${rows.length ? kvHtml(rows) : ''}${c.crit.length ? '<ul class="bul">' + c.crit.map((x) => `<li>${esc(x)}</li>`).join('') + '</ul>' : ''}</div>`;
+  if (c.notes.length) h += `<div class="grp"><span class="grp-h">Prompt ที่บันทึก</span><ul class="bul">${c.notes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  return h;
+}
+function editorHtml(id) {
+  const n = index[id]; if (!n || n.type === 'cust') return '';
+  const mine = editsOf(clinic.key).filter((o) => o.at === id || o.id === id);
+  const opts = Object.keys(index).filter((k) => !k.startsWith('cu:') && k !== id).map((k) => `<option value="${esc(k)}">${esc(index[k].t)}</option>`).join('');
+  return `<div class="grp ed">
+    <span class="grp-h">แก้ flow ที่จุดนี้</span>
+    <p class="d-sum">1 บรรทัด = 1 คำสั่ง · แผนภาพเปลี่ยนทันที · เก็บในเบราว์เซอร์นี้</p>
+    <div class="chips ed-tpl">${[['เพิ่มขั้น ', '+ ขั้นต่อจากนี้'], ['ถ้า  → ', '+ เงื่อนไข'], ['เกณฑ์ ', '+ criteria'], ['เปลี่ยนชื่อเป็น ', 'เปลี่ยนชื่อ'], ['ลบ', 'ลบจุดนี้']].map(([v, l]) => `<button type="button" class="ed-chip" data-tpl="${esc(v)}">${esc(l)}</button>`).join('')}</div>
+    <label class="ed-l" for="ed-prompt">Prompt</label>
+    <textarea id="ed-prompt" class="mih-uf-prompt-input" rows="3" placeholder="เช่น&#10;เพิ่มขั้น ตรวจ ATK&#10;ถ้า ไข้ ≥ 38 → ห้องแยกโรค&#10;เกณฑ์ อายุ ≥ 60 ปี"></textarea>
+    <div class="ed-act"><button type="button" class="ed-btn primary" data-ed="run"><span class="material-symbols-outlined" aria-hidden="true">auto_fix_high</span>ใช้ Prompt</button></div>
+    <span class="grp-h">เพิ่มเงื่อนไข (logic)</span>
+    <div class="ed-form">
+      <label class="ed-l" for="ed-cond">ถ้า</label><input id="ed-cond" class="mih-uf-prompt-input" placeholder="เช่น ESI 1–2 · ไม่มีนัด" />
+      <label class="ed-l" for="ed-to">ไปที่</label><select id="ed-to" class="mih-uf-prompt-input"><option value="">ขั้นใหม่…</option>${opts}</select>
+      <label class="ed-l" for="ed-new">ชื่อขั้นใหม่</label><input id="ed-new" class="mih-uf-prompt-input" placeholder="ใช้เมื่อเลือก ขั้นใหม่…" />
+    </div>
+    <div class="ed-act"><button type="button" class="ed-btn" data-ed="logic"><span class="material-symbols-outlined" aria-hidden="true">call_split</span>เพิ่มเงื่อนไข</button></div>
+    ${mine.length ? `<span class="grp-h">ที่แก้ไว้ที่จุดนี้ (${mine.length})</span><ul class="ed-list">${mine.map((o) => `<li><span>${esc(OP_TXT[o.op](o))}</span><button type="button" class="ed-x" data-undo="${esc(o.id)}" aria-label="ยกเลิก ${esc(OP_TXT[o.op](o))}"><span class="material-symbols-outlined" aria-hidden="true">undo</span></button></li>`).join('')}</ul>` : ''}
+  </div>`;
+}
+detail.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-tpl]'); const ta = document.getElementById('ed-prompt');
+  if (t && ta) { ta.value = (ta.value ? ta.value.replace(/\s*$/, '\n') : '') + t.dataset.tpl; ta.focus(); return; }
+  const u = e.target.closest('[data-undo]'); if (u) { undoOp(u.dataset.undo); return; }
+  const b = e.target.closest('[data-ed]'); if (!b || !activeKey) return;
+  if (b.dataset.ed === 'run') applyOps(parsePrompt(activeKey, ta.value));
+  if (b.dataset.ed === 'logic') {
+    const cond = document.getElementById('ed-cond').value.trim(), to = document.getElementById('ed-to').value, nw = document.getElementById('ed-new').value.trim();
+    if (!cond || (!to && !nw)) { document.getElementById(cond ? 'ed-new' : 'ed-cond').focus(); return; }
+    applyOps([{ op: 'logic', at: activeKey, cond, ...(to ? { to } : { toNew: nw }) }]);
+  }
+});
+detail.addEventListener('keydown', (e) => { if (e.target.id === 'ed-prompt' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) detail.querySelector('[data-ed="run"]').click(); });
+
+/* แถบการแก้ของฉัน: นับ · ส่งออก · นำเข้า · ล้าง */
+const edBarEl = document.getElementById('ed-bar');
+function edBar() {
+  const n = editsOf(clinic.key).length, total = Object.values(EDITS).reduce((s, a) => s + a.length, 0);
+  edBarEl.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">edit_note</span><span class="ed-sum">${n ? `แก้ไว้ ${n} รายการในคลินิกนี้` : 'กดจุดไหนก็ได้ แล้วพิมพ์ Prompt เพื่อแก้ flow'} · เก็บในเบราว์เซอร์นี้</span>
+    <button type="button" class="ed-btn" data-bar="export" ${total ? '' : 'disabled'}><span class="material-symbols-outlined" aria-hidden="true">download</span>ส่งออก</button>
+    <button type="button" class="ed-btn" data-bar="import"><span class="material-symbols-outlined" aria-hidden="true">upload</span>นำเข้า</button>
+    ${n ? '<button type="button" class="ed-btn" data-bar="clear"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>ล้างคลินิกนี้</button>' : ''}
+    <input type="file" accept="application/json,.json" id="ed-file" hidden />`;
+}
+edBarEl.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-bar]'); if (!b) return;
+  if (b.dataset.bar === 'export') {
+    const blob = new Blob([JSON.stringify({ type: 'bma-user-flow-edits', version: 1, exportedAt: new Date().toISOString(), edits: EDITS }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `user-flow-edits-${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  if (b.dataset.bar === 'import') document.getElementById('ed-file').click();
+  if (b.dataset.bar === 'clear' && confirm(`ล้างการแก้ ${editsOf(clinic.key).length} รายการของ ${clinic.short || clinic.name}?`)) { delete EDITS[clinic.key]; saveEdits(); closeSheet(); refreshEdits(); }
+});
+edBarEl.addEventListener('change', async (e) => {
+  if (e.target.id !== 'ed-file' || !e.target.files[0]) return;
+  try {
+    const j = JSON.parse(await e.target.files[0].text()); const inc = j.edits || j;
+    Object.entries(inc).forEach(([k, ops]) => { if (!Array.isArray(ops)) return; const have = new Set(editsOf(k).map((o) => o.id)); (EDITS[k] ??= []).push(...ops.filter((o) => o && o.op && o.at && !have.has(o.id))); });
+    saveEdits(); refreshEdits();
+  } catch { alert('ไฟล์นี้ไม่ใช่ไฟล์การแก้ User flow'); }
+});
+
 function selectClinic(key, push = true) {
-  clinic = CLINICS.find((c) => c.key === key) || CLINICS[0];
+  clinic = withEdits(BASE.find((c) => c.key === key) || BASE[0]);
   expanded = null; indexClinic(clinic);
   pick.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.clinic === clinic.key)));
   const facts = clinic.facts || [];
   sumEl.innerHTML = `<div class="cs-top"><span class="material-symbols-outlined cs-ic" aria-hidden="true">${esc(clinic.icon || 'local_hospital')}</span><div><h3>${esc(clinic.name)}</h3><p>${esc(clinic.sum)}</p></div></div>${facts.length ? `<div class="grp">${kvHtml(facts)}</div>` : ''}`;
-  closeSheet(); render(); box.scrollLeft = 0;
+  closeSheet(); render(); edBar(); box.scrollLeft = 0;
   if (push) setHash();
 }
 
