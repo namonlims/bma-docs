@@ -2383,7 +2383,7 @@ const SYNC_URL = 'https://script.google.com/macros/s/AKfycbw8sRGKyJBdJTgyGJsW65D
 // ---------- เข้าสู่ระบบด้วย Google (ผู้ใช้ 24 ต.ค. 69 เลือก ค · ก = ทุกบัญชี Google) ----------
 // GOOGLE_CLIENT_ID ว่าง = ปิด (ทำงานแบบเดิม ไม่ต้องล็อกอิน) · ใส่แล้ว = ต้องล็อกอินก่อน · ทุกคำขอไปสคริปต์แนบ id token ให้สคริปต์ตรวจ
 // ใช้วิธีห่อ fetch: คำขอที่ไป SYNC_URL รอจนล็อกอินเสร็จ แล้วแนบ tk (GET = ?tk= · POST = ฟิลด์ tk ใน body)
-const GOOGLE_CLIENT_ID = '';
+const GOOGLE_CLIENT_ID = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
 const AUTH = (()=>{
   const on = !!GOOGLE_CLIENT_ID;
   const A = { on, tk:'', exp:0, user:null, ready: on ? null : Promise.resolve(), _res:null };
