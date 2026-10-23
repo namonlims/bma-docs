@@ -289,6 +289,7 @@
     font: inherit; white-space: nowrap; cursor: pointer;
   }
   .seg button .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  @media (max-width: 767px) { .seg { display: flex; width: 100%; } .seg button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 0 var(--dim-space-200, 8px); } .seg button .material-symbols-outlined { display: none; } }
   .seg button:hover { color: var(--text-brandPrimary-default, #007549); }
   .seg button[aria-pressed="true"] { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
   .view-row .hint { flex: 1 1 280px; }
@@ -366,6 +367,10 @@
 
   /* compare cards */
   .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--dim-space-400, 16px); }
+  .cw-img { display: block; overflow: hidden; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEF0F1); border-radius: var(--dim-radius-200, 8px); }
+  .cw-img img { display: block; width: 100%; height: auto; }
+  .cw-src { margin: var(--dim-space-200, 8px) 0 0; font-size: var(--type-size-xs, 12px); }
+  .cw-list { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
   .card-h { display: flex; align-items: center; gap: var(--dim-space-300, 12px); }
   .card-h .ic { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); }
   .card-h p { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
@@ -413,6 +418,7 @@
 
   <nav class="toc" aria-label="หัวข้อในหน้า">
     <a href="#journey">1 · เส้นทางตามคลินิก</a>
+    <a href="#cowork-flow">1.1 · Flow คณะทำงาน</a>
     <a href="#conditions">2 · เงื่อนไขทั้งหมด</a>
     <a href="#consult-refer">3 · ส่งปรึกษา vs ส่งต่อ</a>
     <a href="#clinics">4 · คลินิกพิเศษ</a>
@@ -445,6 +451,7 @@
         <div class="seg" id="view-seg" role="group" aria-label="มุมมองแผนภาพ">
           <button type="button" data-view="uf" aria-pressed="true"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span>User flow</button>
           <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_agenda</span>Service Design</button>
+          <button type="button" data-view="pf" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_week</span>Process flow</button>
         </div>
         <span class="hint"><span class="material-symbols-outlined" aria-hidden="true">swipe</span><span id="view-hint"></span></span>
         <div class="zoom" role="group" aria-label="ซูมแผนภาพ">
@@ -456,6 +463,82 @@
         <button type="button" class="full-btn" id="full-btn" aria-pressed="false" title="ขยายเต็มจอ"><span class="material-symbols-outlined" aria-hidden="true">open_in_full</span><span class="fb-t">เต็มจอ</span></button>
       </div>
       <div class="chart-box" id="chart-main"></div>
+    </div>
+  </section>
+
+  <!-- 1.1 ที่มา -->
+  <section class="sec" id="cowork-flow" aria-labelledby="h-cw">
+    <div class="sec-head">
+      <h2 id="h-cw">1.1 · Flow ที่ออกแบบร่วมกับคณะทำงาน</h2>
+      <p>บอร์ด FigJam 23 ต.ค. 69 · ใช้เป็นต้นทางของ User flow · Service Design · Process flow ด้านบน</p>
+    </div>
+    <div class="panel">
+      <a class="cw-img" href="reference/figjam-flow/board-81-1067.png" target="_blank" rel="noopener"><img src="reference/figjam-flow/board-81-1067.png" alt="ภาพบอร์ด Flow: Queue → Check → Flow การชำระเงิน" loading="lazy" /></a>
+      <p class="cw-src"><a href="https://www.figma.com/board/JSuAKXPCBvCCY6LexuDjEF/Untitled?node-id=81-1067" target="_blank" rel="noopener">เปิดบอร์ดใน FigJam ↗</a></p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">confirmation_number</span><div><h3>Queue</h3><p>Kiosk → คัดแยก → เวชระเบียน → คัดกรอง</p></div></div>
+        <div class="grp">
+          <span class="grp-h">Kiosk เปิด VN</span>
+          <dl class="kv">
+            <dt>ไม่นัด มีคิวแล้ว</dt><dd>คัดแยก ซักประวัติเบื้องต้น (ออกคิวใหม่)</dd>
+            <dt>นัด OPD</dt><dd>ไม่มีตรวจอื่นเพิ่ม → คัดกรองกลาง</dd>
+            <dt>นัดคลินิกพิเศษ</dt><dd>ทันตกรรม · ยาเสพติด → คัดกรองคลินิกพิเศษ</dd>
+            <dt>นัดทำหัตถการ</dt><dd>เปิด VN → ห้องหัตถการ</dd>
+            <dt>Kiosk พัง</dt><dd>คัดแยก เพิ่มคิวต่อแถว + เปิด VN → แยกตามนัดเหมือนเดิม</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">คัดแยก → ต่อ</span>
+          <dl class="kv">
+            <dt>คนไข้ใหม่</dt><dd>คัดแยกออกคิวเวช → เวชระเบียน → เวชออกคิวคลินิก</dd>
+            <dt>คนไข้เก่า</dt><dd>คัดแยกออกคิวคลินิก → คัดกรองกลาง</dd>
+            <dt>คัดกรองกลาง</dt><dd>→ คัดกรองคลินิกพิเศษ → ส่งห้องแพทย์ · ไม่เข้าคัดกรองคลินิก → ตรวจ</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">stethoscope</span><div><h3>Check</h3><p>ตรวจ → CPOE → พยาบาลหลังตรวจ</p></div></div>
+        <div class="grp">
+          <span class="grp-h">ลำดับ</span>
+          <dl class="kv">
+            <dt>ตรวจ</dt><dd>แพทย์ตรวจ</dd>
+            <dt>แพทย์</dt><dd>คีย์ CPOE · สั่งยา · หัตถการ</dd>
+            <dt>พยาบาลหลังตรวจ</dt><dd>สั่งยา · หัตถการ → ห้องยา + ห้องหัตถการ</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">payments</span><div><h3>Flow การชำระเงิน</h3><p>ห้องยา + ห้องหัตถการ → การเงิน → รับยา / ทำหัตถการ</p></div></div>
+        <div class="grp">
+          <span class="grp-h">เส้นทาง</span>
+          <dl class="kv">
+            <dt>การเงิน</dt><dd>ได้รับข้อมูล + คิดเงิน + ปิดสิทธิ</dd>
+            <dt>ห้องหัตถการ</dt><dd>จบบริการของวันนี้ → การเงิน · มาเจาะเลือดอย่างเดียว → การเงิน</dd>
+            <dt>หลังชำระ</dt><dd>รับยา (เภสัช) · ทำหัตถการ · ถ้าพบแพทย์ → ตรวจ</dd>
+            <dt>ค่าใช้จ่ายเพิ่ม</dt><dd>ทำหัตถการ → กลับมาชำระที่การเงิน</dd>
+          </dl>
+        </div>
+        <div class="grp">
+          <span class="grp-h">หมายเหตุบนบอร์ด</span>
+          <ul class="cw-list">
+            <li>คนไข้ต้องมาที่ห้องหัตถการก่อน เพื่อตรวจสอบความถูกต้อง เช่น มาตรงวัน</li>
+            <li>นัดทำหัตถการ มีสิทธิ เช่น บัตรทอง ไม่ต้องชำระ · ต้องชำระ → พยาบาลประเมินรายการ และส่งห้องยา (คนไข้มาชำระเงินก่อน)</li>
+            <li>ถ้ามีการตรวจ เช่น Lab, X-ray, ประเมินจิต ก่อนพบแพทย์ ให้ Bypass การจ่ายเงินก่อน</li>
+            <li>ถ้ามีการตรวจ ให้ Gen คิวใหม่ตอนจังหวะส่งต่อ</li>
+            <li>เลขหัตถการคลินิก ใช้คิวเดิม ยิงเลขคิวไปสองที่</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">help</span><div><h3>รอยืนยันกับคณะทำงาน</h3><p>จุดบนบอร์ดที่อ่านได้มากกว่า 1 แบบ</p></div></div>
+        <ul class="cw-list">
+          <li>"แม้ว่านัดก็ต้องเข้าคัดแยกเสมอ" แต่มีเส้นนัด OPD / นัดคลินิกพิเศษ จาก Kiosk ตรงไปคัดกรอง — คนมีนัดต้องผ่านคัดแยกไหม</li>
+          <li>"VN จะเปิดที่คัดแยก กรณี…" ข้อความไม่จบ — ตอนนี้ใช้กรณี Kiosk พัง</li>
+          <li>"เดี๋ยวคุณหมอลิสให้ - คุณหมอโน๊ต" — รอรายการจากคุณหมอ</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -805,6 +888,37 @@ function toLanes(pos, extra) {
   return lanes;
 }
 
+/* ---------- Process flow (Swimlane): เลนตามบทบาทผู้ทำงาน (ข้อมูลชุดเดียวกับ User flow) ---------- */
+const PF_BADGE = ['b-blue', 'b-green', 'b-orange', 'b-purple', 'b-teal', 'b-grey'];
+function roleLaneName(id) {
+  const ty = typeOf(id);
+  if (ty === 'start') return 'ผู้รับบริการ';
+  const r = roleOf(id);
+  if (r) return r.split(' · ')[0];
+  if (ty === 'group') return 'หลายบทบาท (กดขยาย)';
+  return null;                                        // ทางแยก/ทางเลือกไม่มีบทบาท = อยู่เลนเดียวกับขั้นก่อนหน้า
+}
+function toRoleLanes(pos) {
+  const order = Object.keys(pos).sort((a, b) => pos[a].col - pos[b].col || pos[a].row - pos[b].row);
+  const into = {};
+  clinic.edges.concat(...clinic.flow.map((g) => g.edges || [])).forEach(([a, b]) => { (into[b] ??= []).push(a); });
+  const laneOfId = {};
+  order.forEach((id) => { const L = roleLaneName(id); if (L) laneOfId[id] = L; });
+  for (let pass = 0; pass < 3; pass++) order.forEach((id) => { if (!laneOfId[id]) laneOfId[id] = (into[id] || []).map((a) => laneOfId[a]).find(Boolean); });
+  let last = 'ผู้รับบริการ';
+  order.forEach((id) => { laneOfId[id] ||= last; last = laneOfId[id]; });
+  const names = [...new Set(order.map((id) => laneOfId[id]))];
+  let r = 0; const lanes = [];
+  names.forEach((name, i) => {
+    const cols = {};
+    order.filter((id) => laneOfId[id] === name).forEach((id) => (cols[pos[id].col] ??= []).push(id));
+    Object.values(cols).forEach((a) => a.forEach((id, j) => { pos[id] = { col: pos[id].col, row: r + j }; }));
+    const n = Math.max(1, ...Object.values(cols).map((a) => a.length));
+    lanes.push({ k: i % 2 ? 'front' : 'cust', t: name, d: '', b: PF_BADGE[i % PF_BADGE.length], r0: r, n }); r += n;
+  });
+  return lanes;
+}
+
 /* เส้นหักมุมโค้ง */
 function rpath(pts, r = 10) {
   let d = `M${pts[0][0]} ${pts[0][1]}`;
@@ -821,16 +935,16 @@ function rpath(pts, r = 10) {
 const laneW = () => (matchMedia('(max-width: 767px)').matches ? 84 : 136);
 
 function render() {
-  const bp = view === 'bp';
+  const bp = view === 'bp', lm = view !== 'uf';   // lm = แบ่งเลน (Service Design · Process flow)
   Object.keys(index).forEach((k) => { if (k.startsWith('cu:')) delete index[k]; });
   const { pos, bands } = layout(clinic);
   const extra = [];
-  const lanes = bp ? toLanes(pos, extra) : null;
-  const RH = bp ? ROWH_BP : ROWH, TOP = bp ? 44 : 0, X0 = PAD + (bp ? laneW() : 0);
+  const lanes = bp ? toLanes(pos, extra) : lm ? toRoleLanes(pos) : null;
+  const RH = lm ? ROWH_BP : ROWH, TOP = lm ? 44 : 0, X0 = PAD + (lm ? laneW() : 0);
   const ids = Object.keys(pos);
   const rows = ids.map((id) => pos[id].row);
-  const minRow = bp ? 0 : Math.min(...rows);
-  const maxRow = bp ? lanes.at(-1).r0 + lanes.at(-1).n - 1 : Math.max(...rows);
+  const minRow = lm ? 0 : Math.min(...rows);
+  const maxRow = lm ? lanes.at(-1).r0 + lanes.at(-1).n - 1 : Math.max(...rows);
   const cols = Math.max(...ids.map((id) => pos[id].col)) + 1;
   const cx = (id) => X0 + pos[id].col * COLW + COLW / 2;
   const cy = (id) => PAD + TOP + (pos[id].row - minRow) * RH + RH / 2;
@@ -861,7 +975,7 @@ function render() {
 
   box.innerHTML = '';
   const canvas = document.createElement('div');
-  canvas.className = 'uf-canvas' + (bp ? ' bp' : '');
+  canvas.className = 'uf-canvas' + (lm ? ' bp' : '');
   canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
 
   (lanes || []).forEach((L) => {
@@ -878,8 +992,8 @@ function render() {
     el.className = 'band';
     el.style.left = X0 + b.c0 * COLW + 4 + 'px';
     el.style.width = (b.c1 - b.c0 + 1) * COLW - 8 + 'px';
-    el.style.top = (bp ? PAD : PAD + (b.r0 - minRow) * RH + 2) + 'px';
-    el.style.height = (bp ? TOP + bodyH : (b.r1 - b.r0 + 1) * RH - 4) + 'px';
+    el.style.top = (lm ? PAD : PAD + (b.r0 - minRow) * RH + 2) + 'px';
+    el.style.height = (lm ? TOP + bodyH : (b.r1 - b.r0 + 1) * RH - 4) + 'px';
     el.innerHTML = `<div class="band-h"><button type="button" class="band-collapse" data-collapse="${b.id}" aria-label="ย่อ ${esc(g.t)}"><span class="material-symbols-outlined" aria-hidden="true">unfold_less</span>${esc((g.n ? g.n + ' · ' : '') + g.t)}</button><button type="button" class="band-info" data-key="${b.id}" aria-label="รายละเอียด ${esc(g.t)}"><span class="material-symbols-outlined" aria-hidden="true">info</span></button></div>`;
     canvas.appendChild(el);
   });
@@ -899,9 +1013,9 @@ function render() {
     const { s, t } = e; const [sw, sh] = half(s), [tw, th] = half(t);
     let pts, lx, ly, anchor = 'middle';
     if (e.mode === 'over') {
-      if (bp || bands.some((b) => pos[t].col >= b.c0 && pos[t].col <= b.c1)) {
+      if (lm || bands.some((b) => pos[t].col >= b.c0 && pos[t].col <= b.c1)) {
         /* Service Design / ปลายทางอยู่ในขั้นที่ขยาย: ออกขวา ขึ้นแถบบนสุดในช่องว่างระหว่างคอลัมน์ แล้วลงเข้าทางซ้าย ไม่ทับกล่องผู้รับบริการ */
-        const lane = bp ? PAD + TOP - 14 : Math.max(8, rowTop(s) - 6), xs = cx(s) + sw + 14, xg = cx(t) - tw - 16;
+        const lane = lm ? PAD + TOP - 14 : Math.max(8, rowTop(s) - 6), xs = cx(s) + sw + 14, xg = cx(t) - tw - 16;
         pts = [[cx(s) + sw, cy(s)], [xs, cy(s)], [xs, lane], [xg, lane], [xg, cy(t)], [cx(t) - tw - 2, cy(t)]];
         lx = xs + 14; ly = lane;
       } else {
@@ -1123,7 +1237,7 @@ function show(key, push = true) {
 }
 function closeSheet() { tipHide(); activeKey = null; hl(null); document.querySelectorAll('.uf-node.is-active').forEach((b) => b.classList.remove('is-active')); detail.classList.remove('open'); scrim.classList.remove('open'); detail.setAttribute('aria-hidden', 'true'); }
 
-function setHash(k) { history.replaceState(null, '', `#c=${clinic.key}${view === 'bp' ? '&v=bp' : ''}${expanded ? '&x=' + expanded : ''}${k ? '&k=' + k : ''}`); }
+function setHash(k) { history.replaceState(null, '', `#c=${clinic.key}${view !== 'uf' ? '&v=' + view : ''}${expanded ? '&x=' + expanded : ''}${k ? '&k=' + k : ''}`); }
 
 function toggle(id) {
   tipHide();
@@ -1147,10 +1261,11 @@ function selectClinic(key, push = true) {
 const HINT = {
   uf: 'ไหลจากซ้ายไปขวา · กล่องที่มี "ขยาย" กดเพื่อดูขั้นย่อย (เปิดได้ทีละขั้น) · กล่องอื่นกดเพื่อดูรายละเอียด',
   bp: 'แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
+  pf: 'Swimlane 1 เลนต่อ 1 บทบาท (Kiosk · คัดแยก · เวชระเบียน · พยาบาล · แพทย์ · เภสัช · การเงิน) · ขยายขั้นเพื่อดูว่าใครทำอะไรต่อจากใคร',
 };
 const seg = document.getElementById('view-seg');
 function setView(v, push = true) {
-  view = v === 'bp' ? 'bp' : 'uf';
+  view = v === 'bp' || v === 'pf' ? v : 'uf';
   document.body.dataset.view = view;
   seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
   document.getElementById('view-hint').textContent = HINT[view];
@@ -1183,6 +1298,14 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet
 
 /* ---------- conditions table ---------- */
 const COND = [
+  ['Kiosk · คัดแยก (คณะทำงาน 23 ต.ค. 69)', [
+    ['ไม่นัด มีคิวแล้ว', 'Kiosk เปิด VN → คัดแยก ซักประวัติเบื้องต้น (ออกคิวใหม่)', 'target'],
+    ['คนไข้ใหม่ / คนไข้เก่า', 'คัดแยกออกคิวเวช → เวชระเบียน → คัดกรองกลาง · คนไข้เก่าออกคิวคลินิก → คัดกรองกลาง', 'part'],
+    ['นัด OPD ไม่มีตรวจอื่นเพิ่ม', 'Kiosk → คัดกรองกลาง', 'target'],
+    ['นัดคลินิกพิเศษ (ทันตกรรม · ยาเสพติด)', 'Kiosk → คัดกรองคลินิกพิเศษ', 'target'],
+    ['นัดทำหัตถการ', 'เปิด VN → ห้องหัตถการก่อน (ตรวจว่ามาตรงวัน) · บัตรทองไม่ต้องชำระ · ต้องชำระ → การเงินก่อน', 'target'],
+    ['Kiosk พัง', 'คัดแยก เพิ่มคิวต่อแถว + เปิด VN แล้วแยกตามนัดเหมือนเดิม', 'target'],
+  ]],
   ['เวชระเบียน', [
     ['ญาติมารับยาแทน', 'ใช้ HN ผู้ป่วย ข้ามคัดกรอง ไปแพทย์ ป้าย "มารับยาแทน · รอพบแพทย์"', 'done'],
     ['รายเก่า ลงนามความยินยอมแล้ว', 'ไม่ให้ลงนามซ้ำ การ์ดแสดงอย่างเดียว อยู่ใน ⋮', 'done'],
@@ -1197,7 +1320,7 @@ const COND = [
     ['เลือก 2 คลินิก', 'คลินิกที่ 1 เลือกแพทย์ได้ · คลินิกที่ 2 เข้าคิวรวมหลังคลินิกแรกจบ', 'done'],
   ]],
   ['คลินิกพิเศษ', [
-    ['ไปคลินิกพิเศษ', 'คัดกรองคลินิกต่อจากคัดกรองกลางเสมอ (ไม่แทนกัน)', 'target'],
+    ['ไปคลินิกพิเศษ', 'คัดกรองคลินิกต่อจากคัดกรองกลาง (ไม่แทนกัน) · มีนัดคลินิกพิเศษ → จาก Kiosk ตรงไปคัดกรองคลินิกพิเศษ', 'target'],
     ['คลินิกที่ไม่มีพยาบาลคัดกรอง', 'เวชศาสตร์ฟื้นฟู · กายภาพ · สังคมสงเคราะห์ → ไปคลินิกตรง', 'done'],
     ['เคยลงนามความยินยอมคลินิกแล้ว', 'ขั้น (C) ซ่อนไปไว้ใน ⋮', 'done'],
     ['เบาหวาน · ความดัน · ทันตกรรม', 'มีขั้น "ตรวจสอบข้อมูล" (คลินิกอื่นไม่มี)', 'done'],
@@ -1214,6 +1337,8 @@ const COND = [
     ['มีคำสั่งหัตถการ', 'พยาบาลหลังตรวจตรวจสอบ → ส่งหลังบ้านไปห้องหัตถการพร้อมห้องจัดยา · คีย์หัตถการเสร็จ → การเงิน → ชำระแล้วจึงทำ · ค่าใช้จ่ายเพิ่ม → ชำระเพิ่ม (ผู้ใช้ 20 ต.ค. 69)', 'part'],
     ['ยังมีคลินิกถัดไป', 'พยาบาลหลังตรวจเห็นป้าย "ยังมีคลินิกถัดไป" → ปิดคิว = เข้าคิวรวมคลินิกที่ 2 (ไม่ระบุแพทย์)', 'done'],
     ['เภสัชยังไม่ยืนยันรายการ', 'การเงินยังออกบิลไม่ได้', 'done'],
+    ['ตรวจ Lab · X-ray · ประเมินจิต ก่อนพบแพทย์', 'Bypass การจ่ายเงินก่อน ชำระทีเดียวหลังพบแพทย์ (คณะทำงาน 23 ต.ค. 69)', 'target'],
+    ['มาเจาะเลือดอย่างเดียว', 'ห้องหัตถการ → การเงิน → กลับบ้าน', 'target'],
     ['ยังไม่ชำระ / ปิดสิทธิ', 'ห้องเภสัชล็อกจ่ายยา "รอชำระเงิน/ปิดสิทธิ" → การเงินเรียกคิวมาชำระแล้วรับยาที่ห้องเภสัช', 'done'],
     ['ส่ง HPV แล้วผลยังไม่ออก (วางแผนครอบครัว)', 'ปิดวันนั้นเป็น "รอผลแล็บ" → ผลออก บันทึกย้อนหลังใน VN เดิม', 'done'],
   ]],
