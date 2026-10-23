@@ -13,8 +13,8 @@ const DEMO = 'https://bma-health.mih.co.th';
 const FIGJAM_FLOW = ['Flow คณะทำงาน (FigJam 23 ต.ค. 69) ↗', '#cowork-flow'];
 function preVisit(p, { clinicName, doctorId, toId, opd = false }) {
   const kids = [
-    { id: p + 'k1', lane: 'cust', t: 'Kiosk · เปิด VN', target: true, role: 'ผู้รับบริการ · เจ้าหน้าที่ศูนย์คิว', route: '/queue-center', link: FIGJAM_FLOW,
-      sum: 'กดบัตรคิว ตรวจสิทธิ ระบบเปิด VN ให้ · แยกตามนัดหมาย', groups: [{ h: 'สถานะในเดโม', list: ['ยังไม่ส่งต่อไปคิวถัดไปอัตโนมัติ'] }] },
+    { id: p + 'k1', lane: 'cust', t: 'Kiosk · เปิด VN', role: 'ผู้รับบริการ · เจ้าหน้าที่ศูนย์คิว', route: '/queue-center', link: FIGJAM_FLOW,
+      sum: 'กดบัตรคิว ตรวจสิทธิ ระบบเปิด VN ให้ · แยกตามนัดหมาย', groups: [{ h: 'สถานะในเดโม', list: ['ออกบัตรที่ศูนย์คิว (/queue-center/issue) แล้วขึ้นคิวคัดกรอง/คัดแยกพร้อม VN', 'นัดคลินิกพิเศษ → คิวคัดกรองของคลินิก · นัดทำหัตถการ → ห้องหัตถการ', 'ตู้ Kiosk จริง (bma.kiosk) เป็นแอปแยก ยังไม่ส่งข้อมูลเข้ามา', 'งานบำบัดยาเสพติดยังไม่มีจุดบริการในศูนย์คิว'] }] },
     { id: p + 'kq', row: 2, same: true, t: 'คัดแยก · เพิ่มคิวต่อแถว + เปิด VN', role: 'เจ้าหน้าที่จุดคัดแยก', route: '/opd/queue', link: FIGJAM_FLOW,
       sum: 'Kiosk พัง → จุดคัดแยกเพิ่มคิวต่อแถวและเปิด VN แทน', groups: [{ h: 'เงื่อนไข', list: ['VN จะเปิดที่คัดแยก กรณี Kiosk พัง (ผู้ใช้ยืนยัน 23 ต.ค. 69)'] }] },
     { id: p + 'ka', type: 'dec', t: 'มีนัดหมาย?', sum: 'ไม่นัด → คัดแยก · นัด OPD ไม่มีตรวจอื่นเพิ่ม → คัดกรองกลาง · นัดคลินิกพิเศษ → คัดกรองคลินิกพิเศษ · นัดทำหัตถการ → ห้องหัตถการ', link: FIGJAM_FLOW },
