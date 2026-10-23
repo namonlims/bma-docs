@@ -2176,7 +2176,7 @@ function logHist(action, kind, title, where, changes){
 function renderHist(){
   const H = state.history || [];
   $('hHint').textContent = H.length ? `${H.length} รายการ · ล่าสุดอยู่บนสุด` : 'ยังไม่มีการแก้ไข';
-  const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} if(typeof PRESENCE!=='undefined') PRESENCE.refresh(); segs($('hMe'), Object.fromEntries(['—',...PEOPLE].map(p=>[p,p==='—'?'ไม่ระบุ':p])), me||'—', pickMe); };
+  const pickMe = k=>{ me = k==='—' ? '' : k; try{localStorage.setItem(STORE_KEY+':me', me);}catch(e){} if(typeof PRESENCE!=='undefined') PRESENCE.refresh(); segs($('hMe'), Object.fromEntries(PEOPLE.map(p=>[p,p])), me, pickMe); };   // เอา "ไม่ระบุ" ออก (ผู้ใช้ 23 ต.ค. 69) · ยังไม่เลือก = ไม่มีปุ่มกดอยู่
   pickMe(me||'—');
   let day = '', h = '';
   H.forEach(e=>{
@@ -2412,7 +2412,7 @@ const PRESENCE = (()=>{
     const anon = list.filter(v=>!v.name).length;
     box.innerHTML = `<span class="vlab"><span class="vdot"></span>กำลังดู ${list.length}</span><span class="vstack">${shown.map(av).join('')}${more>0?`<span class="vw more">+${more}</span>`:''}</span>`
       + `<div class="vtip" role="tooltip"><div class="tt-t">กำลังดูหน้านี้ ${list.length} คน</div><div class="tt-s">อัปเดตทุก 20 วินาที · ไม่ต้องเข้าสู่ระบบ</div><div class="vlist">${list.map(v=>`<span><i style="background:${v.name&&WHO_COLOR[v.name]?WHO_COLOR[v.name]:'var(--text-content-tertiary)'}"></i>${v.name?esc(v.name):'ไม่ระบุชื่อ'}${v.sid===sid?' <small>(คุณ)</small>':''}</span>`).join('')}</div>${!me?'<div class="tt-s">กดวงกลมของคุณเพื่อระบุชื่อ</div>':''}</div>`
-      + (menuOpen ? `<div class="vmenu" role="menu"><div class="tt-s">คุณคือ</div>${['', ...PEOPLE].map(p=>`<button type="button" role="menuitem" data-who="${esc(p)}"${(me||'')===p?' aria-pressed="true"':''}>${p?`<i style="background:${WHO_COLOR[p]}"></i>${esc(p)}`:'ไม่ระบุชื่อ'}</button>`).join('')}</div>` : '');
+      + (menuOpen ? `<div class="vmenu" role="menu"><div class="tt-s">คุณคือ</div>${PEOPLE.map(p=>`<button type="button" role="menuitem" data-who="${esc(p)}"${(me||'')===p?' aria-pressed="true"':''}>${p?`<i style="background:${WHO_COLOR[p]}"></i>${esc(p)}`:'ไม่ระบุชื่อ'}</button>`).join('')}</div>` : '');
   }
   box.addEventListener('click', ev=>{
     const w = ev.target.closest('[data-who]');
