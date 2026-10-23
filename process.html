@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Design Ops Process</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--brand-p50, #F4FBF8); color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.5; }
+  .page { display: flex; flex-direction: column; gap: var(--dim-space-1200, 48px); max-width: 1120px; margin: 0 auto;
+    padding: var(--dim-space-800, 32px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px); }
+  h1, h2, h3 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-wrap: balance; }
+  h1 { font-size: var(--type-size-2xl, 24px); }
+  h2 { font-size: var(--type-size-lg, 18px); }
+  h3 { font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
+  p { margin: 0; }
+  .lede { margin-top: var(--dim-space-100, 4px); max-width: 680px; color: var(--text-content-secondary, #636B72); }
+  .group { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .group-head p { margin-top: var(--dim-space-100, 4px); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .panel { background: var(--surface-neutral-primary, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-500, 20px); }
+  .stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--dim-space-300, 12px); }
+  .stat { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .stat b { font-size: var(--type-size-2xl, 24px); color: var(--text-brandPrimary-default, #007549); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .loop { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); counter-reset: step; }
+  .loop .panel { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .loop .panel::before { counter-increment: step; content: counter(step); display: inline-flex; align-items: center; justify-content: center;
+    width: var(--dim-size-700, 36px); height: var(--dim-size-700, 36px); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); }
+  .loop .what { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .loop .why { color: var(--text-content-secondary, #636B72); }
+  .jtable { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+  .jrow { display: grid; grid-template-columns: minmax(200px, 1.3fr) repeat(3, minmax(0, 1fr)); gap: var(--dim-space-400, 16px);
+    padding: var(--dim-space-300, 12px) var(--dim-space-500, 20px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .jrow.head { border-top: 0; background: var(--surface-brandPrimary-quaternary, #F4FBF8); font-size: var(--type-size-xs, 12px);
+    font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .jstep { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-weight: var(--type-weight-medium, 500); }
+  .jid { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); font-variant-numeric: tabular-nums; }
+  .jcell { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); overflow-wrap: anywhere; }
+  .cell-none { color: var(--text-content-tertiary, #858C92); }
+  .chip { display: inline-flex; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px);
+    font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.6; }
+  .chip-ok { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); }
+  .chip-part { background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-warning-default, #C2410C); }
+  .chip-mock { background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-content-secondary, #636B72); }
+  .chip-target { background: var(--surface-info-tertiary, #DBEAFE); color: var(--text-info-default, #1D4ED8); }
+  .guards { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.2fr); }
+  .guards > div { padding: var(--dim-space-300, 12px) 0; border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); padding-right: var(--dim-space-400, 16px); }
+  .guards .gh { border-top: 0; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  footer { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  @media (max-width: 1023px) {
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-800, 32px); gap: var(--dim-space-800, 32px); }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .loop { grid-template-columns: minmax(0, 1fr); }
+    .jrow.head { display: none; }
+    .jrow { grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-100, 4px) var(--dim-space-300, 12px); }
+    .jstep { grid-column: 1 / -1; margin-bottom: var(--dim-space-100, 4px); }
+    .jcell { display: contents; }
+    .jcell::before { content: attr(data-label); color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+    .guards { grid-template-columns: minmax(0, 1fr); }
+    .guards .gh { display: none; }
+    .guards > div { padding: 0; border-top: 0; }
+    .guards > div:nth-child(3n+1) { padding-top: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); font-weight: var(--type-weight-medium, 500); }
+    .guards > div:nth-child(3n+2), .guards > div:nth-child(3n+3) { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>กระบวนการออกแบบและพัฒนาระบบสุขภาพปฐมภูมิ ร่วมกับ AI agent</h1>
+    <p class="lede">ระบบเดียว 3 ช่องทาง: ตู้ Kiosk · เว็บเจ้าหน้าที่ · แอปผู้รับบริการ ทุกงานเริ่มจาก Design system จบที่เอกสารที่ BA Dev และ Figma ใช้ร่วมกัน</p>
+  </header>
+
+  <section class="panel stats" aria-label="ตัวเลขโครงการ">
+    <div class="stat"><b>2,669</b><span>commits ตั้งแต่ May 2026</span></div>
+    <div class="stat"><b>3</b><span>ช่องทาง Kiosk · เว็บ · มือถือ</span></div>
+    <div class="stat"><b>635</b><span>component กลาง</span></div>
+    <div class="stat"><b>2,019</b><span>design token</span></div>
+    <div class="stat"><b>45</b><span>ไฟล์กติกาให้ agent</span></div>
+    <div class="stat"><b>144</b><span>การตัดสินใจที่บันทึกไว้</span></div>
+  </section>
+
+  <section class="group">
+    <div class="group-head"><h2>วงจรการทำงาน 1 งาน</h2><p>ทุกคำสั่งเดินครบ 6 ขั้น ขั้นที่ 4 ทำงานเองอัตโนมัติ</p></div>
+    <div class="loop">
+      <div class="panel"><h3>รับโจทย์</h3><p class="what">TOR · ประชุมคณะทำงาน · Figma · ภาพหน้าจอ</p><p class="why">ทุกคำสั่งถูกบันทึกพร้อมเวลา repo และ branch ย้อนดูได้ว่าการตัดสินใจมาจากคำสั่งไหน</p></div>
+      <div class="panel"><h3>อ่านกติกาเฉพาะงาน</h3><p class="what">กติกา 1 เรื่อง = 1 ไฟล์ · โหลดตามโฟลเดอร์ที่แตะ</p><p class="why">45 ไฟล์กติกา โหลดเฉพาะที่เกี่ยว ประหยัด token และไม่สับสนข้ามโมดูล</p></div>
+      <div class="panel"><h3>สร้างจาก Design system</h3><p class="what">Token 2,019 ตัว · Component กลาง 635 ชิ้น · คลัง asset</p><p class="why">ห้ามค่าลอย ห้ามวาดปุ่มเอง ไอคอนจาก Figma ก่อน Lucide</p></div>
+      <div class="panel"><h3>ตรวจอัตโนมัติ</h3><p class="what">token-lint · mock-lint · agent:check · 4 ความกว้างจอ</p><p class="why">จับค่าที่ไม่ใช่ token, ชิ้นที่ควรเข้า DS, flow ที่เอกสารยังไม่ตาม</p></div>
+      <div class="panel"><h3>เอกสารตรงกัน</h3><p class="what">Flow spec · Decision log · User flow · Service Blueprint · Journey</p><p class="why">บันทึกการตัดสินใจ 144 รายการ BA และ Dev เห็นภาพเดียวกัน</p></div>
+      <div class="panel"><h3>ส่งต่อ Figma / Dev</h3><p class="what">Screen manifest ต่อหน้าจอ</p><p class="why">บอกว่าหน้าจอใช้ component ไหน ไอคอนไหน token ไหน วาดใน Figma ได้ครบและตรงไลบรารี</p></div>
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head"><h2>เส้นทางผู้รับบริการ Kiosk → เว็บ → มือถือ</h2><p>Journey spine ไฟล์เดียว ทุก repo อ่านจากที่นี่ · อัปเดต 2026-10-23</p></div>
+    <div class="panel jtable" role="table" aria-label="เส้นทางผู้รับบริการ">
+      <div class="jrow head" role="row"><div role="columnheader">ขั้น</div><div role="columnheader">Kiosk</div><div role="columnheader">เว็บเจ้าหน้าที่</div><div role="columnheader">แอปมือถือ</div></div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">K1</span><span>ยืนยันตัวตนที่ตู้ Kiosk</span><span class="chip chip-mock" title="mock">จำลอง</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">02-insert-id-card → 02d-thaid-qr → 03-loading-verifying-identity</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">K1b</span><span>ไม่พบประวัติ → ติดต่อเวชระเบียน</span><span class="chip chip-mock" title="mock">จำลอง</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">03b-register-new-patient · 02c foreign</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/opd/queue (คัดแยก) → /registration/register</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">K2</span><span>เลือกบริการ · ตรวจสิทธิ · สแกนใบหน้า</span><span class="chip chip-mock" title="mock">จำลอง</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">01-select-service → 04 → 04b–06b face → 07 / 07b → 08 rights</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">K3</span><span>ออกบัตรคิว + เปิด VN</span><span class="chip chip-target" title="target (VN opened at kiosk — คทง. 23 ต.ค. 69)">เป้าหมาย</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">13-queue-result → queue-slip-print</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/queue-center/*</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">My Queue (home)</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W1b</span><span>คัดแยก (ไม่มีนัด / Kiosk พัง)</span><span class="chip chip-ok" title="wired">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/opd/queue → /opd/screening</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W2</span><span>เวชระเบียน</span><span class="chip chip-ok" title="wired (web) · mobile profile via relay">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/registration/queue → /registration/register → /registration/visit</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/register (app sign-up first visit → full form)</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W3</span><span>คัดกรองกลาง</span><span class="chip chip-ok" title="wired">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/opd/queue → /opd/screening</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W4</span><span>คัดกรองคลินิก</span><span class="chip chip-part" title="partial">บางส่วน</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">clinic screening queue → ClinicRecordPage</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W5</span><span>แพทย์ตรวจ + CPOE · Telemedicine</span><span class="chip chip-ok" title="wired (telemed relay)">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/treat/queue → /treat/record</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/telemed</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W7</span><span>พยาบาลหลังตรวจ</span><span class="chip chip-part" title="partial">บางส่วน</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/exit → /exit/record</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W8</span><span>ห้องยา → การเงิน → รับยา</span><span class="chip chip-mock" title="mock (3 separate copies)">จำลอง</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">09-payment-bill-summary → 10 → 11 / 11b → 14 → 15c</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/pharmacy/queue · /finance</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/pharmacy/preparing → /m/pharmacy/payment → /m/payment/:id</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">W9</span><span>นัดหมาย / ส่งต่อ / ส่งปรึกษา</span><span class="chip chip-ok" title="wired (same browser)">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">InternalReferPopup · appointment step</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/appointments · /m/appointments/:id · /m/reschedule/:id</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">M1</span><span>หลังกลับบ้าน: ผลตรวจ · นัด · วัดความดันที่บ้าน · คำขอ</span><span class="chip chip-ok" title="wired (relay / same browser)">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">staff To-Do / notifications</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/records · /m/home-bp · /m/requests · /m/assessments · /m/home-visit-request</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="group">
+    <div class="group-head"><h2>ปัญหาที่เจอ → กลไกที่ใส่ไว้</h2><p>เปลี่ยนบทเรียนซ้ำ ๆ เป็นการตรวจอัตโนมัติ แทนการเตือนด้วยคน</p></div>
+    <div class="panel guards">
+      <div class="gh">ปัญหา</div><div class="gh">กลไก</div><div class="gh">ผลลัพธ์</div><div>ค่าสี/ระยะไม่ตรง Design system</div><div>Hook ตรวจทุกครั้งที่แก้ไฟล์</div><div>เตือนทันทีพร้อม token ที่ควรใช้</div><div>ชิ้นเดียวกันถูกสร้างซ้ำหลายหน้า</div><div>agent:check ตอนจบงาน</div><div>เสนอ &quot;ควรเพิ่มใน design system&quot; พร้อมที่ใช้</div><div>โค้ดเปลี่ยน flow แต่เอกสารไม่เปลี่ยน</div><div>agent:check ตอนจบงาน</div><div>เตือนให้แก้ flow spec · decision log · user flow</div><div>เว็บเปลี่ยน แต่ Kiosk/มือถือไม่รู้</div><div>Journey spine (JSON)</div><div>บอกหน้าจอและ key ข้อมูลที่ต้องเช็กอีกฝั่ง</div><div>หลายเทอร์มินัลทำงานโฟลเดอร์เดียวกัน</div><div>ตรวจเฉพาะไฟล์ของเซสชันนี้</div><div>ไม่แตะงานคนอื่น ไม่เตือนซ้ำ</div><div>คำสั่งเก่าหาย ตกหล่นตอนส่งต่อ</div><div>Request log + npm run requests</div><div>ไล่ทุกคำสั่งก่อนส่ง BA / Dev / Figma</div>
+    </div>
+  </section>
+
+  <footer>สร้างจาก docs/journey/journey.json และตัวเลขจริงใน repo ด้วย scripts/build-process-page.mjs</footer>
+</main>
+</body>
+</html>
