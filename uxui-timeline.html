@@ -360,7 +360,11 @@ h1{font-weight:700}
 .btn.subdue:focus{outline:none}.btn.subdue:focus-visible{outline:4px solid var(--brand-p200)}
 
 /* ป๊อปอัปงาน: กว้าง 1200 · 2 คอลัมน์ · หัวกลุ่ม + เส้นคั่น · ระยะ กลุ่ม 24 > ในกลุ่ม 16 > ป้าย↔ค่า 8 */
-#taskDlg{width:min(1200px,calc(100vw - 32px))}
+/* ใหญ่ขึ้นเกือบเต็มจอ (ผู้ใช้ 23 ต.ค. 69 "ขยาย popup ให้ใหญ่ขึ้น") · ตัวป๊อปอัปสูงเต็มจอ เนื้อหาเลื่อนข้างใน */
+#taskDlg{width:min(1680px,calc(100vw - 32px));height:calc(100dvh - 32px)}
+#taskDlg .dlg{height:100%}
+#taskDlg .tbody{flex:1;min-height:0}
+@media (min-width:1280px){ #taskDlg .rgrid textarea{min-height:96px} }
 #taskDlg .tbody{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;padding:0}
 #taskDlg .fgrp{display:flex;flex-direction:column;gap:16px;padding:24px;min-width:0}
 #taskDlg .fcol{display:flex;flex-direction:column;border-left:1px solid var(--border-neutral-tertiary);min-width:0}
