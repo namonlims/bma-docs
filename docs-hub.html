@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เอกสารกติกาสำหรับ BA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    line-height: 1.5;
+  }
+  .ms { font-family: 'Material Symbols Outlined'; font-size: var(--type-size-xl, 20px); line-height: 1; font-weight: normal; font-style: normal; display: inline-block; flex: none; }
+  button { font: inherit; color: inherit; }
+
+  /* แถบบน: ชื่อ + ผู้ใช้ */
+  .top {
+    display: flex; align-items: center; gap: var(--dim-space-300, 12px);
+    padding: var(--dim-space-300, 12px) var(--dim-space-600, 24px);
+    background: var(--surface-card-100, #FFFFFF);
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+  }
+  .top a.home { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); border-radius: var(--dim-radius-full, 9999px); color: var(--text-content-secondary, #636B72); text-decoration: none; }
+  .top a.home:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .top h1 { margin: 0; flex: 1; min-width: 0; font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .top h1 small { display: block; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-secondary, #636B72); }
+  .user { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-width: 0; }
+  .user .who { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); text-align: right; min-width: 0; overflow-wrap: anywhere; }
+  .user .who b { display: block; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+
+  /* แท็บ */
+  .tabs {
+    display: flex; gap: var(--dim-space-100, 4px); overflow-x: auto; scrollbar-width: none;
+    padding: 0 var(--dim-space-600, 24px);
+    background: var(--surface-card-100, #FFFFFF);
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: none; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px);
+    min-height: var(--dim-size-1000, 48px); padding: 0 var(--dim-space-400, 16px);
+    border: 0; border-bottom: var(--dim-space-050, 2px) solid transparent; background: none; cursor: pointer;
+    color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); white-space: nowrap;
+  }
+  .tab:hover { color: var(--text-content-default, #363B3F); }
+  .tab[aria-selected="true"] { color: var(--text-brandPrimary-default, #007549); border-bottom-color: var(--border-brandPrimary-default, #007549); }
+  .tab .n { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+
+  /* แถบเครื่องมือของแท็บ */
+  .bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px);
+    padding: var(--dim-space-300, 12px) var(--dim-space-600, 24px);
+  }
+  .bar .sum { flex: 1 1 260px; min-width: 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .bar .sum b { display: block; font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
+  .acts { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--dim-space-150, 6px);
+    min-height: var(--dim-size-800, 40px); padding: 0 var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-200, 8px); cursor: pointer; white-space: nowrap;
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    background: var(--surface-card-100, #FFFFFF); font-weight: var(--type-weight-medium, 500);
+  }
+  .btn:hover { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
+  .btn.fill { background: var(--surface-brandPrimary-default, #007549); border-color: var(--border-brandPrimary-default, #007549); color: var(--text-content-on-content, #FFFFFF); }
+  .btn.fill:hover { background: var(--brand-p800, #004C31); color: var(--text-content-on-content, #FFFFFF); }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+  .btn.ghost { border-color: transparent; background: none; }
+  .btn .ms { font-size: var(--type-size-lg, 18px); }
+
+  .editnote {
+    display: none; align-items: center; gap: var(--dim-space-200, 8px);
+    margin: 0 var(--dim-space-600, 24px) var(--dim-space-300, 12px);
+    padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    border-radius: var(--dim-radius-200, 8px);
+    background: var(--brand-p100, #E2F3EB); color: var(--brand-p800, #004C31); font-size: var(--type-size-xs, 12px);
+  }
+  body.editing .editnote { display: flex; }
+
+  .frames { flex: 1; min-height: 0; position: relative; margin: 0 var(--dim-space-600, 24px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-400, 12px); overflow: hidden; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); }
+  .frames iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: none; }
+  .frames iframe.on { display: block; }
+
+  /* ประวัติการแก้ไข */
+  .scrim { position: fixed; inset: 0; background: var(--surface-overlay-default, rgb(100 116 139 / 0.40)); display: none; z-index: 20; }
+  .scrim.on { display: block; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 21;
+    width: min(480px, 100vw); display: flex; flex-direction: column;
+    background: var(--surface-card-100, #FFFFFF);
+    transform: translateX(100%); transition: transform .2s ease;
+  }
+  .drawer.on { transform: none; }
+  .dh { display: flex; align-items: flex-start; gap: var(--dim-space-200, 8px); padding: var(--dim-space-400, 16px) var(--dim-space-500, 20px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .dh h2 { margin: 0; font-size: var(--type-size-base, 16px); color: var(--text-brandPrimary-default, #007549); }
+  .dh p { margin: var(--dim-space-050, 2px) 0 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .dh > div { flex: 1; min-width: 0; }
+  .db { flex: 1; overflow-y: auto; padding: var(--dim-space-200, 8px) var(--dim-space-500, 20px) var(--dim-space-600, 24px); }
+  .hi { padding: var(--dim-space-400, 16px) 0; border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .hi .meta { display: flex; flex-wrap: wrap; gap: 0 var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .hi .meta b { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
+  .hi .where { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); }
+  .kv span:nth-child(odd) { color: var(--text-content-tertiary, #858C92); }
+  .kv del { color: var(--text-danger-default, #B91C1C); overflow-wrap: anywhere; }
+  .kv ins { text-decoration: none; color: var(--text-brandPrimary-default, #007549); overflow-wrap: anywhere; }
+  .empty { padding: var(--dim-space-800, 32px) 0; text-align: center; color: var(--text-content-tertiary, #858C92); }
+
+  .toast { position: fixed; left: 50%; bottom: var(--dim-space-600, 24px); transform: translateX(-50%); z-index: 30; max-width: calc(100vw - 32px); padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-200, 8px); background: var(--text-content-default, #363B3F); color: var(--text-content-on-content, #FFFFFF); font-size: var(--type-size-xs, 12px); display: none; }
+  .toast.on { display: block; }
+
+  @media (max-width: 767px) {
+    .top, .bar { padding-left: var(--dim-space-400, 16px); padding-right: var(--dim-space-400, 16px); }
+    .tabs { padding: 0 var(--dim-space-200, 8px); }
+    .frames { margin: 0 0 0; border-radius: 0; border-left: 0; border-right: 0; }
+    .editnote { margin-left: var(--dim-space-400, 16px); margin-right: var(--dim-space-400, 16px); }
+    .user .who { display: none; }
+    .btn { min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); }
+    .acts { width: 100%; }
+    .acts .btn { flex: 1 1 auto; }
+    .top h1 small { display: none; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="home" href="./" aria-label="กลับหน้ารวมเอกสาร" title="หน้ารวมเอกสาร"><span class="ms">arrow_back</span></a>
+  <h1>เอกสารกติกาสำหรับ BA<small>3 เรื่องในหน้าเดียว · ดาวน์โหลด PDF ได้ · แก้ข้อความได้เมื่อเข้าสู่ระบบ</small></h1>
+  <div class="user" id="user"></div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="เอกสาร" id="tabs"></nav>
+
+<div class="bar">
+  <div class="sum" id="sum"></div>
+  <div class="acts">
+    <button class="btn" id="pdfBtn" type="button"><span class="ms">picture_as_pdf</span>ดาวน์โหลด PDF</button>
+    <button class="btn" id="histBtn" type="button"><span class="ms">history</span>ประวัติการแก้ไข</button>
+    <button class="btn fill" id="editBtn" type="button"><span class="ms">edit</span>แก้ไขข้อความ</button>
+  </div>
+</div>
+<div class="editnote" role="status"><span class="ms">edit_note</span><span>กำลังแก้ไข · คลิกข้อความในกล่องเพื่อแก้ · คลิกที่อื่นเพื่อบันทึก · Esc = ยกเลิกช่องนั้น · ช่องที่เคยแก้มีพื้นเขียวอ่อน</span></div>
+
+<main class="frames" id="frames"></main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="ประวัติการแก้ไข" aria-hidden="true">
+  <div class="dh">
+    <div><h2>ประวัติการแก้ไข</h2><p id="histSub"></p></div>
+    <button class="btn ghost" id="histClose" type="button" aria-label="ปิด"><span class="ms">close</span></button>
+  </div>
+  <div class="db" id="histList"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ที่เก็บข้อมูลกลาง = Google Apps Script (ไฟล์ bma-docs-edits.gs) · ว่าง = ยังไม่เชื่อม แก้ไม่ได้
+const EDIT_URL = '';
+// บัญชี Google เดียวกับ UXUI Timeline (origin namonlims.github.io อนุญาตไว้แล้ว)
+const GOOGLE_CLIENT_ID = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
+const DOCS = [
+  { id: 'consent', label: 'ความยินยอม', title: 'เงื่อนไขการแสดงแบบฟอร์มความยินยอม', sum: '54 แบบฟอร์ม · แสดงเมื่อไร · ถ้าไม่ยินยอมเป็นอย่างไร', src: 'consent-display-conditions.html', icon: 'assignment_turned_in' },
+  { id: 'icons', label: 'ไอคอนหลังชื่อ', title: 'ไอคอนหลังชื่อผู้รับบริการ', sum: 'มีอะไรบ้าง · แสดงเมื่อไร · หน้าไหน', src: 'worklist-name-icons.html', icon: 'badge' },
+  { id: 'registry', label: 'การขึ้นทะเบียนผู้ป่วย', title: 'การขึ้นทะเบียนผู้ป่วยรายคลินิก', sum: 'คลินิกไหนขึ้นทะเบียนได้ · บทบาทไหนขึ้นทะเบียนได้ · มีช่องเลขทะเบียนไหม', src: 'clinic-registry-number-audit.html', icon: 'how_to_reg' },
+];
+
+let editingOn = false, pendingEdit = false;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let toastT;
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3500); }
+
+/* ---------- เข้าสู่ระบบด้วย Google ---------- */
+const AUTH = { tk: '', exp: 0, user: null };
+const TK_KEY = 'bma-docs:tk';
+const b64 = (s) => decodeURIComponent(atob(s.replace(/-/g, '+').replace(/_/g, '/')).split('').map((ch) => '%' + ('00' + ch.charCodeAt(0).toString(16)).slice(-2)).join(''));
+function setTk(tk) {
+  try {
+    const p = JSON.parse(b64(tk.split('.')[1]));
+    if (p.exp * 1000 < Date.now() + 60000) return false;
+    AUTH.tk = tk; AUTH.exp = p.exp; AUTH.user = { email: p.email, name: p.name || p.email.split('@')[0] };
+    try { localStorage.setItem(TK_KEY, tk); } catch (e) {}
+    return true;
+  } catch (e) { return false; }
+}
+const loggedIn = () => !!AUTH.tk && AUTH.exp * 1000 > Date.now() + 60000;
+function signOut() {
+  AUTH.tk = ''; AUTH.user = null; try { localStorage.removeItem(TK_KEY); } catch (e) {}
+  try { google.accounts.id.disableAutoSelect(); } catch (e) {}
+  setEditing(false); renderUser();
+}
+function renderUser() {
+  const u = $('user');
+  if (loggedIn()) {
+    u.innerHTML = `<div class="who"><b>${esc(AUTH.user.name)}</b>${esc(AUTH.user.email)}</div><button class="btn ghost" type="button" id="outBtn" title="ออกจากระบบ" aria-label="ออกจากระบบ"><span class="ms">logout</span></button>`;
+    $('outBtn').onclick = signOut;
+  } else {
+    u.innerHTML = '<div id="gBtn"></div>';
+    if (window.google?.accounts?.id) google.accounts.id.renderButton($('gBtn'), { theme: 'outline', size: 'medium', text: 'signin', shape: 'pill', locale: 'th' });
+  }
+  renderEditBtn();
+}
+function onCred(r) {
+  if (!r?.credential || !setTk(r.credential)) { toast('เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง'); return; }
+  renderUser(); toast('เข้าสู่ระบบแล้ว · ' + AUTH.user.name);
+  if (pendingEdit) { pendingEdit = false; setEditing(true); }
+}
+(function initAuth() {
+  try { const t = localStorage.getItem(TK_KEY); if (t) setTk(t); } catch (e) {}
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+  s.onload = () => { google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCred, auto_select: true, cancel_on_tap_outside: true, use_fedcm_for_prompt: true }); renderUser(); };
+  document.head.appendChild(s);
+  renderUser();
+})();
+function askLogin() {
+  pendingEdit = true;
+  if (window.google?.accounts?.id) google.accounts.id.prompt();
+  toast('เข้าสู่ระบบด้วยบัญชี Google ก่อนแก้ไข (ปุ่มมุมขวาบน)');
+}
+
+/* ---------- ข้อมูลการแก้ไข ---------- */
+let EDITS = [];               // ทุกแถว (ประวัติ) เก่า → ใหม่
+const latest = {};            // doc → key → แถวล่าสุด
+function indexEdits() {
+  for (const k of Object.keys(latest)) delete latest[k];
+  EDITS.sort((a, b) => a.at - b.at).forEach((e) => { (latest[e.doc] ||= {})[e.key] = e; });
+}
+async function loadEdits() {
+  if (!EDIT_URL) return;
+  try {
+    const j = await (await fetch(EDIT_URL + '?list=1', { cache: 'no-store' })).json();
+    if (j.ok) { EDITS = j.edits || []; indexEdits(); frames.forEach((f, id) => f.engine?.scan(true)); renderHist(); }
+  } catch (e) { toast('โหลดข้อความที่แก้ไม่สำเร็จ · แสดงฉบับต้นฉบับ'); }
+}
+async function saveEdit(edit) {
+  const r = await fetch(EDIT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ tk: AUTH.tk, edit }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.auth ? 'auth' : (j.error || 'save'));
+  EDITS.push(j.edit); indexEdits(); renderHist();
+  return j.edit;
+}
+
+/* ---------- ทำความสะอาด HTML ที่แก้ (กันสคริปต์) ---------- */
+const KEEP = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'BR', 'SPAN', 'CODE', 'SMALL', 'SUB', 'SUP', 'A', 'DIV', 'P', 'UL', 'OL', 'LI', 'MARK']);
+const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'LINK', 'META', 'FORM', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT', 'SVG', 'IMG', 'VIDEO', 'AUDIO']);
+function clean(html) {
+  const t = document.createElement('template'); t.innerHTML = html;
+  (function walk(n) {
+    [...n.childNodes].forEach((c) => {
+      if (c.nodeType === 8) { c.remove(); return; }
+      if (c.nodeType !== 1) return;
+      if (DROP.has(c.tagName)) { c.remove(); return; }
+      walk(c);
+      if (!KEEP.has(c.tagName)) { c.replaceWith(...c.childNodes); return; }
+      [...c.attributes].forEach((a) => {
+        const ok = a.name === 'class' || (c.tagName === 'A' && a.name === 'href' && /^(https?:|#)/i.test(a.value.trim()));
+        if (!ok) c.removeAttribute(a.name);
+      });
+    });
+  })(t.content);
+  return t.innerHTML.trim();
+}
+const plain = (html) => { const d = document.createElement('div'); d.innerHTML = html; return d.textContent.replace(/\s+/g, ' ').trim(); };
+
+/* ---------- เครื่องแก้ไขในแต่ละเอกสาร ---------- */
+const SEL = 'td, p, li, h1, h2, h3, dd, dt, figcaption';
+function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+function makeEngine(doc, iframe) {
+  const w = iframe.contentWindow, d = iframe.contentDocument;
+  const st = d.createElement('style');
+  st.textContent = `
+    [data-ed="1"] { background: ${'var(--brand-p100, #E2F3EB)'} !important; }
+    html.hub-edit [data-ek] { outline: 1px dashed var(--brand-p300, #8FD1B4); outline-offset: -2px; cursor: text; }
+    html.hub-edit [data-ek]:hover { outline-color: var(--brand-p700, #007549); }
+    html.hub-edit [data-ek]:focus { outline: 2px solid var(--brand-p700, #007549); background: var(--surface-card-100, #FFFFFF) !important; }
+    html.hub-edit a { pointer-events: none; }
+    @media print {
+      @page { size: A4 landscape; margin: 10mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      [data-ed="1"] { background: none !important; }
+      .ds-scroll, .table-wrap, .scroll, [class*="scroll"] { overflow: visible !important; max-height: none !important; }
+      table { width: 100% !important; }
+      tr, td, .card, .stat { break-inside: avoid; }
+      .pager, .search, .filters, .toolbar, button { display: none !important; }
+    }`;
+  d.head.appendChild(st);
+  const orig = new WeakMap();
+  const editable = (el) => !el.closest('script,style,button,select,nav,thead,[contenteditable="false"]') && !el.querySelector('input,button,select,textarea,svg,canvas,' + SEL) && el.textContent.trim().length > 0;
+  function keyOf(el, seen) {
+    if (el.tagName === 'TD') {
+      const tr = el.parentElement, tables = [...d.querySelectorAll('table')];
+      const ti = tables.indexOf(el.closest('table'));
+      const rk = tr.dataset.rk || (tr.dataset.rk = (tr.cells[0]?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 60));
+      const th = el.closest('table').tHead?.rows[0]?.cells[el.cellIndex];
+      return { key: `T${ti}|${rk}|c${el.cellIndex}`, where: `ตาราง ${ti + 1} · แถว "${rk.slice(0, 40)}" · คอลัมน์ "${(th?.textContent || el.cellIndex + 1).toString().replace(/\s+/g, ' ').trim()}"` };
+    }
+    const tx = el.textContent.replace(/\s+/g, ' ').trim();
+    const base = el.tagName + '|' + hash(tx);
+    const n = seen[base] = (seen[base] || 0) + 1;
+    const sec = el.closest('section')?.querySelector('h2')?.textContent.replace(/\s+/g, ' ').trim();
+    return { key: `${base}|${n}`, where: `${sec ? 'หัวข้อ "' + sec.slice(0, 40) + '" · ' : ''}"${tx.slice(0, 40)}${tx.length > 40 ? '…' : ''}"` };
+  }
+  function applyOne(el) {
+    const e = latest[doc.id]?.[el.dataset.ek];
+    if (e && el.dataset.applied !== String(e.at)) {
+      el.innerHTML = clean(e.after); el.dataset.applied = String(e.at); el.dataset.ed = '1';
+      el.title = `แก้โดย ${e.name} · ${new Date(e.at).toLocaleString('th-TH')}`;
+    }
+  }
+  function scan(reapply) {
+    mo.disconnect();
+    const seen = {};
+    d.querySelectorAll(SEL).forEach((el) => {
+      if (!el.dataset.ek) {
+        if (!editable(el)) return;
+        const k = keyOf(el, seen); el.dataset.ek = k.key; el.dataset.where = k.where; orig.set(el, el.innerHTML);
+      }
+      applyOne(el);
+      if (editing) el.contentEditable = 'true';
+    });
+    mo.observe(d.body, { childList: true, subtree: true });
+  }
+  let editing = false;
+  function setEdit(on) {
+    editing = on; d.documentElement.classList.toggle('hub-edit', on);
+    d.querySelectorAll('[data-ek]').forEach((el) => { if (on) el.contentEditable = 'true'; else el.removeAttribute('contenteditable'); });
+  }
+  let before = '';
+  d.addEventListener('focusin', (ev) => { const el = ev.target.closest?.('[data-ek]'); if (el && editing) before = el.innerHTML; });
+  d.addEventListener('keydown', (ev) => {
+    const el = ev.target.closest?.('[data-ek]');
+    if (el && editing && ev.key === 'Escape') { el.innerHTML = before; el.blur(); }
+  });
+  d.addEventListener('focusout', async (ev) => {
+    const el = ev.target.closest?.('[data-ek]');
+    if (!el || !editing) return;
+    const after = clean(el.innerHTML);
+    if (plain(after) === plain(before) && after === clean(before)) return;
+    if (!loggedIn()) { el.innerHTML = before; askLogin(); return; }
+    const was = before;
+    el.dataset.ed = '1';
+    try {
+      const e = await saveEdit({ doc: doc.id, key: el.dataset.ek, where: el.dataset.where, before: clean(was), after });
+      el.dataset.applied = String(e.at); el.title = `แก้โดย ${e.name} · ${new Date(e.at).toLocaleString('th-TH')}`;
+      toast('บันทึกแล้ว · ' + el.dataset.where);
+    } catch (err) {
+      el.innerHTML = was;
+      if (err.message === 'auth') { signOut(); askLogin(); toast('หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบใหม่แล้วแก้อีกครั้ง'); }
+      else toast('บันทึกไม่สำเร็จ · ข้อความกลับเป็นแบบเดิม');
+    }
+  });
+  // หน้าที่วาดตารางใหม่ (ค้นหา · กรอง · เปลี่ยนหน้า) → ติดป้ายและใส่ข้อความที่แก้ซ้ำ
+  let t; const mo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => scan(), 60); });
+  scan();
+  return { scan, setEdit, win: w };
+}
+
+/* ---------- แท็บ ---------- */
+const frames = new Map();
+let cur = null;
+function frameOf(doc) {
+  if (frames.has(doc.id)) return frames.get(doc.id);
+  const f = document.createElement('iframe');
+  f.title = doc.title; f.src = doc.src;
+  const rec = { el: f, engine: null };
+  f.addEventListener('load', () => { rec.engine = makeEngine(doc, f); rec.engine.setEdit(editingOn); });
+  $('frames').appendChild(f); frames.set(doc.id, rec);
+  return rec;
+}
+function show(id, push) {
+  const doc = DOCS.find((x) => x.id === id) || DOCS[0];
+  cur = doc;
+  [...$('tabs').children].forEach((b) => b.setAttribute('aria-selected', String(b.dataset.id === doc.id)));
+  const rec = frameOf(doc);
+  frames.forEach((r) => r.el.classList.toggle('on', r === rec));
+  $('sum').innerHTML = `<b>${esc(doc.title)}</b>${esc(doc.sum)}`;
+  document.title = doc.title + ' · เอกสาร BA';
+  if (push !== false) history.replaceState(null, '', '#' + doc.id);
+  renderHist();
+}
+$('tabs').innerHTML = DOCS.map((d) => `<button class="tab" role="tab" type="button" data-id="${d.id}"><span class="ms">${d.icon}</span>${esc(d.label)}</button>`).join('');
+$('tabs').addEventListener('click', (e) => { const b = e.target.closest('.tab'); if (b) show(b.dataset.id); });
+$('tabs').addEventListener('keydown', (e) => {
+  if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+  const i = DOCS.findIndex((d) => d.id === cur.id) + (e.key === 'ArrowRight' ? 1 : -1);
+  const n = DOCS[(i + DOCS.length) % DOCS.length]; show(n.id); $('tabs').querySelector(`[data-id="${n.id}"]`).focus();
+});
+addEventListener('hashchange', () => show(location.hash.slice(1), false));
+
+/* ---------- แก้ไข ---------- */
+function setEditing(on) {
+  editingOn = on; document.body.classList.toggle('editing', on);
+  frames.forEach((r) => r.engine?.setEdit(on));
+  renderEditBtn();
+}
+function renderEditBtn() {
+  const b = $('editBtn');
+  if (!EDIT_URL) { b.disabled = true; b.title = 'ยังไม่ได้เชื่อมที่เก็บข้อมูลกลาง'; b.innerHTML = '<span class="ms">edit_off</span>แก้ไขข้อความ'; return; }
+  b.disabled = false;
+  b.title = loggedIn() ? '' : 'ต้องเข้าสู่ระบบด้วย Google ก่อน';
+  b.innerHTML = editingOn ? '<span class="ms">check</span>เสร็จสิ้นการแก้ไข' : (loggedIn() ? '<span class="ms">edit</span>แก้ไขข้อความ' : '<span class="ms">lock</span>เข้าสู่ระบบเพื่อแก้ไข');
+}
+$('editBtn').onclick = () => { if (!loggedIn()) { askLogin(); return; } setEditing(!editingOn); };
+
+/* ---------- PDF ---------- */
+$('pdfBtn').onclick = () => {
+  const rec = frames.get(cur.id); if (!rec?.engine) { toast('รอโหลดเอกสารก่อน'); return; }
+  const w = rec.engine.win;
+  const wasEdit = editingOn; if (wasEdit) setEditing(false);
+  const oldTitle = w.document.title;
+  w.document.title = `${cur.title} ${new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })}`;
+  // ตารางที่แบ่งหน้า (ความยินยอม) → แสดงทุกแถวตอนพิมพ์
+  w.__printAll = true; if (typeof w.render === 'function') try { w.render(); } catch (e) {}
+  const done = () => { w.__printAll = false; if (typeof w.render === 'function') try { w.render(); } catch (e) {} w.document.title = oldTitle; if (wasEdit) setEditing(true); w.removeEventListener('afterprint', done); };
+  w.addEventListener('afterprint', done);
+  setTimeout(() => { w.focus(); w.print(); }, 150);
+  toast('เลือกปลายทาง "บันทึกเป็น PDF" ในหน้าต่างพิมพ์');
+};
+
+/* ---------- ประวัติ ---------- */
+function renderHist() {
+  if (!cur) return;
+  const list = EDITS.filter((e) => e.doc === cur.id).sort((a, b) => b.at - a.at);
+  $('histSub').textContent = `${cur.title} · ${list.length} รายการ · ล่าสุดก่อน`;
+  $('histList').innerHTML = !EDIT_URL ? '<p class="empty">ยังไม่ได้เชื่อมที่เก็บข้อมูลกลาง</p>' : list.length ? list.map((e) => `
+    <div class="hi">
+      <div class="meta"><b>${esc(e.name)}</b><span>${esc(e.email)}</span><span>${new Date(e.at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })}</span></div>
+      <div class="where">${esc(e.where || e.key)}</div>
+      <div class="kv"><span>เดิม</span><del>${esc(plain(e.before)) || '—'}</del><span>ใหม่</span><ins>${esc(plain(e.after)) || '—'}</ins></div>
+    </div>`).join('') : '<p class="empty">ยังไม่มีการแก้ไขในเอกสารนี้</p>';
+}
+function openHist(on) { $('drawer').classList.toggle('on', on); $('scrim').classList.toggle('on', on); $('drawer').setAttribute('aria-hidden', String(!on)); if (on) $('histClose').focus(); }
+$('histBtn').onclick = () => openHist(true);
+$('histClose').onclick = () => openHist(false);
+$('scrim').onclick = () => openHist(false);
+addEventListener('keydown', (e) => { if (e.key === 'Escape') openHist(false); });
+
+show(location.hash.slice(1), false);
+renderEditBtn();
+loadEdits();
+</script>
+</body>
+</html>

@@ -113,6 +113,16 @@
     .name { white-space: normal; }
     th:first-child, td:first-child { min-width: 160px; }
   }
+  .roles { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); min-width: 260px; }
+  .rl { white-space: nowrap; color: var(--text-content-secondary, #636B72); }
+  .rv { color: var(--text-content-default, #363B3F); }
+  .ck { display: inline-block; width: 1.2em; font-weight: var(--type-weight-bold, 700); }
+  .ck.ok { color: var(--text-colorfulbadge-green, #00663F); }
+  .ck.no { color: var(--text-content-tertiary, #858C92); }
+  .roles + .sub { margin-top: var(--dim-space-200, 8px); }
+  .mx td.c { text-align: center; font-size: var(--type-size-base, 16px); }
+  .mx td.c .sub { font-size: var(--type-size-xs, 12px); }
+  .mx table { min-width: 900px; }
 </style>
 </head>
 <body>
@@ -161,7 +171,7 @@
           <tr>
             <td><span class="name">เบาหวาน · ความดันโลหิตสูง · หอบหืด/COPD</span><span class="sub">/clinic/diabetes · /hypertension · /asthma-copd</span></td>
             <td>"ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ (แถวผลตรวจใน PatientCard) · ป้าย "ยังไม่ขึ้นทะเบียน"<span class="sub">ไม่มีหน้า /registry แยก — ดูที่แท็บ "รายชื่อผู้ป่วยทั้งหมด" › ขึ้นทะเบียน</span></td>
-            <td>แพทย์เท่านั้น</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">อายุรแพทย์ของคลินิก · อายุรแพทย์ (6 คลินิก)</span><span class="rl"><span class="ck no">✕</span> พยาบาลคัดกรอง</span><span class="rv">ดูอย่างเดียว</span><span class="rl"><span class="ck no">✕</span> พยาบาลหลังตรวจ</span><span class="rv">ดูอย่างเดียว</span><span class="rl"><span class="ck no">✕</span> อื่น ๆ</span><span class="rv">—</span></div><span class="sub">โค้ดตรวจบทบาท = แพทย์ · chronicClinicExtension.jsx:751</span></td>
             <td><span class="badge b-green">กรอกได้ · แก้ได้</span><span class="sub">บังคับกรอก</span></td>
             <td><span class="label-q">"เลขประจำศูนย์ *"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 1/70-24 · เริ่มใหม่ทุกปีงบ · จำหน่ายแล้วเลขไม่ถูกใช้ซ้ำ · "เลขทะเบียนกลาง" (NCD-…) ดูได้จาก hover เท่านั้น</span></td>
             <td>ใต้ชื่อใน worklist "ทะเบียน: …" · ป้ายม่วงข้าง HN/VN<span class="sub">ไม่มีคอลัมน์แยก</span></td>
@@ -173,7 +183,7 @@
           <tr>
             <td><span class="name">ฝากครรภ์ (ANC)</span><span class="sub">/treat/anc/queue</span></td>
             <td>"ขึ้นทะเบียนผู้ป่วยใหม่" → ป็อปอัป "ขึ้นทะเบียนฝากครรภ์" · ปุ่ม "บันทึกการขึ้นทะเบียน" (ต้อง UPT บวก)<span class="sub">ไม่มีหน้า /registry</span></td>
-            <td>ไม่พบการจำกัดบทบาทในโค้ด</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">สูติแพทย์</span><span class="rl"><span class="ck ok">✓</span> พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (ฝากครรภ์)</span><span class="rl"><span class="ck ok">✓</span> พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (ฝากครรภ์)</span><span class="rl"><span class="ck ok">✓</span> อื่น ๆ</span><span class="rv">ทุกบทบาทที่เปิดหน้าได้</span></div><span class="sub">โค้ดไม่ตรวจบทบาท · ancClinicExtension:642</span></td>
             <td><span class="badge b-red">ไม่มีเลข</span></td>
             <td>—</td>
             <td>สถานะ "ฝากครรภ์ครั้งที่ N" ใน worklist</td>
@@ -183,7 +193,7 @@
           <tr>
             <td><span class="name">วางแผนครอบครัว</span><span class="sub">/clinic/family-planning · /registry</span></td>
             <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ<br>(ข) "ลงทะเบียนวางแผนครอบครัวใหม่" ในหน้าทะเบียน</td>
-            <td>แพทย์ · พยาบาลคัดกรอง/หลังตรวจของคลินิก</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">นรีแพทย์</span><span class="rl"><span class="ck ok">✓</span> พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (วางแผนครอบครัว)</span><span class="rl"><span class="ck ok">✓</span> พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (วางแผนครอบครัว)</span><span class="rl"><span class="ck no">✕</span> อื่น ๆ</span><span class="rv">—</span></div><span class="sub">(ก) แพทย์ + พยาบาล · โค้ดรับพยาบาลหลังตรวจทุกคลินิก · (ข) หน้าทะเบียนไม่ตรวจบทบาท</span></td>
             <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-purple">ระบบออกเลข</span> ที่ (ข)</td>
             <td>(ก) <span class="label-q">"เลขทะเบียน *"</span> · (ข) <span class="label-q">"เลขที่วางแผนครอบครัว"</span> (ช่องล็อก)<span class="sub">รูปแบบเดียวกับ NCD เช่น 1/70-24</span></td>
             <td>คอลัมน์ "เลขที่วางแผนครอบครัว" ในหน้าทะเบียน · "ทะเบียน: …" ใน worklist</td>
@@ -193,7 +203,7 @@
           <tr>
             <td><span class="name">สร้างเสริมภูมิคุ้มกัน / เด็กดี</span><span class="sub">/clinic/immunization/registry</span></td>
             <td>"ลงทะเบียนเด็กใหม่" → "บันทึกทะเบียน"<span class="sub">ฝังเป็นแท็บ "รายชื่อผู้ป่วยทั้งหมด" ใน worklist ด้วย</span></td>
-            <td>ไม่ผูกบทบาท (สวิตช์สิทธิ์เดโม)</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">กุมารแพทย์ · แพทย์ IIS</span><span class="rl"><span class="ck ok">✓</span> พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (เด็กดี · IIS)</span><span class="rl"><span class="ck ok">✓</span> พยาบาลหลังตรวจ</span><span class="rv">เปิดลิงก์ตรงได้</span><span class="rl"><span class="ck ok">✓</span> อื่น ๆ</span><span class="rv">ทุกบทบาทที่เปิดหน้าได้</span></div><span class="sub">โค้ดไม่ตรวจบทบาท · มีแค่ธงสิทธิ์เดโม (ไม่มีปุ่มสลับ)</span></td>
             <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">ไม่มีช่องกรอก</span></td>
             <td>ข้อความ "เลขทะเบียนจะออกให้อัตโนมัติเมื่อบันทึกสำเร็จ"<span class="sub">เช่น 1/69-4</span></td>
             <td>คอลัมน์ "เลขทะเบียน" · ป้ายบน PatientCard</td>
@@ -205,7 +215,7 @@
           <tr>
             <td><span class="name">รักปลอดภัย (HIV/STI)</span><span class="sub">/clinic/hiv-sti/registry</span></td>
             <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ<br>(ข) "ลงทะเบียนผู้รับบริการใหม่" ในหน้าทะเบียน</td>
-            <td>แพทย์เท่านั้น</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">อายุรแพทย์โรคติดเชื้อ (ที่หน้าบันทึกตรวจ)</span><span class="rl"><span class="ck no">✕</span> พยาบาลคัดกรอง</span><span class="rv">ดูอย่างเดียว</span><span class="rl"><span class="ck no">✕</span> พยาบาลหลังตรวจ</span><span class="rv">ดูอย่างเดียว</span><span class="rl"><span class="ck no">✕</span> อื่น ๆ</span><span class="rv">—</span></div><span class="sub">หน้าทะเบียน (ข) ไม่ตรวจบทบาท → ทุกบทบาทที่เปิดหน้าได้ รวมพยาบาลคัดกรอง</span></td>
             <td><span class="badge b-orange">รหัสอื่น</span><span class="sub">ไม่มีเลขทะเบียน</span></td>
             <td><span class="label-q">"UIC code *"</span> กรอกเอง ไม่ออกอัตโนมัติ<span class="sub">เช่น UIC-2545-01-30 · ใช้แสดงแทนชื่อ</span></td>
             <td>คอลัมน์ "ผู้รับบริการ (UIC)" · ป้าย "ทะเบียน: UIC"</td>
@@ -215,7 +225,7 @@
           <tr>
             <td><span class="name">งานบำบัดสารเสพติด</span><span class="sub">ก้าวใหม่ · เมทาโดน · บุหรี่ · แอลกอฮอล์ · /clinic/addiction/registry</span></td>
             <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึก<br>(ข) "ลงทะเบียนผู้ติดสารเสพติด" ในหน้าทะเบียน</td>
-            <td>ทุกบทบาทงานบำบัด (รายใหม่) · แก้ทะเบียนเดิม = แพทย์</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">แพทย์เวชศาสตร์การเสพติด</span><span class="rl"><span class="ck ok">✓</span> พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (งานบำบัด)</span><span class="rl"><span class="ck ok">✓</span> พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (งานบำบัด)</span><span class="rl"><span class="ck ok">✓</span> อื่น ๆ</span><span class="rv">นักสังคมสงเคราะห์ · นักจิตวิทยา (งานบำบัด)</span></div><span class="sub">รายใหม่ = ทุกบทบาท · แก้ทะเบียนเดิมที่หน้าบันทึก = แพทย์เท่านั้น · หน้าทะเบียน (ข) ทุกบทบาทแก้ได้</span></td>
             <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-red">ไม่มีช่อง</span> ที่ (ข)</td>
             <td><span class="label-q">"เลขทะเบียนผู้ป่วยก้าวใหม่"</span> (ไม่บังคับ) — ใช้ชื่อเดียวกันทั้ง 4 โปรแกรม<span class="sub">ลำดับ/ปี พ.ศ. 2 หลัก เช่น 12/69 · ไม่มีเลข ศบส. · นับตามปีปฏิทิน</span></td>
             <td>ป้าย/tooltip บน PatientCard · หน้าบำบัด/ติดตาม<span class="sub">ไม่มีคอลัมน์ในหน้าทะเบียน</span></td>
@@ -225,7 +235,7 @@
           <tr>
             <td><span class="name">วัณโรค (TB)</span><span class="sub">/clinic/tb/registry</span></td>
             <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" → "บันทึกและออกเลขที่ขึ้นทะเบียน"<br>(ข) "ขึ้นทะเบียนใหม่" ในหน้าทะเบียน</td>
-            <td>แพทย์ (ก) · สวิตช์สิทธิ์เดโม (ข)</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">อายุรแพทย์ระบบทางเดินหายใจ · อายุรแพทย์ (6 คลินิก)</span><span class="rl"><span class="ck no">✕</span> พยาบาลคัดกรอง</span><span class="rv">ดูอย่างเดียวที่ (ก) · ขึ้นทะเบียนได้ที่ (ข)</span><span class="rl"><span class="ck no">✕</span> พยาบาลหลังตรวจ</span><span class="rv">ดูอย่างเดียว</span><span class="rl"><span class="ck no">✕</span> อื่น ๆ</span><span class="rv">—</span></div><span class="sub">(ก) ตรวจบทบาท = แพทย์ · (ข) หน้าทะเบียนไม่ตรวจบทบาท</span></td>
             <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-purple">ระบบออกเลข</span> ที่ (ข)</td>
             <td><span class="label-q">"เลขที่ขึ้นทะเบียน (TB No.) *"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 1/70-4 · กันขึ้นทะเบียนซ้ำ HN เดิม</span></td>
             <td>คอลัมน์แรก "เลขที่ขึ้นทะเบียน" (ตรึง · ค้นหา · เรียงได้) · ป้าย "ทะเบียน: …"</td>
@@ -235,7 +245,7 @@
           <tr>
             <td><span class="name">สุขภาพจิต</span><span class="sub">/clinic/mental-health/registry</span></td>
             <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" → "บันทึกและออกเลขที่สุขภาพจิต"<br>(ข) "ลงทะเบียนสุขภาพจิตใหม่" ในหน้าทะเบียน</td>
-            <td>แพทย์ · พยาบาลคัดกรอง/หลังตรวจของคลินิก</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">จิตแพทย์</span><span class="rl"><span class="ck ok">✓</span> พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (สุขภาพจิต)</span><span class="rl"><span class="ck ok">✓</span> พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (สุขภาพจิต)</span><span class="rl"><span class="ck no">✕</span> อื่น ๆ</span><span class="rv">นักสังคมฯ · นักจิตวิทยา ดูอย่างเดียวที่ (ก)</span></div><span class="sub">(ข) หน้าทะเบียนไม่ตรวจบทบาท → นักสังคมฯ · นักจิตวิทยาขึ้นทะเบียนได้</span></td>
             <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">ช่องล็อก แก้ไม่ได้</span></td>
             <td><span class="label-q">"เลขที่สุขภาพจิต"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 8/69-4</span></td>
             <td>คอลัมน์แรก "เลขที่สุขภาพจิต" (ปิดบังเมื่อไม่มีสิทธิ์) · ป้าย "ทะเบียน: …"</td>
@@ -247,7 +257,7 @@
           <tr>
             <td><span class="name">สังคมสงเคราะห์</span><span class="sub">/clinic/social-work/registry · /requesters</span></td>
             <td>"ลงทะเบียนผู้รับบริการใหม่" ในหน้าทะเบียน · "ลงทะเบียนผู้ขอวัสดุ"<span class="sub">ไม่มีปุ่มบนหน้าบันทึก</span></td>
-            <td>สวิตช์สิทธิ์เดโม (ไม่ผูกบทบาท)</td>
+            <td><div class="roles"><span class="rl"><span class="ck no">✕</span> แพทย์</span><span class="rv">แพทย์คลินิกเข้าหน้าไม่ได้</span><span class="rl"><span class="ck no">✕</span> พยาบาลคัดกรอง</span><span class="rv">เข้าหน้าไม่ได้</span><span class="rl"><span class="ck no">✕</span> พยาบาลหลังตรวจ</span><span class="rv">—</span><span class="rl"><span class="ck ok">✓</span> อื่น ๆ</span><span class="rv">นักสังคมสงเคราะห์ศูนย์</span></div><span class="sub">โค้ดไม่ตรวจบทบาท · กันด้วยสิทธิ์เข้าหน้า + สวิตช์ "สิทธิ:" เดโม</span></td>
             <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">กด "แก้เลขที่" ได้ ต้องระบุเหตุผล</span></td>
             <td><span class="label-q">"เลขที่สังคมสงเคราะห์ (เลข CASE)"</span> สค.nnnn/2569 · <span class="label-q">"เลขทะเบียนผู้ขอ"</span> ขว.nnnn/2569 (ล็อก)</td>
             <td>คอลัมน์ในหน้าทะเบียน + worklist ("ยังไม่ออกเลข" เมื่อว่าง)</td>
@@ -257,7 +267,7 @@
           <tr>
             <td><span class="name">กายภาพบำบัด · ฟื้นฟูสมรรถภาพ</span><span class="sub">/clinic/physio/registry · /clinic/rehab/registry (หน้าเดียวกัน)</span></td>
             <td>"ขึ้นทะเบียนใหม่" → "บันทึกทะเบียน" · มีทะเบียน IMC แยก</td>
-            <td>ไม่พบการจำกัดบทบาท</td>
+            <td><div class="roles"><span class="rl"><span class="ck ok">✓</span> แพทย์</span><span class="rv">แพทย์เวชศาสตร์ฟื้นฟู (เฉพาะ /rehab)</span><span class="rl"><span class="ck no">✕</span> พยาบาลคัดกรอง</span><span class="rv">ไม่มีบทบาทนี้</span><span class="rl"><span class="ck no">✕</span> พยาบาลหลังตรวจ</span><span class="rv">—</span><span class="rl"><span class="ck ok">✓</span> อื่น ๆ</span><span class="rv">นักกายภาพบำบัด</span></div><span class="sub">โค้ดไม่ตรวจบทบาท · ธงแก้ไขใน sessionStorage</span></td>
             <td><span class="badge b-orange">รหัสอื่น</span><span class="sub">ไม่มีเลขทะเบียน</span></td>
             <td><span class="label-q">"เลขที่ Course"</span> กรอกเอง ไม่บังคับ<span class="sub">เช่น C-2569-030</span></td>
             <td>คอลัมน์ "Course / ครั้งที่รับบริการ"</td>
@@ -267,6 +277,36 @@
         </tbody>
       </table>
     </div>
+  </section>
+
+  <section class="card section mx">
+    <div class="section-head">
+      <h2>1.1 ใครขึ้นทะเบียนได้ — แยกบทบาท</h2>
+      <p class="note">✓ = กดขึ้นทะเบียนและบันทึกได้ · ✕ = ไม่เห็นปุ่ม หรือดูอย่างเดียว · แพทย์/พยาบาล = ของคลินิกนั้น · ตรวจจากโค้ด 24 ต.ค. 2569</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>คลินิก · ที่ขึ้นทะเบียน</th><th>แพทย์</th><th>พยาบาลคัดกรอง</th><th>พยาบาลหลังตรวจ</th><th>บทบาทอื่น</th><th>โค้ดตรวจสิทธิ์</th></tr></thead>
+        <tbody>
+          <tr><td><span class="name">เบาหวาน · ความดัน · หอบหืด/COPD</span><span class="sub">หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span></td><td>ตรวจ: แพทย์</td></tr>
+          <tr><td><span class="name">ฝากครรภ์ (ANC)</span><span class="sub">หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+          <tr><td><span class="name">วางแผนครอบครัว</span><span class="sub">(ก) หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกคลินิก</span></td><td class="c"><span class="ck no">✕</span></td><td>ตรวจ: แพทย์ + พยาบาล</td></tr>
+          <tr><td><span class="name">วางแผนครอบครัว</span><span class="sub">(ข) หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span> + สวิตช์สิทธิ์เดโม</td></tr>
+          <tr><td><span class="name">สร้างเสริมภูมิคุ้มกัน / เด็กดี</span><span class="sub">หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+          <tr><td><span class="name">รักปลอดภัย (HIV/STI)</span><span class="sub">(ก) หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span></td><td>ตรวจ: แพทย์</td></tr>
+          <tr><td><span class="name">รักปลอดภัย (HIV/STI)</span><span class="sub">(ข) หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+          <tr><td><span class="name">งานบำบัดสารเสพติด</span><span class="sub">(ก) หน้าบันทึก · รายใหม่</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">นักสังคมฯ · นักจิตฯ</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span> · แก้ทะเบียนเดิม = แพทย์</td></tr>
+          <tr><td><span class="name">งานบำบัดสารเสพติด</span><span class="sub">(ข) หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span> + สวิตช์สิทธิ์เดโม</td></tr>
+          <tr><td><span class="name">วัณโรค (TB)</span><span class="sub">(ก) หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ดูอย่างเดียว</span></td><td class="c"><span class="ck no">✕</span></td><td>ตรวจ: แพทย์</td></tr>
+          <tr><td><span class="name">วัณโรค (TB)</span><span class="sub">(ข) หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกบทบาท</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+          <tr><td><span class="name">สุขภาพจิต</span><span class="sub">(ก) หน้าบันทึกตรวจ</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">ทุกคลินิก</span></td><td class="c"><span class="ck no">✕</span><span class="sub">นักสังคมฯ · นักจิตฯ ดูอย่างเดียว</span></td><td>ตรวจ: แพทย์ + พยาบาล</td></tr>
+          <tr><td><span class="name">สุขภาพจิต</span><span class="sub">(ข) หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">นักสังคมฯ · นักจิตฯ</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+          <tr><td><span class="name">สังคมสงเคราะห์</span><span class="sub">หน้าทะเบียน</span></td><td class="c"><span class="ck no">✕</span><span class="sub">เข้าหน้าไม่ได้</span></td><td class="c"><span class="ck no">✕</span><span class="sub">เข้าหน้าไม่ได้</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">เปิดลิงก์ตรง</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">นักสังคมสงเคราะห์ศูนย์</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span> + สวิตช์สิทธิ์เดโม</td></tr>
+          <tr><td><span class="name">ฟื้นฟู / กายภาพ</span><span class="sub">หน้าทะเบียน</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">เฉพาะ /rehab</span></td><td class="c"><span class="ck no">✕</span><span class="sub">ไม่มีบทบาทนี้</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">เปิดลิงก์ตรง</span></td><td class="c"><span class="ck ok">✓</span><span class="sub">นักกายภาพบำบัด</span></td><td><span class="badge b-orange">ไม่ตรวจบทบาท</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note"><b>"ไม่ตรวจบทบาท"</b> = ใครเปิดหน้าได้ก็ขึ้นทะเบียนได้ · บทบาทที่ระบบไม่กันการเปิดลิงก์ตรง (ไม่มีในเมนู): อายุรแพทย์ทั่วไป · แพทย์ห้วงเวลา · หัวหน้าพยาบาล · พยาบาลคัดกรองกลาง · พยาบาลห้องหัตถการ · ห้องสังเกตการณ์ · พยาบาลหลังตรวจทุกคลินิก · ห้องปฏิบัติการ · รังสี · เภสัชกร · การเงิน · เวชระเบียน · ผู้ดูแลศูนย์</p>
   </section>
 
   <section class="card section">
@@ -322,7 +362,7 @@
       <li><span class="issue-no">7</span><span><span class="issue-title">"ปิดทะเบียน" จากป็อปอัปยังไม่สะท้อนในตารางทะเบียน</span><span class="issue-body">ฝากครรภ์ · วางแผนครอบครัว · รักปลอดภัย · งานบำบัด — เก็บแยกจากทะเบียน ผู้ป่วยที่ปิดแล้วยังเห็นเป็น active ในตาราง</span></span></li>
       <li><span class="issue-no">8</span><span><span class="issue-title">สังคมสงเคราะห์: ปีในเลข CASE ฝังเป็น 2569</span><span class="issue-body">ข้ามปีแล้วเลขจะไม่เปลี่ยนปี</span></span></li>
       <li><span class="issue-no">9</span><span><span class="issue-title">NCD ไม่มีคอลัมน์เลขทะเบียน</span><span class="issue-body">เลขอยู่ใต้ชื่อเท่านั้น ค้นหา/เรียงตามเลขไม่ได้ (ต่างจาก TB · สุขภาพจิต · เด็กดี)</span></span></li>
-      <li><span class="issue-no">10</span><span><span class="issue-title">สิทธิ์ผู้ขึ้นทะเบียนไม่เหมือนกัน</span><span class="issue-body">แพทย์เท่านั้น (NCD · TB · รักปลอดภัย) · แพทย์+พยาบาล (วางแผนครอบครัว · สุขภาพจิต) · ไม่จำกัด (ฝากครรภ์ · กายภาพ · เด็กดี · สังคมสงเคราะห์)</span></span></li>
+      <li><span class="issue-no">10</span><span><span class="issue-title">สิทธิ์ผู้ขึ้นทะเบียนไม่เหมือนกัน</span><span class="issue-body">หน้าบันทึกตรวจ: แพทย์เท่านั้น (NCD · TB · รักปลอดภัย) · แพทย์+พยาบาล (วางแผนครอบครัว · สุขภาพจิต) · ไม่ตรวจ (ฝากครรภ์ · งานบำบัดรายใหม่) · หน้าทะเบียนทั้ง 9 หน้าไม่ตรวจบทบาท — TB/รักปลอดภัยจึงเป็น "แพทย์เท่านั้น" แค่ที่หน้าบันทึก · ดูข้อ 1.1</span></span></li>
     </ul>
   </section>
 

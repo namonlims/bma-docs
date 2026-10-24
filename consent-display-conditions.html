@@ -824,7 +824,7 @@ function pageOf(list) {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if (page > totalPages) page = totalPages;
   if (page < 1) page = 1;
-  if (total <= PAGE_SIZE) return { rows: list, total, totalPages: 1, start: total ? 1 : 0, end: total };
+  if (total <= PAGE_SIZE || window.__printAll) return { rows: list, total, totalPages: 1, start: total ? 1 : 0, end: total };   // __printAll = หน้ารวม docs-hub สั่งพิมพ์ PDF ทุกแถว
   const startIndex = (page - 1) * PAGE_SIZE;
   return {
     rows: list.slice(startIndex, startIndex + PAGE_SIZE),
