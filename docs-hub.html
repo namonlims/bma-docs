@@ -293,7 +293,11 @@ function makeEngine(doc, iframe) {
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       [data-ed="1"] { background: none !important; }
       .ds-scroll, .table-wrap, .scroll, [class*="scroll"] { overflow: visible !important; max-height: none !important; }
-      table { width: 100% !important; }
+      table { width: 100% !important; min-width: 0 !important; font-size: 10px !important; }
+      th, td { padding: 4px 6px !important; }
+      .roles { min-width: 0 !important; }
+      code { word-break: break-all; }
+      html, body { background: #FFFFFF !important; }
       tr, td, .card, .stat { break-inside: avoid; }
       .pager, .search, .filters, .toolbar, button { display: none !important; }
     }`;
