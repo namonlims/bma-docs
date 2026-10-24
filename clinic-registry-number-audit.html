@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ตรวจการขึ้นทะเบียนและเลขทะเบียนรายคลินิก · PHCIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scrollbar-gutter: stable; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-600, 24px);
+    padding: var(--dim-space-600, 24px);
+    padding-bottom: var(--dim-space-1200, 48px);
+  }
+  h1, h2, h3 {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+  }
+  h1 { font-size: var(--type-size-xl, 20px); }
+  h2 { font-size: var(--type-size-base, 16px); }
+  h3 { font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
+  .lede { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); max-width: 960px; }
+  .meta { margin-top: var(--dim-space-200, 8px); color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .card {
+    background: var(--surface-card-100, #FFFFFF);
+    border-radius: var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-card);
+  }
+  .stat { padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .stat-num { font-size: var(--type-size-2xl, 24px); font-weight: var(--type-weight-bold, 700); color: var(--text-content-default, #363B3F); }
+  .stat-label { font-weight: var(--type-weight-medium, 500); }
+  .stat-sub { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+
+  .section { padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .section-head { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .section-sub { margin: 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border-table-default, #D1F0E3); border-radius: var(--dim-radius-300, 12px); }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  th, td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: 1px solid var(--border-table-default, #D1F0E3); }
+  th + th, td + td { border-left: 1px solid var(--border-brandPrimary-tertiary, #A3E1C7); }
+  th {
+    background: var(--surface-table-header, #F4FBF8);
+    color: var(--text-table-title, #005C3A);
+    font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+    position: sticky; top: 0;
+  }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  td.group { background: var(--surface-neutral-tertiary, #F5F7F9); font-weight: var(--type-weight-bold, 700); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .name { font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  .sub { display: block; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); word-break: break-all; }
+  .label-q { font-weight: var(--type-weight-medium, 500); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    padding: 2px var(--dim-space-200, 8px);
+    border-radius: var(--dim-radius-full, 9999px);
+    font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+  }
+  .b-green  { background: var(--surface-colorfulbadge-green, #D1F0E3);  color: var(--text-colorfulbadge-green, #00663F); }
+  .b-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .b-red    { background: var(--surface-colorfulbadge-red, #FEE2E2);    color: var(--text-colorfulbadge-red, #B91C1C); }
+  .b-grey   { background: var(--surface-colorfulbadge-grey, #F5F7F9);   color: var(--text-colorfulbadge-grey, #4D5358); }
+  .b-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .legend span { display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); }
+
+  .issues { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+  .issues li {
+    display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-300, 12px);
+    padding: var(--dim-space-300, 12px) 0;
+    border-top: 1px solid var(--border-neutral-quaternary, #EEF0F2);
+  }
+  .issues li:first-child { border-top: 0; }
+  .issue-no { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); min-width: 24px; }
+  .issue-title { font-weight: var(--type-weight-medium, 500); }
+  .issue-body { display: block; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+
+  .note { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+
+  @media (max-width: 1023px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px); gap: var(--dim-space-400, 16px); }
+    .section { padding: var(--dim-space-400, 16px); }
+    .stats { grid-template-columns: 1fr; }
+    .name { white-space: normal; }
+    th:first-child, td:first-child { min-width: 160px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header>
+    <h1>การขึ้นทะเบียนผู้ป่วยและช่องเลขทะเบียน รายคลินิก</h1>
+    <p class="lede">คลินิกไหนมี/ไม่มีการขึ้นทะเบียน และในฟอร์มขึ้นทะเบียนมีช่องกรอกเลขทะเบียนหรือไม่ ให้ BA ใช้ไล่ตรวจในระบบ</p>
+    <p class="meta">ตรวจจากโค้ด branch Kae-Branch · 24 ต.ค. 2569 · ยังไม่ได้เปิดกดจริงในเบราว์เซอร์ทุกคลินิก — BA ควรกดยืนยันตามเส้นทางในตาราง</p>
+  </header>
+
+  <section class="stats" aria-label="สรุปตัวเลข">
+    <div class="card stat"><span class="stat-num">12</span><span class="stat-label">คลินิกที่มีการขึ้นทะเบียน</span><span class="stat-sub">นับ งานบำบัด 4 โปรแกรมเป็น 1 · กายภาพ/ฟื้นฟูเป็น 1</span></div>
+    <div class="card stat"><span class="stat-num">6</span><span class="stat-label">มีช่องกรอกเลข (ระบบเติมให้ · แก้ได้)</span><span class="stat-sub">เบาหวาน · ความดัน · หอบหืด/COPD · วางแผนครอบครัว · วัณโรค · งานบำบัด</span></div>
+    <div class="card stat"><span class="stat-num">3</span><span class="stat-label">ระบบออกเลขให้ · แก้ไม่ได้ / ไม่มีช่อง</span><span class="stat-sub">สุขภาพจิต · สร้างเสริมภูมิคุ้มกัน · สังคมสงเคราะห์ (แก้ได้เมื่อระบุเหตุผล)</span></div>
+    <div class="card stat"><span class="stat-num">3</span><span class="stat-label">ขึ้นทะเบียนได้ แต่ไม่มีเลขทะเบียน</span><span class="stat-sub">ฝากครรภ์ · รักปลอดภัย (ใช้ UIC) · กายภาพ/ฟื้นฟู (ใช้เลขที่ Course)</span></div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head">
+      <h2>1. คลินิกที่มีการขึ้นทะเบียน</h2>
+      <p class="section-sub">ชื่อช่อง/ปุ่มตรงตามหน้าจอ · ตารางเลื่อนซ้าย-ขวาได้</p>
+    </div>
+    <div class="legend">
+      <span><span class="badge b-green">กรอกได้ · แก้ได้</span> ระบบเติมเลขให้ ผู้ใช้แก้ได้</span>
+      <span><span class="badge b-purple">ระบบออกเลข</span> แสดงเลข แต่แก้ไม่ได้ / ไม่มีช่อง</span>
+      <span><span class="badge b-orange">รหัสอื่น</span> มีช่อง แต่ไม่ใช่เลขทะเบียน</span>
+      <span><span class="badge b-red">ไม่มีเลข</span> ไม่มีทั้งช่องและเลข</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>คลินิก</th>
+            <th>ปุ่มขึ้นทะเบียน · ที่อยู่</th>
+            <th>ผู้ขึ้นทะเบียนได้</th>
+            <th>ช่องเลขทะเบียน</th>
+            <th>ชื่อช่อง · รูปแบบเลข</th>
+            <th>เลขแสดงที่ไหน</th>
+            <th>ปิด / จำหน่าย</th>
+            <th>ไฟล์อ้างอิง</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="group" colspan="8">กลุ่มโรคเรื้อรัง (NCD)</td></tr>
+          <tr>
+            <td><span class="name">เบาหวาน · ความดันโลหิตสูง · หอบหืด/COPD</span><span class="sub">/clinic/diabetes · /hypertension · /asthma-copd</span></td>
+            <td>"ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ (แถวผลตรวจใน PatientCard) · ป้าย "ยังไม่ขึ้นทะเบียน"<span class="sub">ไม่มีหน้า /registry แยก — ดูที่แท็บ "รายชื่อผู้ป่วยทั้งหมด" › ขึ้นทะเบียน</span></td>
+            <td>แพทย์เท่านั้น</td>
+            <td><span class="badge b-green">กรอกได้ · แก้ได้</span><span class="sub">บังคับกรอก</span></td>
+            <td><span class="label-q">"เลขประจำศูนย์ *"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 1/70-24 · เริ่มใหม่ทุกปีงบ · จำหน่ายแล้วเลขไม่ถูกใช้ซ้ำ · "เลขทะเบียนกลาง" (NCD-…) ดูได้จาก hover เท่านั้น</span></td>
+            <td>ใต้ชื่อใน worklist "ทะเบียน: …" · ป้ายม่วงข้าง HN/VN<span class="sub">ไม่มีคอลัมน์แยก</span></td>
+            <td>"จำหน่าย"</td>
+            <td><code>pages/clinic/chronic/ChronicRegistrationForm.jsx:504</code></td>
+          </tr>
+
+          <tr><td class="group" colspan="8">อนามัยแม่และเด็ก · อนามัยเจริญพันธุ์</td></tr>
+          <tr>
+            <td><span class="name">ฝากครรภ์ (ANC)</span><span class="sub">/treat/anc/queue</span></td>
+            <td>"ขึ้นทะเบียนผู้ป่วยใหม่" → ป็อปอัป "ขึ้นทะเบียนฝากครรภ์" · ปุ่ม "บันทึกการขึ้นทะเบียน" (ต้อง UPT บวก)<span class="sub">ไม่มีหน้า /registry</span></td>
+            <td>ไม่พบการจำกัดบทบาทในโค้ด</td>
+            <td><span class="badge b-red">ไม่มีเลข</span></td>
+            <td>—</td>
+            <td>สถานะ "ฝากครรภ์ครั้งที่ N" ใน worklist</td>
+            <td>"ปิดทะเบียน"</td>
+            <td><code>pages/treat/anc/ancClinicExtension.jsx:676</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">วางแผนครอบครัว</span><span class="sub">/clinic/family-planning · /registry</span></td>
+            <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ<br>(ข) "ลงทะเบียนวางแผนครอบครัวใหม่" ในหน้าทะเบียน</td>
+            <td>แพทย์ · พยาบาลคัดกรอง/หลังตรวจของคลินิก</td>
+            <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-purple">ระบบออกเลข</span> ที่ (ข)</td>
+            <td>(ก) <span class="label-q">"เลขทะเบียน *"</span> · (ข) <span class="label-q">"เลขที่วางแผนครอบครัว"</span> (ช่องล็อก)<span class="sub">รูปแบบเดียวกับ NCD เช่น 1/70-24</span></td>
+            <td>คอลัมน์ "เลขที่วางแผนครอบครัว" ในหน้าทะเบียน · "ทะเบียน: …" ใน worklist</td>
+            <td>"ปิดทะเบียน" (ป็อปอัป) · "ยกเลิกทะเบียน" (หน้าทะเบียน)</td>
+            <td><code>pages/clinic/family-planning/FpRegisterPatientButton.jsx:324</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">สร้างเสริมภูมิคุ้มกัน / เด็กดี</span><span class="sub">/clinic/immunization/registry</span></td>
+            <td>"ลงทะเบียนเด็กใหม่" → "บันทึกทะเบียน"<span class="sub">ฝังเป็นแท็บ "รายชื่อผู้ป่วยทั้งหมด" ใน worklist ด้วย</span></td>
+            <td>ไม่ผูกบทบาท (สวิตช์สิทธิ์เดโม)</td>
+            <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">ไม่มีช่องกรอก</span></td>
+            <td>ข้อความ "เลขทะเบียนจะออกให้อัตโนมัติเมื่อบันทึกสำเร็จ"<span class="sub">เช่น 1/69-4</span></td>
+            <td>คอลัมน์ "เลขทะเบียน" · ป้ายบน PatientCard</td>
+            <td>"ยกเลิก" (มีเหตุผล) · ไม่มีจำหน่าย</td>
+            <td><code>pages/clinic/immunization/ImmunizationRegistryPage.jsx:459</code></td>
+          </tr>
+
+          <tr><td class="group" colspan="8">คลินิกที่มีทะเบียนลับ / ข้อมูลอ่อนไหว</td></tr>
+          <tr>
+            <td><span class="name">รักปลอดภัย (HIV/STI)</span><span class="sub">/clinic/hiv-sti/registry</span></td>
+            <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึกตรวจ<br>(ข) "ลงทะเบียนผู้รับบริการใหม่" ในหน้าทะเบียน</td>
+            <td>แพทย์เท่านั้น</td>
+            <td><span class="badge b-orange">รหัสอื่น</span><span class="sub">ไม่มีเลขทะเบียน</span></td>
+            <td><span class="label-q">"UIC code *"</span> กรอกเอง ไม่ออกอัตโนมัติ<span class="sub">เช่น UIC-2545-01-30 · ใช้แสดงแทนชื่อ</span></td>
+            <td>คอลัมน์ "ผู้รับบริการ (UIC)" · ป้าย "ทะเบียน: UIC"</td>
+            <td>"ปิดทะเบียน" · "ยกเลิกทะเบียนผู้รับบริการ"</td>
+            <td><code>pages/clinic/hiv-sti/HivStiRegisterPatientButton.jsx:245</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">งานบำบัดสารเสพติด</span><span class="sub">ก้าวใหม่ · เมทาโดน · บุหรี่ · แอลกอฮอล์ · /clinic/addiction/registry</span></td>
+            <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" บนหน้าบันทึก<br>(ข) "ลงทะเบียนผู้ติดสารเสพติด" ในหน้าทะเบียน</td>
+            <td>ทุกบทบาทงานบำบัด (รายใหม่) · แก้ทะเบียนเดิม = แพทย์</td>
+            <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-red">ไม่มีช่อง</span> ที่ (ข)</td>
+            <td><span class="label-q">"เลขทะเบียนผู้ป่วยก้าวใหม่"</span> (ไม่บังคับ) — ใช้ชื่อเดียวกันทั้ง 4 โปรแกรม<span class="sub">ลำดับ/ปี พ.ศ. 2 หลัก เช่น 12/69 · ไม่มีเลข ศบส. · นับตามปีปฏิทิน</span></td>
+            <td>ป้าย/tooltip บน PatientCard · หน้าบำบัด/ติดตาม<span class="sub">ไม่มีคอลัมน์ในหน้าทะเบียน</span></td>
+            <td>"ปิดทะเบียน" (ป็อปอัป) · "จำหน่ายเพื่อติดตามผล" (หน้าทะเบียน)</td>
+            <td><code>pages/clinic/addiction/AddictionSteps.jsx:922</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">วัณโรค (TB)</span><span class="sub">/clinic/tb/registry</span></td>
+            <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" → "บันทึกและออกเลขที่ขึ้นทะเบียน"<br>(ข) "ขึ้นทะเบียนใหม่" ในหน้าทะเบียน</td>
+            <td>แพทย์ (ก) · สวิตช์สิทธิ์เดโม (ข)</td>
+            <td><span class="badge b-green">กรอกได้ · แก้ได้</span> ที่ (ก)<br><span class="badge b-purple">ระบบออกเลข</span> ที่ (ข)</td>
+            <td><span class="label-q">"เลขที่ขึ้นทะเบียน (TB No.) *"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 1/70-4 · กันขึ้นทะเบียนซ้ำ HN เดิม</span></td>
+            <td>คอลัมน์แรก "เลขที่ขึ้นทะเบียน" (ตรึง · ค้นหา · เรียงได้) · ป้าย "ทะเบียน: …"</td>
+            <td>"ปิดทะเบียน" ตามผลการรักษา · "ยกเลิกทะเบียน" · "เปิดทะเบียนอีกครั้ง"</td>
+            <td><code>pages/clinic/tb/TbRegisterPatientButton.jsx:375</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">สุขภาพจิต</span><span class="sub">/clinic/mental-health/registry</span></td>
+            <td>(ก) "ขึ้นทะเบียนผู้ป่วยใหม่" → "บันทึกและออกเลขที่สุขภาพจิต"<br>(ข) "ลงทะเบียนสุขภาพจิตใหม่" ในหน้าทะเบียน</td>
+            <td>แพทย์ · พยาบาลคัดกรอง/หลังตรวจของคลินิก</td>
+            <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">ช่องล็อก แก้ไม่ได้</span></td>
+            <td><span class="label-q">"เลขที่สุขภาพจิต"</span><span class="sub">ลำดับ/ปีงบ 2 หลัก-เลข ศบส. เช่น 8/69-4</span></td>
+            <td>คอลัมน์แรก "เลขที่สุขภาพจิต" (ปิดบังเมื่อไม่มีสิทธิ์) · ป้าย "ทะเบียน: …"</td>
+            <td>"จำหน่าย" (ป็อปอัป) · หน้าทะเบียนมีแค่ยกเลิก</td>
+            <td><code>pages/clinic/mental-health/MhRegisterPatientButton.jsx:330</code></td>
+          </tr>
+
+          <tr><td class="group" colspan="8">สหวิชาชีพ / ฟื้นฟู</td></tr>
+          <tr>
+            <td><span class="name">สังคมสงเคราะห์</span><span class="sub">/clinic/social-work/registry · /requesters</span></td>
+            <td>"ลงทะเบียนผู้รับบริการใหม่" ในหน้าทะเบียน · "ลงทะเบียนผู้ขอวัสดุ"<span class="sub">ไม่มีปุ่มบนหน้าบันทึก</span></td>
+            <td>สวิตช์สิทธิ์เดโม (ไม่ผูกบทบาท)</td>
+            <td><span class="badge b-purple">ระบบออกเลข</span><span class="sub">กด "แก้เลขที่" ได้ ต้องระบุเหตุผล</span></td>
+            <td><span class="label-q">"เลขที่สังคมสงเคราะห์ (เลข CASE)"</span> สค.nnnn/2569 · <span class="label-q">"เลขทะเบียนผู้ขอ"</span> ขว.nnnn/2569 (ล็อก)</td>
+            <td>คอลัมน์ในหน้าทะเบียน + worklist ("ยังไม่ออกเลข" เมื่อว่าง)</td>
+            <td>ยกเลิก / เปิดใช้งาน · "ยุติการให้บริการ" ระดับเคส</td>
+            <td><code>pages/clinic/social-work/SocialWorkRegistryPage.jsx:577</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">กายภาพบำบัด · ฟื้นฟูสมรรถภาพ</span><span class="sub">/clinic/physio/registry · /clinic/rehab/registry (หน้าเดียวกัน)</span></td>
+            <td>"ขึ้นทะเบียนใหม่" → "บันทึกทะเบียน" · มีทะเบียน IMC แยก</td>
+            <td>ไม่พบการจำกัดบทบาท</td>
+            <td><span class="badge b-orange">รหัสอื่น</span><span class="sub">ไม่มีเลขทะเบียน</span></td>
+            <td><span class="label-q">"เลขที่ Course"</span> กรอกเอง ไม่บังคับ<span class="sub">เช่น C-2569-030</span></td>
+            <td>คอลัมน์ "Course / ครั้งที่รับบริการ"</td>
+            <td>"สถานะจำหน่าย" · "ยกเลิกทะเบียน"</td>
+            <td><code>pages/clinic/rehab/RehabRegistryPage.jsx:941</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head">
+      <h2>2. คลินิกที่ไม่มีการขึ้นทะเบียน</h2>
+      <p class="section-sub">ไม่มีปุ่มขึ้นทะเบียนและไม่มีเลขทะเบียน</p>
+    </div>
+    <div class="table-wrap">
+      <table style="min-width: 720px">
+        <thead><tr><th>คลินิก</th><th>สิ่งที่มีแทน</th><th>หมายเหตุ</th></tr></thead>
+        <tbody>
+          <tr><td class="name">คลินิกตรวจโรคทั่วไป (OPD)</td><td>—</td><td>/treat/queue</td></tr>
+          <tr><td class="name">ทันตกรรม</td><td>—</td><td>คำว่า "ขึ้นทะเบียน" ในโมดูลเป็นเลขใบอนุญาตทันตแพทย์ ไม่ใช่ทะเบียนผู้ป่วย</td></tr>
+          <tr><td class="name">จักษุ</td><td>—</td><td>ใช้หน้าเดียวกับ NCD แต่ปุ่มขึ้นทะเบียนเปิดเฉพาะเบาหวาน · ความดัน · หอบหืด/COPD</td></tr>
+          <tr><td class="name">แพทย์แผนไทย</td><td>"ลงทะเบียนเปิดคอร์สใหม่" · "จำนวนครั้งของคอร์ส" · "ปิดคอร์สก่อนกำหนด"</td><td>เป็นคอร์สรักษา ไม่มีเลขคอร์ส</td></tr>
+          <tr><td class="name">ตรวจสุขภาพ</td><td>"ลงทะเบียนใหม่" / "เพิ่มรายชื่อ"</td><td>สร้างเวชระเบียน (HN) ไม่ใช่ทะเบียนคลินิก</td></tr>
+          <tr><td class="name">คลินิกพัฒนาการ</td><td>—</td><td>ดึงเด็กจากเด็กดี/อนามัยโรงเรียนที่ผลพัฒนาการช้า ไม่มีรายชื่อของตัวเอง</td></tr>
+          <tr><td class="name">คลินิกที่แอดมินสร้างเอง</td><td>หน้า /clinic/:code/registry</td><td>เป็นรายการ visit (1 แถว/HN) ไม่ใช่การขึ้นทะเบียน · ไม่มีเมนูลิงก์ไป</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head">
+      <h2>3. ระบบงาน (ไม่ใช่คลินิก) ที่มีทะเบียนของตัวเอง</h2>
+      <p class="section-sub">อยู่นอกคำถามหลัก แสดงไว้เพื่อให้ BA ตรวจครบ</p>
+    </div>
+    <div class="table-wrap">
+      <table style="min-width: 860px">
+        <thead><tr><th>ระบบ</th><th>ปุ่ม · ที่อยู่</th><th>ช่องเลข</th><th>ปิด / จำหน่าย</th></tr></thead>
+        <tbody>
+          <tr><td class="name">งานเยี่ยมบ้าน</td><td>"ลงทะเบียนผู้รับบริการ" · /homevisit/registry</td><td><span class="badge b-red">ไม่มีเลข</span><span class="sub">มีแค่ "เลขที่เอกสารส่งต่อ / อ้างอิงต้นทาง" (กรอกเอง)</span></td><td>ยกเลิก · "สิ้นสุดการดูแล (ปิดเคส)" ในแผนการดูแล</td></tr>
+          <tr><td class="name">งานอนามัยโรงเรียน</td><td>"เพิ่มนักเรียน" · /clinic/school-health/students</td><td><span class="badge b-orange">รหัสอื่น</span><span class="sub">"ลำดับที่" · "เลขประจำตัวนักเรียน" กรอกเอง (เลขประจำตัวนักเรียนไม่แสดงในตาราง)</span></td><td>"จำหน่าย" · จำหน่ายจบการศึกษาอัตโนมัติ</td></tr>
+          <tr><td class="name">สถานรับเลี้ยงเด็กกลางวัน</td><td>"เพิ่มเด็ก" · /clinic/daycare/centers/:id</td><td><span class="badge b-orange">รหัสอื่น</span><span class="sub">เลขบัตรประชาชน · G-Code</span></td><td>"จำหน่าย" (มีเหตุผล)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head">
+      <h2>4. ข้อที่ไม่สอดคล้องกัน — ให้ BA ตรวจ/ตัดสินใจ</h2>
+      <p class="section-sub">เรียงจากผลกระทบมากไปน้อย</p>
+    </div>
+    <ul class="issues">
+      <li><span class="issue-no">1</span><span><span class="issue-title">ฝากครรภ์ขึ้นทะเบียนได้ แต่ไม่มีเลขทะเบียนเลย</span><span class="issue-body">ไม่มีทั้งช่องกรอกและเลขที่ระบบออกให้ · ไม่มีหน้าทะเบียนแยก</span></span></li>
+      <li><span class="issue-no">2</span><span><span class="issue-title">ชื่อช่องไม่เหมือนกัน</span><span class="issue-body">เลขประจำศูนย์ · เลขทะเบียน · เลขที่วางแผนครอบครัว · เลขที่ขึ้นทะเบียน (TB No.) · เลขที่สุขภาพจิต · เลขทะเบียนผู้ป่วยก้าวใหม่ · เลขที่สังคมสงเคราะห์ (เลข CASE)</span></span></li>
+      <li><span class="issue-no">3</span><span><span class="issue-title">แก้เลขได้หรือไม่ ไม่ตรงกัน</span><span class="issue-body">NCD · วางแผนครอบครัว · วัณโรค · งานบำบัด = แก้ได้ · สุขภาพจิต · เด็กดี = แก้ไม่ได้ · สังคมสงเคราะห์ = แก้ได้เมื่อระบุเหตุผล</span></span></li>
+      <li><span class="issue-no">4</span><span><span class="issue-title">ฟอร์ม 2 ทางในคลินิกเดียวกันไม่เหมือนกัน</span><span class="issue-body">วางแผนครอบครัว: ป็อปอัปแก้ได้ · หน้าทะเบียนล็อก · วัณโรค/งานบำบัด: ป็อปอัปมีช่อง · หน้าทะเบียนไม่มีช่อง</span></span></li>
+      <li><span class="issue-no">5</span><span><span class="issue-title">งานบำบัด: รูปแบบเลขต่างจากคลินิกอื่น</span><span class="issue-body">12/69 ไม่มีเลข ศบส. · นับปีปฏิทินแทนปีงบ · ชื่อ "ก้าวใหม่" ขึ้นในเมทาโดน/บุหรี่/แอลกอฮอล์ด้วย · ไม่มีคอลัมน์เลขในหน้าทะเบียน · ไม่บังคับกรอก</span></span></li>
+      <li><span class="issue-no">6</span><span><span class="issue-title">รักปลอดภัยใช้ UIC แทนเลขทะเบียน</span><span class="issue-body">กรอกเอง ไม่ออกอัตโนมัติ · ยืนยันว่าไม่ต้องมีเลขทะเบียนรันของศูนย์ใช่หรือไม่</span></span></li>
+      <li><span class="issue-no">7</span><span><span class="issue-title">"ปิดทะเบียน" จากป็อปอัปยังไม่สะท้อนในตารางทะเบียน</span><span class="issue-body">ฝากครรภ์ · วางแผนครอบครัว · รักปลอดภัย · งานบำบัด — เก็บแยกจากทะเบียน ผู้ป่วยที่ปิดแล้วยังเห็นเป็น active ในตาราง</span></span></li>
+      <li><span class="issue-no">8</span><span><span class="issue-title">สังคมสงเคราะห์: ปีในเลข CASE ฝังเป็น 2569</span><span class="issue-body">ข้ามปีแล้วเลขจะไม่เปลี่ยนปี</span></span></li>
+      <li><span class="issue-no">9</span><span><span class="issue-title">NCD ไม่มีคอลัมน์เลขทะเบียน</span><span class="issue-body">เลขอยู่ใต้ชื่อเท่านั้น ค้นหา/เรียงตามเลขไม่ได้ (ต่างจาก TB · สุขภาพจิต · เด็กดี)</span></span></li>
+      <li><span class="issue-no">10</span><span><span class="issue-title">สิทธิ์ผู้ขึ้นทะเบียนไม่เหมือนกัน</span><span class="issue-body">แพทย์เท่านั้น (NCD · TB · รักปลอดภัย) · แพทย์+พยาบาล (วางแผนครอบครัว · สุขภาพจิต) · ไม่จำกัด (ฝากครรภ์ · กายภาพ · เด็กดี · สังคมสงเคราะห์)</span></span></li>
+    </ul>
+  </section>
+
+  <p class="note">ที่มา: อ่านจากโค้ด src/ (ไฟล์:บรรทัดในตาราง) · ยังไม่ได้ทดสอบกดจริงในเบราว์เซอร์ · ตัวเลขสรุปนับเฉพาะตารางข้อ 1</p>
+</main>
+</body>
+</html>
