@@ -146,14 +146,33 @@
   .gate-note { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92) !important; }
   html.locked body > :not(.gate):not(.toast) { visibility: hidden; }
   /* สถานะตรวจสอบโดย BA ต่อแท็บ (ผู้ใช้ 25 ต.ค. 69) */
-  .rv { margin-top: var(--dim-space-150, 6px); }
+  .rv { margin-top: var(--dim-space-300, 12px); }
   .rv-chip { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); }
   .rv-chip .ms { font-size: var(--type-size-sm, 14px); }
   .rv-ok { color: var(--text-colorfulbadge-green, #00663F); background: var(--surface-colorfulbadge-green, #D1F0E3); }
   .rv-wait { color: var(--text-colorfulbadge-orange, #C2410C); background: var(--surface-colorfulbadge-orange, #FFEDD5); }
   .rv-note { display: block; margin-top: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
-  .tab .rv-tab { font-size: var(--type-size-base, 16px); color: var(--text-colorfulbadge-green, #00663F); }
-  .tab .rv-tab.wait { color: var(--text-colorfulbadge-orange, #C2410C); }
+  .tab .rv-tab { font-size: var(--type-size-base, 16px); color: var(--text-content-tertiary, #858C92); }
+  .tab .rv-tab[data-st="doing"] { color: var(--text-colorfulbadge-orange, #C2410C); }
+  .tab .rv-tab[data-st="checked"] { color: var(--text-colorfulbadge-green, #00663F); }
+  .pg { display: flex; align-items: center; gap: var(--dim-space-300, 12px); max-width: 560px; }
+  .pg-step { display: flex; align-items: center; gap: var(--dim-space-200, 8px); flex: none; min-width: 0; }
+  .pg-dot { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-700, 36px); height: var(--dim-size-700, 36px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-content-tertiary, #858C92); flex: none; }
+  .pg-dot .ms { font-size: var(--type-size-lg, 18px); }
+  .pg-txt { display: flex; flex-direction: column; min-width: 0; }
+  .pg-t { display: inline-flex; align-items: center; gap: var(--dim-space-150, 6px); font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); white-space: nowrap; }
+  .pg-m { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .pg-t select { font: inherit; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); padding: var(--dim-space-050, 2px) var(--dim-space-100, 4px); border-radius: var(--dim-radius-150, 6px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); color: inherit; cursor: pointer; min-height: var(--dim-size-600, 32px); }
+  .pg-bar { flex: 1 1 60px; min-width: 40px; height: var(--dim-space-100, 4px); border-radius: var(--dim-radius-full, 9999px); background: var(--border-neutral-tertiary, #E2E4E6); overflow: hidden; }
+  .pg-bar span { display: block; height: 100%; background: var(--surface-brandPrimary-default, #007549); transition: width .3s ease; }
+  .pg-doing .s1 .pg-dot { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .pg-doing .s1 .pg-t select, .pg-doing .s1 .pg-t b { color: var(--text-colorfulbadge-orange, #C2410C); }
+  .pg-doing .pg-bar span { background: var(--surface-colorfulbadge-orange-bold, #F97316); }
+  .pg-checked .s1 .pg-dot { background: var(--surface-colorfulbadge-green, #D1F0E3); color: var(--text-colorfulbadge-green, #00663F); }
+  .pg-checked .s1 .pg-t select, .pg-checked .s1 .pg-t b { color: var(--text-colorfulbadge-green, #00663F); }
+  .pg-step.s2.on .pg-dot { background: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-content, #FFFFFF); }
+  .pg-step.s2.on .pg-m { color: var(--text-brandPrimary-default, #007549); }
+  @media (max-width: 767px) { .pg { max-width: none; flex-wrap: wrap; gap: var(--dim-space-200, 8px); } .pg-step { flex: 1 1 0; min-width: 0; align-items: flex-start; } .pg-bar { order: 3; flex: 1 1 100%; } .pg-dot { width: var(--dim-size-600, 32px); height: var(--dim-size-600, 32px); } .pg-t { white-space: normal; flex-wrap: wrap; } .pg-m { white-space: normal; } }
   .fld { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); margin-top: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   .fld textarea { font: inherit; font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); resize: vertical; }
   .hi.review { background: var(--surface-colorfulbadge-green, #D1F0E3); margin: var(--dim-space-200, 8px) calc(-1 * var(--dim-space-300, 12px)); padding: var(--dim-space-300, 12px); border-radius: var(--dim-radius-200, 8px); border-bottom: 0; }
@@ -193,7 +212,6 @@
     <label class="flt" title="ดูเฉพาะที่แก้ไขในช่วงนี้"><span class="ms">filter_list</span><span class="lbl">แก้ไขย้อนหลัง</span><select id="rangeSel" aria-label="แก้ไขย้อนหลัง"><option value="0">ทั้งหมด</option><option value="1">1 วัน</option><option value="2">2 วัน</option><option value="3">3 วัน</option><option value="7">1 สัปดาห์</option><option value="30">1 เดือน</option></select></label>
     <button class="btn" id="pdfBtn" type="button" title="ดาวน์โหลด PDF"><span class="ms">picture_as_pdf</span><span class="lbl">ดาวน์โหลด PDF</span></button>
     <button class="btn" id="histBtn" type="button" title="ประวัติการแก้ไข"><span class="ms">history</span><span class="lbl">ประวัติการแก้ไข</span></button>
-    <button class="btn" id="rvBtn" type="button" title="BA ตรวจสอบแล้ว"><span class="ms">fact_check</span><span class="lbl">BA ตรวจสอบแล้ว</span></button>
     <button class="btn" id="undoBtn" type="button" hidden title="ย้อนการบันทึกล่าสุดในแท็บนี้"><span class="ms">undo</span>เลิกทำ</button>
     <button class="btn fill" id="editBtn" type="button"><span class="ms">edit</span>แก้ไขข้อความ</button>
   </div>
@@ -231,7 +249,7 @@
 </div>
 <div class="scrim" id="rvScrim"></div>
 <div class="dlg" id="rvDlg" role="dialog" aria-modal="true" aria-labelledby="rvTitle">
-  <h2 id="rvTitle">ยืนยัน BA ตรวจสอบแล้ว</h2>
+  <h2 id="rvTitle">ยืนยัน BA ตรวจสอบแล้ว (Checked)</h2>
   <p id="rvSub"></p>
   <label class="fld"><span>หมายเหตุ (ไม่บังคับ)</span><textarea id="rvNote" rows="3" placeholder="เช่น ตรวจครบทุกแถว · ข้อ 4 รอยืนยันกับทีม Dev"></textarea></label>
   <div class="dlg-acts">
@@ -376,6 +394,7 @@ function makeEngine(doc, iframe) {
   st.textContent = `
     /* ในหน้ารวม เอกสารกว้างเต็มกรอบ (ผู้ใช้ 25 ต.ค. 69) */
     .page, main.page { max-width: none !important; }
+    html, body { background: var(--surface-card-100, #FFFFFF) !important; }   /* พื้นขาวด้านหลังเอกสาร (ผู้ใช้ 25 ต.ค. 69) */
     [data-ed="1"] { background: ${'var(--brand-p100, #E2F3EB)'} !important; }
     html.hub-edit [data-ek] { outline: 1px dashed var(--brand-p300, #8FD1B4); outline-offset: -2px; cursor: text; }
     html.hub-edit [data-ek]:hover { outline-color: var(--brand-p700, #007549); }
@@ -603,45 +622,67 @@ $('rangeSel').addEventListener('change', () => { RANGE = Number($('rangeSel').va
 
 /* ---------- ตรวจสอบโดย BA ---------- */
 const REVIEW_KEY = '__review__';
+// สถานะ BA: awaiting · doing · checked (ผู้ใช้ 25 ต.ค. 69) → checked แล้วขั้น "Dev นำไปทำ" ติด
+const BA_STATES = { awaiting: { label: 'Awaiting', th: 'รอ BA ตรวจสอบ', icon: 'pending' }, doing: { label: 'Doing', th: 'BA กำลังตรวจ', icon: 'manage_search' }, checked: { label: 'Checked', th: 'BA ตรวจสอบแล้ว', icon: 'verified' } };
 function reviewOf(id) {
   const r = latest[id]?.[REVIEW_KEY];
   let v = null; try { v = r ? JSON.parse(r.after) : null; } catch (e) {}
+  let st = v?.status === 'ok' ? 'checked' : (BA_STATES[v?.status] ? v.status : 'awaiting');
   const lastEdit = Math.max(0, ...Object.values(latest[id] || {}).filter((e) => e.key !== REVIEW_KEY).map((e) => e.at));
-  if (!v || v.status !== 'ok') return { state: 'wait' };
-  return { state: lastEdit > r.at ? 'stale' : 'ok', by: r.name, at: r.at, note: v.note || '' };
+  const stale = st === 'checked' && lastEdit > r.at;
+  return { state: st, stale, by: r?.name, at: r?.at, note: v?.note || '' };
 }
 function renderReview() {
   if (!cur) return;
   const r = reviewOf(cur.id), d = (t) => new Date(t).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
-  $('rvChip').innerHTML = r.state === 'ok'
-    ? `<span class="rv-chip rv-ok"><span class="ms">verified</span>BA ตรวจสอบแล้ว · ${esc(r.by)} · ${d(r.at)}</span>${r.note ? `<span class="rv-note">หมายเหตุ BA: ${esc(r.note)}</span>` : ''}`
-    : r.state === 'stale'
-      ? `<span class="rv-chip rv-wait"><span class="ms">history_edu</span>มีการแก้ไขหลัง BA ตรวจ (${esc(r.by)} · ${d(r.at)}) · รอ BA ตรวจซ้ำ</span>`
-      : '<span class="rv-chip rv-wait"><span class="ms">pending</span>รอ BA ตรวจสอบ</span>';
-  const b = $('rvBtn'); b.hidden = !EDIT_URL; b.disabled = r.state === 'ok';
-  b.innerHTML = r.state === 'ok' ? '<span class="ms">verified</span><span class="lbl">ตรวจสอบแล้ว</span>' : '<span class="ms">fact_check</span><span class="lbl">BA ตรวจสอบแล้ว</span>';
+  const eff = r.stale ? 'doing' : r.state;            // แก้หลัง checked = กลับไปตรวจซ้ำ
+  const fill = { awaiting: 0, doing: 50, checked: 100 }[eff];
+  const can = loggedIn() && !!EDIT_URL;
+  const sel = can
+    ? `<select id="baSel" aria-label="สถานะ BA">${Object.entries(BA_STATES).map(([k, x]) => `<option value="${k}" ${k === r.state ? 'selected' : ''}>${x.label}</option>`).join('')}</select>`
+    : `<b>${BA_STATES[r.state].label}</b>`;
+  const meta = r.by ? `${esc(r.by)} · ${d(r.at)}` : 'ยังไม่มีผู้ตรวจ';
+  $('rvChip').innerHTML = `
+    <div class="pg pg-${eff}" role="group" aria-label="ความคืบหน้า">
+      <div class="pg-step s1">
+        <span class="pg-dot"><span class="ms">${BA_STATES[eff].icon}</span></span>
+        <div class="pg-txt"><span class="pg-t">BA ตรวจสอบ ${sel}</span><span class="pg-m">${r.stale ? 'มีการแก้ไขหลังตรวจ · รอตรวจซ้ำ' : meta}</span></div>
+      </div>
+      <div class="pg-bar"><span style="width:${fill}%"></span></div>
+      <div class="pg-step s2 ${eff === 'checked' ? 'on' : ''}">
+        <span class="pg-dot"><span class="ms">${eff === 'checked' ? 'code' : 'lock_clock'}</span></span>
+        <div class="pg-txt"><span class="pg-t">Dev นำไปทำ</span><span class="pg-m">${eff === 'checked' ? 'พร้อมให้ Dev นำไปทำ' : 'รอ BA ตรวจเสร็จ'}</span></div>
+      </div>
+    </div>${r.note && r.state === 'checked' ? `<span class="rv-note">หมายเหตุ BA: ${esc(r.note)}</span>` : ''}`;
+  $('baSel')?.addEventListener('change', (e) => setBa(e.target.value));
   [...$('tabs').children].forEach((t) => {
-    const s2 = reviewOf(t.dataset.id).state; let m = t.querySelector('.rv-tab');
+    const x = reviewOf(t.dataset.id), e2 = x.stale ? 'doing' : x.state; let m = t.querySelector('.rv-tab');
     if (!m) { m = document.createElement('span'); m.className = 'ms rv-tab'; m.setAttribute('aria-hidden', 'true'); t.appendChild(m); }
-    m.textContent = s2 === 'ok' ? 'verified' : 'pending'; m.classList.toggle('wait', s2 !== 'ok');
-    t.title = s2 === 'ok' ? 'BA ตรวจสอบแล้ว' : s2 === 'stale' ? 'แก้ไขหลัง BA ตรวจ · รอตรวจซ้ำ' : 'รอ BA ตรวจสอบ';
+    m.textContent = BA_STATES[e2].icon; m.dataset.st = e2;
+    t.title = x.stale ? 'แก้ไขหลัง BA ตรวจ · รอตรวจซ้ำ' : BA_STATES[e2].th;
   });
 }
-$('rvBtn').onclick = async () => {
-  if (!loggedIn()) { askLogin(); return; }
+async function saveBa(status, note) {
+  const prev = latest[cur.id]?.[REVIEW_KEY];
+  await saveEdit({ doc: cur.id, key: REVIEW_KEY, where: 'สถานะ BA ตรวจสอบ', before: prev ? prev.after : '', after: JSON.stringify({ status, note: (note || '').slice(0, 500) }) });
+  toast(`บันทึกแล้ว · ${BA_STATES[status].th} · แท็บ "${cur.label}"`);
+}
+async function setBa(status) {
+  if (!loggedIn()) { askLogin(); renderReview(); return; }
   if (editTab === cur.id) await saveAndClose();
-  $('rvSub').textContent = `แท็บ "${cur.title}" · บันทึกชื่อ ${AUTH.user.name} และเวลาไว้ในประวัติ · ถ้ามีคนแก้ข้อความภายหลัง สถานะจะกลับเป็นรอตรวจซ้ำ`;
-  $('rvNote').value = ''; $('rvDlg').classList.add('on'); $('rvScrim').classList.add('on'); $('rvNote').focus();
-};
-const closeRv = () => { $('rvDlg').classList.remove('on'); $('rvScrim').classList.remove('on'); };
+  if (status === 'checked') {
+    $('rvSub').textContent = `แท็บ "${cur.title}" · บันทึกชื่อ ${AUTH.user.name} และเวลา · ขั้น "Dev นำไปทำ" จะพร้อม · ถ้ามีคนแก้ข้อความภายหลัง จะกลับเป็นตรวจซ้ำ`;
+    $('rvNote').value = ''; $('rvDlg').classList.add('on'); $('rvScrim').classList.add('on'); $('rvNote').focus();
+    return;
+  }
+  try { await saveBa(status); } catch (err) { toast(err.message === 'auth' ? 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบใหม่' : 'บันทึกไม่สำเร็จ'); renderReview(); }
+}
+const closeRv = () => { $('rvDlg').classList.remove('on'); $('rvScrim').classList.remove('on'); renderReview(); };
 $('rvCancel').onclick = closeRv; $('rvScrim').onclick = closeRv;
 $('rvOk').onclick = async () => {
   $('rvOk').disabled = true;
-  try {
-    const prev = latest[cur.id]?.[REVIEW_KEY];
-    await saveEdit({ doc: cur.id, key: REVIEW_KEY, where: 'สถานะตรวจสอบโดย BA', before: prev ? prev.after : '', after: JSON.stringify({ status: 'ok', note: $('rvNote').value.trim().slice(0, 500) }) });
-    closeRv(); toast('บันทึกแล้ว · BA ตรวจสอบแท็บ "' + cur.label + '"');
-  } catch (err) { toast(err.message === 'auth' ? 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบใหม่' : 'บันทึกไม่สำเร็จ'); }
+  try { await saveBa('checked', $('rvNote').value.trim()); closeRv(); }
+  catch (err) { toast(err.message === 'auth' ? 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบใหม่' : 'บันทึกไม่สำเร็จ'); }
   $('rvOk').disabled = false;
 };
 
@@ -666,7 +707,7 @@ function renderHist() {
   renderReview();
   const list = EDITS.filter((e) => e.doc === cur.id && e.at >= cutoff()).sort((a, b) => b.at - a.at);
   $('histSub').textContent = `${cur.title} · ${RANGE ? $('rangeSel').selectedOptions[0].text + ' ล่าสุด · ' : ''}${list.length} รายการ · ล่าสุดก่อน`;
-  const rvText = (e) => { try { const v = JSON.parse(e.after); return 'BA ตรวจสอบแล้ว' + (v.note ? ' · ' + v.note : ''); } catch (x) { return ''; } };
+  const rvText = (e) => { try { const v = JSON.parse(e.after); const k = v.status === 'ok' ? 'checked' : v.status; return 'สถานะ BA: ' + (BA_STATES[k]?.label || k) + (v.note ? ' · ' + v.note : ''); } catch (x) { return ''; } };
   $('histList').innerHTML = !EDIT_URL ? '<p class="empty">ยังไม่ได้เชื่อมที่เก็บข้อมูลกลาง</p>' : list.length ? list.map((e) => e.key === REVIEW_KEY ? `
     <div class="hi review">
       <div class="meta"><b>${esc(e.name)}</b><span>${esc(e.email)}</span><span>${new Date(e.at).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })}</span></div>
