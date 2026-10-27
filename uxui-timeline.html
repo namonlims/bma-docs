@@ -12,7 +12,7 @@
   --bg:#F6F8F7; --card:#FFFFFF; --text:#1B2420; --text2:#55625C; --text3:#86928C;
   --line:#E3E8E5; --line2:#F0F3F1; --weekend:#F7F9F8; --brand:#007549; --brand-soft:#E6F4EE;
   --today:#F08C00; --today-soft:#FFF4E5;
-  --kae:#007549; --mel:#4F46E5; --prang:#C2410C; --oat:#BE185D; --mink:#0E7490; --aim:#A16207; --pim:#475569; --mon:#9333EA; --dev:#0E7490; --other:#6B7280;
+  --kae:#007549; --mel:#4F46E5; --prang:#C2410C; --oat:#BE185D; --mink:#0E7490; --aim:#A16207; --pim:#475569; --mon:#9333EA; --khim:#0F766E; --toon:#B91C1C; --dev:#0E7490; --other:#6B7280;
   --ev-present:#007549; --ev-ba:#9333EA; --ev-meet:#0E7490; --ev-ms:#DC2626; --ev-rec:#BE185D;
   --s-delay:#B91C1C; --s-delay-bg:#FDECEC;
   --DW:32px; --LW:360px;
@@ -22,7 +22,7 @@
     --bg:#111614; --card:#1A211E; --text:#E8EEEB; --text2:#AAB6B0; --text3:#7D8A84;
     --line:#2A3430; --line2:#222A27; --weekend:#151B18; --brand:#3DD39A; --brand-soft:#16302A;
     --today:#F5A524; --today-soft:#33270F;
-    --kae:#2FB884; --mel:#8B86FF; --prang:#F08A4B; --oat:#F472B6; --mink:#22B8D6; --aim:#EAB308; --pim:#A3B1C6; --mon:#C084FC; --dev:#22B8D6; --other:#9CA3AF;
+    --kae:#2FB884; --mel:#8B86FF; --prang:#F08A4B; --oat:#F472B6; --mink:#22B8D6; --aim:#EAB308; --pim:#A3B1C6; --mon:#C084FC; --khim:#2DD4BF; --toon:#F87171; --dev:#22B8D6; --other:#9CA3AF;
     --ev-present:#3DD39A; --ev-ba:#C88BFF; --ev-meet:#22D3EE; --ev-ms:#F87171; --ev-rec:#F472B6;
     --s-delay:#F87171; --s-delay-bg:#3A1818;
   }
@@ -625,6 +625,12 @@ dialog.drawer .dlg{height:100%;max-height:100dvh}
 .lopen:hover{background:var(--brand-p50)}.ldel:hover{background:var(--surface-alert-error);color:var(--text-danger-default)}
 .lopen[hidden]{display:inline-flex;visibility:hidden}
 .ladd{margin-left:-8px}
+.ladds{display:flex;flex-wrap:wrap;gap:4px 16px}
+.ladds .additem + .additem{margin-left:0}
+.lrow.up > .ms{animation:lspin 1s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lrow.err > .ms{color:var(--text-danger-default)}
+.lrow.err .lurl::placeholder{color:var(--text-danger-default)}
 .mkl{position:absolute;right:-2px;top:-2px;width:8px;height:8px;border-radius:50%;background:var(--brand-p700);border:1.5px solid var(--card);z-index:1}
 @media (max-width:640px){ .lrow{grid-template-columns:minmax(0,1fr) 36px 36px} .lrow > .ms{display:none} .lrow .lname{grid-column:1;grid-row:2} }
 @media (pointer:coarse){ .lopen,.ldel{width:44px;height:44px} .lrow{grid-template-columns:20px minmax(0,1.6fr) minmax(0,1fr) 44px 44px} }
@@ -1056,7 +1062,7 @@ html{scroll-padding-top:72px}
     <div class="dbody" id="dList"></div>
   </div>
 </dialog>
-<datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"><option value="Mon"></datalist>
+<datalist id="whoList"><option value="Kae"><option value="Mel"><option value="Prang"><option value="Oat"><option value="Mink"><option value="Aim"><option value="Pim"><option value="Mon"><option value="Khim"><option value="Toon"></datalist>
 <div class="toast" id="toast"></div>
 <div class="tipcard" id="tipcard" role="tooltip"></div>
 
@@ -1064,8 +1070,8 @@ html{scroll-padding-top:72px}
 <script id="embedded-data" type="application/json">null</script>
 <script>
 const STORE_KEY = 'uxui-manday-v2';
-const PEOPLE = ['Kae','Mel','Prang','Oat','Mink','Aim','Pim','Mon'];   // ผู้รับผิดชอบ 8 คน (24 ต.ค. 69 เพิ่ม Mon) (ผู้ใช้สั่ง 20 ต.ค. 69 เอา Dev ออก · 21 ต.ค. 69 เพิ่ม Oat Mink Aim Pim)
-const WHO_COLOR = {Kae:'var(--kae)', Mel:'var(--mel)', Prang:'var(--prang)', Oat:'var(--oat)', Mink:'var(--mink)', Aim:'var(--aim)', Pim:'var(--pim)', Mon:'var(--mon)'};
+const PEOPLE = ['Kae','Mel','Prang','Oat','Mink','Aim','Pim','Mon','Khim','Toon'];   // ผู้รับผิดชอบ 10 คน (24 ต.ค. 69 เพิ่ม Mon · 27 ต.ค. 69 เพิ่ม Khim Toon) (ผู้ใช้สั่ง 20 ต.ค. 69 เอา Dev ออก · 21 ต.ค. 69 เพิ่ม Oat Mink Aim Pim)
+const WHO_COLOR = {Kae:'var(--kae)', Mel:'var(--mel)', Prang:'var(--prang)', Oat:'var(--oat)', Mink:'var(--mink)', Aim:'var(--aim)', Pim:'var(--pim)', Mon:'var(--mon)', Khim:'var(--khim)', Toon:'var(--toon)'};
 const whoColor = w => WHO_COLOR[w] || 'var(--other)';
 const STATUS = {todo:'To do', prog:'In progress', done:'Done'};   // ลบ "เลื่อน" (ผู้ใช้สั่ง 21 ต.ค. 69) · งานเดิมที่เลื่อน = To do
 const TYPE = {uxui:'UXUI', doc:'Document', figma:'Figma'};   // ประเภทงาน (ผู้ใช้สั่ง 21 ต.ค. 69) · ไม่ระบุ = UXUI
@@ -1875,6 +1881,7 @@ $('tAddItem').onclick = ()=>{
 };
 $('taskForm').onsubmit = ev=>{
   ev.preventDefault();
+  if(uploadsPending($('taskForm'))) return;
   const items = checkedItems();
   if(!items.length){ alert('เลือกระบบย่อยอย่างน้อย 1 รายการ'); return; }
   if($('tE').value < $('tS').value){ alert('วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'); return; }
@@ -1926,6 +1933,7 @@ function openEvent(id, preset){
 }
 $('evForm').onsubmit = ev=>{
   ev.preventDefault();
+  if(uploadsPending($('evForm'))) return;
   const data = {c:$('eC').value, text:$('eText').value.trim(), date:$('eD').value, time:$('eT').value, kind:eKind, links:readLinks($('eLinks')), ...(eKind==='present' ? {mode:eMode} : {}), ...(eKind==='rec' && $('eNote').value.trim() ? {note:$('eNote').value.trim()} : {})};
   if(eKind!=='present' && editE) delete state.events.find(x=>x.id===editE).mode;
   if(editE && !data.note) delete state.events.find(x=>x.id===editE).note;
@@ -2006,13 +2014,41 @@ const safeHref = u => /^https?:\/\//i.test(u) ? u : '#';
 function renderLinks(box, links){
   const row = l => `<div class="lrow"><span class="ms">link</span><input type="text" inputmode="url" class="lurl" placeholder="วางลิงก์ เช่น figma.com/… หรือ drive.google.com/…" value="${esc(l?.url||'')}" aria-label="ลิงก์"><input type="text" class="lname" placeholder="ชื่อ (ไม่บังคับ)" value="${esc(l?.name||'')}" aria-label="ชื่อลิงก์">`+
     `<a class="lopen" target="_blank" rel="noopener" href="${esc(safeHref(l?.url||''))}" aria-label="เปิดลิงก์"${l?.url?'':' hidden'}><span class="ms">open_in_new</span></a><button type="button" class="ldel" aria-label="ลบลิงก์"><span class="ms">close</span></button></div>`;
-  box.innerHTML = `<div class="lrows">${(links||[]).map(row).join('')}</div><button type="button" class="additem ladd"><span class="ms">add</span>เพิ่มลิงก์</button>`;
-  const rows = box.querySelector('.lrows');
+  box.innerHTML = `<div class="lrows">${(links||[]).map(row).join('')}</div><div class="ladds"><button type="button" class="additem ladd"><span class="ms">add</span>เพิ่มลิงก์</button>`+
+    `<button type="button" class="additem lfile"><span class="ms">attach_file</span>เพิ่มไฟล์</button><input type="file" multiple hidden aria-label="เลือกไฟล์"></div>`;
+  const rows = box.querySelector('.lrows'), pick = box.querySelector('input[type=file]');
   box.querySelector('.ladd').onclick = ()=>{ rows.insertAdjacentHTML('beforeend', row(null)); rows.lastElementChild.querySelector('.lurl').focus(); };
+  // แนบไฟล์ = อัปขึ้น Drive ผ่านสคริปต์ข้อมูลกลาง แล้วเก็บเป็นลิงก์ (ผู้ใช้ 27 ต.ค. 69 "แนบไฟล์ได้ด้วย")
+  box.querySelector('.lfile').onclick = ()=>pick.click();
+  pick.onchange = ()=>{
+    [...pick.files].forEach(async f=>{
+      rows.insertAdjacentHTML('beforeend', row({name:f.name}));
+      const r = rows.lastElementChild, u = r.querySelector('.lurl');
+      r.classList.add('up'); r.querySelector('.ms').textContent = 'progress_activity'; u.readOnly = true; u.placeholder = 'กำลังอัปโหลด…';
+      try {
+        const res = await uploadFile(f);
+        u.value = res.url; u.readOnly = false; r.querySelector('.ms').textContent = 'attach_file';
+        const a = r.querySelector('.lopen'); a.href = safeHref(res.url); a.hidden = false;
+      } catch(e){ r.querySelector('.ms').textContent = 'error'; u.placeholder = `อัปโหลดไม่สำเร็จ · ${e.message || e}`; r.classList.add('err'); }
+      r.classList.remove('up');
+    });
+    pick.value = '';
+  };
   box.oninput = ev=>{ const r = ev.target.closest('.lrow'); if(!r || !ev.target.classList.contains('lurl')) return; const u = normUrl(ev.target.value), a = r.querySelector('.lopen'); a.href = safeHref(u); a.hidden = !u; };
   box.onclick = ev=>{ const d = ev.target.closest('.ldel'); if(d) d.closest('.lrow').remove(); };
 }
-const readLinks = box => [...box.querySelectorAll('.lrow')].map(r=>({url:normUrl(r.querySelector('.lurl').value), name:r.querySelector('.lname').value.trim()})).filter(l=>l.url).map(l=>l.name?l:{url:l.url});
+const FILE_MAX = 20 * 1024 * 1024;   // Apps Script รับ POST ได้ ~50 MB · base64 โตขึ้น 1/3
+async function uploadFile(f){
+  if(typeof SYNC_URL === 'undefined' || !SYNC_URL) throw new Error('ยังไม่ได้เชื่อมข้อมูลกลาง');
+  if(f.size > FILE_MAX) throw new Error('ไฟล์เกิน 20 MB · อัปขึ้น Drive เองแล้ววางลิงก์');
+  const b64 = await new Promise((ok, no)=>{ const r = new FileReader(); r.onload = ()=>ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(f); });
+  const res = await (await fetch(SYNC_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({file:{name:f.name, mime:f.type || 'application/octet-stream', b64, by:me||''}})})).json();
+  if(!res.ok || !res.url) throw new Error(res.error || 'สคริปต์ไม่ตอบ');
+  return res;
+}
+const uploadsPending = form => !!form.querySelector('.lrow.up') && (alert('รอไฟล์อัปโหลดเสร็จก่อนบันทึก'), true);
+const readLinks = box =>[...box.querySelectorAll('.lrow')].map(r=>({url:normUrl(r.querySelector('.lurl').value), name:r.querySelector('.lname').value.trim()})).filter(l=>l.url).map(l=>l.name?l:{url:l.url});
 const linksTip = L => L?.length ? `<div class="tt-g"><span>ลิงก์</span><span>${L.map(l=>esc(linkName(l))).join(' · ')}</span></div>` : '';
 
 // ---------- ไฟล์และโน้ตของงาน (ผู้ใช้ 23 ต.ค. 69 "Drive คณะทำงาน · Figma · BA Note · Design Note ทุกช่องแนบลิงก์ได้") ----------
