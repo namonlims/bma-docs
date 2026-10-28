@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ใบรับรองแพทย์: Drive เทียบหน้าเว็บ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--brand-p50, #F4FBF8); color: var(--text-content-default, #363B3F); font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
+  .page { max-width: 1120px; margin: 0 auto; padding: var(--dim-space-800, 32px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  h1, h2 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-wrap: balance; }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-lg, 18px); line-height: 1.4; }
+  p { margin: 0; }
+  .lede { margin-top: var(--dim-space-200, 8px); color: var(--text-content-secondary, #636B72); max-width: 720px; }
+  .chip { display: inline-flex; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
+  .ok { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .warn { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .miss { background: var(--surface-colorfulbadge-pink, #FCE7F3); color: var(--text-colorfulbadge-pink, #BE185D); }
+  .na { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  th { text-align: left; background: var(--surface-table-header, #E2F3EB); color: var(--text-table-title, #007549); font-weight: var(--type-weight-bold, 700); }
+  th, td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #B8E0CE); vertical-align: top; }
+  td.n { width: 40px; color: var(--text-content-tertiary, #858C92); }
+  ol, ul { margin: 0; padding-left: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .note { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  @media (max-width: 767px) { .card { padding: var(--dim-space-400, 16px); } h1 { font-size: var(--type-size-xl, 20px); } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>ใบรับรองแพทย์: Drive เทียบหน้าเว็บ PHCIS</h1>
+    <p class="lede">ลิสต์ใบรับรองแพทย์จากโฟลเดอร์ Drive เทียบกับป๊อปอัป "เอกสาร/ใบรับรองแพทย์" ในหน้า /treat/record · 28 ต.ค. 69</p>
+  </header>
+
+  <section class="card" aria-labelledby="s1">
+    <h2 id="s1">1. ใบรับรองแพทย์ใน Drive</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>#</th><th>ไฟล์</th><th>ใบอะไร</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td>คทง1-ใบรับรองแพทย์.png</td><td>ใบรับรองแพทย์ สำนักอนามัย กทม. (ส่วนที่ 1 ผู้ขอ / ส่วนที่ 2 แพทย์) แบบแพทยสภา 8/2551</td><td>ฟอร์มหลักของ HCIS · เลขที่ 267/69</td></tr>
+        <tr><td class="n">2</td><td>ใบรับรองแพทย์ตรวจสุขภาพ สมัครงาน.pdf</td><td>ฟอร์มเดียวกับข้อ 1 ที่กรอกจริง</td><td>สแกน · เลขที่ 298/69</td></tr>
+        <tr><td class="n">3</td><td>ใบรับรองแพทย์ลาป่วย (แบบในระบบHCIS).pdf</td><td>ใบลาป่วย: มีอาการ / เห็นว่าเป็นโรค / เห็นว่า</td><td>สแกน · เลขที่ 7/69</td></tr>
+        <tr><td class="n">4</td><td>ใบรับรองแพทย์ (สำหรับใบอนุญาตขับรถ).jpg</td><td>ใบขับขี่ แพทยสภา 2/2564</td><td>ส่วนที่ 1 มีข้อโรคลมชัก</td></tr>
+        <tr><td class="n">5</td><td>ใบรับรองแพทย์ผู้ค้า.jpg</td><td>แบบ สณ.11 (ผู้ค้า) รับรอง 10 โรค</td><td>ไม่มีส่วนผู้ขอ</td></tr>
+        <tr><td class="n">6</td><td>Medical Certificate for verifying the visit (.docx/.pdf)</td><td>ใบยืนยันการมารับบริการ ภาษาอังกฤษ</td><td>ร่างใหม่ ดึงข้อมูลจาก HIS (โฟลเดอร์ Line)</td></tr>
+        <tr><td class="n">7</td><td>ใบรับรองแพทย์ วินิจฉัย ลาป่วย ภาษาไทย (.docx/.pdf)</td><td>ใบวินิจฉัย/ลาป่วย ภาษาไทย</td><td>วินิจฉัยและความเห็นไม่พิมพ์ เห็นเฉพาะใน HIS</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">ไฟล์อื่นในโฟลเดอร์ (ใบส่งต่อ ใบนัด ใบสั่งยา Patient Instruction Sheet TMT Triage หนังสือภายใน) ไม่ใช่ใบรับรองแพทย์ จึงไม่นับ</p>
+  </section>
+
+  <section class="card" aria-labelledby="s2">
+    <h2 id="s2">2. ใบรับรองแพทย์ในเว็บ PHCIS</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>ใบในเว็บ</th><th>ชื่ออังกฤษ</th><th>หมายเหตุ</th></tr></thead>
+      <tbody>
+        <tr><td>ใบรับรองแพทย์สมัครงาน</td><td>Employment Certificate</td><td>ไม่ต้องระบุวินิจฉัย (ผู้ใช้ 28 ต.ค. 69)</td></tr>
+        <tr><td>ใบรับรองแพทย์ลาป่วย</td><td>Sick Leave</td><td>ระยะเวลาพักรักษา + ความเห็นแบบ dropdown</td></tr>
+        <tr><td>ใบรับรองแพทย์ไปต่างประเทศ</td><td>Travel Certificate</td><td>ต้องใส่เลขหนังสือเดินทาง</td></tr>
+        <tr><td>ใบรับรองแพทย์พกยาเดินทาง</td><td>Medication Certificate for Travel</td><td>แบบภาษาอังกฤษ มีรายการยา</td></tr>
+        <tr><td>ใบรับรองแพทย์แรงงานต่างด้าว</td><td>Migrant Worker Certificate</td><td>ใช้เลขหนังสือเดินทาง</td></tr>
+        <tr><td>ใบรับรองแพทย์ 5 โรค</td><td>Five-Disease Certificate</td><td>โรคเรื้อน · วัณโรค · เท้าช้าง · ติดยา · พิษสุราเรื้อรัง</td></tr>
+        <tr><td>ใบสรุปการรักษา · ใบส่งตัว</td><td>Medical Summary · Referral Letter</td><td>เอกสารการแพทย์ ไม่ใช่ใบรับรอง</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">เทียบจากโค้ดและภาพป๊อปอัป ยังไม่ได้กดเปิดทีละใบบนเว็บจริง</p>
+  </section>
+
+  <section class="card" aria-labelledby="s3">
+    <h2 id="s3">3. เทียบ Drive กับเว็บ</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>ใบในเว็บ</th><th>ใบใน Drive</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td>สมัครงาน</td><td>#1 / #2 (คทง1)</td><td><span class="chip ok">ตรง</span> ส่วนที่ 1 / ส่วนที่ 2 / สรุปความเห็น / ข้อ (4)</td></tr>
+        <tr><td>ลาป่วย</td><td>#3 และ #6–7</td><td><span class="chip warn">ไม่ตรง</span> ดู conflict ข้อ 1</td></tr>
+        <tr><td>5 โรค</td><td>ใกล้ #4 และ #5</td><td><span class="chip warn">ไม่ตรง</span> รายการโรคต่างกันทั้งสองแบบ</td></tr>
+        <tr><td>พกยาเดินทาง</td><td>ไม่มีใน Drive</td><td><span class="chip na">เทียบไม่ได้</span></td></tr>
+        <tr><td>ไปต่างประเทศ · แรงงานต่างด้าว</td><td>ไม่มีใน Drive</td><td><span class="chip na">เทียบไม่ได้</span></td></tr>
+        <tr><td>—</td><td>ใบขับขี่ (#4)</td><td><span class="chip miss">ขาดในเว็บ</span></td></tr>
+        <tr><td>—</td><td>ผู้ค้า สณ.11 (#5)</td><td><span class="chip miss">ขาดในเว็บ</span></td></tr>
+        <tr><td>—</td><td>ยืนยันการมารับบริการ ไทย/อังกฤษ (#6)</td><td><span class="chip miss">ขาดในเว็บ</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="s4">
+    <h2 id="s4">4. Conflict ที่พบ</h2>
+    <ol>
+      <li>ใบลาป่วยมี 3 แบบไม่ตรงกัน: แบบ HCIS (มีอาการ / เห็นว่าเป็นโรค / เห็นว่า) · แบบใหม่จากพี่ต้น (วินิจฉัย / สรุปความคิดเห็น ไม่พิมพ์ในเอกสาร) · ฟอร์ม คทง1 + ระยะเวลาพักรักษาในเว็บ</li>
+      <li>ใบสมัครงาน: กระดาษ คทง1 มีช่องสรุปความเห็นและข้อ (4) แต่ผู้ใช้สั่ง 28 ต.ค. 69 ไม่ให้ระบุวินิจฉัย ต้องเช็กว่าช่องไหนไม่พิมพ์</li>
+      <li>ใบ 5 โรค: เว็บ 5 ข้อ (เรื้อน · วัณโรค · เท้าช้าง · ติดยา · พิษสุรา) ส่วน สณ.11 รับรอง 10 โรคคนละชุด (วัณโรค · อหิวาต์ · ไทฟอยด์ · บิด · สุกใส · คางทูม · เรื้อน · ผิวหนัง · ตับอักเสบ · อื่น ๆ)</li>
+      <li>ใบขับขี่เทียบ คทง1: ใบขับขี่มีข้อ "โรคลมชัก" ในส่วนผู้ขอ ซึ่ง คทง1 ไม่มี ส่วนอื่นคล้ายกัน</li>
+      <li>เลขไทย: กระดาษใช้ ๑ ๒ ๓ แต่กติการะบบใช้เลขอารบิก ต้องตัดสินว่าให้ตรงกระดาษหรือแปลง</li>
+      <li>PDF ภาษาไทยในโฟลเดอร์ Line ดึงข้อความแล้วสระ/วรรณยุกต์หลุด ใช้ไฟล์ .docx แทน</li>
+    </ol>
+  </section>
+
+  <section class="card" aria-labelledby="s5">
+    <h2 id="s5">5. รอตัดสินใจ</h2>
+    <ul>
+      <li>ใบลาป่วยใช้แบบไหน: (ก) แบบ HCIS (ข) แบบใหม่จากพี่ต้น (ค) คงฟอร์ม คทง1 ในเว็บ</li>
+      <li>จะเพิ่มใบขับขี่ · ผู้ค้า (สณ.11) · ยืนยันการมารับบริการ ในเว็บหรือไม่ ใบไหนบ้าง</li>
+      <li>"5 โรค" อ้างอิง สณ.11 (10 โรค) หรือคงชุดเดิม</li>
+      <li>เลขไทยบนใบพิมพ์: ตรงกระดาษหรือแปลงเป็นเลขอารบิก</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
