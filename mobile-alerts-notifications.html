@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ทะเบียน Alert และ Notification · สำหรับ BA</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<!-- ===== เปลี่ยนไฟล์ข้อมูลตรงนี้ (เช่น kiosk-alerts-notifications.js / mobile-alerts-notifications.js) ===== -->
+<script>window.AN_DATA_FILE = 'mobile-alerts-notifications.js'; window.AN_FLOW_PAGE = 'mobile-user-flow.html';</script>
+<script>document.write('<script src="' + window.AN_DATA_FILE + '"><\/script>');</script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--brand-p50, #F4FBF8); color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.5; }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
+  .page { max-width: 1440px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 12px; text-decoration: none; }
+  .back .material-symbols-outlined { font-size: 16px; }
+  h1 { margin: 0; font-size: 24px; } h2 { margin: 0 0 8px; font-size: 18px; }
+  .lede { margin: 4px 0 0; color: var(--text-content-secondary, #636B72); max-width: 820px; }
+  .meta { margin-top: 12px; font-size: 12px; color: var(--text-content-tertiary, #858C92); display: flex; gap: 8px 24px; flex-wrap: wrap; }
+  .cards { display: flex; flex-wrap: wrap; gap: 12px; }
+  .card { background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+  .card b { display: block; font-size: 22px; } .card span { font-size: 12px; color: var(--text-content-secondary, #636B72); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; padding: 12px; position: sticky; top: 0; z-index: 3; }
+  .filters label { display: flex; flex-direction: column; font-size: 12px; gap: 2px; }
+  select, input { font: inherit; padding: 6px 8px; border: 1px solid #C9D0D5; border-radius: 6px; min-height: 36px; }
+  input[type=search] { min-width: 240px; }
+  button { font: inherit; min-height: 36px; padding: 6px 14px; border-radius: 6px; border: 0; background: var(--brand-p600, #007549); color: #fff; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .wrap { overflow-x: auto; background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  th, td { border-bottom: 1px solid #EEF1F3; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #F7F9FA; position: sticky; top: 0; white-space: nowrap; }
+  td.msg { min-width: 260px; } td.miss { min-width: 200px; color: #8A4B00; }
+  .pill { display: inline-block; padding: 0 6px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
+  .s-mock { background: #FFF4D6; } .s-missing { background: #FDE2E1; } .s-real { background: #DDF3E8; }
+  .v-block { background: #FDE2E1; } .v-warn { background: #FFF4D6; } .v-info { background: #E3EEFB; }
+  .count { font-weight: 400; font-size: 13px; color: #636B72; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <a class="back" href="index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
+    <h1>ทะเบียน Alert และ Notification <span id="prod"></span></h1>
+    <p class="lede">รายการนี้ใช้ให้ BA ตรวจและยืนยัน (confirm) รายละเอียดของ Alert และ Notification ทุกข้อ ก่อนส่งมอบให้ dev รวบรวมจากโค้ดอัตโนมัติ <b>ยังไม่ได้ทดสอบใช้งานจริง</b> ทุกข้อจากโค้ดยังเป็นระบบจำลอง (ไม่มี backend) ข้อที่สถานะ "ยังไม่มี" มาจากมติหรือ TOR ที่ตัดสินแล้วแต่ยังไม่มีในโค้ด ข้อความใน {…} คือค่าที่ระบบเติมตอนรัน</p>
+    <div class="meta" id="meta"></div>
+  </header>
+  <section class="cards" id="cards"></section>
+  <section class="filters">
+    <label>ประเภท<select id="f-type"></select></label>
+    <label>สถานะ<select id="f-status"></select></label>
+    <label>ผู้รับ<select id="f-recipient"></select></label>
+    <label>ความรุนแรง<select id="f-severity"></select></label>
+    <label>ผล BA<select id="f-ba"></select></label>
+    <label>ค้นหา<input type="search" id="f-q" placeholder="รหัส ข้อความ ไฟล์ ..." /></label>
+    <button id="csv" type="button"><span class="material-symbols-outlined">download</span>ส่งออก CSV</button>
+  </section>
+  <section><h2>Alert <span class="count" id="c-alert"></span></h2><div class="wrap"><table id="t-alert"></table></div></section>
+  <section><h2>Notification <span class="count" id="c-notification"></span></h2><div class="wrap"><table id="t-notification"></table></div></section>
+</div>
+<script>
+(function () {
+  var D = window.ALERTS_NOTIFICATIONS || { items: [] };
+  var L = {
+    type: { alert: 'Alert', notification: 'Notification' },
+    status: { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด' },
+    severity: { block: 'บล็อก', warn: 'เตือน', info: 'แจ้งให้ทราบ' },
+    ba: { pending: 'รอ BA ตรวจ', confirmed: 'BA ยืนยันแล้ว', rejected: 'ต้องแก้' }
+  };
+  var COLS = [['id','รหัส'],['module','โมดูล'],['name','ชื่อ'],['message','ข้อความ'],['trigger','เหตุที่แสดง'],['recipient','ผู้รับ'],['channel','ช่องทาง'],['severity','ความรุนแรง'],['flow','หน้า flow'],['status','สถานะ'],['source','ที่มา'],['missing','รายละเอียดที่ยังขาด'],['ba','ผล BA'],['note','หมายเหตุ']];
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var lab = function (k, v) { return (L[k] && L[k][v]) || v; };
+  $('prod').textContent = '· ' + (D.product || '');
+  $('meta').innerHTML = '<span><b>อัปเดต</b> ' + esc(D.updated) + '</span><span><b>ที่มาโค้ด</b> ' + esc((D.source || '').slice(0, 12)) + '</span><span><b>ไฟล์ข้อมูล</b> ' + esc(window.AN_DATA_FILE) + '</span><span><b>ทั้งหมด</b> ' + D.items.length + ' ข้อ</span>';
+  function counts(k) { var m = {}; D.items.forEach(function (i) { m[i[k]] = (m[i[k]] || 0) + 1; }); return m; }
+  var cards = ''; ['type', 'status', 'ba'].forEach(function (k) { var m = counts(k); Object.keys(m).forEach(function (v) { cards += '<div class="card"><b>' + m[v] + '</b><span>' + esc(lab(k, v)) + '</span></div>'; }); });
+  $('cards').innerHTML = cards;
+  ['type', 'status', 'recipient', 'severity', 'ba'].forEach(function (k) {
+    var vals = Object.keys(counts(k)).sort();
+    $('f-' + k).innerHTML = '<option value="">ทั้งหมด</option>' + vals.map(function (v) { return '<option value="' + esc(v) + '">' + esc(lab(k, v)) + '</option>'; }).join('');
+    $('f-' + k).onchange = render;
+  });
+  $('f-q').oninput = render;
+  function filtered() {
+    var q = $('f-q').value.trim().toLowerCase();
+    return D.items.filter(function (i) {
+      return ['type', 'status', 'recipient', 'severity', 'ba'].every(function (k) { var v = $('f-' + k).value; return !v || i[k] === v; }) &&
+        (!q || COLS.some(function (c) { return String(i[c[0]] || '').toLowerCase().indexOf(q) >= 0; }));
+    });
+  }
+  function cell(i, k) {
+    var v = i[k];
+    if (k === 'flow') return v ? '<a href="' + esc(window.AN_FLOW_PAGE + v) + '">ดู flow</a>' : '';
+    if (k === 'status') return '<span class="pill s-' + esc(v) + '">' + esc(lab(k, v)) + '</span>';
+    if (k === 'severity') return '<span class="pill v-' + esc(v) + '">' + esc(lab(k, v)) + '</span>';
+    if (k === 'ba' || k === 'type') return esc(lab(k, v));
+    return esc(v);
+  }
+  function render() {
+    var rows = filtered();
+    ['alert', 'notification'].forEach(function (t) {
+      var r = rows.filter(function (i) { return i.type === t; });
+      $('c-' + t).textContent = '(' + r.length + ' ข้อ)';
+      $('t-' + t).innerHTML = '<thead><tr>' + COLS.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        r.map(function (i) { return '<tr>' + COLS.map(function (c) { return '<td class="' + (c[0] === 'message' ? 'msg' : c[0] === 'missing' ? 'miss' : '') + '">' + cell(i, c[0]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+    });
+  }
+  $('csv').onclick = function () {
+    var q = function (s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+    var lines = [COLS.map(function (c) { return q(c[0]); }).join(',')].concat(filtered().map(function (i) { return COLS.map(function (c) { return q(i[c[0]]); }).join(','); }));
+    var blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = (D.product || 'product') + '-alerts-notifications-' + (D.updated || '') + '.csv'; a.click();
+  };
+  render();
+})();
+</script>
+</body>
+</html>
