@@ -46,7 +46,7 @@
   <header>
     <a class="back" href="index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
     <h1>ทะเบียน Alert และ Notification <span id="prod"></span></h1>
-    <p class="lede">รายการนี้ใช้ให้ BA ตรวจและยืนยัน (confirm) รายละเอียดของ Alert และ Notification ทุกข้อ ก่อนส่งมอบให้ dev รวบรวมจากโค้ดอัตโนมัติ <b>ยังไม่ได้ทดสอบใช้งานจริง</b> ทุกข้อจากโค้ดยังเป็นระบบจำลอง (ไม่มี backend) ข้อที่สถานะ "ยังไม่มี" มาจากมติหรือ TOR ที่ตัดสินแล้วแต่ยังไม่มีในโค้ด ข้อความใน {…} คือค่าที่ระบบเติมตอนรัน</p>
+    <p class="lede">รายการนี้ใช้ให้ BA ตรวจและยืนยัน (confirm) รายละเอียดของ Alert และ Notification ทุกข้อ ก่อนส่งมอบให้ dev รวบรวมจากโค้ดอัตโนมัติ <b>ยังไม่ได้ทดสอบใช้งานจริง</b> <span id="statusLede">สถานะตามข้อมูล: ทำงานจริง (real) / ระบบจำลอง (mock) / ยังไม่มี (missing)</span> ข้อที่สถานะ "ยังไม่มี" มาจากมติหรือ TOR ที่ตัดสินแล้วแต่ยังไม่มีในโค้ด ข้อความใน {…} คือค่าที่ระบบเติมตอนรัน</p>
     <div class="meta" id="meta"></div>
   </header>
   <section class="cards" id="cards"></section>
@@ -119,5 +119,6 @@
   render();
 })();
 </script>
+<script>(function(){var it=(window.ALERTS_NOTIFICATIONS||{}).items||[],c={real:0,mock:0,missing:0};it.forEach(function(i){if(c[i.status]!=null)c[i.status]++;});var e=document.getElementById("statusLede");if(e)e.textContent="จากทั้งหมด "+it.length+" ข้อ: ทำงานจริง (real) "+c.real+" ข้อ, ระบบจำลอง (mock ไม่มี backend) "+c.mock+" ข้อ, ยังไม่มีในโค้ด (missing) "+c.missing+" ข้อ";})();</script>
 </body>
 </html>
