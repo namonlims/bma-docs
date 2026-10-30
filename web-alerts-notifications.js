@@ -19174,6 +19174,57 @@ window.ALERTS_NOTIFICATIONS = {
    "missing": "ยังไม่มี backend (ข้อความ/เงื่อนไขอยู่ในหน้าเว็บจำลอง) · ยังไม่ระบุผู้รับเป็นบทบาท · ไม่มีการ escalate เมื่อไม่มีผู้รับทราบ",
    "ba": "pending",
    "note": "ชนิดในโค้ด: Alert info"
+  },
+  {
+   "id": "WEB-ALR-1076",
+   "module": "สั่งตรวจ (Lab)",
+   "type": "alert",
+   "name": "แจ้งเตือนสั่ง Lab ซ้ำ",
+   "message": "(ยังไม่มีในโค้ด)",
+   "trigger": "สั่ง Lab รายการเดิมซ้ำภายในช่วงเวลาที่กำหนด",
+   "recipient": "แพทย์",
+   "channel": "screen",
+   "severity": "warn",
+   "flow": "",
+   "status": "missing",
+   "source": "TOR 1.5.2.4 (Toory checklist 2026-10-30)",
+   "missing": "ยังไม่มีในโค้ด · ช่วงเวลาที่ถือว่าซ้ำยังไม่กำหนด · บล็อก/เตือนยังไม่ตัดสิน",
+   "ba": "pending",
+   "note": "ช่องว่างจากการตรวจ TOR ของ Toory ตรวจจากโค้ด ยังไม่ได้ทดสอบบนเว็บจริง"
+  },
+  {
+   "id": "WEB-ALR-1077",
+   "module": "สั่งยา",
+   "type": "alert",
+   "name": "แจ้งเตือนเกินเกณฑ์ Dose limit",
+   "message": "(ยังไม่มีในโค้ด)",
+   "trigger": "ขนาดยาที่สั่งเกินเกณฑ์ dose limit ของยา",
+   "recipient": "แพทย์/เภสัชกร",
+   "channel": "screen",
+   "severity": "block",
+   "flow": "",
+   "status": "missing",
+   "source": "TOR 1.5.4.18 (Toory checklist 2026-10-30)",
+   "missing": "ยังไม่มีในโค้ด · เกณฑ์ dose limit ต่อยายังไม่กำหนด · บล็อก/เตือนยังไม่ตัดสิน",
+   "ba": "pending",
+   "note": "ช่องว่างจากการตรวจ TOR ของ Toory ตรวจจากโค้ด ยังไม่ได้ทดสอบบนเว็บจริง"
+  },
+  {
+   "id": "WEB-ALR-1078",
+   "module": "สั่งยา / สิทธิการรักษา",
+   "type": "alert",
+   "name": "แจ้งเตือนยานอกสิทธิ",
+   "message": "(ยังไม่มีในโค้ด)",
+   "trigger": "สั่งยาที่อยู่นอกสิทธิการรักษาของผู้ป่วย",
+   "recipient": "แพทย์/เภสัชกร",
+   "channel": "screen",
+   "severity": "warn",
+   "flow": "",
+   "status": "missing",
+   "source": "TOR 1.9.2.9 (Toory checklist 2026-10-30)",
+   "missing": "ยังไม่มีในโค้ด · ตารางยาในสิทธิแต่ละสิทธิยังไม่กำหนด · ข้อความแจ้งผู้ป่วยเรื่องค่าใช้จ่ายยังไม่กำหนด",
+   "ba": "pending",
+   "note": "ช่องว่างจากการตรวจ TOR ของ Toory ตรวจจากโค้ด ยังไม่ได้ทดสอบบนเว็บจริง"
   }
  ]
 };
