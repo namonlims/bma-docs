@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>User flow · Kiosk (bma.kiosk)</title>
+<meta name="description" content="เส้นทางผู้รับบริการ 1 ครั้งตั้งแต่ Kiosk ถึงกลับบ้าน ดูได้ทั้งแบบ User flow และ Service Design พร้อมเงื่อนไขทุกจุดแยก ส่งปรึกษา vs ส่งต่อ คลินิกพิเศษ งานบำบัด และสถานะคิว" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: var(--type-size-xl, 20px);
+    line-height: 1;
+    user-select: none;
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-800, 32px);
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--dim-space-600, 24px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px);
+  }
+  h1, h2, h3 {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+    text-wrap: balance;
+  }
+  h1 { font-size: var(--type-size-2xl, 24px); }
+  h2 { font-size: var(--type-size-lg, 18px); }
+  h3 { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .back {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-900, 44px);
+    font-size: var(--type-size-xs, 12px);
+    text-decoration: none;
+  }
+  .back .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .lede { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); max-width: 760px; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
+    margin-top: var(--dim-space-300, 12px);
+    font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92);
+  }
+  .meta b { color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); }
+
+  /* section nav */
+  .toc {
+    position: sticky; top: 0; z-index: 5;
+    margin: 0 calc(-1 * var(--dim-space-600, 24px));
+    padding: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
+    background: var(--brand-p50, #F4FBF8);
+    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    display: flex; gap: var(--dim-space-200, 8px);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc a {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center;
+    min-height: var(--dim-size-900, 44px);
+    padding: 0 var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    color: var(--text-content-default, #363B3F);
+    text-decoration: none; white-space: nowrap;
+  }
+  .toc a:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+
+  .sec { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .sec-head p { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .panel {
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border-radius: var(--dim-radius-500, 16px);
+    padding: var(--dim-space-500, 20px);
+    min-width: 0;
+  }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-300, 12px) var(--dim-space-600, 24px); align-items: center; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .legend span.k { display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .sw { display: inline-block; width: var(--dim-space-600, 24px); height: var(--dim-space-400, 16px); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-default, #007549); background: var(--surface-card-100, #FFFFFF); }
+  .sw.pill { border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-default, #007549); }
+  .sw.step { border-radius: var(--dim-radius-200, 8px); }
+  .sw.dia { width: var(--dim-space-400, 16px); transform: rotate(45deg); border-color: var(--text-colorfulbadge-orange, #C2410C); background: var(--surface-colorfulbadge-orange, #FFEDD5); }
+  .sw.opt { border-radius: var(--dim-radius-200, 8px); border-color: var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .sw.grp { border-radius: var(--dim-radius-200, 8px); border-width: var(--dim-stroke-200, 2px); box-shadow: var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 0 var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .sw.tgt { border-radius: var(--dim-radius-200, 8px); border-style: dashed; }
+
+  /* badges */
+  .badge {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    padding: 0 var(--dim-space-200, 8px);
+    border-radius: var(--dim-radius-full, 9999px);
+    font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500);
+    line-height: 1.7; white-space: nowrap;
+  }
+  .b-blue   { background: var(--surface-colorfulbadge-blue, #DBEAFE);   color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .b-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .b-teal   { background: var(--surface-colorfulbadge-teal, #D1F6EE);   color: var(--text-colorfulbadge-teal, #196C65); }
+  .b-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .b-red    { background: var(--surface-colorfulbadge-red, #FEE2E2);    color: var(--text-colorfulbadge-red, #B91C1C); }
+  .b-grey   { background: var(--surface-colorfulbadge-grey, #F5F7F9);  color: var(--text-colorfulbadge-grey, #4D5358); }
+  .b-green  { background: var(--surface-colorfulbadge-green, #E2F3EB);  color: var(--text-colorfulbadge-green, #007549); }
+  .b-indigo { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+
+  /* flow chart — ไหลซ้าย → ขวา · เลื่อนแนวนอนในกล่องของตัวเอง */
+  .chart-panel { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .hint { display: flex; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .hint .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .chart-box {
+    overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-neutral-quaternary, #F9FBFB);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+  }
+  .uf-canvas { position: relative; }
+  .uf-edges { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .uf-edges path { fill: none; stroke: var(--text-content-tertiary, #858C92); stroke-width: var(--dim-stroke-150, 1.5px); }
+  .uf-edges .ah { fill: none; stroke: var(--text-content-tertiary, #858C92); stroke-width: var(--dim-stroke-150, 1.5px); }
+  .uf-edges .ah.hot, .uf-edges .hot path { stroke: var(--border-brandPrimary-default, #007549); stroke-width: var(--dim-stroke-200, 2px); }
+  .uf-edges text {
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-xs, 12px); fill: var(--text-content-secondary, #636B72);
+    paint-order: stroke; stroke: var(--surface-neutral-quaternary, #F9FBFB); stroke-width: var(--dim-space-100, 4px); stroke-linejoin: round;
+  }
+  .uf-edges .hot text { fill: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .uf-node {
+    position: absolute; display: flex; align-items: center; justify-content: center; text-align: center;
+    padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    font: inherit; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.35;
+    color: var(--text-content-default, #363B3F);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-150, 1.5px) solid var(--border-brandPrimary-default, #007549);
+    border-radius: var(--dim-radius-200, 8px);
+    cursor: pointer;
+    transition: box-shadow 200ms ease-out;
+  }
+  .uf-node:hover { box-shadow: var(--shadow-card); }
+  .uf-node:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: var(--dim-stroke-200, 2px); }
+  .uf-node.is-active { box-shadow: 0 0 0 var(--dim-space-100, 4px) var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .uf-node.target { border-style: dashed; }
+  .uf-node .lbl { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .uf-node .tag { font-size: var(--type-size-xxs, 10px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .uf-node.start {
+    border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549);
+    color: var(--text-content-on-primary, #FFFFFF);
+  }
+  .uf-node.option { background: var(--surface-neutral-tertiary, #F4F5F5); border-color: var(--border-neutral-tertiary, #E2E4E6); }
+  .uf-node.dec { background: transparent; border: 0; padding: var(--dim-space-500, 20px); }
+  .uf-node.dec::before {
+    content: ''; position: absolute; inset: 19px;
+    transform: rotate(45deg);
+    background: var(--surface-colorfulbadge-orange, #FFEDD5);
+    border: var(--dim-stroke-150, 1.5px) solid var(--text-colorfulbadge-orange, #C2410C);
+    border-radius: var(--dim-radius-100, 4px);
+  }
+  .uf-node.dec:hover { box-shadow: none; }
+  .uf-node.dec:hover::before, .uf-node.dec.is-active::before { box-shadow: 0 0 0 var(--dim-space-100, 4px) var(--surface-colorfulbadge-orange, #FFEDD5); }
+  .uf-node.dec.is-active { box-shadow: none; }
+
+  /* detail drawer (ขวา) · bottom sheet บนมือถือ */
+  .detail {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 20;
+    width: min(420px, 100vw);
+    overflow-y: auto; display: flex; flex-direction: column; gap: var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-500, 16px) 0 0 var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-card-strong, var(--shadow-card));
+    transform: translateX(100%); visibility: hidden;
+    transition: transform 200ms ease-out, visibility 200ms;
+  }
+  .detail.open { transform: none; visibility: visible; }
+  .detail .d-top { display: flex; align-items: flex-start; gap: var(--dim-space-300, 12px); }
+  .detail .d-kind { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .detail .d-top h3 { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .detail .d-sum { margin: var(--dim-space-100, 4px) 0 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .x {
+    margin-left: auto; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+    width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px);
+    border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent; color: var(--icon-content-secondary, #636B72); cursor: pointer;
+  }
+  .x:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); align-items: center; font-size: var(--type-size-xs, 12px); }
+  .grp { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); padding-top: var(--dim-space-400, 16px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .grp-h { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); }
+  .kv dt { color: var(--text-content-tertiary, #858C92); }
+  .kv dd { margin: 0; color: var(--text-content-default, #363B3F); overflow-wrap: anywhere; }
+  .kv code, td code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); }
+  ul.bul { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); }
+  .scrim { display: none; }
+  /* hover: สรุปสั้นของกล่อง (title → 1 บรรทัด → กลุ่ม label/value) · กดกล่อง = ดูทั้งหมด */
+  .tip {
+    position: fixed; z-index: 30; pointer-events: none;
+    width: max-content; max-width: min(360px, calc(100vw - 32px));
+    display: flex; flex-direction: column; gap: var(--dim-space-200, 8px);
+    padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    border-radius: var(--dim-radius-300, 10px);
+    box-shadow: var(--shadow-card);
+    opacity: 0; transform: translateY(var(--dim-space-100, 4px));
+    transition: opacity 120ms ease-out, transform 120ms ease-out;
+  }
+  .tip.on { opacity: 1; transform: none; }
+  .tip .t-k { font-size: var(--type-size-xxs, 10px); color: var(--text-content-tertiary, #858C92); }
+  .tip .t-h { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .tip .t-s { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tip .grp { padding-top: var(--dim-space-200, 8px); gap: var(--dim-space-100, 4px); }
+  .tip .kv { gap: var(--dim-space-100, 4px) var(--dim-space-300, 12px); }
+  .tip .kv dd { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tip .t-f { font-size: var(--type-size-xxs, 10px); color: var(--text-content-tertiary, #858C92); }
+  @media (hover: none) { .tip { display: none; } }
+  .scrim.open { display: block; position: fixed; inset: 0; z-index: 15; background: var(--surface-overlay-default, rgba(17, 19, 20, 0.4)); }
+  /* เลือกคลินิก */
+  .clinic-pick { display: flex; gap: var(--dim-space-200, 8px); overflow-x: auto; scrollbar-width: thin; padding-bottom: var(--dim-space-100, 4px); }
+  .clinic-pick button {
+    flex: 0 0 auto; min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border-radius: var(--dim-radius-full, 9999px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F);
+    font: inherit; white-space: nowrap; cursor: pointer;
+  }
+  .clinic-pick button:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+  .clinic-pick button[aria-pressed="true"] { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-primary, #FFFFFF); }
+  .clinic-sum { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .clinic-sum .cs-top { display: flex; align-items: flex-start; gap: var(--dim-space-300, 12px); }
+  .clinic-sum .cs-ic { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); }
+  .clinic-sum h3 { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .clinic-sum p { margin: var(--dim-space-100, 4px) 0 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  /* ขั้นที่ขยายได้ */
+  .uf-node.group { border-width: var(--dim-stroke-200, 2px); box-shadow: var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 calc(-1 * var(--dim-stroke-100, 1px)) var(--surface-card-100, #FFFFFF), var(--dim-space-100, 4px) var(--dim-space-100, 4px) 0 0 var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .uf-node.group:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .uf-node .more { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); margin-top: var(--dim-space-100, 4px); padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-tertiary, #E2F3EB); color: var(--text-brandPrimary-default, #007549); font-size: var(--type-size-xxs, 10px); }
+  .uf-node .more .material-symbols-outlined { font-size: var(--type-size-xs, 12px); }
+  .band {
+    position: absolute;
+    border: var(--dim-stroke-150, 1.5px) dashed var(--border-brandPrimary-default, #007549);
+    border-radius: var(--dim-radius-400, 12px);
+    background: var(--surface-brandPrimary-quaternary, #F4FBF8);
+  }
+  .band-h { position: absolute; top: var(--dim-space-100, 4px); left: var(--dim-space-200, 8px); right: var(--dim-space-200, 8px); display: flex; align-items: center; gap: var(--dim-space-100, 4px); }
+  .band-collapse, .band-info {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-700, 36px); padding: 0 var(--dim-space-300, 12px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #C5EDDA); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-brandPrimary-default, #007549);
+    font: inherit; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); cursor: pointer; white-space: nowrap;
+  }
+  .band-info { padding: 0; width: var(--dim-size-700, 36px); justify-content: center; }
+  .band-collapse .material-symbols-outlined, .band-info .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .band-collapse:hover, .band-info:hover { border-color: var(--border-brandPrimary-default, #007549); }
+  @media (max-width: 1279px), (pointer: coarse) { .band-collapse, .band-info { min-height: var(--dim-size-900, 44px); } .band-info { width: var(--dim-size-900, 44px); } }
+  .add-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--dim-space-400, 16px) var(--dim-space-600, 24px); }
+  .add-info .grp, .panel.add-info .grp:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+  .add-info { align-items: start; }
+
+  /* สลับมุมมอง User flow / Service Design */
+  .view-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+  .seg { display: inline-flex; padding: var(--dim-space-100, 4px); gap: var(--dim-space-100, 4px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .seg button {
+    display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px);
+    min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border: var(--dim-stroke-100, 1px) solid transparent; border-radius: var(--dim-radius-full, 9999px);
+    background: transparent; color: var(--text-content-secondary, #636B72);
+    font: inherit; white-space: nowrap; cursor: pointer;
+  }
+  .seg button .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  @media (max-width: 767px) { .seg { display: flex; width: 100%; } .seg button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 0 var(--dim-space-200, 8px); } .seg button .material-symbols-outlined { display: none; } }
+  .seg button:hover { color: var(--text-brandPrimary-default, #007549); }
+  .seg button[aria-pressed="true"] { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .view-row .hint { flex: 1 1 280px; }
+  .zoom { display: inline-flex; align-items: center; margin-left: auto; padding: var(--dim-space-100, 4px); gap: var(--dim-space-100, 4px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .zoom button {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-200, 8px);
+    border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent;
+    color: var(--icon-content-secondary, #636B72); font: inherit; font-size: var(--type-size-xs, 12px); cursor: pointer;
+  }
+  .zoom button:hover { background: var(--surface-card-100, #FFFFFF); color: var(--text-brandPrimary-default, #007549); }
+  .zoom button:disabled { opacity: var(--opacity-disabled, 0.5); cursor: default; background: transparent; }
+  .full-btn {
+    display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px);
+    min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F);
+    font: inherit; white-space: nowrap; cursor: pointer;
+  }
+  .full-btn .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  .full-btn:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+  /* เต็มจอ: แผงแผนภาพทับทั้งหน้า · แผนภาพเลื่อนได้ทั้งแนวตั้งและแนวนอน */
+  .chart-panel.is-full {
+    position: fixed; inset: 0; z-index: 25; border-radius: 0; border: 0;
+    padding: var(--dim-space-400, 16px) var(--dim-space-600, 24px);
+  }
+  .chart-panel.is-full > .grp-h, .chart-panel.is-full > .clinic-sum { display: none; }
+  .chart-panel.is-full .chart-box { flex: 1 1 auto; min-height: 0; overflow: auto; }
+  body.no-scroll { overflow: hidden; }
+  .detail { z-index: 40; }
+  .scrim.open { z-index: 35; }
+  .tip { z-index: 45; }
+  @media (max-width: 767px) { .chart-panel.is-full { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); } .full-btn .fb-t { display: none; } .full-btn { padding: 0; width: var(--dim-size-900, 44px); justify-content: center; } .zoom { margin-left: 0; } }
+  .zoom .z-pct { min-width: var(--dim-size-1200, 56px); font-variant-numeric: tabular-nums; color: var(--text-content-default, #363B3F); }
+  body:not([data-view="bp"]) .bp-only { display: none !important; }
+  .sw.cust { border-radius: var(--dim-radius-200, 8px); border-color: var(--text-colorfulbadge-blue, #1D4ED8); background: var(--surface-colorfulbadge-blue, #DBEAFE); }
+  .sw.tp { height: 0; border: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--text-colorfulbadge-blue, #1D4ED8); background: transparent; }
+
+  /* แก้ flow ในหน้า (prompt · logic) */
+  .uf-node.edited::after { content: ''; position: absolute; top: calc(var(--dim-space-100, 4px) * -1); right: calc(var(--dim-space-100, 4px) * -1); width: var(--dim-size-200, 12px); height: var(--dim-size-200, 12px); border-radius: var(--dim-radius-full, 9999px); background: var(--icon-warning-tertiary, #EA580C); border: var(--dim-stroke-200, 2px) solid var(--surface-card-100, #FFFFFF); }
+  .uf-node.dec.edited::after { top: var(--dim-space-300, 12px); right: var(--dim-space-300, 12px); }
+  .ed-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .ed-bar .ed-sum { flex: 1 1 220px; min-width: 0; }
+  .ed-btn {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-full, 9999px);
+    background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F);
+    font: inherit; font-size: var(--type-size-xs, 12px); white-space: nowrap; cursor: pointer;
+  }
+  .ed-btn .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
+  .ed-btn:hover:not(:disabled) { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
+  .ed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ed-btn.primary { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-content, #FFFFFF); }
+  .ed-btn.primary:hover { color: var(--text-content-on-content, #FFFFFF); }
+  .detail .ed { border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEF0F1); padding-top: var(--dim-space-400, 16px); }
+  .ed-chip { min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) dashed var(--border-brandPrimary-tertiary, #C5EDDA); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font: inherit; font-size: var(--type-size-xs, 12px); cursor: pointer; }
+  .ed-l { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .ed-form { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: center; gap: var(--dim-space-200, 8px) var(--dim-space-300, 12px); }
+  .mih-uf-prompt-input { width: 100%; min-height: var(--dim-size-900, 44px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font: inherit; font-size: var(--type-size-sm, 14px); }
+  textarea.mih-uf-prompt-input { resize: vertical; line-height: 1.5; }
+  .mih-uf-prompt-input:focus, .mih-uf-prompt-input:focus-visible { outline: none; border-color: var(--border-brandPrimary-default, #007549); box-shadow: 0 0 0 var(--dim-stroke-200, 2px) var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .mih-uf-prompt-input::placeholder { color: var(--text-content-tertiary, #858C92); opacity: 1; }
+  .ed-act { display: flex; justify-content: flex-end; }
+  .ed-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); }
+  .ed-list li { display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .ed-list li span:first-child { flex: 1 1 auto; min-width: 0; }
+  .ed-x { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent; color: var(--icon-neutral-secondary, #636B72); cursor: pointer; }
+  .ed-x:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  /* เส้น: หักมุมโค้ง · ป้ายเป็นแถบบนเส้น · ชี้กล่องแล้วเส้นที่เกี่ยวข้องเด่น ที่เหลือจาง */
+  .uf-edges text { stroke: none; dominant-baseline: central; }
+  .uf-edges rect.lb { fill: var(--surface-card-100, #FFFFFF); stroke: var(--border-neutral-tertiary, #E2E4E6); stroke-width: var(--dim-stroke-100, 1px); }
+  .uf-edges .hot rect.lb { stroke: var(--border-brandPrimary-default, #007549); }
+  .uf-edges g { transition: opacity 150ms ease-out; }
+  .uf-edges.dim g:not(.hot) { opacity: var(--opacity-disabled, 0.5); }
+  .uf-edges .tp path { stroke: var(--text-colorfulbadge-blue, #1D4ED8); stroke-dasharray: 4 4; }
+  .uf-edges .cj path, .uf-edges .cj .ah { stroke: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .uf-node { z-index: 1; }
+  .uf-edges.uf-labels { z-index: 2; }
+  .uf-node.cust { background: var(--surface-colorfulbadge-blue, #DBEAFE); border-color: var(--text-colorfulbadge-blue, #1D4ED8); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+
+  /* Service Design: เลน */
+  .lane { position: absolute; left: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-quaternary, #F9FBFB); }
+  .lane.lane-cust, .lane.lane-back { background: var(--surface-card-100, #FFFFFF); }
+  .lane-l {
+    position: sticky; left: 0; z-index: 3;
+    display: flex; flex-direction: column; justify-content: center; gap: var(--dim-space-100, 4px);
+    height: 100%; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    background: inherit; border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92);
+  }
+  .lane-l .badge { align-self: flex-start; max-width: 100%; white-space: normal; }
+  .lane-l .ln { position: absolute; top: var(--dim-space-100, 4px); left: var(--dim-space-300, 12px); font-size: var(--type-size-xxs, 10px); }
+  .uf-canvas.bp .band { background: transparent; }
+  .uf-canvas.bp .band-h { z-index: 2; }
+  @media (max-width: 767px) { .lane-l .d, .lane-l .ln { display: none; } .lane-l .badge { white-space: normal; } }
+
+  /* tables */
+  .tbl-box { overflow-x: auto; border-radius: var(--dim-radius-400, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--type-size-xs, 12px); }
+  th, td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  th { background: var(--surface-neutral-quaternary, #F9FBFB); color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  tr.gh td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); font-size: var(--type-size-xs, 12px); }
+  td.c { text-align: center; }
+  table.matrix { min-width: 960px; }
+
+  /* compare cards */
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--dim-space-400, 16px); }
+  .cw-img { display: block; overflow: hidden; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEF0F1); border-radius: var(--dim-radius-200, 8px); }
+  .cw-img img { display: block; width: 100%; height: auto; }
+  .cw-src { margin: var(--dim-space-200, 8px) 0 0; font-size: var(--type-size-xs, 12px); }
+  .cw-list { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .card-h { display: flex; align-items: center; gap: var(--dim-space-300, 12px); }
+  .card-h .ic { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); }
+  .card-h p { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .panel .grp:first-of-type { margin-top: var(--dim-space-400, 16px); }
+
+  .foot { margin: 0; color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+
+  /* responsive */
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); gap: var(--dim-space-600, 24px); }
+    .toc { margin: 0 calc(-1 * var(--dim-space-400, 16px)); padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+    .panel { padding: var(--dim-space-400, 16px); }
+    .detail {
+      top: auto; left: 0; width: auto; max-height: min(80dvh, 640px);
+      border-radius: var(--dim-radius-500, 16px) var(--dim-radius-500, 16px) 0 0;
+      padding-bottom: calc(var(--dim-space-500, 20px) + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+    }
+    /* stacked rows for the conditions table */
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack thead { display: none; }
+    table.stack tr { padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+    table.stack tr.gh { padding: 0; }
+    table.stack td { border: 0; padding: var(--dim-space-100, 4px) 0; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: var(--dim-space-300, 12px); }
+    table.stack td::before { content: attr(data-l); color: var(--text-content-tertiary, #858C92); }
+    table.stack td .badge { justify-self: start; }
+    table.stack td[data-l="จุด"] { display: none; }
+    table.stack tr.gh td { display: block; padding: var(--dim-space-300, 12px); }
+    table.stack tr.gh td::before { content: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .node, .detail { transition: none; } html { scroll-behavior: auto; } }
+
+  .clinic-pick button .material-symbols-outlined{font-size:16px;vertical-align:-3px}
+</style>
+</head>
+<body>
+<main class="page">
+<header>
+  <a class="back" href="https://github.com/namonlims/bma.kiosk"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>repo bma.kiosk</a>
+  <h1>User flow · Service Design ตู้ Kiosk สำนักอนามัย (bma.kiosk)</h1>
+  <p class="lede">เส้นทางผู้รับบริการที่ตู้บริการตนเอง 1080×1920 แนวตั้ง ตั้งแต่เสียบบัตรจนรับบัตรคิว/ใบเสร็จ แยกตามบริการที่เลือก กดกล่องเพื่อดูหน้าจอ (slug) และกลุ่มหน้าจอในโค้ด</p>
+  <div class="meta">
+    <span><b>อ้างอิง</b> src/pagesRegistry.tsx · src/flow.ts · design.md · .claude/rules · commit log</span>
+    <span><b>อัปเดต</b> <span id="upd">29 ต.ค. 69</span> (ตัวอย่าง · commit ล่าสุด 24 ต.ค. 69)</span>
+  </div>
+</header>
+<nav class="toc" aria-label="หัวข้อในหน้า">
+  <a href="#journey">1 · เส้นทางตามบริการ</a>
+  <a href="#rules">2 · กติกาของ flow</a>
+  <a href="#screens">3 · หน้าจอทั้งหมด</a>
+  <a href="#design">4 · Design system</a>
+  <a href="#log">5 · บันทึกการเปลี่ยนแปลง</a>
+</nav>
+
+<section class="sec" id="journey">
+  <div class="sec-head"><h2>1 · เส้นทางตามบริการ</h2>
+  <p>ลำดับหน้าจอ <b>อนุมาน</b>จากชื่อหน้าใน pagesRegistry และกติกาใน flow.ts · กล่องเส้นประ = หน้าจอที่ยังไม่มีใน Kiosk (ส่งต่อเจ้าหน้าที่)</p></div>
+  <div class="legend">
+    <span class="k"><span class="sw pill"></span>เริ่ม / จบ</span>
+    <span class="k"><span class="sw step"></span>หน้าจอ Kiosk</span>
+    <span class="k"><span class="sw tgt"></span>ส่งต่อเจ้าหน้าที่</span>
+    <span class="k"><span class="sw dia"></span>เงื่อนไข / ทางแยก</span>
+    <span class="k"><span class="sw opt"></span>ผิดพลาด / ทางเลือก</span>
+  </div>
+  <div class="panel chart-panel">
+    <span class="grp-h">ผู้รับบริการเลือกบริการไหน (flow=…)</span>
+    <div class="clinic-pick" id="clinic-pick" role="group"></div>
+    <div class="clinic-sum" id="clinic-sum"></div>
+    <div class="view-row">
+      <div class="seg" id="view-seg" role="group">
+        <button type="button" data-view="uf" aria-pressed="true"><span class="material-symbols-outlined">account_tree</span>User flow</button>
+        <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined">view_agenda</span>Service Design</button>
+      </div>
+      <span class="hint"><span class="material-symbols-outlined">swipe</span><span id="view-hint"></span></span>
+    </div>
+    <div class="chart-box" id="chart-main"></div>
+  </div>
+</section>
+
+<section class="sec" id="rules">
+  <div class="sec-head"><h2>2 · กติกาของ flow</h2><p>จากคอมเมนต์และฟังก์ชันใน src/flow.ts</p></div>
+  <div class="tbl-box"><table><thead><tr><th>จุด</th><th>ถ้า</th><th>ระบบทำ</th></tr></thead><tbody id="rule-body"></tbody></table></div>
+</section>
+
+<section class="sec" id="screens">
+  <div class="sec-head"><h2>3 · หน้าจอทั้งหมด</h2><p>43 หน้าจาก src/pagesRegistry.tsx แยกตามกลุ่ม</p></div>
+  <div class="tbl-box"><table><thead><tr><th>slug</th><th>ชื่อหน้า</th><th>ใช้ใน flow</th></tr></thead><tbody id="scr-body"></tbody></table></div>
+</section>
+
+<section class="sec" id="design">
+  <div class="sec-head"><h2>4 · Design system ของ Kiosk</h2><p>จาก design.md (แยกจาก HCIS · 24 ต.ค. 69)</p></div>
+  <div class="two">
+    <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">palette</span><div><h3>สีหลัก --kiosk-*</h3><p>น้ำเงิน ไม่ใช่เขียวมรกตของเว็บ</p></div></div>
+      <div class="grp"><dl class="kv">
+        <dt><code>--kiosk-blue</code></dt><dd><span class="badge" style="background:#0D4477;color:#fff">#0D4477</span> หัวข้อ · ปุ่ม Fill</dd>
+        <dt><code>--kiosk-blue-muted</code></dt><dd><span class="badge" style="background:#466E93;color:#fff">#466E93</span> ข้อความรอง</dd>
+        <dt><code>--kiosk-surface-card</code></dt><dd><span class="badge" style="background:#EEFFFC;color:#0D4477">#EEFFFC</span> พื้นการ์ด</dd>
+        <dt><code>--kiosk-mint-*</code></dt><dd>พื้นหลังไล่สี · <code>--kiosk-pink-*</code> หน้าผิดพลาด</dd>
+        <dt><code>--kiosk-radius-card</code></dt><dd>24px</dd>
+      </dl></div></div>
+    <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">text_fields</span><div><h3>ตัวอักษร Prompt · จอใหญ่</h3><p>อ่านจากระยะยืน</p></div></div>
+      <div class="grp"><dl class="kv">
+        <dt>100px</dt><dd>เลขคิว</dd><dt>58 · 56</dt><dd>หัวข้อหน้าจอ</dd><dt>48</dt><dd>หัวข้อส่วน · ป้ายปุ่ม</dd><dt>40–24</dt><dd>เนื้อความ · caption</dd><dt>20–14</dt><dd>ใบคิว/ใบเสร็จที่พิมพ์</dd>
+      </dl></div>
+      <div class="grp"><span class="grp-h">Components</span><p style="margin:0">PrimaryButton · OutlineButton · OutlineSubduedButton · Card · Keypad/NumberKey · KioskShell · Header · IdNumberDisplay · PrintingScreen · LottieAsset</p></div></div>
+    <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">hub</span><div><h3>เชื่อม 3 ระบบ</h3><p>.claude/rules/cross-product-journey.md</p></div></div>
+      <div class="grp"><dl class="kv">
+        <dt>ผู้ป่วยเดโม</dt><dd>นายสมชาย มีสุข · HN 67-00001 (ใช้ร่วม bma.health · bma.mobile)</dd>
+        <dt>เลขคิว</dt><dd><code>C-021</code> / <code>R-021</code> · ปิดสิทธิ <code>NHCO-…</code></dd>
+        <dt>เส้นทางกลาง</dt><dd>bma.health <code>docs/journey/journey.json</code> (ขั้น K1 · K1b · K2 · K3 · W8 = หน้าจอ Kiosk)</dd>
+      </dl></div></div>
+  </div>
+</section>
+
+<section class="sec" id="log">
+  <div class="sec-head"><h2>5 · บันทึกการเปลี่ยนแปลง</h2><p>commit ล่าสุดบน main (ส่วนนี้คือส่วนที่ตั้งใจให้อัปเดตอัตโนมัติทุกวัน)</p></div>
+  <div class="tbl-box"><table><thead><tr><th>วันที่</th><th>เปลี่ยนอะไร</th></tr></thead><tbody id="log-body"></tbody></table></div>
+</section>
+<p class="foot">หน้าตัวอย่าง · สร้างจากไฟล์ใน repo namonlims/bma.kiosk (main) · ลำดับขั้นใน flow เป็นการอนุมาน ควรให้ทีมตรวจทาน</p>
+</main>
+
+<aside class="detail panel" id="detail" aria-live="polite"></aside>
+
+<script>
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COLW = 200, ROWH = 130, PAD = 28, LANEW = 150;
+const SIZE = { start:[140,56], action:[160,72], option:[140,60], dec:[124,124], target:[160,72] };
+const KIND = { start:'เริ่ม / จบ', action:'หน้าจอ Kiosk', option:'ผิดพลาด / ทางเลือก', dec:'เงื่อนไข', target:'ส่งต่อเจ้าหน้าที่' };
+const LANES = [
+  { k:'cust', t:'ผู้รับบริการ', d:'ทำอะไรที่ตู้', b:'b-blue' },
+  { k:'kiosk', t:'หน้าจอ Kiosk', d:'สิ่งที่เห็นบนจอ', b:'b-green' },
+  { k:'staff', t:'เจ้าหน้าที่', d:'เวชระเบียน · คัดแยก', b:'b-orange' },
+  { k:'sys', t:'ระบบสนับสนุน', d:'HCIS · ThaID · ชำระเงิน · เครื่องพิมพ์', b:'b-grey' },
+];
+/* node: id, t, type, s=slug, row, lane, to:[[id,label]] */
+const ENTRY = [
+  { id:'in', t:'เดินมาที่ตู้', type:'start', lane:'cust', to:[['p02']] },
+  { id:'p02', t:'เสียบบัตร / กดเลข 13 หลัก', s:'02-insert-id-card', type:'action', lane:'kiosk', to:[['dId']] },
+  { id:'dId', t:'ระบุตัวตนได้?', type:'dec', lane:'sys', to:[['p03','มีประวัติ'],['p03b','ไม่พบประวัติ'],['p02c','ต่างชาติ']] },
+  { id:'p03', t:'กำลังอ่าน / ตรวจสอบ', s:'03-loading-verifying-identity', type:'action', lane:'sys', to:[['p01']] },
+  { id:'p03b', t:'ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่', s:'03b-register-new-patient', type:'target', lane:'staff', row:2, same:1 },
+  { id:'p02c', t:'ต่างชาติ ติดต่อเวชระเบียน', s:'02c-enter-id-passport', type:'target', lane:'staff', row:3, same:1 },
+];
+const SEL = { id:'p01', t:'เลือกบริการ', s:'01-select-service', type:'action', lane:'kiosk' };
+const END = (s, t) => [{ id:'p'+s.slice(0,3), t, s, type:'action', lane:'kiosk', to:[['out']] }, { id:'out', t:'กลับหน้าเลือกบริการ / หน้าหลัก', type:'start', lane:'cust' }];
+const FLOWS = {
+  reception: { n:'รับบริการ / ออกคิว', ic:'confirmation_number', sum:'ยืนยันตัวตน → เพื่อใคร → ถ่ายภาพใบหน้า → ยืนยันข้อมูล → สิทธิ์ → พิมพ์บัตรคิวพร้อม VN',
+    flow:[...ENTRY, {...SEL,to:[['p04']]},
+      { id:'p04', t:'รับบริการเพื่อใคร (ตนเอง / แทนผู้อื่น)', s:'04-select-patient-relation', type:'action', lane:'kiosk', to:[['p06']] },
+      { id:'p06', t:'ถ่ายภาพใบหน้า (04b → 05 → 06 → 06b)', s:'06-face-recognition', type:'action', lane:'cust', to:[['dAp'],['eFace','ไม่สำเร็จ']] },
+      { id:'eFace', t:'สแกนใบหน้าไม่สำเร็จ', s:'error-face-scan-failed', type:'option', lane:'kiosk', row:2, same:1 },
+      { id:'dAp', t:'มีนัดวันนี้?', type:'dec', lane:'sys', to:[['p07','มีนัด'],['p07b','ไม่มีนัด']] },
+      { id:'p07', t:'ยืนยันข้อมูล มีนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', to:[['p08']] },
+      { id:'p07b', t:'ยืนยันข้อมูล ไม่มีนัดหมาย', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['p08']] },
+      { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['p13']] },
+      { id:'p13', t:'ผลคิว + VN', s:'13-queue-result', type:'action', lane:'kiosk', to:[['slip']] },
+      { id:'slip', t:'พิมพ์บัตรคิว (วันนัด = วันนี้)', s:'queue-slip-print', type:'action', lane:'sys', to:[['p15']] },
+      ...END('15-thank-you','ขอบคุณ')] },
+  appointment: { n:'ตรวจสอบนัดหมาย', ic:'event', sum:'ยืนยันตัวตน → ดูนัดหมาย → ตรวจสอบนัดหมายสำเร็จ',
+    flow:[...ENTRY, {...SEL,to:[['p07']]},
+      { id:'p07', t:'ข้อมูลนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', to:[['p15d']] },
+      ...END('15d-thank-you-appointment','ตรวจสอบนัดหมายสำเร็จ')] },
+  entitlement: { n:'ตรวจสอบสิทธิ์', ic:'verified_user', sum:'ยืนยันตัวตน → รายละเอียดสิทธิ์ ตนเอง/บุตร → สำเร็จ · ต่างชาติไม่มีเมนูนี้ (commit 27 ส.ค.)',
+    flow:[...ENTRY, {...SEL,to:[['dWho']]},
+      { id:'dWho', t:'สิทธิ์ของใคร', type:'dec', lane:'cust', to:[['p08','ตนเอง'],['p08b','บุตร / ผู้อยู่ในอุปการะ']] },
+      { id:'p08', t:'รายละเอียดสิทธิ์ ตนเอง', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['p15e']] },
+      { id:'p08b', t:'รายละเอียดสิทธิ์ บุตร', s:'08b-entitlement-details-dependent', type:'action', lane:'kiosk', row:2, same:1, to:[['p15e']] },
+      ...END('15e-thank-you-entitlement','ตรวจสอบสิทธิสำเร็จ')] },
+  payment: { n:'ชำระเงิน', ic:'payments', sum:'สรุปยอด → เลือกวิธีชำระ (PromptPay / บัตรเครดิต) → ตรวจสอบ → สำเร็จ → พิมพ์ใบเสร็จ → ขอบคุณ มียา/ไม่มียา',
+    flow:[...ENTRY, {...SEL,to:[['p09']]},
+      { id:'p09', t:'สรุปยอดชำระ', s:'09-payment-bill-summary', type:'action', lane:'kiosk', to:[['p10']] },
+      { id:'p10', t:'เลือกวิธีชำระเงิน', s:'10-select-payment-method', type:'action', lane:'cust', to:[['p11','QR'],['p11b','บัตร']] },
+      { id:'p11', t:'QR PromptPay', s:'11-payment-qr-promptpay', type:'action', lane:'kiosk', to:[['p11c']] },
+      { id:'p11b', t:'บัตรเครดิต', s:'11b-payment-credit-card', type:'action', lane:'kiosk', row:2, same:1, to:[['p11c']] },
+      { id:'p11c', t:'กำลังตรวจสอบการชำระเงิน', s:'11c-loading-verifying-payment', type:'action', lane:'sys', to:[['dPay']] },
+      { id:'dPay', t:'ชำระสำเร็จ?', type:'dec', lane:'sys', to:[['p14','สำเร็จ'],['ePay','ไม่สำเร็จ']] },
+      { id:'ePay', t:'ชำระเงินไม่สำเร็จ', s:'error-payment-failed', type:'option', lane:'kiosk', row:2 , same:0},
+      { id:'p14', t:'ชำระเงินสำเร็จ', s:'14-payment-success', type:'action', lane:'kiosk', same:1, to:[['rcp']] },
+      { id:'rcp', t:'กำลังพิมพ์ใบเสร็จ', s:'loading-printing-receipt', type:'action', lane:'sys', to:[['dMed']] },
+      { id:'dMed', t:'มียาต้องรับ?', type:'dec', lane:'sys', to:[['p15c','มียา'],['p15b','ไม่มียา']] },
+      { id:'p15c', t:'ขอบคุณ มียา', s:'15c-thank-you-with-medicine', type:'action', lane:'kiosk', to:[['out']] },
+      { id:'p15b', t:'ขอบคุณ ไม่มียา', s:'15b-thank-you-no-medicine', type:'action', lane:'kiosk', row:2, same:1, to:[['out']] },
+      { id:'out', t:'กลับหน้าเลือกบริการ / หน้าหลัก', type:'start', lane:'cust' }] },
+  reprint: { n:'พิมพ์บัตรคิวซ้ำ', ic:'print', sum:'flow=reprint ข้ามขั้นโหลด ไปหน้าผลคิวทันทีหลังอ่านบัตร (useIdentityAccepted)',
+    flow:[ENTRY[0], {...ENTRY[1], to:[['p13']]},
+      { id:'p13', t:'ผลคิว', s:'13-queue-result', type:'action', lane:'kiosk', to:[['slip']] },
+      { id:'slip', t:'กำลังพิมพ์บัตรคิว', s:'loading-printing-queue-slip', type:'action', lane:'sys', to:[['p15f']] },
+      ...END('15f-thank-you-reprint','พิมพ์บัตรคิวสำเร็จ')] },
+  closeRights: { n:'ปิดสิทธิ', ic:'lock', sum:'ยืนยันปิดสิทธิ → สำเร็จ (เลขอ้างอิง NHCO-…)',
+    flow:[...ENTRY, {...SEL,to:[['p16']]},
+      { id:'p16', t:'ยืนยันปิดสิทธิ', s:'16-close-rights-confirm', type:'action', lane:'cust', to:[['p16b']] },
+      ...END('16b-close-rights-success','ปิดสิทธิสำเร็จ')] },
+};
+let cat = 'reception', view = 'uf', active = null;
+const box = document.getElementById('chart-main'), pick = document.getElementById('clinic-pick'), detail = document.getElementById('detail');
+pick.innerHTML = Object.entries(FLOWS).map(([k,f]) => `<button type="button" data-c="${k}"><span class="material-symbols-outlined">${f.ic}</span> ${esc(f.n)}</button>`).join('');
+function layout(flow) {
+  const pos = {}; let col = -1;
+  flow.forEach((n) => { if (!n.same) col++; pos[n.id] = { col, row: n.row || 1 }; });
+  return pos;
+}
+function render() {
+  const f = FLOWS[cat]; const flow = f.flow; const idx = Object.fromEntries(flow.map((n)=>[n.id,n]));
+  const pos = layout(flow); const bp = view === 'bp';
+  const laneIdx = Object.fromEntries(LANES.map((l,i)=>[l.k,i]));
+  const P = {}; const stack = {}; const k = {};
+  if (bp) flow.forEach((n)=>{ const key=n.lane+':'+pos[n.id].col; k[n.id]=stack[key]=(stack[key]||0)+1; });
+  const laneN = LANES.map((l)=>Math.max(1,...flow.filter(n=>n.lane===l.k).map(n=>k[n.id]||1)));
+  const laneTop = []; let acc=0; laneN.forEach((m,i)=>{ laneTop[i]=acc; acc += 60 + m*90; });
+  flow.forEach((n) => { const p = pos[n.id]; const [w,h] = SIZE[n.type];
+    const cx = PAD + (bp?LANEW:0) + p.col*COLW + COLW/2;
+    const cy = bp ? laneTop[laneIdx[n.lane]] + 30 + (k[n.id]-1)*90 + 45 : PAD + (p.row-1)*ROWH + ROWH/2;
+    P[n.id] = {cx,cy,w:bp&&n.type==='dec'?100:w,h:bp&&n.type==='dec'?100:h}; });
+  const cols = Math.max(...Object.values(pos).map(p=>p.col))+1;
+  const W = PAD*2 + (bp?LANEW:0) + cols*COLW;
+  const H = bp ? acc : PAD*2 + Math.max(...Object.values(pos).map(p=>p.row))*ROWH;
+  let html = `<div class="uf-canvas${bp?' bp':''}" style="width:${W}px;height:${H}px">`;
+  if (bp) LANES.forEach((l,i) => { html += `<div class="lane lane-${l.k==='kiosk'?'front':l.k==='staff'?'back':l.k}" style="top:${laneTop[i]}px;height:${60+laneN[i]*90}px;width:${W}px"><div class="lane-l" style="width:${LANEW}px"><span class="badge ${l.b}">${l.t}</span><span class="d">${l.d}</span></div></div>`; });
+  let svg = `<svg class="uf-edges${active?' dim':''}" width="${W}" height="${H}">`;
+  flow.forEach((n) => (n.to||[]).forEach(([t,lab]) => { if (!P[t]) return; const a=P[n.id], b=P[t];
+    const x1=a.cx+a.w/2, y1=a.cy, x2=b.cx-b.w/2, y2=b.cy; const mx=(x1+x2)/2;
+    const d = Math.abs(y1-y2)<2 ? `M${x1},${y1} L${x2},${y2}` : (x2>x1+20 ? `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}` : `M${a.cx},${a.cy+a.h/2} L${b.cx},${b.cy-b.h/2}`);
+    const ex = x2>x1+20 ? x2 : b.cx, ey = x2>x1+20 ? y2 : b.cy-b.h/2;
+    const hot = active && (active===n.id || active===t);
+    const ah = x2>x1+20 ? `M${ex-7},${ey-5} L${ex},${ey} L${ex-7},${ey+5}` : `M${ex-5},${ey-7} L${ex},${ey} L${ex+5},${ey-7}`;
+    svg += `<g class="${hot?'hot':''}"><path d="${d}"/><path class="ah${hot?' hot':''}" d="${ah}"/>${lab?`<text x="${(x1+ex)/2}" y="${(y1+ey)/2-6}" text-anchor="middle">${esc(lab)}</text>`:''}</g>`; }));
+  svg += '</svg>';
+  html += svg;
+  flow.forEach((n) => { const p=P[n.id]; const cls = n.type==='target' ? 'action target' : n.type;
+    html += `<button type="button" class="uf-node ${cls}${active===n.id?' is-active':''}" data-id="${n.id}" style="left:${p.cx-p.w/2}px;top:${p.cy-p.h/2}px;width:${p.w}px;height:${p.h}px"><span class="lbl">${n.s?`<span class="tag">${esc(n.s.split('-')[0])}</span>`:''}${esc(n.t)}</span></button>`; });
+  box.innerHTML = html + '</div>';
+  document.getElementById('clinic-sum').innerHTML = `<p class="lede" style="margin:0"><b>flow=${cat}</b> · ${esc(f.sum)}</p>`;
+  pick.querySelectorAll('button').forEach((b)=>b.setAttribute('aria-pressed', b.dataset.c===cat));
+  document.querySelectorAll('#view-seg button').forEach((b)=>b.setAttribute('aria-pressed', b.dataset.view===view));
+  document.getElementById('view-hint').textContent = bp ? 'แบ่งเลน: ผู้รับบริการ · หน้าจอ · เจ้าหน้าที่ · ระบบ' : 'เลื่อนซ้าย-ขวาเพื่อดูทั้งเส้นทาง';
+  box.querySelectorAll('.uf-node').forEach((el)=>el.onclick=()=>openDetail(idx[el.dataset.id]));
+}
+function openDetail(n) {
+  active = active===n.id ? null : n.id; render();
+  if (!active) { detail.classList.remove('open'); return; }
+  const pg = PAGES.find((p)=>p[0]===n.s);
+  detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[n.type]}</span><h3>${esc(n.t)}</h3></div><button class="x" onclick="active=null;detail.classList.remove('open');render()"><span class="material-symbols-outlined">close</span></button></div>
+  <dl class="kv"><dt>เลน</dt><dd>${LANES.find(l=>l.k===n.lane).t}</dd>${n.s?`<dt>slug</dt><dd><code>/${esc(n.s)}</code></dd>`:''}${pg?`<dt>หน้าในโค้ด</dt><dd>${esc(pg[1])}</dd><dt>กลุ่ม</dt><dd>${esc(pg[2])}</dd>`:''}
+  ${(n.to||[]).length?`<dt>ไปต่อ</dt><dd>${n.to.map(([t,l])=>esc((l?l+' → ':'')+(FLOWS[cat].flow.find(x=>x.id===t)||{}).t)).join('<br>')}</dd>`:''}</dl>`;
+  detail.classList.add('open');
+}
+function readHash() { const h = new URLSearchParams(location.hash.slice(1)); if (FLOWS[h.get('c')]) cat = h.get('c'); if (['uf','bp'].includes(h.get('v'))) view = h.get('v'); }
+function writeHash() { history.replaceState(null,'',`#c=${cat}&v=${view}`); }
+pick.onclick = (e) => { const b=e.target.closest('button'); if (!b) return; cat=b.dataset.c; active=null; detail.classList.remove('open'); writeHash(); render(); };
+document.getElementById('view-seg').onclick = (e) => { const b=e.target.closest('button'); if (!b) return; view=b.dataset.view; writeHash(); render(); };
+window.addEventListener('hashchange', () => { readHash(); render(); });
+
+const RULES = [
+  ['หน้าแรก','เดินมาที่ตู้','หน้าแรกคือเสียบบัตร (02) ไม่ถามสัญชาติก่อน · กดเลข 13 หลักได้'],
+  ['ระบุตัวตน','ไม่มีประวัติที่สถานพยาบาลนี้','ไปหน้า 03b ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่ (TOR 1.16.1.4)'],
+  ['ระบุตัวตน','เลข 1111111111111','เลขเดียวที่จำลองว่า "ไม่พบ"'],
+  ['ระบุตัวตน','ไม่มีบัตรไทย (ต่างชาติ)','ลิงก์ "ต่างชาติ" → 02c ส่งต่อเวชระเบียน (Kiosk ตรวจ passport ไม่ได้)'],
+  ['ระบุตัวตน','ใช้ ThaID','สแกน QR (02d) → สำเร็จ (02e)'],
+  ['พิมพ์ซ้ำ','flow=reprint','อ่านบัตรแล้วไปหน้าผลคิว 13 ทันที'],
+  ['ทุกหน้า','ไม่มีการสัมผัส ~60 วินาที','กลับหน้าหลัก (TOR use case #7)'],
+  ['จบบริการ','กด ตกลง / เสร็จสิ้น','กลับหน้าเลือกบริการ ไม่ต้องเสียบบัตรใหม่ (ล้าง flow/step/method)'],
+  ['ทุกหน้า','กด ยกเลิก','กลับหน้าหลักทันที'],
+  ['หน้าผิดพลาด / ขอบคุณ','แสดงผลแล้ว','นับถอยหลัง 10 วินาทีกลับหน้าหลัก'],
+];
+document.getElementById('rule-body').innerHTML = RULES.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+const PAGES = [
+['02-insert-id-card','เสียบบัตร / ระบุเลข 13 หลัก (Home)','Entry'],['02b-insert-id-card-detected','ตรวจพบบัตร','Entry'],['02c-enter-id-passport','ต่างชาติ ติดต่อเวชระเบียน','Entry'],['02d-thaid-qr','สแกน QR ยืนยันด้วย ThaID','Entry'],['02e-thaid-success','ยืนยันตัวตนสำเร็จ (ThaID)','Entry'],['03-loading-verifying-identity','กำลังอ่าน/ตรวจสอบ','Entry'],['01-select-service','เลือกบริการ','Entry'],
+['03b-register-new-patient','ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่','Identity'],['04-select-patient-relation','รับบริการเพื่อใคร','Identity'],['04b-prepare-face-scan','เตรียมถ่ายภาพ','Identity'],['05-loading-face-scan','กำลังสแกนใบหน้า','Identity'],['06-face-recognition','ถ่ายภาพใบหน้า','Identity'],['06b-face-photo-preview','ตรวจสอบภาพถ่าย','Identity'],
+['07-confirm-patient-has-appointment','ยืนยันข้อมูล มีนัดหมาย','Patient Info'],['07b-confirm-patient-no-appointment','ยืนยันข้อมูล ไม่มีนัดหมาย','Patient Info'],
+['08-entitlement-details-self','รายละเอียดสิทธิ์ ตนเอง','Entitlement'],['08b-entitlement-details-dependent','รายละเอียดสิทธิ์ บุตร','Entitlement'],['16-close-rights-confirm','ยืนยันปิดสิทธิ','Entitlement'],['16b-close-rights-success','ปิดสิทธิสำเร็จ','Entitlement'],
+['09-payment-bill-summary','สรุปยอดชำระ','Payment'],['loading-printing-receipt','กำลังพิมพ์ใบเสร็จ','Payment'],['09b-receipt-detail','รายละเอียดใบเสร็จ','Payment'],['10-select-payment-method','เลือกวิธีชำระเงิน','Payment'],['11-payment-qr-promptpay','ชำระด้วย QR PromptPay','Payment'],['11b-payment-credit-card','ชำระด้วยบัตรเครดิต','Payment'],['11c-loading-verifying-payment','กำลังตรวจสอบการชำระเงิน','Payment'],['12-insert-id-card-after-payment','เสียบบัตรหลังชำระเงิน','Payment'],
+['13-queue-result','ผลลัพธ์คิว','Queue'],['loading-printing-queue-slip','กำลังพิมพ์บัตรคิว','Queue'],['queue-slip-print','ใบคิว','Queue'],
+['14-payment-success','ชำระเงินสำเร็จ','Completion'],['15-thank-you','ขอบคุณ','Completion'],['15b-thank-you-no-medicine','ขอบคุณ ไม่มียา','Completion'],['15c-thank-you-with-medicine','ขอบคุณ มียา','Completion'],['15d-thank-you-appointment','ตรวจสอบนัดหมายสำเร็จ','Completion'],['15e-thank-you-entitlement','ตรวจสอบสิทธิสำเร็จ','Completion'],['15f-thank-you-reprint','พิมพ์บัตรคิวสำเร็จ','Completion'],['15g-thank-you-cancel','ยกเลิก — รับบัตรคืน','Completion'],
+['error-payment-failed','ชำระเงินไม่สำเร็จ','Error'],['error-id-card-not-found','ไม่พบบัตรประชาชน','Error'],['error-face-scan-failed','สแกนใบหน้าไม่สำเร็จ','Error'],['error-identity-verification-failed','ยืนยันตัวตนไม่สำเร็จ','Error']];
+let g0=''; document.getElementById('scr-body').innerHTML = PAGES.map(([s,t,g])=>{ const used = Object.entries(FLOWS).filter(([k,f])=>f.flow.some(n=>n.s===s)).map(([k,f])=>`<span class="badge b-green">${esc(f.n)}</span>`).join(' ') || '<span class="badge b-grey">ยังไม่วางใน flow</span>';
+  const h = g!==g0 ? `<tr class="gh"><td colspan="3">${g}</td></tr>` : ''; g0=g; return h+`<tr><td><code>/${s}</code></td><td>${esc(t)}</td><td>${used}</td></tr>`; }).join('');
+const LOG = [
+['24 ต.ค. 69','Kiosk เป็น design system ของตัวเอง — kiosk.css · design.md · Figma variables (PR #6)'],
+['24 ต.ค. 69','ใช้ design token จาก mih-design — --kiosk-* + agent kit'],
+['23 ต.ค. 69','Kiosk แสดง VN บนหน้าผลคิวและบัตรคิว ตาม Flow คณะทำงาน (PR #5)'],
+['23 ต.ค. 69','ใบคิว: วันนัดหมาย = วันนี้ แทนวันที่ตายตัว (PR #4)'],
+['23 ต.ค. 69','ใบคิว: การ์ดสิทธิเป็นของผู้ป่วยเอง ตรงกับ PHCIS HN 67-00001 (PR #3)'],
+['23 ต.ค. 69','ผู้ป่วยเดโมกลาง 3 ระบบ: นายสมชาย มีสุข HN 67-00001 (PR #2)'],
+['22 ต.ค. 69','ไอคอนเคลื่อนไหวบนการ์ด ตนเอง / แทนผู้อื่น'],
+['13 ต.ค. 69','ยืนยันตัวตนด้วย ThaID ผ่าน QR + ถามว่าลงทะเบียนให้ใคร'],
+['18 ก.ย. 69','New flow kiosk ver.1'],
+['27 ส.ค. 69','แยกทางเข้าตามสัญชาติ · ต่างชาติไม่มีเมนูตรวจสอบสิทธิ์ · หน้ากำลังพิมพ์ใบเสร็จ (PR #1)'],
+['8 ส.ค. 69','workflow Deploy to production แบบกดเอง สำหรับ UAT'],
+['5 ส.ค. 69','ทางเข้าแบบระบุบัตรก่อน (ID-first) และหน้าจอช่องว่างตาม TOR'],
+];
+document.getElementById('log-body').innerHTML = LOG.map(r=>`<tr><td style="white-space:nowrap">${r[0]}</td><td>${esc(r[1])}</td></tr>`).join('');
+readHash(); writeHash(); render();
+</script>
+</body>
+</html>
