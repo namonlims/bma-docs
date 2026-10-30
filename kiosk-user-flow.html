@@ -375,6 +375,8 @@
   /* Service Design: เลน */
   .uf-node.mock { border-style: dashed; border-color: var(--icon-warning-tertiary, #EA580C); }
   .uf-node .mk { font-size: var(--type-size-xxs, 10px); font-weight: 700; color: var(--icon-warning-tertiary, #EA580C); }
+  .uf-node.gap { border-color: #DC2626; background: #FEF2F2; }
+  .uf-node.gap .mk { color: #DC2626; }
   .uf-node.q { box-shadow: 0 0 0 var(--dim-space-100, 4px) #DBEAFE; }
   .lane { position: absolute; left: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-quaternary, #F9FBFB); }
   .lane.lane-cust, .lane.lane-back { background: var(--surface-card-100, #FFFFFF); }
@@ -543,8 +545,13 @@ const LANES0 = [
 ];
 /* node: id, t, type, s=slug, row, lane, to:[[id,label]] */
 const ENTRY = [
-  { id:'in', t:'เดินมาที่ตู้', type:'start', lane:'cust', to:[['p02']] },
-  { id:'p02', t:'เสียบบัตร / กดเลข 13 หลัก', s:'02-insert-id-card', type:'action', lane:'kiosk', to:[['dId']] },
+  { id:'in', t:'เดินมาที่ตู้', type:'start', lane:'cust', to:[['dIdm']] },
+  { id:'dIdm', t:'เลือกวิธียืนยันตัวตน (มติ 26 ต.ค.)', type:'dec', lane:'cust', to:[['p02','บัตร ปชช.'],['p02d','ThaID'],['gApp','แอปทางรัฐ'],['gFace','สแกนใบหน้า'],['gFp','ลายนิ้วมือ']] },
+  { id:'p02', t:'เสียบบัตร / กดเลข 13 หลัก', s:'02-insert-id-card', type:'action', lane:'kiosk', mock:'เครื่องอ่านบัตรจำลอง: ใช้ MOCK_CARD_READER_NATIONAL_ID', to:[['dId']] },
+  { id:'p02d', t:'สแกน QR ด้วยแอป ThaID (02d → 02e)', s:'02d-thaid-qr', type:'action', lane:'kiosk', row:2, same:1, mock:'ไม่มี ThaID backend: รอ 8 วินาทีแล้วถือว่ายืนยันสำเร็จ (MOCK_APPROVAL_MS)', to:[['dId']] },
+  { id:'gApp', t:'ยืนยันผ่านแอปทางรัฐ', type:'option', lane:'kiosk', row:3, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: ไม่มีหน้าจอหรือการเชื่อมต่อแอปทางรัฐ' },
+  { id:'gFace', t:'ยืนยันตัวตนด้วยสแกนใบหน้า', type:'option', lane:'kiosk', row:4, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด ในฐานะวิธียืนยันตัวตน: กล้อง (06) ใช้หลังเลือกบริการ ตรวจแค่หน้าอยู่ในกรอบ ไม่ได้เทียบตัวตน' },
+  { id:'gFp', t:'สแกนลายนิ้วมือ', type:'option', lane:'kiosk', row:5, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: ไม่มีหน้าจอ/เครื่องอ่านลายนิ้วมือ' },
   { id:'dId', t:'ระบุตัวตนได้?', type:'dec', lane:'sys', to:[['p03','มีประวัติ'],['p03b','ไม่พบประวัติ'],['p02c','ต่างชาติ']] },
   { id:'p03', t:'กำลังอ่าน / ตรวจสอบ', s:'03-loading-verifying-identity', type:'action', lane:'sys', to:[['p01']] },
   { id:'p03b', t:'ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่', s:'03b-register-new-patient', type:'target', lane:'staff', row:2, same:1 },
@@ -561,7 +568,9 @@ const FLOWS = {
       { id:'dAp', t:'มีนัดวันนี้?', type:'dec', lane:'sys', to:[['p07','มีนัด'],['p07b','ไม่มีนัด']] },
       { id:'p07', t:'ยืนยันข้อมูล มีนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', to:[['p08']] },
       { id:'p07b', t:'ยืนยันข้อมูล ไม่มีนัดหมาย', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['p08']] },
-      { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['p13']] },
+      { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['dSelf']] },
+      { id:'dSelf', t:'ชำระเงินเอง?', type:'dec', lane:'sys', to:[['p13','มีสิทธิ์'],['gPay','ชำระเอง']] },
+      { id:'gPay', t:'ชำระเงินก่อนออกคิว (09 → 14)', type:'option', lane:'kiosk', row:2, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: มติให้ผู้ชำระเงินเองจ่ายก่อนระบบออกคิว แต่โค้ดตอนนี้ออกคิวทันทีหลังหน้าสิทธิ์ และชำระเงินเป็นเมนูแยก', to:[['p13','ชำระแล้ว']] },
       { id:'p13', t:'ผลคิว + VN', s:'13-queue-result', type:'action', lane:'kiosk', to:[['slip']] },
       { id:'slip', t:'พิมพ์บัตรคิว (วันนัด = วันนี้)', s:'queue-slip-print', type:'action', lane:'sys', to:[['p15']] },
       ...END('15-thank-you','ขอบคุณ')] },
@@ -591,7 +600,7 @@ const FLOWS = {
       { id:'p15b', t:'ขอบคุณ ไม่มียา', s:'15b-thank-you-no-medicine', type:'action', lane:'kiosk', row:2, same:1, to:[['out']] },
       { id:'out', t:'กลับหน้าเลือกบริการ / หน้าหลัก', type:'start', lane:'cust' }] },
   reprint: { n:'พิมพ์บัตรคิวซ้ำ', ic:'print', sum:'flow=reprint ข้ามขั้นโหลด ไปหน้าผลคิวทันทีหลังอ่านบัตร (useIdentityAccepted)',
-    flow:[ENTRY[0], {...ENTRY[1], to:[['p13']]},
+    flow:[{...ENTRY[0], to:[['p02']]}, {...ENTRY[2], to:[['p13']]},
       { id:'p13', t:'ผลคิว', s:'13-queue-result', type:'action', lane:'kiosk', to:[['slip']] },
       { id:'slip', t:'กำลังพิมพ์บัตรคิว', s:'loading-printing-queue-slip', type:'action', lane:'sys', to:[['p15f']] },
       ...END('15f-thank-you-reprint','พิมพ์บัตรคิวสำเร็จ')] },
@@ -611,7 +620,9 @@ const PF_LANES = [
   { k:'staff', t:'เจ้าหน้าที่', d:'เวชระเบียน · คัดแยก · การเงิน · ห้องยา', b:'b-orange' },
 ];
 const PF_ID = [
-  { id:'a1', t:'เดินมาที่ตู้ เสียบบัตร ปชช. / กดเลข 13 หลัก', type:'start', lane:'cust', to:[['a2']] },
+  { id:'a1', t:'เดินมาที่ตู้ เลือกวิธียืนยันตัวตน', type:'start', lane:'cust', to:[['a2'],['aT'],['aG','แอปทางรัฐ / ใบหน้า / ลายนิ้วมือ']] },
+  { id:'aT', t:'ThaID ยืนยันบนมือถือ', type:'action', lane:'ext', same:1, mock:'ไม่มี ThaID backend: รอ 8 วินาทีแล้วผ่าน', to:[['a3']] },
+  { id:'aG', t:'แอปทางรัฐ · สแกนใบหน้า · ลายนิ้วมือ', type:'option', lane:'dev', row:2, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด' },
   { id:'a2', t:'อ่านบัตรประชาชน', type:'action', lane:'dev', mock:'ใช้เลขบัตรคงที่ MOCK_CARD_READER_NATIONAL_ID ยังไม่ต่อเครื่องอ่านจริง', to:[['a3']] },
   { id:'a3', t:'ค้นประวัติผู้ป่วย (HN)', type:'action', lane:'his', mock:'ยังไม่ต่อ HIS จริง ใช้ข้อมูลจำลอง', to:[['a4']] },
   { id:'a4', t:'พบประวัติ?', type:'dec', lane:'his', to:[['a5','พบ'],['a6','ไม่พบ / ต่างชาติ']] },
@@ -624,7 +635,9 @@ const PF = {
     { id:'b1', t:'เลือกรับบริการเพื่อใคร (04)', type:'action', lane:'cust', to:[['b2']] },
     { id:'b2', t:'ถ่ายภาพใบหน้า (MediaPipe ตรวจหน้าในกรอบ)', type:'action', lane:'dev', mock:'ตรวจแค่ใบหน้าอยู่ในกรอบ ยังไม่ส่งภาพไปเทียบตัวตน', to:[['b3']] },
     { id:'b3', t:'ตรวจนัดวันนี้ + สิทธิ์การรักษา', type:'action', lane:'his', mock:'ข้อมูลนัด/สิทธิ์จำลอง', to:[['b4']] },
-    { id:'b4', t:'ยืนยันข้อมูล + สิทธิ์ (07/08)', type:'action', lane:'kiosk', to:[['b5']] },
+    { id:'b4', t:'ยืนยันข้อมูล + สิทธิ์ (07/08)', type:'action', lane:'kiosk', to:[['bS']] },
+    { id:'bS', t:'ผู้ชำระเงินเอง?', type:'dec', lane:'his', to:[['b5','มีสิทธิ์'],['bP','ชำระเอง']] },
+    { id:'bP', t:'ชำระเงินก่อนออกคิว', type:'option', lane:'ext', same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: ตอนนี้ออกคิวได้โดยไม่ต้องจ่ายก่อน', to:[['b5','ชำระแล้ว']] },
     { id:'b5', t:'ออกคิว + เปิด VN', type:'action', lane:'his', q:1, note:'กติกาใหม่จาก bma.health: เลขคิว 2 แบบ — คิวคัดแยกเป็นเลขลำดับ (1, 2, 3…) ส่วนจุดบริการอื่นเป็นตัวอักษร+เลข (A001) · ตู้ต้องแสดง/พิมพ์ให้ถูกแบบ', to:[['b6']] },
     { id:'b6', t:'พิมพ์บัตรคิว (13)', type:'action', lane:'dev', to:[['b7']] },
     { id:'b7', t:'ไปจุดคัดแยก / จุดบริการตามคิว', type:'target', lane:'staff', to:[['z']] },
@@ -694,8 +707,8 @@ function render() {
     svg += `<g class="${hot?'hot':''}"><path d="${d}"/><path class="ah${hot?' hot':''}" d="${ah}"/>${lab?`<text x="${(x1+ex)/2}" y="${(y1+ey)/2-6}" text-anchor="middle">${esc(lab)}</text>`:''}</g>`; }));
   svg += '</svg>';
   html += svg;
-  flow.forEach((n) => { const p=P[n.id]; const cls = (n.type==='target' ? 'action target' : n.type) + (n.mock?' mock':'') + (n.q?' q':'');
-    html += `<button type="button" class="uf-node ${cls}${active===n.id?' is-active':''}" data-id="${n.id}" style="left:${p.cx-p.w/2}px;top:${p.cy-p.h/2}px;width:${p.w}px;height:${p.h}px"><span class="lbl">${n.s?`<span class="tag">${esc(n.s.split('-')[0])}</span>`:''}${esc(n.t)}${n.mock?'<span class="mk">MOCK</span>':''}</span></button>`; });
+  flow.forEach((n) => { const p=P[n.id]; const cls = (n.type==='target' ? 'action target' : n.type) + (n.mock?' mock':'') + (n.gap?' gap':'') + (n.q?' q':'');
+    html += `<button type="button" class="uf-node ${cls}${active===n.id?' is-active':''}" data-id="${n.id}" style="left:${p.cx-p.w/2}px;top:${p.cy-p.h/2}px;width:${p.w}px;height:${p.h}px"><span class="lbl">${n.s?`<span class="tag">${esc(n.s.split('-')[0])}</span>`:''}${esc(n.t)}${n.gap?'<span class="mk">มติ 26 ต.ค. · ยังไม่มีในโค้ด</span>':n.mock?'<span class="mk">MOCK</span>':''}</span></button>`; });
   box.innerHTML = html + '</div>';
   document.getElementById('clinic-sum').innerHTML = `<p class="lede" style="margin:0"><b>flow=${cat}</b> · ${esc(f.sum)}</p>`;
   pick.querySelectorAll('button').forEach((b)=>b.setAttribute('aria-pressed', b.dataset.c===cat));
@@ -709,7 +722,7 @@ function openDetail(n) {
   const pg = PAGES.find((p)=>p[0]===n.s); const LANES = view==='pf' ? PF_LANES : LANES0; const cur = view==='pf' ? PF[cat] : FLOWS[cat].flow;
   detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[n.type]}</span><h3>${esc(n.t)}</h3></div><button class="x" onclick="active=null;detail.classList.remove('open');render()"><span class="material-symbols-outlined">close</span></button></div>
   <dl class="kv"><dt>เลน</dt><dd>${LANES.find(l=>l.k===n.lane).t}</dd>${n.s?`<dt>slug</dt><dd><code>/${esc(n.s)}</code></dd>`:''}${pg?`<dt>หน้าในโค้ด</dt><dd>${esc(pg[1])}</dd><dt>กลุ่ม</dt><dd>${esc(pg[2])}</dd>`:''}
-  ${n.mock?`<dt>MOCK</dt><dd>${esc(n.mock)}</dd>`:''}${n.note?`<dt>หมายเหตุ</dt><dd>${esc(n.note)}</dd>`:''}${(n.to||[]).length?`<dt>ไปต่อ</dt><dd>${n.to.map(([t,l])=>esc((l?l+' → ':'')+(cur.find(x=>x.id===t)||{}).t)).join('<br>')}</dd>`:''}</dl>`;
+  ${n.mock?`<dt>${n.gap?'ช่องว่าง':'MOCK'}</dt><dd>${esc(n.mock)}</dd>`:''}${n.note?`<dt>หมายเหตุ</dt><dd>${esc(n.note)}</dd>`:''}${(n.to||[]).length?`<dt>ไปต่อ</dt><dd>${n.to.map(([t,l])=>esc((l?l+' → ':'')+(cur.find(x=>x.id===t)||{}).t)).join('<br>')}</dd>`:''}</dl>`;
   detail.classList.add('open');
 }
 function readHash() { const h = new URLSearchParams(location.hash.slice(1)); if (FLOWS[h.get('c')]) cat = h.get('c'); if (['uf','bp','pf'].includes(h.get('v'))) view = h.get('v'); }
