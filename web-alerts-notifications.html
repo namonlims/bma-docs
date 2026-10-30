@@ -34,7 +34,7 @@
   table { border-collapse: collapse; width: 100%; font-size: 12px; }
   th, td { border-bottom: 1px solid #EEF1F3; padding: 6px 8px; text-align: left; vertical-align: top; }
   th { background: #F7F9FA; position: sticky; top: 0; white-space: nowrap; }
-  td.msg { min-width: 260px; } td.miss { min-width: 200px; color: #8A4B00; }
+  td.msg { min-width: 260px; } td.miss { min-width: 200px; color: #8A4B00; } td.rcp { min-width: 180px; }
   .pill { display: inline-block; padding: 0 6px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
   .s-mock { background: #FFF4D6; } .s-missing { background: #FDE2E1; } .s-real { background: #DDF3E8; }
   .v-block { background: #FDE2E1; } .v-warn { background: #FFF4D6; } .v-info { background: #E3EEFB; }
@@ -107,7 +107,7 @@
       var r = rows.filter(function (i) { return i.type === t; });
       $('c-' + t).textContent = '(' + r.length + ' ข้อ)';
       $('t-' + t).innerHTML = '<thead><tr>' + COLS.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>' +
-        r.map(function (i) { return '<tr>' + COLS.map(function (c) { return '<td class="' + (c[0] === 'message' ? 'msg' : c[0] === 'missing' ? 'miss' : '') + '">' + cell(i, c[0]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+        r.map(function (i) { return '<tr>' + COLS.map(function (c) { return '<td class="' + (c[0] === 'message' ? 'msg' : c[0] === 'missing' ? 'miss' : c[0] === 'recipient' ? 'rcp' : '') + '">' + cell(i, c[0]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
     });
   }
   $('csv').onclick = function () {
