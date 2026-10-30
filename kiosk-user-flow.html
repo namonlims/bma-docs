@@ -373,6 +373,9 @@
   .uf-node.cust { background: var(--surface-colorfulbadge-blue, #DBEAFE); border-color: var(--text-colorfulbadge-blue, #1D4ED8); color: var(--text-colorfulbadge-blue, #1D4ED8); }
 
   /* Service Design: เลน */
+  .uf-node.mock { border-style: dashed; border-color: var(--icon-warning-tertiary, #EA580C); }
+  .uf-node .mk { font-size: var(--type-size-xxs, 10px); font-weight: 700; color: var(--icon-warning-tertiary, #EA580C); }
+  .uf-node.q { box-shadow: 0 0 0 var(--dim-space-100, 4px) #DBEAFE; }
   .lane { position: absolute; left: 0; border-top: var(--dim-stroke-150, 1.5px) dashed var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-neutral-quaternary, #F9FBFB); }
   .lane.lane-cust, .lane.lane-back { background: var(--surface-card-100, #FFFFFF); }
   .lane-l {
@@ -475,6 +478,7 @@
       <div class="seg" id="view-seg" role="group">
         <button type="button" data-view="uf" aria-pressed="true"><span class="material-symbols-outlined">account_tree</span>User flow</button>
         <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined">view_agenda</span>Service Design</button>
+        <button type="button" data-view="pf" aria-pressed="false"><span class="material-symbols-outlined">view_week</span>Process flow</button>
       </div>
       <span class="hint"><span class="material-symbols-outlined">swipe</span><span id="view-hint"></span></span>
     </div>
@@ -531,7 +535,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'
 const COLW = 200, ROWH = 130, PAD = 28, LANEW = 150;
 const SIZE = { start:[140,56], action:[160,72], option:[140,60], dec:[124,124], target:[160,72] };
 const KIND = { start:'เริ่ม / จบ', action:'หน้าจอ Kiosk', option:'ผิดพลาด / ทางเลือก', dec:'เงื่อนไข', target:'ส่งต่อเจ้าหน้าที่' };
-const LANES = [
+const LANES0 = [
   { k:'cust', t:'ผู้รับบริการ', d:'ทำอะไรที่ตู้', b:'b-blue' },
   { k:'kiosk', t:'หน้าจอ Kiosk', d:'สิ่งที่เห็นบนจอ', b:'b-green' },
   { k:'staff', t:'เจ้าหน้าที่', d:'เวชระเบียน · คัดแยก', b:'b-orange' },
@@ -596,6 +600,65 @@ const FLOWS = {
       { id:'p16', t:'ยืนยันปิดสิทธิ', s:'16-close-rights-confirm', type:'action', lane:'cust', to:[['p16b']] },
       ...END('16b-close-rights-success','ปิดสิทธิสำเร็จ')] },
 };
+
+/* ---------- Process flow (Swimlane ตามผู้ทำงาน/ระบบ) ---------- */
+const PF_LANES = [
+  { k:'cust', t:'ผู้รับบริการ', d:'ผู้ป่วย / ญาติ', b:'b-blue' },
+  { k:'kiosk', t:'ตู้ Kiosk', d:'แอปหน้าจอ (bma.kiosk)', b:'b-green' },
+  { k:'dev', t:'อุปกรณ์ตู้', d:'เครื่องอ่านบัตร · กล้อง · เครื่องพิมพ์', b:'b-teal' },
+  { k:'his', t:'HIS / HCIS', d:'เวชระเบียน · นัด · คิว · VN · บิล', b:'b-grey' },
+  { k:'ext', t:'ระบบภายนอก', d:'สปสช. · ThaID · ช่องทางชำระเงิน', b:'b-purple' },
+  { k:'staff', t:'เจ้าหน้าที่', d:'เวชระเบียน · คัดแยก · การเงิน · ห้องยา', b:'b-orange' },
+];
+const PF_ID = [
+  { id:'a1', t:'เดินมาที่ตู้ เสียบบัตร ปชช. / กดเลข 13 หลัก', type:'start', lane:'cust', to:[['a2']] },
+  { id:'a2', t:'อ่านบัตรประชาชน', type:'action', lane:'dev', mock:'ใช้เลขบัตรคงที่ MOCK_CARD_READER_NATIONAL_ID ยังไม่ต่อเครื่องอ่านจริง', to:[['a3']] },
+  { id:'a3', t:'ค้นประวัติผู้ป่วย (HN)', type:'action', lane:'his', mock:'ยังไม่ต่อ HIS จริง ใช้ข้อมูลจำลอง', to:[['a4']] },
+  { id:'a4', t:'พบประวัติ?', type:'dec', lane:'his', to:[['a5','พบ'],['a6','ไม่พบ / ต่างชาติ']] },
+  { id:'a6', t:'ลงทะเบียนผู้ป่วยใหม่ / เวชระเบียน', type:'target', lane:'staff', same:1 },
+];
+const PF_SEL = (to) => ({ id:'a5', t:'เลือกบริการ (01)', type:'action', lane:'cust', to:[[to]] });
+const PF_END = (t) => ({ id:'z', t, type:'start', lane:'cust' });
+const PF = {
+  reception: [...PF_ID, PF_SEL('b1'),
+    { id:'b1', t:'เลือกรับบริการเพื่อใคร (04)', type:'action', lane:'cust', to:[['b2']] },
+    { id:'b2', t:'ถ่ายภาพใบหน้า (MediaPipe ตรวจหน้าในกรอบ)', type:'action', lane:'dev', mock:'ตรวจแค่ใบหน้าอยู่ในกรอบ ยังไม่ส่งภาพไปเทียบตัวตน', to:[['b3']] },
+    { id:'b3', t:'ตรวจนัดวันนี้ + สิทธิ์การรักษา', type:'action', lane:'his', mock:'ข้อมูลนัด/สิทธิ์จำลอง', to:[['b4']] },
+    { id:'b4', t:'ยืนยันข้อมูล + สิทธิ์ (07/08)', type:'action', lane:'kiosk', to:[['b5']] },
+    { id:'b5', t:'ออกคิว + เปิด VN', type:'action', lane:'his', q:1, note:'กติกาใหม่จาก bma.health: เลขคิว 2 แบบ — คิวคัดแยกเป็นเลขลำดับ (1, 2, 3…) ส่วนจุดบริการอื่นเป็นตัวอักษร+เลข (A001) · ตู้ต้องแสดง/พิมพ์ให้ถูกแบบ', to:[['b6']] },
+    { id:'b6', t:'พิมพ์บัตรคิว (13)', type:'action', lane:'dev', to:[['b7']] },
+    { id:'b7', t:'ไปจุดคัดแยก / จุดบริการตามคิว', type:'target', lane:'staff', to:[['z']] },
+    PF_END('รับบัตรคิว ไปรอเรียก')],
+  appointment: [...PF_ID, PF_SEL('c1'),
+    { id:'c1', t:'ดึงนัดหมาย', type:'action', lane:'his', mock:'ข้อมูลนัดจำลอง', to:[['c2']] },
+    { id:'c2', t:'แสดงข้อมูลนัด (07)', type:'action', lane:'kiosk', to:[['z']] },
+    PF_END('ตรวจสอบนัดหมายสำเร็จ (15d)')],
+  entitlement: [...PF_ID, PF_SEL('d1'),
+    { id:'d1', t:'เลือกสิทธิ์ตนเอง / บุตร', type:'dec', lane:'cust', to:[['d2']] },
+    { id:'d2', t:'ตรวจสิทธิ์การรักษา', type:'action', lane:'ext', mock:'ยังไม่เรียก สปสช. จริง แสดงสิทธิ์จำลอง', to:[['d3']] },
+    { id:'d3', t:'แสดงรายละเอียดสิทธิ์ (08/08b)', type:'action', lane:'kiosk', to:[['z']] },
+    PF_END('ตรวจสอบสิทธิสำเร็จ (15e) · ต่างชาติไม่มีเมนูนี้')],
+  payment: [...PF_ID, PF_SEL('e1'),
+    { id:'e1', t:'รวมยอดค่าบริการทุกจุดของวันนี้', type:'action', lane:'his', q:1, mock:'ยอดในบิลเขียนตายตัวในโค้ด ยังไม่มีระบบลูกหนี้/เจ้าหนี้', note:'กติกาใหม่จาก bma.health: ใช้หลายบริการในวันเดียว จ่ายครั้งเดียว — ตู้ต้องดึงยอดรวมทุกจุด', to:[['e2']] },
+    { id:'e2', t:'สรุปยอดชำระ (09)', type:'action', lane:'kiosk', to:[['e3']] },
+    { id:'e3', t:'เลือก QR PromptPay / บัตรเครดิต (10–11b)', type:'action', lane:'cust', to:[['e4']] },
+    { id:'e4', t:'ตรวจสอบการชำระเงิน', type:'action', lane:'ext', mock:'ยังไม่ต่อช่องทางชำระเงินจริง', to:[['e5']] },
+    { id:'e5', t:'ชำระสำเร็จ?', type:'dec', lane:'kiosk', to:[['e6','สำเร็จ'],['e7','ไม่สำเร็จ']] },
+    { id:'e7', t:'ติดต่อการเงิน', type:'target', lane:'staff', same:1 },
+    { id:'e6', t:'บันทึกรับชำระ + พิมพ์ใบเสร็จ', type:'action', lane:'dev', mock:'receiptDownload.ts = mock download ไม่มี backend', to:[['e8']] },
+    { id:'e8', t:'มียา → ไปห้องยา', type:'target', lane:'staff', to:[['z']] },
+    PF_END('ขอบคุณ (15b/15c)')],
+  reprint: [PF_ID[0], {...PF_ID[1], to:[['f1']]},
+    { id:'f1', t:'ดึงคิวเดิมของวันนี้', type:'action', lane:'his', mock:'ข้อมูลคิวจำลอง', note:'คิวที่พิมพ์ซ้ำต้องคงรูปแบบเดิม (เลขลำดับ หรือ A001)', q:1, to:[['f2']] },
+    { id:'f2', t:'ผลคิว (13)', type:'action', lane:'kiosk', to:[['f3']] },
+    { id:'f3', t:'พิมพ์บัตรคิวซ้ำ', type:'action', lane:'dev', to:[['z']] },
+    PF_END('พิมพ์บัตรคิวสำเร็จ (15f)')],
+  closeRights: [...PF_ID, PF_SEL('g1'),
+    { id:'g1', t:'ยืนยันปิดสิทธิ (16)', type:'action', lane:'cust', to:[['g2']] },
+    { id:'g2', t:'ส่งปิดสิทธิ สปสช.', type:'action', lane:'ext', mock:'UI อย่างเดียว: รอ 2.2 วินาที แล้วสุ่มเลข NHCO-… ยังไม่ต่อ สปสช.', to:[['g3']] },
+    { id:'g3', t:'แสดงเลขอ้างอิง', type:'action', lane:'kiosk', to:[['z']] },
+    PF_END('ปิดสิทธิสำเร็จ (16b)')],
+};
 let cat = 'reception', view = 'uf', active = null;
 const box = document.getElementById('chart-main'), pick = document.getElementById('clinic-pick'), detail = document.getElementById('detail');
 pick.innerHTML = Object.entries(FLOWS).map(([k,f]) => `<button type="button" data-c="${k}"><span class="material-symbols-outlined">${f.ic}</span> ${esc(f.n)}</button>`).join('');
@@ -605,8 +668,8 @@ function layout(flow) {
   return pos;
 }
 function render() {
-  const f = FLOWS[cat]; const flow = f.flow; const idx = Object.fromEntries(flow.map((n)=>[n.id,n]));
-  const pos = layout(flow); const bp = view === 'bp';
+  const f = FLOWS[cat]; const pfv = view === 'pf'; const flow = pfv ? PF[cat] : f.flow; const LANES = pfv ? PF_LANES : LANES0; const idx = Object.fromEntries(flow.map((n)=>[n.id,n]));
+  const pos = layout(flow); const bp = view !== 'uf';
   const laneIdx = Object.fromEntries(LANES.map((l,i)=>[l.k,i]));
   const P = {}; const stack = {}; const k = {};
   if (bp) flow.forEach((n)=>{ const key=n.lane+':'+pos[n.id].col; k[n.id]=stack[key]=(stack[key]||0)+1; });
@@ -631,25 +694,25 @@ function render() {
     svg += `<g class="${hot?'hot':''}"><path d="${d}"/><path class="ah${hot?' hot':''}" d="${ah}"/>${lab?`<text x="${(x1+ex)/2}" y="${(y1+ey)/2-6}" text-anchor="middle">${esc(lab)}</text>`:''}</g>`; }));
   svg += '</svg>';
   html += svg;
-  flow.forEach((n) => { const p=P[n.id]; const cls = n.type==='target' ? 'action target' : n.type;
-    html += `<button type="button" class="uf-node ${cls}${active===n.id?' is-active':''}" data-id="${n.id}" style="left:${p.cx-p.w/2}px;top:${p.cy-p.h/2}px;width:${p.w}px;height:${p.h}px"><span class="lbl">${n.s?`<span class="tag">${esc(n.s.split('-')[0])}</span>`:''}${esc(n.t)}</span></button>`; });
+  flow.forEach((n) => { const p=P[n.id]; const cls = (n.type==='target' ? 'action target' : n.type) + (n.mock?' mock':'') + (n.q?' q':'');
+    html += `<button type="button" class="uf-node ${cls}${active===n.id?' is-active':''}" data-id="${n.id}" style="left:${p.cx-p.w/2}px;top:${p.cy-p.h/2}px;width:${p.w}px;height:${p.h}px"><span class="lbl">${n.s?`<span class="tag">${esc(n.s.split('-')[0])}</span>`:''}${esc(n.t)}${n.mock?'<span class="mk">MOCK</span>':''}</span></button>`; });
   box.innerHTML = html + '</div>';
   document.getElementById('clinic-sum').innerHTML = `<p class="lede" style="margin:0"><b>flow=${cat}</b> · ${esc(f.sum)}</p>`;
   pick.querySelectorAll('button').forEach((b)=>b.setAttribute('aria-pressed', b.dataset.c===cat));
   document.querySelectorAll('#view-seg button').forEach((b)=>b.setAttribute('aria-pressed', b.dataset.view===view));
-  document.getElementById('view-hint').textContent = bp ? 'แบ่งเลน: ผู้รับบริการ · หน้าจอ · เจ้าหน้าที่ · ระบบ' : 'เลื่อนซ้าย-ขวาเพื่อดูทั้งเส้นทาง';
+  document.getElementById('view-hint').textContent = pfv ? 'Process flow: แบ่งเลนตามผู้ทำงาน/ระบบ · กรอบประส้ม = MOCK ยังไม่ต่อระบบจริง · กรอบฟ้า = กติกาคิว/ชำระเงินใหม่' : bp ? 'แบ่งเลน: ผู้รับบริการ · หน้าจอ · เจ้าหน้าที่ · ระบบ' : 'เลื่อนซ้าย-ขวาเพื่อดูทั้งเส้นทาง';
   box.querySelectorAll('.uf-node').forEach((el)=>el.onclick=()=>openDetail(idx[el.dataset.id]));
 }
 function openDetail(n) {
   active = active===n.id ? null : n.id; render();
   if (!active) { detail.classList.remove('open'); return; }
-  const pg = PAGES.find((p)=>p[0]===n.s);
+  const pg = PAGES.find((p)=>p[0]===n.s); const LANES = view==='pf' ? PF_LANES : LANES0; const cur = view==='pf' ? PF[cat] : FLOWS[cat].flow;
   detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[n.type]}</span><h3>${esc(n.t)}</h3></div><button class="x" onclick="active=null;detail.classList.remove('open');render()"><span class="material-symbols-outlined">close</span></button></div>
   <dl class="kv"><dt>เลน</dt><dd>${LANES.find(l=>l.k===n.lane).t}</dd>${n.s?`<dt>slug</dt><dd><code>/${esc(n.s)}</code></dd>`:''}${pg?`<dt>หน้าในโค้ด</dt><dd>${esc(pg[1])}</dd><dt>กลุ่ม</dt><dd>${esc(pg[2])}</dd>`:''}
-  ${(n.to||[]).length?`<dt>ไปต่อ</dt><dd>${n.to.map(([t,l])=>esc((l?l+' → ':'')+(FLOWS[cat].flow.find(x=>x.id===t)||{}).t)).join('<br>')}</dd>`:''}</dl>`;
+  ${n.mock?`<dt>MOCK</dt><dd>${esc(n.mock)}</dd>`:''}${n.note?`<dt>หมายเหตุ</dt><dd>${esc(n.note)}</dd>`:''}${(n.to||[]).length?`<dt>ไปต่อ</dt><dd>${n.to.map(([t,l])=>esc((l?l+' → ':'')+(cur.find(x=>x.id===t)||{}).t)).join('<br>')}</dd>`:''}</dl>`;
   detail.classList.add('open');
 }
-function readHash() { const h = new URLSearchParams(location.hash.slice(1)); if (FLOWS[h.get('c')]) cat = h.get('c'); if (['uf','bp'].includes(h.get('v'))) view = h.get('v'); }
+function readHash() { const h = new URLSearchParams(location.hash.slice(1)); if (FLOWS[h.get('c')]) cat = h.get('c'); if (['uf','bp','pf'].includes(h.get('v'))) view = h.get('v'); }
 function writeHash() { history.replaceState(null,'',`#c=${cat}&v=${view}`); }
 pick.onclick = (e) => { const b=e.target.closest('button'); if (!b) return; cat=b.dataset.c; active=null; detail.classList.remove('open'); writeHash(); render(); };
 document.getElementById('view-seg').onclick = (e) => { const b=e.target.closest('button'); if (!b) return; view=b.dataset.view; writeHash(); render(); };
