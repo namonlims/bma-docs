@@ -4,7 +4,7 @@
    node: { id, type: start|action|dec|option, t, n?, row? (1 = เส้นหลัก · 0 บน · 2,3 ล่าง),
            same? (คอลัมน์เดียวกับขั้นก่อน), lane? (Service Design: cust|front|back|sys · ไม่ใส่ = เดาจากบทบาท), cust? (ผู้รับบริการทำอะไรที่จุดนี้), role?, route?, sum?, info?, final?, groups?, target?, unknown? }
    edge: [from, to, label?, mode?] · mode: over (เส้นบน ข้ามขั้น) · back (ย้อนกลับ เส้นล่าง)
-   ที่มา: docs/flow-spec-draft.md · .claude/rules/* · memory · Kaebrain · โค้ดเดโม (17 ต.ค. 69) · การเงิน/ส่งเบิกตามมติ คทง.8 (18 ต.ค. 69) · sync bma.health main f96cbe11 (30 ต.ค. 69)
+   ที่มา: docs/flow-spec-draft.md · .claude/rules/* · memory · Kaebrain · โค้ดเดโม (17 ต.ค. 69) · การเงิน/ส่งเบิกตามมติ คทง.8 (18 ต.ค. 69) · sync bma.health main 509da29e (31 ต.ค. 69)
    ════════════════════════════════════════════════════════════════ */
 
 const DEMO = 'https://bma-health.mih.co.th';
@@ -69,6 +69,7 @@ function postVisit(p, { exit = true, poolId, exitNote, doctorId } = {}) {
     ...(exit ? [{ id: p + 'x', same: true, t: 'พยาบาลหลังตรวจ', target: true, role: 'พยาบาลหลังตรวจ', route: '/exit',
       sum: 'ตรวจสอบคำสั่งยา/หัตถการจาก CPOE ให้คำแนะนำ ออกเอกสาร · ส่งข้อมูลหลังบ้านไปห้องจัดยา + ห้องหัตถการ', final: '"บันทึกและส่งต่อ" (ป๊อปอัปตั้งต้นตามที่แพทย์เลือก แก้ได้)',
       groups: [{ h: 'ขั้น', list: ['[สถานะความยินยอม — ไม่มีสำหรับ OPD · แผนไทย · เบาหวาน · ความดัน]', 'ตรวจร่างกายและวินิจฉัย', 'สั่งการรักษา (CPOE)', 'เอกสาร/ใบรับรองแพทย์'] },
+               { h: 'แก้ได้ (ผู้ใช้ 30 ต.ค. 69)', list: ['การวินิจฉัย ICD-10 (แก้ได้เสมอ)', 'การนัดหมาย', 'รายการส่งต่อ'] },
                ...(exitNote ? [{ h: 'คลินิกนี้', list: [exitNote] }] : []),
                { h: 'สถานะ', html: '<span class="badge b-orange">รอส่งกลับ</span> → <span class="badge b-blue">กำลังส่งกลับ</span> → <span class="badge b-teal">ส่งต่อแล้ว</span>' }] }] : []),
     { id: p + 'hr', type: 'option', row: 2, same: true, t: 'ส่งต่อภายนอกสำนักอนามัย', sum: 'โรงพยาบาล + ใบส่งตัว · ความยินยอม Health Link · การเงินปิดสิทธิก่อน', link: ['ดู §3', '#consult-refer'] },
