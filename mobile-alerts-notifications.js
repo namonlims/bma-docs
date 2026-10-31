@@ -1,8 +1,8 @@
-/* Alert & Notification register — mobile (bma.mobile) · สร้างจากโค้ด origin/main d90fea3 · ยังไม่ได้ทดสอบจริง · หน้า flow ของ mobile ยังไม่เผยแพร่ */
+/* Alert & Notification register — mobile (bma.mobile) · สร้างจากโค้ด origin/main 1924cc9 · ยังไม่ได้ทดสอบจริง · หน้า flow ของ mobile ยังไม่เผยแพร่ */
 window.ALERTS_NOTIFICATIONS = {
  "product": "mobile",
- "updated": "2026-10-30",
- "source": "namonlims/bma.mobile@d90fea3",
+ "updated": "2026-10-31",
+ "source": "namonlims/bma.mobile@1924cc9",
  "items": [
   {
    "id": "MOB-ALR-001",
@@ -1147,18 +1147,18 @@ window.ALERTS_NOTIFICATIONS = {
    "id": "MOB-NTF-001",
    "module": "คิว (features/queue, notifications)",
    "type": "notification",
-   "name": "อีก n คิวถึงคิวของคุณ",
-   "message": "อีก ${q.waitingAhead} คิวถึงคิวของคุณ — คิว ${q.code} · ${q.service} — เตรียมตัวและรอใกล้จุดบริการ แตะเพื่อดูใบคิว",
-   "trigger": "ใบคิววันนี้เหลือ ≤2 คิว (QUEUE_ALERT_AHEAD=2)",
+   "name": "อีก 5 / 3 คิวถึงคิวของคุณ",
+   "message": "อีก ${n} คิวถึงคิวของคุณ (n = 5, 3) — คิว ${q.code} · ${q.service} — เตรียมตัวและรอใกล้จุดบริการ แตะเพื่อดูใบคิว",
+   "trigger": "ใบคิวเข้าตรวจ (ตู้กดคิว) วันนี้เหลือ 5 และ 3 คิว (QUEUE_ALERT_STEPS=[5,3]) · ครั้งละ 1 แถวต่อขั้น ไม่ซ้ำ · คิวตู้ชำระเงินไม่แจ้ง",
    "recipient": "ผู้ป่วย (ผู้ใช้แอป)",
    "channel": "in-app (กระดิ่ง)",
    "severity": "info",
    "flow": "#c=queue&v=uf",
    "status": "mock",
-   "source": "src/features/home/pages/MobileNotificationsPage.jsx:215",
+   "source": "src/features/home/pages/MobileNotificationsPage.jsx:223",
    "missing": "ไม่มี push/เสียง; ไม่แจ้งเวลารอโดยประมาณ",
    "ba": "pending",
-   "note": "รายการสร้างฝั่งแอป/ข้อมูลตัวอย่าง ไม่มี push จริง (registerPush ไม่ถูกเรียก)"
+   "note": "รายการสร้างฝั่งแอป/ข้อมูลตัวอย่าง ไม่มี push จริง (registerPush ไม่ถูกเรียก) · ขั้นที่ผ่านแล้วค้างในรายการ (ก่อนหน้านี้/อ่านแล้ว) เรียงใหม่สุดก่อน"
   },
   {
    "id": "MOB-NTF-002",
@@ -1166,16 +1166,16 @@ window.ALERTS_NOTIFICATIONS = {
    "type": "notification",
    "name": "ถึงคิวของคุณแล้ว (เรียกคิว)",
    "message": "ถึงคิวของคุณแล้ว — คิว ${q.code} · ${q.service} กำลังเรียก — กรุณาไปที่ ${q.next} · แตะเพื่อดูใบคิว",
-   "trigger": "สถานะคิว = calling",
+   "trigger": "สถานะคิว = calling · เฉพาะคิวเข้าตรวจจากตู้กดคิว (ไม่แจ้งคิวตู้ชำระเงิน)",
    "recipient": "ผู้ป่วย (ผู้ใช้แอป)",
    "channel": "in-app (กระดิ่ง)",
    "severity": "warn",
    "flow": "#c=queue&v=uf",
    "status": "mock",
-   "source": "src/features/home/pages/MobileNotificationsPage.jsx:192",
+   "source": "src/features/home/pages/MobileNotificationsPage.jsx:209",
    "missing": "ไม่มี push/SMS/เสียงเมื่อแอปปิดอยู่",
    "ba": "pending",
-   "note": "รายการสร้างฝั่งแอป/ข้อมูลตัวอย่าง ไม่มี push จริง (registerPush ไม่ถูกเรียก)"
+   "note": "รายการสร้างฝั่งแอป/ข้อมูลตัวอย่าง ไม่มี push จริง (registerPush ไม่ถูกเรียก) · ครั้งที่ 3 ของชุดแจ้งเตือนคิว (5 · 3 · ถึงคิว)"
   },
   {
    "id": "MOB-NTF-003",
