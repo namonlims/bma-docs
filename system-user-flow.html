@@ -519,6 +519,7 @@
             <dt>นัด OPD</dt><dd>ไม่มีตรวจอื่นเพิ่ม → คิวคลินิก (A001, C001) → คัดกรองกลาง</dd>
             <dt>นัดคลินิกพิเศษ</dt><dd>ทันตกรรม · ยาเสพติด → คัดกรองคลินิกพิเศษ</dd>
             <dt>นัดทำหัตถการ</dt><dd>เปิด VN → ห้องหัตถการ</dd>
+            <dt>นัดผ่านแอป</dt><dd>มาศูนย์ครั้งแรกหลังสมัครแอป → เวชระเบียนยืนยันตัวตน · รายเก่า → คลินิกที่นัดเลย</dd>
             <dt>Kiosk พัง</dt><dd>คัดแยก เพิ่มคิวต่อแถว + เปิด VN → แยกตามนัดเหมือนเดิม</dd>
           </dl>
         </div>
@@ -571,6 +572,7 @@
           <span class="grp-h">ตัดสินใจแล้ว</span>
           <dl class="kv">
             <dt>มีนัดหมาย</dt><dd>ข้ามคัดแยก ไปจุดที่นัดเลย</dd>
+            <dt>นัดผ่านแอป</dt><dd>ครั้งแรก → ยืนยันตัวตนที่เวชระเบียน · รายเก่า → คลินิกเลย (2 พ.ย. 69)</dd>
             <dt>VN เปิดที่คัดแยก</dt><dd>เฉพาะกรณี Kiosk พัง</dd>
             <dt>เลขคิว</dt><dd>คัดแยก = เลขลำดับล้วน · คลินิก / เวชระเบียน / จุดอื่น = ตัวอักษร+เลข (28 ต.ค. 69)</dd>
             <dt>พยาบาลหลังตรวจแก้ได้</dt><dd>ICD-10 · การนัดหมาย · ปลายทาง "ส่งไปยัง" · สุขศึกษา/คำแนะนำ — การตรวจร่างกายและยา/CPOE ดูอย่างเดียว ทุกคลินิก (1 พ.ย. 69 แทน 30 ต.ค. 69)</dd>
@@ -1058,7 +1060,7 @@ function render() {
   const seen = new Set(); const list = [];
   const all = [...clinic.edges];
   clinic.flow.forEach((g) => (g.edges || []).forEach((e) => all.push(e)));
-  all.forEach(([a, b, label, mode]) => {
+  all.forEach(([a, b, label, mode, at]) => {
     const s = visible(a, pos, true), t = visible(b, pos, false);
     if (!s || !t || s === t) return;
     const k = s + '>' + t; if (seen.has(k)) return; seen.add(k);
@@ -1068,7 +1070,7 @@ function render() {
     if (!m && skip) m = 'over';
     if (!m && pos[t].col < pos[s].col) m = 'back';
     if (!m && pos[t].col === pos[s].col && pos[t].row !== pos[s].row) m = pos[t].row > pos[s].row ? 'down' : 'up';
-    list.push({ s, t, label: mapped && m !== 'over' ? '' : (label || ''), mode: m });
+    list.push({ s, t, label: mapped && m !== 'over' ? '' : (label || ''), mode: m, at });
   });
   extra.forEach((e) => { const k = e.s + '>' + e.t; if (seen.has(k)) return; seen.add(k); list.push(e); });
   const backs = list.filter((e) => e.mode === 'back').length;
@@ -1112,8 +1114,10 @@ function render() {
   const lsvg = document.createElementNS(NS, 'svg');
   lsvg.setAttribute('class', 'uf-edges uf-labels');
   lsvg.setAttribute('width', W); lsvg.setAttribute('height', H); lsvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const overSeen = {};                                  /* เส้นข้ามขั้นเส้นที่ 2+ จากกล่องเดียวกัน → ป้ายไปอยู่ฝั่งปลายทาง ไม่ทับกัน */
   edgeEls = list.map((e) => {
     const { s, t } = e; const [sw, sh] = half(s), [tw, th] = half(t);
+    const overN = e.mode === 'over' ? (e.at === 'end' ? 2 : (overSeen[s] = (overSeen[s] || 0) + 1)) : 0;
     let pts, lx, ly, anchor = 'middle';
     if (e.mode === 'over') {
       if (lm || bands.some((b) => pos[t].col >= b.c0 && pos[t].col <= b.c1)) {
@@ -1121,12 +1125,15 @@ function render() {
         const lane = lm ? PAD + TOP - 14 : Math.max(8, rowTop(s) - 6), xs = cx(s) + sw + 14, xg = cx(t) - tw - 16;
         pts = [[cx(s) + sw, cy(s)], [xs, cy(s)], [xs, lane], [xg, lane], [xg, cy(t)], [cx(t) - tw - 2, cy(t)]];
         lx = xs + 14; ly = lane;
+        if (e.at === 'end') { lx = xg; ly = (lane + cy(t)) / 2; anchor = 'end-v'; }   /* ป้ายบนเส้นแนวตั้งที่ลงเข้าปลายทาง */
+        else if (overN > 1) { lx = xg - 14; anchor = 'end'; }
       } else {
         const lane = Math.max(8, (bandTop(s) ?? rowTop(s)) - 6);
         pts = [[cx(s), cy(s) - sh], [cx(s), lane], [cx(t), lane], [cx(t), cy(t) - th - 2]];
         lx = cx(s) + 14; ly = lane;
+        if (overN > 1) { lx = cx(t) - 14; anchor = 'end'; }
       }
-      anchor = 'start';
+      if (anchor === 'end-v') anchor = 'middle'; else if (anchor !== 'end') anchor = 'start';
     } else if (e.mode === 'back') {
       backN++;
       const lane = PAD + TOP + bodyH + 8 + backN * 16;
@@ -1592,13 +1599,14 @@ const COND = [
     ['คนไข้ใหม่ / คนไข้เก่า', 'คัดแยกออกคิวเวช → เวชระเบียน → คัดกรองกลาง · คนไข้เก่าออกคิวคลินิก → คัดกรองกลาง', 'part'],
     ['นัด OPD ไม่มีตรวจอื่นเพิ่ม', 'Kiosk → คัดกรองกลาง', 'target'],
     ['นัดคลินิกพิเศษ (ทันตกรรม · ยาเสพติด)', 'Kiosk → คัดกรองคลินิกพิเศษ', 'target'],
+    ['นัดผ่าน Mobile App (ผู้ใช้ 2 พ.ย. 69)', 'มาศูนย์ครั้งแรกหลังสมัครแอป → เวชระเบียนยืนยันตัวตนอีกรอบ แล้วไปจุดที่นัด · ผู้รับบริการเก่า → เข้าคลินิกที่นัดได้เลย', 'target'],
     ['นัดทำหัตถการ', 'เปิด VN → ห้องหัตถการก่อน (ตรวจว่ามาตรงวัน) · บัตรทองไม่ต้องชำระ · ต้องชำระ → การเงินก่อน', 'target'],
     ['Kiosk พัง', 'คัดแยก เพิ่มคิวต่อแถว + เปิด VN แล้วแยกตามนัดเหมือนเดิม', 'target'],
   ]],
   ['เวชระเบียน', [
     ['ญาติมารับยาแทน', 'ใช้ HN ผู้ป่วย ข้ามคัดกรอง ไปแพทย์ ป้าย "มารับยาแทน · รอพบแพทย์"', 'done'],
     ['รายเก่า ลงนามความยินยอมแล้ว', 'ไม่ให้ลงนามซ้ำ การ์ดแสดงอย่างเดียว อยู่ใน ⋮', 'done'],
-    ['ลงทะเบียนแอป มาครั้งแรก', 'กรอกแบบเต็มที่เวชระเบียน แล้วไปคัดกรอง', 'done'],
+    ['ลงทะเบียนแอป มาครั้งแรก', 'ยืนยันตัวตนอีกรอบ + กรอกแบบเต็มที่เวชระเบียน แล้วไปจุดที่นัด / คัดกรอง', 'done'],
     ['เริ่มลงทะเบียนแล้วแต่ยังไม่จบ (ร่าง)', 'แถวแสดง "กำลังลงทะเบียน" ไม่ใช่ "บันทึกไม่เสร็จ" (ผู้ใช้ 1 พ.ย. 69)', 'done'],
     ['กด "บันทึกข้อมูลลงทะเบียน"', 'บันทึก + ป๊อปอัปแนะนำกรอกแบบฟอร์มความยินยอม → พาไปแท็บแบบฟอร์มยินยอม (2 พ.ย. 69)', 'done'],
     ['ผู้ป่วยไม่ยินยอมใบหลัก (GCT-1013)', 'ปิด Visit → worklist "ปิด Visit · ผู้ป่วยไม่ให้ความยินยอม" แถวกดไม่ได้ · ไม่ยินยอมใบอื่น = ลงทะเบียนต่อ (2 พ.ย. 69)', 'done'],
