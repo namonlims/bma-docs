@@ -3515,7 +3515,8 @@ const appUrl=(u)=>{
 };
 const buildSpotlightUrl=(r,impl)=>{
   if(!impl?.u) return null;
-  const u=impl.u;
+  /* ใส่บทบาทที่ต้องใช้เปิดหน้านั้น (?asRole=) — แอปสลับบทบาทเดโมให้ก่อน ไม่เด้งไป /hub (ผู้ใช้ 3 พ.ย. 69) */
+  const u=(impl.r && impl.u.startsWith('/')) ? impl.u+(impl.u.includes('?')?'&':'?')+'asRole='+encodeURIComponent(impl.r) : impl.u;
   /* Skip if URL already has its own query string (e.g. kiosk ticket sample
      link uses ?dept=&name=...) — those carry data, not a spotlight target. */
   if(u.includes('?') && !impl.h) return /^https?:\/\//.test(u) ? u : appUrl(u);
