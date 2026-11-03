@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>รายงานการประชุม · ไฮไลต์</title>
+<style>
+  :root{--bg:#F4F5F5;--surface:#FFFFFF;--border:#E2E4E6;--text:#171A1F;--muted:#6E757C;--brand:#007549;--hl:rgba(250,204,21,.45);--hl-line:#CA8A04}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0F1115;--surface:#171A1F;--border:#2A2F36;--text:#E8EAED;--muted:#9AA1A9;--brand:#3DD68C}}
+  :root[data-theme="dark"]{--bg:#0F1115;--surface:#171A1F;--border:#2A2F36;--text:#E8EAED;--muted:#9AA1A9;--brand:#3DD68C}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Sarabun","Noto Sans Thai",sans-serif;font-size:14px}
+  header{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+  header h1{margin:0;font-size:15px;flex:1 1 240px;min-width:0}
+  header .sub{display:block;font-size:12px;color:var(--muted);font-weight:400}
+  .nav{display:flex;gap:6px;align-items:center}
+  .nav button{min-width:44px;min-height:44px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;font:inherit;cursor:pointer}
+  .nav span{font-size:12px;color:var(--muted);min-width:64px;text-align:center}
+  .quote{margin:12px 16px 0;padding:10px 12px;border-left:3px solid var(--hl-line);background:var(--surface);border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+  .quote b{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+  .status{margin:8px 16px 0;font-size:12px;color:var(--muted)}
+  main{padding:12px 16px 32px;display:flex;justify-content:center}
+  .page{position:relative;background:#FFF;box-shadow:0 1px 3px rgba(15,23,42,.12);max-width:100%}
+  .page canvas{display:block;max-width:100%;height:auto}
+  .hl{position:absolute;background:var(--hl);outline:2px solid var(--hl-line);border-radius:2px;pointer-events:none;animation:pulse 1.6s ease-in-out 3}
+  @keyframes pulse{50%{background:rgba(250,204,21,.8)}}
+  .txt{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;max-width:900px;width:100%;white-space:pre-wrap;line-height:1.7;overflow-wrap:anywhere}
+  .txt mark{background:var(--hl);outline:2px solid var(--hl-line);border-radius:2px;color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">รายงานการประชุม<span class="sub" id="sub"></span></h1>
+  <div class="nav" id="nav" hidden>
+    <button type="button" id="prev" aria-label="หน้าก่อน">‹</button>
+    <span id="pg"></span>
+    <button type="button" id="next" aria-label="หน้าถัดไป">›</button>
+  </div>
+</header>
+<div class="quote" id="quote" hidden><b>ข้อความที่ยกมา</b><span id="qtext"></span></div>
+<p class="status" id="status" role="status">กำลังโหลด…</p>
+<main id="main"></main>
+
+<script>window.TOR_SECURE = { script: 'https://script.google.com/macros/s/AKfycbzQsEmSjZpH-v0r0t_Infz0TGVziO3JLQVXPdEs_FDy9TaBnUJnMa7sPW9Y4B9auH3M/exec', client: '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com', title: 'รายงานการประชุมคณะทำงาน' };</script>
+<script src="auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(async () => {
+  const P = new URLSearchParams(location.search);
+  const f = P.get('f') || '', q = P.get('q') || '', t = P.get('t') || '';
+  let page = Math.max(1, parseInt(P.get('p') || '1', 10) || 1);
+  const $ = (id) => document.getElementById(id);
+  $('sub').textContent = t;
+  document.title = (t || 'รายงานการประชุม') + ' · ไฮไลต์';
+  if (q) { $('quote').hidden = false; $('qtext').textContent = q; }
+  const status = (m) => { $('status').textContent = m; };
+  if (!/^[A-Za-z0-9_-]{10,}$/.test(f)) { status('ลิงก์ไม่ถูกต้อง (ไม่มีรหัสไฟล์)'); return; }
+
+  /* เทียบข้อความไทยแบบทนข้อความที่สระ/วรรณยุกต์เพี้ยนใน PDF: ตัดช่องว่าง + สระบน/ล่าง + วรรณยุกต์ ออกก่อน */
+  const norm = (s) => s.normalize('NFC').replace(/[\s​ ]+/g, '').replace(/[ัิ-ฺ็-๎]/g, '').replace(/[“”"'‘’…·•\-–—()（）\[\]{}:;,.]/g, '');
+  const qn = norm(q);
+
+  let data;
+  try { status('กำลังเข้าสู่ระบบ…'); await TORAUTH.ready; status('กำลังโหลดรายงาน…'); data = await TORAUTH.fetchEnc('f/' + f + '.enc'); }
+  catch (e) { status('เปิดรายงานไม่ได้: ' + (e.message || e)); return; }
+  const bytes = new Uint8Array(data);
+  const isPdf = bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46;
+
+  if (!isPdf) {
+    /* ร่าง .docx — แสดงเป็นข้อความ + ไฮไลต์ */
+    const text = new TextDecoder('utf-8').decode(bytes);
+    const box = document.createElement('div'); box.className = 'txt'; $('main').appendChild(box);
+    const map = []; let n = '';
+    for (let i = 0; i < text.length; i++) { const c = norm(text[i]); for (const ch of c) { n += ch; map.push(i); } }
+    const hit = findBest(n, qn);
+    if (hit) {
+      const s = map[hit[0]], e = map[hit[1] - 1] + 1;
+      box.append(text.slice(0, s)); const m = document.createElement('mark'); m.textContent = text.slice(s, e); box.append(m, text.slice(e));
+      status('ร่างรายงาน (.docx) — แสดงเป็นข้อความ · ไฮไลต์ข้อความที่ยกมาแล้ว');
+      setTimeout(() => m.scrollIntoView({ block: 'center', behavior: 'smooth' }), 50);
+    } else { box.textContent = text; status('ร่างรายงาน (.docx) — หาตำแหน่งข้อความที่ยกมาไม่เจอ แสดงทั้งฉบับ'); }
+    return;
+  }
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+  page = Math.min(page, pdf.numPages);
+  $('nav').hidden = false;
+  $('prev').onclick = () => { if (page > 1) { page--; render(false); } };
+  $('next').onclick = () => { if (page < pdf.numPages) { page++; render(false); } };
+
+  /* หาเลขหน้าที่มีข้อความจริง ถ้าหน้าที่อ้างไม่มี ลองหน้าข้าง ๆ */
+  async function pageText(n) {
+    const tc = await (await pdf.getPage(n)).getTextContent();
+    let s = ''; const owner = [];
+    tc.items.forEach((it, idx) => { const c = norm(it.str || ''); for (const ch of c) { s += ch; owner.push(idx); } });
+    return { tc, s, owner };
+  }
+  async function render(search) {
+    $('pg').textContent = page + ' / ' + pdf.numPages;
+    const pg = await pdf.getPage(page);
+    const width = Math.min(document.documentElement.clientWidth - 32, 1000);
+    const vp0 = pg.getViewport({ scale: 1 });
+    const vp = pg.getViewport({ scale: (width / vp0.width) * (window.devicePixelRatio || 1) });
+    const css = width / vp0.width;
+    const wrap = document.createElement('div'); wrap.className = 'page';
+    const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height; cv.style.width = width + 'px';
+    wrap.appendChild(cv); $('main').replaceChildren(wrap);
+    await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+    if (!qn) { status(''); return; }
+    const { tc, s, owner } = await pageText(page);
+    const hit = findBest(s, qn);
+    if (!hit) { status(search ? 'หาตำแหน่งข้อความที่ยกมาในหน้านี้ไม่เจอ — ข้อความอยู่ในกรอบด้านบน' : ''); return; }
+    const items = new Set(owner.slice(hit[0], hit[1]));
+    const vpc = pg.getViewport({ scale: css });
+    let first = null;
+    items.forEach((idx) => {
+      const it = tc.items[idx]; if (!it || !it.str.trim()) return;
+      const tx = pdfjsLib.Util.transform(vpc.transform, it.transform);
+      const h = Math.hypot(tx[2], tx[3]); const w = it.width * css;
+      const d = document.createElement('div'); d.className = 'hl';
+      d.style.left = tx[4] + 'px'; d.style.top = (tx[5] - h) + 'px'; d.style.width = w + 'px'; d.style.height = (h * 1.15) + 'px';
+      wrap.appendChild(d); if (!first || (tx[5] - h) < parseFloat(first.style.top)) first = d;
+    });
+    status('ไฮไลต์ข้อความที่ยกมาแล้ว (สีเหลือง)');
+    if (first) setTimeout(() => first.scrollIntoView({ block: 'center', behavior: 'smooth' }), 50);
+  }
+  /* ถ้าหน้าที่อ้างหาไม่เจอ ลองหน้า ±1 */
+  if (qn) {
+    for (const c of [page, page + 1, page - 1, page + 2]) {
+      if (c < 1 || c > pdf.numPages) continue;
+      const { s } = await pageText(c);
+      if (findBest(s, qn)) { page = c; break; }
+    }
+  }
+  await render(true);
+
+  /* หาช่วงที่ตรงกับข้อความที่ยกมามากที่สุด: ลองทั้งข้อความ → ตัดเป็นท่อน 24 ตัวอักษร แล้วรวมช่วงที่เจอ */
+  function findBest(hay, needle) {
+    if (!needle) return null;
+    const full = hay.indexOf(needle.slice(0, 400));
+    if (full >= 0) return [full, full + Math.min(needle.length, 400)];
+    const L = 24; let lo = Infinity, hi = -1, found = 0;
+    for (let i = 0; i + L <= needle.length; i += L) {
+      const k = hay.indexOf(needle.slice(i, i + L), lo === Infinity ? 0 : Math.max(0, lo - 2000));
+      if (k >= 0) { lo = Math.min(lo, k); hi = Math.max(hi, k + L); found++; }
+    }
+    if (!found && needle.length >= 12) { const k = hay.indexOf(needle.slice(0, 12)); if (k >= 0) return [k, k + 12]; }
+    return found ? [lo, hi] : null;
+  }
+})();
+</script>
+</body>
+</html>
