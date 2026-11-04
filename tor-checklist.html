@@ -159,6 +159,13 @@
   .shot-lb .bar button:disabled{opacity:.4;cursor:default}
   .shot-lb .pic{overflow:auto;padding:8px;background:#F3F4F6}
   .shot-lb img{display:block;max-width:100%;height:auto;margin:0 auto;border-radius:6px}
+  @media (max-width:768px){
+    .req .text-cell .shot-btn{min-height:44px;padding:10px 14px;font-size:13px}
+    .shot-lb .bar button{min-height:44px;padding:10px 14px}
+    .shot-lb .box{max-height:100%}
+    .shot-lb .pic{-webkit-overflow-scrolling:touch}
+    .shot-lb img{max-width:none;width:960px}
+  }
   .req .text-cell .impl-link:hover{background:var(--brand);color:#FFFFFF;border-color:var(--brand)}
   /* Impl note — short explanation of where/how it's implemented */
   .req .text-cell .impl-note{
