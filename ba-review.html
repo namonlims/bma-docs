@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ชุดตรวจทาน BA</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html.locked, html.locked body { overflow: hidden; }
+  body { margin: 0; background: var(--surface-neutral-quaternary, #F9FBFB); color: var(--text-content-default, #363B3F);
+    font-family: 'Sarabun', system-ui, sans-serif; font-size: var(--type-size-sm, 14px); line-height: 1.5; }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  h1, h2, h3, h4, p, ul, dl, dd { margin: 0; padding: 0; }
+  ul { list-style: none; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  .ms { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; font-weight: 400; font-style: normal; flex: none; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: var(--type-size-xs, 12px); overflow-wrap: anywhere; }
+  .page { max-width: 1600px; margin: 0 auto; padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+
+  /* ส่วนหัว */
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--dim-space-400, 16px); }
+  .top-text { min-width: 0; flex: 1 1 0; }
+  .back { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); min-height: 44px; font-size: var(--type-size-xs, 12px); text-decoration: none; }
+  h1 { font-size: var(--type-size-xl, 20px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .lede { color: var(--text-content-secondary, #636B72); }
+  .user { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: 44px; }
+  .who { text-align: right; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); overflow-wrap: anywhere; }
+  .who b { display: block; color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
+  .icon-btn { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; background: transparent; border-radius: var(--dim-radius-200, 8px); cursor: pointer; color: var(--text-content-secondary, #636B72); }
+  .icon-btn:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+
+  /* แท็บ */
+  .tabs { display: flex; gap: var(--dim-space-100, 4px); overflow-x: auto; border-bottom: 1px solid var(--border-neutral-tertiary, #E2E4E6); scrollbar-width: none; }
+  .tab { flex: none; min-height: 48px; padding: 0 var(--dim-space-400, 16px); border: 0; border-bottom: 2px solid transparent; background: none; cursor: pointer; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); }
+  .tab[aria-selected="true"] { color: var(--text-brandPrimary-default, #007549); border-bottom-color: var(--text-brandPrimary-default, #007549); }
+  .tab small { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); }
+
+  /* การ์ดภาพรวม */
+  .card { background: var(--surface-card-100, #FFFFFF); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-400, 16px); min-width: 0; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--dim-space-300, 12px); }
+  .stack { display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  .stack-sm { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .h2 { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .sum { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .stat-num { font-size: var(--type-size-2xl, 24px); font-weight: var(--type-weight-bold, 700); }
+  .bar { height: 8px; border-radius: var(--dim-radius-100, 4px); background: var(--surface-neutral-tertiary, #F4F5F5); overflow: hidden; display: flex; }
+  .bar i { display: block; height: 100%; background: var(--text-brandPrimary-default, #007549); }
+  .bar i.fix { background: var(--text-danger-default, #B91C1C); }
+  .steps { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: var(--dim-space-200, 8px); counter-increment: s; }
+  .steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 50%; background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); display: flex; align-items: center; justify-content: center; }
+  .link-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--dim-space-200, 8px); align-items: center; min-height: 44px; padding: var(--dim-space-200, 8px) 0; border-top: 1px solid var(--border-neutral-quaternary, #F4F5F5); text-decoration: none; color: inherit; }
+  .link-row:first-child { border-top: 0; }
+
+  /* ทะเบียน: เมนูกลุ่ม + เนื้อหา */
+  .layout { display: grid; grid-template-columns: 264px minmax(0,1fr); gap: var(--dim-space-400, 16px); align-items: start; }
+  .nav { position: sticky; top: var(--dim-space-200, 8px); max-height: calc(100dvh - 16px); overflow-y: auto; padding: var(--dim-space-200, 8px); }
+  .nav h4 { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); padding: var(--dim-space-300, 12px) var(--dim-space-200, 8px) var(--dim-space-100, 4px); }
+  .nav button { width: 100%; min-height: 40px; padding: var(--dim-space-100, 4px) var(--dim-space-200, 8px); border: 0; background: none; border-radius: var(--dim-radius-200, 8px); cursor: pointer; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--dim-space-200, 8px); align-items: center; text-align: left; }
+  .nav button:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .nav button[aria-current="true"] { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .nav small { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); font-variant-numeric: tabular-nums; }
+  .group-select { display: none; }
+  .main { min-width: 0; display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); align-items: center; background: var(--surface-card-100, #FFFFFF); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-200, 8px); }
+  .field { min-height: 40px; padding: 0 var(--dim-space-300, 12px); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); min-width: 0; }
+  .filters .search { flex: 1 1 220px; }
+  .filters select { flex: 0 1 auto; max-width: 100%; }
+  .check { display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: 40px; padding: 0 var(--dim-space-100, 4px); cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--text-brandPrimary-default, #007549); margin: 0; }
+  .btn { min-height: 40px; padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-200, 8px); border: 1px solid var(--text-brandPrimary-default, #007549); background: var(--surface-card-100, #FFFFFF); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); cursor: pointer; display: inline-flex; gap: var(--dim-space-200, 8px); align-items: center; justify-content: center; }
+  .btn.fill { background: var(--text-brandPrimary-default, #007549); color: var(--surface-card-100, #FFFFFF); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .result { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+
+  /* แถวรายการ */
+  .row { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.8fr) minmax(0,1.1fr); gap: var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-400, 16px); scroll-margin-top: var(--dim-space-200, 8px); }
+  .row.hit { border-color: var(--text-brandPrimary-default, #007549); }
+  .cell { min-width: 0; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .label { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); align-items: center; }
+  .pill { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-100, 4px); font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-content-secondary, #636B72); white-space: nowrap; }
+  .pill.block { background: var(--surface-danger-tertiary, #FEE2E2); color: var(--text-danger-default, #B91C1C); }
+  .pill.warn { background: var(--surface-warning-tertiary, #FEF3C7); color: var(--text-warning-default, #C2410C); }
+  .pill.info { background: var(--surface-info-tertiary, #DBEAFE); color: var(--text-info-default, #1D4ED8); }
+  .pill.success { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); }
+  .pill.new { background: var(--surface-info-tertiary, #DBEAFE); color: var(--text-info-default, #1D4ED8); }
+  .name { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); }
+  .msg { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-200, 8px); background: var(--surface-neutral-quaternary, #F9FBFB); overflow-wrap: anywhere; }
+  .cond li { display: grid; grid-template-columns: 16px minmax(0,1fr); gap: var(--dim-space-100, 4px); padding: 2px 0; }
+  .cond li::before { content: '•'; color: var(--text-content-tertiary, #858C92); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0,1fr); gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); }
+  .kv dt { color: var(--text-content-tertiary, #858C92); }
+  .kv dd { overflow-wrap: anywhere; }
+  .ask { display: grid; grid-template-columns: 20px minmax(0,1fr); gap: var(--dim-space-200, 8px); padding: var(--dim-space-200, 8px); background: var(--surface-warning-tertiary, #FEF3C7); color: var(--text-warning-default, #C2410C); border-radius: var(--dim-radius-200, 8px); font-size: var(--type-size-xs, 12px); }
+
+  /* ผล BA + โน้ต */
+  .seg { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); overflow: hidden; }
+  .seg button { min-height: 44px; border: 0; background: var(--surface-card-100, #FFFFFF); cursor: pointer; font-size: var(--type-size-xs, 12px); padding: 0 var(--dim-space-100, 4px); border-left: 1px solid var(--border-neutral-tertiary, #E2E4E6); }
+  .seg button:first-child { border-left: 0; }
+  .seg button[aria-pressed="true"] { background: var(--surface-neutral-tertiary, #F4F5F5); font-weight: var(--type-weight-medium, 500); }
+  .seg button.ok[aria-pressed="true"] { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); }
+  .seg button.fix[aria-pressed="true"] { background: var(--surface-danger-tertiary, #FEE2E2); color: var(--text-danger-default, #B91C1C); }
+  .by { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .notes { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .note { padding: var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 8px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); overflow-wrap: anywhere; white-space: pre-wrap; }
+  .note b { font-weight: var(--type-weight-medium, 500); }
+  .note span { display: block; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); white-space: normal; }
+  .note-form { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .note-form textarea { width: 100%; min-height: 44px; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px); resize: vertical; background: var(--surface-card-100, #FFFFFF); }
+  .note-form input { width: 100%; }
+  .note-form .more { display: none; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .note-form.on .more { display: flex; }
+  .note-form.on textarea { min-height: 88px; }
+  .note-actions { display: flex; justify-content: flex-end; gap: var(--dim-space-200, 8px); flex-wrap: wrap; }
+  .err { font-size: var(--type-size-xs, 12px); color: var(--text-danger-default, #B91C1C); }
+  .req { color: var(--text-danger-default, #B91C1C); }
+  .empty { padding: var(--dim-space-600, 24px); text-align: center; color: var(--text-content-secondary, #636B72); }
+  .more-wrap { display: flex; justify-content: center; }
+
+  /* ตาราง */
+  .tbl-wrap { overflow-x: auto; background: var(--surface-card-100, #FFFFFF); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 10px); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; }
+  th, td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-neutral-quaternary, #F4F5F5); }
+  th { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-secondary, #636B72); background: var(--surface-neutral-quaternary, #F9FBFB); white-space: nowrap; }
+
+  /* เข้าสู่ระบบ */
+  .gate { position: fixed; inset: 0; z-index: 50; background: var(--surface-neutral-quaternary, #F9FBFB); display: flex; align-items: center; justify-content: center; padding: var(--dim-space-400, 16px); }
+  .gate-card { width: min(420px, 100%); background: var(--surface-card-100, #FFFFFF); border: 1px solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-600, 24px); text-align: center; display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); align-items: center; }
+  .gate-card .ms { font-size: 40px; color: var(--text-brandPrimary-default, #007549); }
+  .gate-msg { color: var(--text-danger-default, #B91C1C); font-size: var(--type-size-xs, 12px); min-height: 18px; }
+  .toast { position: fixed; left: 50%; bottom: calc(var(--dim-space-400, 16px) + env(safe-area-inset-bottom)); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; transition: .2s; z-index: 60; max-width: calc(100vw - 32px); padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-200, 8px); background: var(--text-content-default, #363B3F); color: var(--surface-card-100, #FFFFFF); }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .row.side { grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); }
+  @media (max-width: 1439px) { .row { grid-template-columns: minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); } .c-who { grid-column: 1 / 3; } .c-note { grid-column: 3; grid-row: 1 / 3; } }
+  @media (max-width: 1279px) {
+    .layout { grid-template-columns: minmax(0,1fr); }
+    .nav { display: none; }
+    .group-select { display: block; width: 100%; min-height: 44px; }
+    .row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .c-who { grid-column: 1; } .c-note { grid-column: 2; grid-row: auto; }
+    .kv a { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px); }
+    .row, .row.side { grid-template-columns: minmax(0,1fr); padding: var(--dim-space-300, 12px); }
+    .c-who, .c-note { grid-column: 1; }
+    .filters select, .filters .btn { flex: 1 1 calc(50% - 8px); }
+    .field, .btn { min-height: 44px; }
+    .who { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-card">
+    <span class="ms" aria-hidden="true">lock</span>
+    <h2 id="gateTitle" class="h2">ชุดตรวจทาน BA</h2>
+    <p class="sum">เข้าสู่ระบบด้วยบัญชี Google ก่อนเข้าใช้งาน</p>
+    <div id="gateBtn"></div>
+    <p class="gate-msg" id="gateMsg" role="status"></p>
+    <p class="sum">ระบบเก็บชื่อและอีเมลไว้กับโน้ตและผลตรวจทุกรายการ</p>
+  </div>
+</div>
+
+<div class="page" id="app" hidden>
+  <header class="top">
+    <div class="top-text">
+      <a class="back" href="index.html"><span class="ms" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
+      <h1>ชุดตรวจทาน BA</h1>
+      <p class="lede">Alert ทุกข้อ เงื่อนไขการแสดง และ Flow ที่ต้องยืนยัน แยกตามระบบและคลินิก</p>
+    </div>
+    <div class="user" id="user"></div>
+  </header>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <main id="view"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ที่เก็บกลางเดียวกับ docs-hub (bma-docs-edits.gs) · แถวเพิ่มอย่างเดียว ไม่ทับของเดิม
+   doc = ba-review · key = รหัสรายการ · where = "note|<ชื่อที่พิมพ์>" หรือ "status" · after = ข้อความ/ผล */
+const EDIT_URL = 'https://script.google.com/macros/s/AKfycbzB2p0Sj0Dm8OUoXRSSZtnIY2UYgQ110nkEghrq75qX7rwsa-LsbWFgAMp1ib0-p7E/exec';
+const GOOGLE_CLIENT_ID = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
+const DOC = 'ba-review';
+const PAGE = 40;
+const PLATFORMS = [
+  { id: 'web', label: 'เว็บ PHCIS', file: 'web-alerts-notifications.js' },
+  { id: 'kiosk', label: 'Kiosk', file: 'kiosk-alerts-notifications.js' },
+  { id: 'mobile', label: 'Mobile App', file: 'mobile-alerts-notifications.js' },
+];
+const CLINICS = { opd: 'ตรวจโรคทั่วไป (OPD)', anc: 'ฝากครรภ์ (ANC)', fp: 'วางแผนครอบครัว', vaccine: 'สุขภาพเด็กดี / ภูมิคุ้มกัน', diabetes: 'เบาหวาน', hypertension: 'ความดันโลหิตสูง', 'asthma-copd': 'หอบหืด / COPD', tb: 'วัณโรค', hiv: 'รักปลอดภัย (HIV/STI)', addiction: 'งานบำบัดยาเสพติด', mental: 'สุขภาพจิต', social: 'สังคมสงเคราะห์', dental: 'ทันตกรรม', eye: 'จักษุ', rehab: 'เวชศาสตร์ฟื้นฟู', physio: 'กายภาพบำบัด', thai: 'แพทย์แผนไทย', school: 'อนามัยโรงเรียน', daycare: 'สถานรับเลี้ยงเด็ก' };
+const SEV = { block: 'บล็อก', warn: 'เตือน', info: 'แจ้งให้ทราบ', success: 'สำเร็จ' };
+const STATUS = { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด' };
+const CHANNEL = { screen: 'หน้าจอ', print: 'พิมพ์', voice: 'เสียง', push: 'พุช', bell: 'กระดิ่ง', email: 'อีเมล' };
+const thDate = (s) => { const d = new Date(s); return isNaN(d) ? String(s || '') : d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }); };
+const BA = { pending: 'รอตรวจ', confirmed: 'ยืนยัน', fix: 'ต้องแก้' };
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const when = (ms) => new Date(ms).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
+let toastT;
+function toast(m) { const t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3500); }
+
+/* ---------- เข้าสู่ระบบ ---------- */
+const AUTH = { tk: '', exp: 0, user: null };
+const TK_KEY = 'bma-docs:tk';
+const b64 = (s) => decodeURIComponent(atob(s.replace(/-/g, '+').replace(/_/g, '/')).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+function setTk(tk) {
+  try {
+    const p = JSON.parse(b64(tk.split('.')[1]));
+    if (p.exp * 1000 < Date.now() + 60000) return false;
+    AUTH.tk = tk; AUTH.exp = p.exp; AUTH.user = { email: p.email, name: p.name || p.email.split('@')[0] };
+    store.set(TK_KEY, tk);
+    return true;
+  } catch (e) { return false; }
+}
+const loggedIn = () => !!AUTH.tk && AUTH.exp * 1000 > Date.now() + 60000;
+function gate(on, msg) {
+  $('gate').hidden = !on; $('app').hidden = on; document.documentElement.classList.toggle('locked', on);
+  if (msg != null) $('gateMsg').textContent = msg;
+  if (on && window.google?.accounts?.id) google.accounts.id.renderButton($('gateBtn'), { theme: 'filled_blue', size: 'large', text: 'signin_with', shape: 'pill', locale: 'th', width: 280 });
+  if (!on) start();
+}
+function renderUser() {
+  if (!AUTH.user) { $('user').innerHTML = ''; return; }
+  $('user').innerHTML = `<div class="who"><b>${esc(AUTH.user.name)}</b>${esc(AUTH.user.email)}</div><button class="icon-btn" type="button" id="outBtn" title="ออกจากระบบ" aria-label="ออกจากระบบ"><span class="ms">logout</span></button>`;
+  $('outBtn').onclick = () => { AUTH.tk = ''; AUTH.user = null; store.del(TK_KEY); try { google.accounts.id.disableAutoSelect(); } catch (e) {} gate(true, ''); };
+}
+function onCred(r) {
+  if (!r?.credential || !setTk(r.credential)) { $('gateMsg').textContent = 'เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง'; return; }
+  renderUser(); gate(false, '');
+}
+function initAuth() {
+  const t = store.get(TK_KEY); if (t) setTk(t);
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+  s.onload = () => { google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCred, auto_select: true, cancel_on_tap_outside: false, use_fedcm_for_prompt: true }); if (!loggedIn()) { gate(true); google.accounts.id.prompt(); } };
+  s.onerror = () => { if (!loggedIn()) gate(true, 'โหลดปุ่มเข้าสู่ระบบของ Google ไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช'); };
+  document.head.appendChild(s);
+  if (loggedIn()) { renderUser(); gate(false); } else gate(true);
+  setInterval(() => { if (!loggedIn() && $('gate').hidden) { gate(true, 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบอีกครั้ง'); try { google.accounts.id.prompt(); } catch (e) {} } }, 60000);
+}
+
+/* ---------- ข้อมูล ---------- */
+const DATA = {};
+let REVIEW = {};
+const NOTES = {};   // key → แถวโน้ต เก่า → ใหม่
+const STATE = {};   // key → แถวผลตรวจล่าสุด
+function loadScript(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src + '?v=20261106'; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+async function loadData() {
+  for (const p of PLATFORMS) { await loadScript(p.file); DATA[p.id] = window.ALERTS_NOTIFICATIONS || { items: [] }; }
+  await loadScript('ba-review-data.js'); REVIEW = window.BA_REVIEW || {};
+}
+function indexRows(rows) {
+  Object.keys(NOTES).forEach((k) => delete NOTES[k]); Object.keys(STATE).forEach((k) => delete STATE[k]);
+  rows.sort((a, b) => a.at - b.at).forEach((r) => {
+    if (String(r.where).startsWith('note|')) (NOTES[r.key] ||= []).push({ at: r.at, name: String(r.where).slice(5), email: r.email, text: r.after });
+    else if (r.where === 'status') STATE[r.key] = { at: r.at, v: r.after, name: r.name };
+  });
+}
+async function loadRows() {
+  // ส่ง token ไปด้วย: เมื่อ Apps Script ตั้งให้อ่านต้องล็อกอิน หน้านี้ใช้ได้เลย
+  const r = await fetch(EDIT_URL + '?doc=' + DOC + '&tk=' + encodeURIComponent(AUTH.tk), { cache: 'no-store' });
+  const j = await r.json();
+  if (j.auth) { gate(true, 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบอีกครั้ง'); throw new Error('auth'); }
+  if (!j.ok) throw new Error('load');
+  indexRows((j.edits || []).filter((e) => e.doc === DOC));
+}
+async function save(edit) {
+  const r = await fetch(EDIT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ tk: AUTH.tk, edit: { doc: DOC, before: '', ...edit } }) });
+  const j = await r.json();
+  if (!j.ok) { if (j.auth) { gate(true, 'หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบอีกครั้ง ข้อความที่พิมพ์ยังอยู่'); try { google.accounts.id.prompt(); } catch (e) {} } throw new Error(j.error || 'save'); }
+  return j.edit;
+}
+const baOf = (id) => STATE[id]?.v || 'pending';
+const noteCount = (id) => (NOTES[id] || []).length;
+
+/* ---------- สถานะหน้า ---------- */
+const UI = { tab: 'overview', group: 'all', q: '', type: '', sev: '', ba: '', status: '', onlyNote: false, onlyAsk: false, onlyNew: false, shown: PAGE, focus: '', qSource: '' };
+function readHash() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get('t')) UI.tab = h.get('t');
+  if (h.get('g')) UI.group = h.get('g');
+  if (h.get('id')) UI.focus = h.get('id');
+}
+function writeHash() {
+  const h = new URLSearchParams({ t: UI.tab }); if (UI.group !== 'all') h.set('g', UI.group);
+  history.replaceState(null, '', '#' + h);
+}
+const isPlatform = (t) => PLATFORMS.some((p) => p.id === t);
+const items = (p) => DATA[p]?.items || [];
+function groupsOf(p) {
+  const list = items(p); const mods = {}; const clin = {};
+  list.forEach((i) => { const cs = i.clinics || []; if (cs.length) cs.forEach((c) => (clin[c] = (clin[c] || 0) + 1)); else mods[i.module || 'อื่น ๆ'] = (mods[i.module || 'อื่น ๆ'] || 0) + 1; });
+  const m = Object.entries(mods).sort((a, b) => b[1] - a[1]);
+  return { clinics: p === 'web' ? Object.keys(CLINICS).filter((k) => clin[k]).map((k) => [k, clin[k]]) : [], mods: m };
+}
+function inGroup(i, g) { if (g === 'all') return true; if (g.startsWith('c:')) return (i.clinics || []).includes(g.slice(2)); return !(i.clinics || []).length && (i.module || 'อื่น ๆ') === g.slice(2); }
+function matches(i) {
+  if (!inGroup(i, UI.group)) return false;
+  if (UI.type && i.type !== UI.type) return false;
+  if (UI.sev && i.severity !== UI.sev) return false;
+  if (UI.status && i.status !== UI.status) return false;
+  if (UI.ba && baOf(i.id) !== UI.ba) return false;
+  if (UI.onlyNote && !noteCount(i.id)) return false;
+  if (UI.onlyAsk && !i.question) return false;
+  if (UI.onlyNew && !i.isNew) return false;
+  if (UI.q) { const q = UI.q.toLowerCase(); const hay = [i.id, i.name, i.message, i.role, i.where, i.source, ...(i.when || []), ...(i.whenAny || []), ...(i.notWhen || [])].join(' ').toLowerCase(); if (!hay.includes(q)) return false; }
+  return true;
+}
+
+/* ---------- ส่วนประกอบ ---------- */
+function noteBlock(id) {
+  const n = NOTES[id] || [];
+  return `<div class="notes" data-notes="${esc(id)}">${n.map((x) => `<div class="note"><b>${esc(x.name)}</b> ${esc(x.text)}<span>${esc(when(x.at))} · ${esc(x.email)}</span></div>`).join('')}</div>`;
+}
+function statusBlock(id) {
+  const v = baOf(id), s = STATE[id];
+  return `<div class="seg" role="group" aria-label="ผลตรวจของ ${esc(id)}" data-seg="${esc(id)}">${Object.entries(BA).map(([k, l]) => `<button type="button" class="${k === 'confirmed' ? 'ok' : k === 'fix' ? 'fix' : ''}" data-ba="${k}" aria-pressed="${v === k}">${l}</button>`).join('')}</div>${s ? `<p class="by" data-by="${esc(id)}">${esc(s.name)} · ${esc(when(s.at))}</p>` : `<p class="by" data-by="${esc(id)}" hidden></p>`}`;
+}
+function noteForm(id) {
+  const draft = store.get('bma-ba-review:draft:' + id) || '';
+  return `<form class="note-form${draft ? ' on' : ''}" data-form="${esc(id)}" novalidate>
+    <textarea name="text" aria-label="โน้ตของ ${esc(id)}" placeholder="พิมพ์โน้ต…" maxlength="2000">${esc(draft)}</textarea>
+    <div class="more">
+      <label class="label">ชื่อผู้เขียน <span class="req">*</span><input class="field" name="who" maxlength="80" autocomplete="name" /></label>
+      <p class="err" hidden></p>
+      <div class="note-actions"><button class="btn fill" type="submit">เพิ่มโน้ต</button></div>
+    </div></form>`;
+}
+function rowHtml(i, p) {
+  const list = (a) => (a || []).map((x) => `<li>${esc(x)}</li>`).join('');
+  const hasCond = (i.when || []).length || (i.whenAny || []).length;
+  const flow = i.flow ? `<a href="system-user-flow.html${esc(i.flow)}">ดู flow</a>` : '';
+  return `<article class="row${UI.focus === i.id ? ' hit' : ''}" id="r-${esc(i.id)}">
+    <div class="cell">
+      <div class="meta"><code>${esc(i.id)}</code><span class="pill ${esc(i.severity)}">${esc(SEV[i.severity] || i.severity)}</span>${i.ui ? `<span class="pill">${esc(i.ui)}</span>` : ''}${i.isNew ? '<span class="pill new">ใหม่รอบนี้</span>' : ''}${i.status === 'missing' ? '<span class="pill block">ยังไม่มีในโค้ด</span>' : ''}</div>
+      <h3 class="name">${esc(i.name)}</h3>
+      ${i.message ? `<p class="msg">${esc(i.message)}</p>` : ''}
+    </div>
+    <div class="cell">
+      <h4 class="label">เงื่อนไขการแสดง</h4>
+      ${(i.when || []).length ? `<ul class="cond">${list(i.when)}</ul>` : ''}
+      ${(i.whenAny || []).length ? `<p class="label">ข้อใดข้อหนึ่ง</p><ul class="cond">${list(i.whenAny)}</ul>` : ''}
+      ${(i.notWhen || []).length ? `<p class="label">ไม่แสดงเมื่อ</p><ul class="cond">${list(i.notWhen)}</ul>` : ''}
+      ${!hasCond ? '<p class="sum">ยังไม่ทราบเงื่อนไข</p>' : ''}
+      ${(i.criteria || []).length ? `<p class="label">เกณฑ์</p><ul class="cond">${list(i.criteria)}</ul>` : ''}
+      ${i.question ? `<div class="ask"><span class="ms" aria-hidden="true">help</span><span>${esc(i.question)}</span></div>` : ''}
+    </div>
+    <div class="cell c-who">
+      <h4 class="label">ผู้เห็นและจุดที่เห็น</h4>
+      <dl class="kv"><dt>ผู้เห็น</dt><dd>${esc(i.role || i.recipient || 'ยังไม่ระบุ')}</dd>${i.where ? `<dt>จุดที่เห็น</dt><dd>${esc(i.where)}</dd>` : ''}${i.buttons ? `<dt>ปุ่ม</dt><dd>${esc(i.buttons)}</dd>` : ''}${i.after ? `<dt>หลังจากนั้น</dt><dd>${esc(i.after)}</dd>` : ''}${i.channel ? `<dt>ช่องทาง</dt><dd>${esc(CHANNEL[i.channel] || i.channel)}</dd>` : ''}<dt>ที่มา</dt><dd><code>${esc(i.source)}</code>${flow ? ' · ' + flow : ''}</dd></dl>
+    </div>
+    <div class="cell c-note">
+      <h4 class="label">ผลตรวจและโน้ต</h4>
+      ${statusBlock(i.id)}${noteBlock(i.id)}${noteForm(i.id)}
+    </div>
+  </article>`;
+}
+function sideCard(id, title, body) {
+  return `<article class="row side" id="r-${esc(id)}"><div class="cell"><div class="meta"><code>${esc(id)}</code></div><h3 class="name">${esc(title)}</h3>${body}</div><div class="cell"><h4 class="label">ผลตรวจและโน้ต</h4>${statusBlock(id)}${noteBlock(id)}${noteForm(id)}</div></article>`;
+}
+
+/* ---------- มุมมอง ---------- */
+function renderTabs() {
+  const q = allQuestions().length, c = allCriteria().length;
+  const t = [['overview', 'ภาพรวม', ''], ...PLATFORMS.map((p) => [p.id, p.label, items(p.id).length.toLocaleString()]), ['questions', 'คำถามรอยืนยัน', q], ['criteria', 'เกณฑ์ตัวเลข', c], ['flows', 'Flow', (REVIEW.flowChanges || []).length]];
+  $('tabs').innerHTML = t.map(([id, l, n]) => `<button class="tab" role="tab" type="button" data-tab="${id}" aria-selected="${UI.tab === id}">${esc(l)}${n !== '' ? ` <small>${esc(n)}</small>` : ''}</button>`).join('');
+}
+function allQuestions() {
+  const a = [];
+  (REVIEW.flowQuestions || []).forEach((q) => a.push({ id: q.id, src: 'flow', group: q.clinic, title: q.q, why: q.why, ref: q.ref }));
+  PLATFORMS.forEach((p) => items(p.id).forEach((i) => { if (i.question) a.push({ id: i.id, src: p.id, group: (i.clinics || []).map((c) => CLINICS[c] || c).join(' · ') || i.module, title: i.question, why: i.name, ref: i.source }); }));
+  return a;
+}
+function allCriteria() {
+  const a = [];
+  PLATFORMS.forEach((p) => items(p.id).forEach((i) => (i.criteria || []).forEach((c) => a.push({ id: i.id, p: p.id, group: (i.clinics || []).map((k) => CLINICS[k] || k).join(' · ') || i.module, crit: c, name: i.name }))));
+  return a;
+}
+function progress(list) {
+  let ok = 0, fix = 0; list.forEach((i) => { const v = baOf(i.id); if (v === 'confirmed') ok++; else if (v === 'fix') fix++; });
+  return { ok, fix, total: list.length };
+}
+function barHtml(p) { const w = (n) => p.total ? (n / p.total * 100).toFixed(1) : 0; return `<div class="bar" role="img" aria-label="ยืนยัน ${p.ok} ต้องแก้ ${p.fix} จาก ${p.total}"><i style="width:${w(p.ok)}%"></i><i class="fix" style="width:${w(p.fix)}%"></i></div>`; }
+function renderOverview() {
+  const qs = allQuestions();
+  const cards = PLATFORMS.map((p) => { const l = items(p.id), g = progress(l), news = l.filter((i) => i.isNew).length, partial = l.filter((i) => i.confidence === 'partial').length;
+    return `<section class="card stack-sm"><h2 class="h2">${esc(p.label)}</h2><p class="sum">อัปเดต ${esc(thDate(DATA[p.id]?.updated))} · โค้ด ${esc(String(DATA[p.id]?.source || '').replace(/^.*@/, '').slice(0, 8))}</p><p class="stat-num">${l.length.toLocaleString()}</p><p class="sum">ใหม่ ${news} · เงื่อนไขยังไม่ครบ ${partial}</p>${barHtml(g)}<p class="sum">ยืนยัน ${g.ok} · ต้องแก้ ${g.fix} · รอตรวจ ${g.total - g.ok - g.fix}</p><button class="btn" type="button" data-tab="${p.id}">เปิดรายการ</button></section>`; }).join('');
+  const docs = (REVIEW.flowDocs || []).map((d) => `<a class="link-row" href="${esc(d.href)}"><span><b>${esc(d.title)}</b><br><span class="sum">${esc(d.type)} · ${esc(d.sum)}</span></span><span class="ms" aria-hidden="true">arrow_outward</span></a>`).join('');
+  return `<div class="stack">
+    <div class="grid-auto">${cards}</div>
+    <div class="grid-auto">
+      <section class="card stack-sm"><h2 class="h2">วิธีตรวจทาน</h2><ol class="steps" style="list-style:none;margin:0;padding:0">
+        <li>เปิดแท็บ "คำถามรอยืนยัน" ตอบ ${qs.length} ข้อก่อน เพราะกระทบหลายรายการ</li>
+        <li>เลือกแท็บระบบ แล้วเลือกคลินิกหรือหมวด</li>
+        <li>อ่านเงื่อนไขการแสดง แล้วกด "ยืนยัน" หรือ "ต้องแก้"</li>
+        <li>พิมพ์โน้ตพร้อมชื่อผู้เขียน โน้ตเพิ่มต่อกันได้ ไม่ทับของเดิม</li>
+        <li>ตรวจเสร็จ กด "ส่งออก CSV" ส่งให้ Dev</li></ol>
+        <p class="sum">ห้ามใส่ชื่อหรือข้อมูลผู้ป่วยในโน้ต</p></section>
+      <section class="card"><h2 class="h2">เอกสาร Flow</h2>${docs}</section>
+    </div></div>`;
+}
+function renderRegister(p) {
+  const g = groupsOf(p);
+  const navBtn = (k, l, n) => { const pr = progress(items(p).filter((i) => inGroup(i, k))); return `<button type="button" data-group="${esc(k)}" aria-current="${UI.group === k}"><span>${esc(l)}</span><small>${pr.ok ? pr.ok + '/' : ''}${n}</small></button>`; };
+  const nav = navBtn('all', 'ทั้งหมด', items(p).length) + (g.clinics.length ? '<h4>แยกตามคลินิก</h4>' + g.clinics.map(([k, n]) => navBtn('c:' + k, CLINICS[k], n)).join('') : '') + `<h4>${g.clinics.length ? 'ไม่แยกคลินิก' : 'หมวด'}</h4>` + g.mods.map(([k, n]) => navBtn('m:' + k, k, n)).join('');
+  const opt = (k, l, n) => `<option value="${esc(k)}"${UI.group === k ? ' selected' : ''}>${esc(l)} (${n})</option>`;
+  const sel = opt('all', 'ทั้งหมด', items(p).length) + (g.clinics.length ? `<optgroup label="แยกตามคลินิก">${g.clinics.map(([k, n]) => opt('c:' + k, CLINICS[k], n)).join('')}</optgroup>` : '') + `<optgroup label="${g.clinics.length ? 'ไม่แยกคลินิก' : 'หมวด'}">${g.mods.map(([k, n]) => opt('m:' + k, k, n)).join('')}</optgroup>`;
+  const o = (obj, cur) => Object.entries(obj).map(([k, l]) => `<option value="${k}"${cur === k ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  return `<div class="layout">
+    <nav class="card nav" aria-label="กลุ่มรายการ">${nav}</nav>
+    <div class="main">
+      <select class="field group-select" id="groupSel" aria-label="เลือกคลินิกหรือหมวด">${sel}</select>
+      <div class="filters">
+        <input class="field search" type="search" id="fq" placeholder="ค้นหา รหัส ข้อความ เงื่อนไข" aria-label="ค้นหา" value="${esc(UI.q)}" />
+        <select class="field" id="ftype" aria-label="ประเภท"><option value="">ทุกประเภท</option>${o({ alert: 'Alert', notification: 'Notification' }, UI.type)}</select>
+        <select class="field" id="fsev" aria-label="ความรุนแรง"><option value="">ทุกระดับ</option>${o(SEV, UI.sev)}</select>
+        <select class="field" id="fba" aria-label="ผลตรวจ"><option value="">ทุกผลตรวจ</option>${o(BA, UI.ba)}</select>
+        <select class="field" id="fstatus" aria-label="สถานะ"><option value="">ทุกสถานะ</option>${o(STATUS, UI.status)}</select>
+        <label class="check"><input type="checkbox" id="fnote"${UI.onlyNote ? ' checked' : ''} />มีโน้ต</label>
+        <label class="check"><input type="checkbox" id="fask"${UI.onlyAsk ? ' checked' : ''} />มีคำถาม</label>
+        <label class="check"><input type="checkbox" id="fnew"${UI.onlyNew ? ' checked' : ''} />ใหม่รอบนี้</label>
+        <button class="btn" type="button" id="csv"><span class="ms" aria-hidden="true">download</span>ส่งออก CSV</button>
+      </div>
+      <p class="result" id="result" role="status"></p>
+      <div class="stack-sm" id="rows"></div>
+      <div class="more-wrap" id="moreWrap"></div>
+    </div></div>`;
+}
+function renderRows() {
+  const list = items(UI.tab).filter(matches);
+  if (UI.focus) { const ix = list.findIndex((i) => i.id === UI.focus); if (ix >= UI.shown) UI.shown = ix + 10; }
+  $('result').textContent = `แสดง ${Math.min(UI.shown, list.length).toLocaleString()} จาก ${list.length.toLocaleString()} รายการ`;
+  $('rows').innerHTML = list.length ? list.slice(0, UI.shown).map((i) => rowHtml(i, UI.tab)).join('') : '<div class="card empty">ไม่มีรายการตามตัวกรองนี้</div>';
+  $('moreWrap').innerHTML = list.length > UI.shown ? '<button class="btn" type="button" id="moreBtn">แสดงเพิ่ม</button>' : '';
+  fillNames();
+  if (UI.focus) { const el = document.getElementById('r-' + UI.focus); if (el) el.scrollIntoView({ block: 'start' }); UI.focus = ''; }
+}
+function renderQuestions() {
+  const all = allQuestions();
+  const list = all.filter((q) => (!UI.qSource || q.src === UI.qSource) && (!UI.ba || baOf(q.id) !== 'confirmed' || UI.ba !== 'open'));
+  const srcL = { flow: 'Flow', web: 'เว็บ PHCIS', kiosk: 'Kiosk', mobile: 'Mobile App' };
+  const opts = Object.entries(srcL).map(([k, l]) => `<option value="${k}"${UI.qSource === k ? ' selected' : ''}>${l} (${all.filter((q) => q.src === k).length})</option>`).join('');
+  return `<div class="main"><div class="filters"><select class="field" id="qsrc" aria-label="ที่มาคำถาม"><option value="">ทุกที่มา (${all.length})</option>${opts}</select></div>
+    <div class="stack-sm">${list.length ? list.map((q) => sideCard(q.id, q.title, `<dl class="kv"><dt>กลุ่ม</dt><dd>${esc(srcL[q.src])} · ${esc(q.group || '')}</dd>${q.why ? `<dt>เรื่อง</dt><dd>${esc(q.why)}</dd>` : ''}${q.ref ? `<dt>ที่มา</dt><dd><code>${esc(q.ref)}</code></dd>` : ''}</dl>`)).join('') : '<div class="card empty">ไม่มีคำถาม</div>'}</div></div>`;
+}
+function renderCriteria() {
+  const a = allCriteria();
+  return `<div class="main"><p class="sum">ตัวเลขที่ฝังในเงื่อนไข Alert ต้องให้ผู้รู้ทางคลินิกยืนยันค่า กดรหัสเพื่อเปิดรายการและพิมพ์โน้ต</p><div class="tbl-wrap"><table><thead><tr><th>รหัส</th><th>กลุ่ม</th><th>เกณฑ์</th><th>Alert</th><th>ผลตรวจ</th></tr></thead><tbody>${a.map((c) => `<tr><td><a href="#t=${c.p}&id=${esc(c.id)}" data-jump="${c.p}|${esc(c.id)}"><code>${esc(c.id)}</code></a></td><td>${esc(c.group)}</td><td>${esc(c.crit)}</td><td>${esc(c.name)}</td><td>${esc(BA[baOf(c.id)])}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function renderFlows() {
+  const docs = (REVIEW.flowDocs || []).map((d) => `<a class="link-row" href="${esc(d.href)}"><span><b>${esc(d.title)}</b><br><span class="sum">${esc(d.type)} · ${esc(d.sum)}</span></span><span class="ms" aria-hidden="true">arrow_outward</span></a>`).join('');
+  const rows = (REVIEW.flowChanges || []).map((r) => `<tr><td>${esc(r.clinic)}</td><td>${esc(r.doc)}</td><td>${esc(r.change)}</td><td>${esc(r.decision)}</td></tr>`).join('');
+  const gaps = (REVIEW.logicGaps || []).map((r) => `<tr><td>${esc(r.clinic)}</td><td>${esc(r.gap)}</td><td>${r.fixed ? 'แก้แล้ว' : 'ยังไม่แก้'}</td></tr>`).join('');
+  const removed = (REVIEW.removed || []).map((r) => `<tr><td><code>${esc(r.id)}</code></td><td>${esc(r.platform)}</td><td>${esc(r.name)}</td><td>${esc(r.why)}</td></tr>`).join('');
+  return `<div class="stack">
+    <section class="card"><h2 class="h2">เอกสาร Flow</h2><p class="sum">ซิงก์กับโค้ด ${esc(String(REVIEW.synced || '').slice(0, 8))} วันที่ ${esc(thDate(REVIEW.updated))}</p>${docs}</section>
+    <section class="stack-sm"><h2 class="h2">เปลี่ยนแปลงรอบนี้ (${(REVIEW.flowChanges || []).length})</h2><div class="tbl-wrap"><table><thead><tr><th>คลินิก</th><th>เอกสาร</th><th>เปลี่ยนอะไร</th><th>มติวันที่</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+    ${gaps ? `<section class="stack-sm"><h2 class="h2">จุดที่ Logic ไม่ปิด (${(REVIEW.logicGaps || []).length})</h2><div class="tbl-wrap"><table><thead><tr><th>คลินิก</th><th>จุดที่พบ</th><th>สถานะ</th></tr></thead><tbody>${gaps}</tbody></table></div></section>` : ''}
+    ${(REVIEW.kioskStale || []).length ? `<section class="card stack-sm"><h2 class="h2">Kiosk user flow ที่ยังไม่ตรง (${REVIEW.kioskStale.length})</h2><ul class="cond">${REVIEW.kioskStale.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>` : ''}
+    ${removed ? `<section class="stack-sm"><h2 class="h2">Alert ที่ไม่พบในโค้ดล่าสุด (${(REVIEW.removed || []).length})</h2><div class="tbl-wrap"><table><thead><tr><th>รหัส</th><th>ระบบ</th><th>ชื่อเดิม</th><th>เหตุผล</th></tr></thead><tbody>${removed}</tbody></table></div></section>` : ''}
+  </div>`;
+}
+function render() {
+  renderTabs(); writeHash();
+  const t = UI.tab;
+  if (isPlatform(t)) { $('view').innerHTML = renderRegister(t); renderRows(); }
+  else if (t === 'questions') { $('view').innerHTML = renderQuestions(); fillNames(); }
+  else if (t === 'criteria') $('view').innerHTML = renderCriteria();
+  else if (t === 'flows') $('view').innerHTML = renderFlows();
+  else $('view').innerHTML = renderOverview();
+}
+function fillNames() { const n = store.get('bma-ba-review:name') || AUTH.user?.name || ''; document.querySelectorAll('.note-form input[name=who]').forEach((i) => { if (!i.value) i.value = n; }); }
+function resetFilters() { Object.assign(UI, { group: 'all', q: '', type: '', sev: '', ba: '', status: '', onlyNote: false, onlyAsk: false, onlyNew: false, shown: PAGE }); }
+
+function refreshBlock(id) {
+  document.querySelectorAll(`[data-notes="${CSS.escape(id)}"]`).forEach((el) => { el.outerHTML = noteBlock(id); });
+  document.querySelectorAll(`[data-seg="${CSS.escape(id)}"]`).forEach((el) => { el.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.ba === baOf(id))); });
+  document.querySelectorAll(`[data-by="${CSS.escape(id)}"]`).forEach((el) => { const s = STATE[id]; el.hidden = !s; if (s) el.textContent = `${s.name} · ${when(s.at)}`; });
+}
+function exportCsv() {
+  const q = (s) => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+  const head = ['ระบบ', 'รหัส', 'คลินิก/หมวด', 'ประเภท', 'รูปแบบ', 'ความรุนแรง', 'ชื่อ', 'ข้อความ', 'เงื่อนไขการแสดง', 'ไม่แสดงเมื่อ', 'เกณฑ์', 'ผู้เห็น', 'จุดที่เห็น', 'ปุ่ม', 'หลังจากนั้น', 'สถานะ', 'ที่มา', 'คำถาม', 'ผลตรวจ', 'ผู้ตรวจ', 'โน้ต'];
+  const rows = [];
+  const ps = isPlatform(UI.tab) ? [UI.tab] : PLATFORMS.map((p) => p.id);
+  ps.forEach((p) => items(p).filter((i) => !isPlatform(UI.tab) || matches(i)).forEach((i) => rows.push([p, i.id, (i.clinics || []).map((c) => CLINICS[c] || c).join(' · ') || i.module, i.type, i.ui, SEV[i.severity] || i.severity, i.name, i.message, [...(i.when || []), ...(i.whenAny || []).map((x) => 'หรือ ' + x)].join(' | '), (i.notWhen || []).join(' | '), (i.criteria || []).join(' | '), i.role || i.recipient, i.where, i.buttons, i.after, STATUS[i.status] || i.status, i.source, i.question, BA[baOf(i.id)], STATE[i.id]?.name, (NOTES[i.id] || []).map((n) => `${n.name}: ${n.text}`).join(' | ')])));
+  const blob = new Blob(['﻿' + [head.map(q).join(','), ...rows.map((r) => r.map(q).join(','))].join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `ba-review-${ps.join('-')}-${REVIEW.updated || ''}.csv`; a.click();
+  toast(`ส่งออก ${rows.length.toLocaleString()} รายการ`);
+}
+
+/* ---------- เหตุการณ์ ---------- */
+document.addEventListener('click', async (e) => {
+  const tab = e.target.closest('[data-tab]');
+  if (tab) { UI.tab = tab.dataset.tab; resetFilters(); render(); window.scrollTo(0, 0); return; }
+  const g = e.target.closest('[data-group]');
+  if (g) { UI.group = g.dataset.group; UI.shown = PAGE; render(); return; }
+  const j = e.target.closest('[data-jump]');
+  if (j) { e.preventDefault(); const [p, id] = j.dataset.jump.split('|'); UI.tab = p; resetFilters(); UI.focus = id; render(); return; }
+  if (e.target.closest('#moreBtn')) { UI.shown += PAGE; renderRows(); return; }
+  if (e.target.closest('#csv')) { exportCsv(); return; }
+  const b = e.target.closest('[data-ba]');
+  if (b) {
+    const id = b.closest('[data-seg]').dataset.seg, v = b.dataset.ba, prev = STATE[id];
+    STATE[id] = { at: Date.now(), v, name: AUTH.user.name }; refreshBlock(id);
+    try { await save({ key: id, where: 'status', after: v }); toast(`${id} · ${BA[v]}`); if (isPlatform(UI.tab) && v === 'fix') document.querySelector(`[data-form="${CSS.escape(id)}"] textarea`)?.focus(); }
+    catch (err) { if (prev) STATE[id] = prev; else delete STATE[id]; refreshBlock(id); toast('บันทึกผลตรวจไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+  }
+});
+document.addEventListener('focusin', (e) => { const f = e.target.closest('.note-form'); if (f && !f.classList.contains('on')) { f.classList.add('on'); fillNames(); } });
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.name === 'text' && t.closest('.note-form')) { const k = 'bma-ba-review:draft:' + t.closest('.note-form').dataset.form; t.value ? store.set(k, t.value) : store.del(k); }
+  if (t.id === 'fq') { UI.q = t.value; UI.shown = PAGE; renderRows(); }
+});
+document.addEventListener('change', (e) => {
+  const t = e.target, map = { ftype: 'type', fsev: 'sev', fba: 'ba', fstatus: 'status' }, chk = { fnote: 'onlyNote', fask: 'onlyAsk', fnew: 'onlyNew' };
+  if (map[t.id]) { UI[map[t.id]] = t.value; UI.shown = PAGE; renderRows(); }
+  if (chk[t.id]) { UI[chk[t.id]] = t.checked; UI.shown = PAGE; renderRows(); }
+  if (t.id === 'groupSel') { UI.group = t.value; UI.shown = PAGE; render(); }
+  if (t.id === 'qsrc') { UI.qSource = t.value; render(); }
+});
+document.addEventListener('submit', async (e) => {
+  const f = e.target.closest('.note-form'); if (!f) return;
+  e.preventDefault();
+  const id = f.dataset.form, ta = f.elements.text, who = f.elements.who, err = f.querySelector('.err'), btn = f.querySelector('button[type=submit]');
+  const text = ta.value.trim(), name = who.value.trim();
+  const miss = !name ? 'กรอกชื่อผู้เขียน' : !text ? 'พิมพ์ข้อความโน้ต' : '';
+  err.hidden = !miss; err.textContent = miss;
+  if (miss) { (!name ? who : ta).focus(); return; }
+  btn.disabled = true;
+  try {
+    const r = await save({ key: id, where: 'note|' + name, after: text });
+    (NOTES[id] ||= []).push({ at: r.at, name, email: r.email, text });
+    store.set('bma-ba-review:name', name); store.del('bma-ba-review:draft:' + id);
+    ta.value = ''; f.classList.remove('on'); refreshBlock(id); toast('เพิ่มโน้ตแล้ว');
+  } catch (x) { err.hidden = false; err.textContent = x.message === 'save' ? 'บันทึกไม่สำเร็จ ข้อความยังอยู่ ลองกดอีกครั้ง' : 'บันทึกไม่สำเร็จ · ' + x.message; }
+  btn.disabled = false;
+});
+let started = false;
+async function start() {
+  if (started) return; started = true;
+  renderUser();
+  $('view').innerHTML = '<div class="card empty" role="status">กำลังโหลดรายการ…</div>';
+  try { await loadData(); } catch (e) { $('view').innerHTML = '<div class="card empty">โหลดรายการไม่สำเร็จ · รีเฟรชหน้าอีกครั้ง</div>'; return; }
+  try { await loadRows(); } catch (e) { toast('โหลดโน้ตไม่สำเร็จ · แสดงรายการอย่างเดียว'); }
+  readHash(); render();
+  setInterval(async () => {   // โน้ตของคนอื่น ทุก 1 นาที ไม่รบกวนช่องที่กำลังพิมพ์
+    if (document.hidden || !loggedIn()) return;
+    try { const before = JSON.stringify([NOTES, STATE]); await loadRows(); if (JSON.stringify([NOTES, STATE]) !== before) document.querySelectorAll('[data-notes]').forEach((el) => refreshBlock(el.dataset.notes)); } catch (e) {}
+  }, 60000);
+}
+initAuth();
+</script>
+</body>
+</html>

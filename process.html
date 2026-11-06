@@ -83,33 +83,33 @@
   </header>
 
   <section class="panel stats" aria-label="ตัวเลขโครงการ">
-    <div class="stat"><b>2,669</b><span>commits ตั้งแต่ May 2026</span></div>
+    <div class="stat"><b>3,395</b><span>commits ตั้งแต่ May 2026</span></div>
     <div class="stat"><b>3</b><span>ช่องทาง Kiosk · เว็บ · มือถือ</span></div>
-    <div class="stat"><b>635</b><span>component กลาง</span></div>
-    <div class="stat"><b>2,019</b><span>design token</span></div>
-    <div class="stat"><b>45</b><span>ไฟล์กติกาให้ agent</span></div>
-    <div class="stat"><b>145</b><span>การตัดสินใจที่บันทึกไว้</span></div>
+    <div class="stat"><b>728</b><span>component กลาง</span></div>
+    <div class="stat"><b>1,785</b><span>design token</span></div>
+    <div class="stat"><b>47</b><span>ไฟล์กติกาให้ agent</span></div>
+    <div class="stat"><b>400</b><span>การตัดสินใจที่บันทึกไว้</span></div>
   </section>
 
   <section class="group">
     <div class="group-head"><h2>วงจรการทำงาน 1 งาน</h2><p>ทุกคำสั่งเดินครบ 6 ขั้น ขั้นที่ 4 ทำงานเองอัตโนมัติ</p></div>
     <div class="loop">
       <div class="panel"><h3>รับโจทย์</h3><p class="what">TOR · ประชุมคณะทำงาน · Figma · ภาพหน้าจอ</p><p class="why">ทุกคำสั่งถูกบันทึกพร้อมเวลา repo และ branch ย้อนดูได้ว่าการตัดสินใจมาจากคำสั่งไหน</p></div>
-      <div class="panel"><h3>อ่านกติกาเฉพาะงาน</h3><p class="what">กติกา 1 เรื่อง = 1 ไฟล์ · โหลดตามโฟลเดอร์ที่แตะ</p><p class="why">45 ไฟล์กติกา โหลดเฉพาะที่เกี่ยว ประหยัด token และไม่สับสนข้ามโมดูล</p></div>
-      <div class="panel"><h3>สร้างจาก Design system</h3><p class="what">Token 2,019 ตัว · Component กลาง 635 ชิ้น · คลัง asset</p><p class="why">ห้ามค่าลอย ห้ามวาดปุ่มเอง ไอคอนจาก Figma ก่อน Lucide</p></div>
+      <div class="panel"><h3>อ่านกติกาเฉพาะงาน</h3><p class="what">กติกา 1 เรื่อง = 1 ไฟล์ · โหลดตามโฟลเดอร์ที่แตะ</p><p class="why">47 ไฟล์กติกา โหลดเฉพาะที่เกี่ยว ประหยัด token และไม่สับสนข้ามโมดูล</p></div>
+      <div class="panel"><h3>สร้างจาก Design system</h3><p class="what">Token 1,785 ตัว · Component กลาง 728 ชิ้น · คลัง asset</p><p class="why">ห้ามค่าลอย ห้ามวาดปุ่มเอง ไอคอนจาก Figma ก่อน Lucide</p></div>
       <div class="panel"><h3>ตรวจอัตโนมัติ</h3><p class="what">token-lint · mock-lint · agent:check · 4 ความกว้างจอ</p><p class="why">จับค่าที่ไม่ใช่ token, ชิ้นที่ควรเข้า DS, flow ที่เอกสารยังไม่ตาม</p></div>
-      <div class="panel"><h3>เอกสารตรงกัน</h3><p class="what">Flow spec · Decision log · User flow · Service Blueprint · Journey</p><p class="why">บันทึกการตัดสินใจ 145 รายการ BA และ Dev เห็นภาพเดียวกัน</p></div>
+      <div class="panel"><h3>เอกสารตรงกัน</h3><p class="what">Flow spec · Decision log · User flow · Service Blueprint · Journey</p><p class="why">บันทึกการตัดสินใจ 400 รายการ BA และ Dev เห็นภาพเดียวกัน</p></div>
       <div class="panel"><h3>ส่งต่อ Figma / Dev</h3><p class="what">Screen manifest ต่อหน้าจอ</p><p class="why">บอกว่าหน้าจอใช้ component ไหน ไอคอนไหน token ไหน วาดใน Figma ได้ครบและตรงไลบรารี</p></div>
     </div>
   </section>
 
   <section class="group">
-    <div class="group-head"><h2>เส้นทางผู้รับบริการ Kiosk → เว็บ → มือถือ</h2><p>Journey spine ไฟล์เดียว ทุก repo อ่านจากที่นี่ · อัปเดต 2026-10-23</p></div>
+    <div class="group-head"><h2>เส้นทางผู้รับบริการ Kiosk → เว็บ → มือถือ</h2><p>Journey spine ไฟล์เดียว ทุก repo อ่านจากที่นี่ · อัปเดต 2026-11-06</p></div>
     <div class="panel jtable" role="table" aria-label="เส้นทางผู้รับบริการ">
       <div class="jrow head" role="row"><div role="columnheader">ขั้น</div><div role="columnheader">Kiosk</div><div role="columnheader">เว็บเจ้าหน้าที่</div><div role="columnheader">แอปมือถือ</div></div>
       <div class="jrow" role="row">
         <div class="jstep" role="rowheader"><span class="jid">K1</span><span>ยืนยันตัวตนที่ตู้ Kiosk</span><span class="chip chip-mock" title="mock">จำลอง</span></div>
-        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">02-insert-id-card → 02d-thaid-qr → 03-loading-verifying-identity</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">02-insert-id-card → 02d-thaid-qr → 03-loading-verifying-identity · demo card 1369900526072 → HN 67-00001</span></div>
         <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-none">—</span></div>
         <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
       </div>
@@ -126,8 +126,8 @@
         <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-none">—</span></div>
       </div>
       <div class="jrow" role="row">
-        <div class="jstep" role="rowheader"><span class="jid">K3</span><span>ออกบัตรคิว + เปิด VN</span><span class="chip chip-target" title="target (VN opened at kiosk — คทง. 23 ต.ค. 69)">เป้าหมาย</span></div>
-        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">13-queue-result → queue-slip-print</span></div>
+        <div class="jstep" role="rowheader"><span class="jid">K3</span><span>ออกบัตรคิว + เปิด VN</span><span class="chip chip-mock" title="mock (web queue center opens VN on issue + feeds /opd/queue · clinic screening · /procedure — tested 24 ต.ค. 69; kiosk shows HN · VN on result + slip — bma.kiosk PR #5; real kiosk tickets not sent to web yet)">จำลอง</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-main">13-queue-result → queue-slip-print (shows &quot;HN · VN&quot; for patients with HN — MOCK_DEMO_VN 69-00001, ผู้ใช้ 1ก 23 ต.ค. 69)</span></div>
         <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/queue-center/*</span></div>
         <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">My Queue (home)</span></div>
       </div>
@@ -183,7 +183,13 @@
         <div class="jstep" role="rowheader"><span class="jid">M1</span><span>หลังกลับบ้าน: ผลตรวจ · นัด · วัดความดันที่บ้าน · คำขอ</span><span class="chip chip-ok" title="wired (relay / same browser)">เชื่อมแล้ว</span></div>
         <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
         <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">staff To-Do / notifications</span></div>
-        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/records · /m/home-bp · /m/requests · /m/assessments · /m/home-visit-request</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m/records · /m/home-bp · /m/peak-flow · /m/requests · /m/assessments · /m/home-visit-request</span></div>
+      </div>
+      <div class="jrow" role="row">
+        <div class="jstep" role="rowheader"><span class="jid">M2</span><span>ข่าวสารประชาสัมพันธ์ในแอป (TOR 4.9)</span><span class="chip chip-ok" title="wired (relay dev / Apps Script · ผู้ใช้ 2 พ.ย. 69 ข้อ 52ก)">เชื่อมแล้ว</span></div>
+        <div class="jcell" role="cell" data-label="Kiosk"><span class="cell-none">—</span></div>
+        <div class="jcell" role="cell" data-label="เว็บเจ้าหน้าที่"><span class="cell-main">/admin/mobile-news</span></div>
+        <div class="jcell" role="cell" data-label="แอปมือถือ"><span class="cell-main">/m (หน้าแรก การ์ดข่าว) · /m/news</span></div>
       </div>
     </div>
   </section>
