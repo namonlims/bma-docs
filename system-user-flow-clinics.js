@@ -790,7 +790,7 @@ CLINICS.push({
 const CONSENT_SF = ['Screen flow ความยินยอม (ภาพหน้าจอ · สำหรับ Dev) ↗', 'https://namonlims.github.io/bma-docs/login-admin-consent-flow.html'];
 const CONSENT_COND = ['เงื่อนไขการแสดงแบบฟอร์ม 54 ใบ ↗', 'https://namonlims.github.io/bma-docs/consent-display-conditions.html'];
 CLINICS.push({
-  key: 'consent', name: 'ระบบความยินยอม (Consent Management)', short: 'ความยินยอม', icon: 'assignment_turned_in', route: '/consent',
+  key: 'consent', name: 'ระบบความยินยอม (Consent Management)', short: 'ความยินยอม (Consent)', icon: 'assignment_turned_in', route: '/consent',
   sum: 'ผู้ดูแลตั้งแบบฟอร์ม → เวชระเบียนเก็บใบหลักตอนลงทะเบียน → คลินิกขอใบเฉพาะ → แพทย์ติดด่านก่อนส่งใบสั่งยา / ข้อมูลข้ามศูนย์ / ส่งต่อ → ห้องยาส่งยานอกศูนย์ → จัดการ worklist (รอลงนาม · ยินยอม · ถอน · หมดอายุ → Re-Consent) · ขอสิทธิ์เข้าถึง · นำออกข้อมูล',
   facts: [['ใบบังคับตอนลงทะเบียน', 'EHC-1011 หนังสือแสดงความยินยอมให้เปิดเผยข้อมูลด้านสุขภาพทางอิเล็กทรอนิกส์ (ใบเดียว) · "แบบฟอร์มอื่นๆ" เลือกเพิ่มได้ เช่น INS-1012 ประกันภัย · GCT-1013 รับการรักษาทั่วไป'], ['ใบเดิม', 'PD-1011 · TX-1011 · CL-1011 ไม่บังคับแล้ว (17 ก.ย. 69) · ยังเปิดดูในทะเบียนเก่าได้'], ['อายุใบ', 'EHC-1011 และใบส่วนใหญ่ 365 วันนับจากวันลงนาม · TX-1011 ไม่มีวันหมดอายุ (ถอนได้ทุกเมื่อ) · ใกล้หมดอายุ = ≤ 30 วัน'], ['worklist /consent', 'รอลงนาม · ยินยอมแล้ว · ปฏิเสธ/เพิกถอน · รอการอัปเดต (ใกล้หมดอายุ · หมดอายุแล้ว) | ผู้รับบริการทั้งหมด'], ['สิทธิ์', 'admin_super จัดการ /consent/* · Editor ขอ/บันทึก/เพิกถอน · Viewer ดูอย่างเดียว · บทบาทอื่นดูทะเบียนแบบฟอร์มที่ /consent-forms'], ['แอปมือถือ', 'ผู้รับบริการลงนาม Re-Consent / ถอนเองที่ /m/consent (bma.mobile)']],
   flow: [
@@ -840,6 +840,7 @@ CLINICS.push({
 
 /* ลำดับในตัวเลือก */
 {
-  const ORDER = ['opd', 'addiction', 'mental', 'dental', 'anc', 'fp', 'diabetes', 'hypertension', 'asthma-copd', 'eye', 'tb', 'hiv', 'vaccine', 'rehab', 'physio', 'social', 'thai', 'consent'];
+  /* ระบบความยินยอมต่อจากตรวจโรคทั่วไป ให้เห็นโดยไม่ต้องเลื่อนแถวชิป (ผู้ใช้ 11 พ.ย. 69 หาไม่เจอเมื่ออยู่ท้ายแถว) */
+  const ORDER = ['opd', 'consent', 'addiction', 'mental', 'dental', 'anc', 'fp', 'diabetes', 'hypertension', 'asthma-copd', 'eye', 'tb', 'hiv', 'vaccine', 'rehab', 'physio', 'social', 'thai'];
   CLINICS.sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
 }

@@ -16,7 +16,7 @@
   body {
     margin: 0;
     min-height: 100dvh;
-    background: var(--brand-p50, #F4FBF8);
+    background: var(--surface-card-100, #FFFFFF); /* พื้นขาว (ผู้ใช้ 11 พ.ย. 69) */
     color: var(--text-content-default, #363B3F);
     font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
     font-size: var(--type-size-sm, 14px);
@@ -70,7 +70,7 @@
     position: sticky; top: 0; z-index: 5;
     margin: 0 calc(-1 * var(--dim-space-600, 24px));
     padding: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
-    background: var(--brand-p50, #F4FBF8);
+    background: var(--surface-card-100, #FFFFFF);
     border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
     display: flex; gap: var(--dim-space-200, 8px);
     overflow-x: auto; scrollbar-width: none;
@@ -93,7 +93,7 @@
   .sec-head p { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
   .panel {
     background: var(--surface-card-100, #FFFFFF);
-    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
     border-radius: var(--dim-radius-500, 16px);
     padding: var(--dim-space-500, 20px);
     min-width: 0;
@@ -134,8 +134,8 @@
   .chart-box {
     overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
     border-radius: var(--dim-radius-400, 12px);
-    background: var(--surface-neutral-quaternary, #F9FBFB);
-    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    background: var(--surface-card-100, #FFFFFF);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
   }
   .uf-canvas { position: relative; }
   .uf-edges { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
