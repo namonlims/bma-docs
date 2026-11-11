@@ -451,7 +451,7 @@
   <p class="lede">เส้นทางผู้รับบริการที่ตู้บริการตนเอง 1080×1920 แนวตั้ง ตั้งแต่เสียบบัตรจนรับบัตรคิว/ใบเสร็จ แยกตามบริการที่เลือก กดกล่องเพื่อดูหน้าจอ (slug) และกลุ่มหน้าจอในโค้ด</p>
   <div class="meta">
     <span><b>อ้างอิง</b> src/pagesRegistry.tsx · src/flow.ts · design.md · .claude/rules · commit log</span>
-    <span><b>อัปเดต</b> <span id="upd">29 ต.ค. 69</span> (ตัวอย่าง · commit ล่าสุด 24 ต.ค. 69)</span>
+    <span><b>อัปเดต</b> <span id="upd">11 พ.ย. 69</span> (commit ล่าสุด 9 พ.ย. 69 · 5f9b534)</span>
   </div>
 </header>
 <nav class="toc" aria-label="หัวข้อในหน้า">
@@ -494,7 +494,7 @@
 </section>
 
 <section class="sec" id="screens">
-  <div class="sec-head"><h2>3 · หน้าจอทั้งหมด</h2><p>43 หน้าจาก src/pagesRegistry.tsx แยกตามกลุ่ม</p></div>
+  <div class="sec-head"><h2>3 · หน้าจอทั้งหมด</h2><p>43 หน้าจาก src/pagesRegistry.tsx แยกตามกลุ่ม (+ ตัวอย่างในหน้า /dev: คลินิกพิเศษ 07 · 13 · ใบคิว และยอดไม่ถึง 1,000 ที่ 09 · 10)</p></div>
   <div class="tbl-box"><table><thead><tr><th>slug</th><th>ชื่อหน้า</th><th>ใช้ใน flow</th></tr></thead><tbody id="scr-body"></tbody></table></div>
 </section>
 
@@ -517,7 +517,7 @@
     <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">hub</span><div><h3>เชื่อม 3 ระบบ</h3><p>.claude/rules/cross-product-journey.md</p></div></div>
       <div class="grp"><dl class="kv">
         <dt>ผู้ป่วยเดโม</dt><dd>นายสมชาย มีสุข · HN 67-00001 (ใช้ร่วม bma.health · bma.mobile)</dd>
-        <dt>เลขคิว</dt><dd><code>C-021</code> / <code>R-021</code> · ปิดสิทธิ <code>NHCO-…</code></dd>
+        <dt>เลขคิว</dt><dd>คิวคลินิก <code>C021</code> · คิวกลาง <code>21</code> · ผู้ป่วยใหม่ <code>K004</code> · คลินิกพิเศษ <code>C-101</code> (lib/queueTicket.ts) · ปิดสิทธิ <code>NHCO-…</code></dd>
         <dt>เส้นทางกลาง</dt><dd>bma.health <code>docs/journey/journey.json</code> (ขั้น K1 · K1b · K2 · K3 · W8 = หน้าจอ Kiosk)</dd>
       </dl></div></div>
   </div>
@@ -554,29 +554,31 @@ const ENTRY = [
   { id:'gFp', t:'สแกนลายนิ้วมือ', type:'option', lane:'kiosk', row:5, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: ไม่มีหน้าจอ/เครื่องอ่านลายนิ้วมือ' },
   { id:'dId', t:'ระบุตัวตนได้?', type:'dec', lane:'sys', to:[['p03','มีประวัติ'],['p03b','ไม่พบประวัติ'],['p02c','ต่างชาติ']] },
   { id:'p03', t:'กำลังอ่าน / ตรวจสอบ', s:'03-loading-verifying-identity', type:'action', lane:'sys', to:[['p01']] },
-  { id:'p03b', t:'ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่', s:'03b-register-new-patient', type:'target', lane:'staff', row:2, same:1 },
+  { id:'p03b', t:'ผู้ป่วยใหม่ · กดรับบัตรคิว K004 ไปจุดคัดแยก', s:'03b-register-new-patient', type:'target', lane:'staff', row:2, same:1, note:'9 พ.ย. 69: ไม่มี HN จึงไม่เข้าเมนูบริการ · ปุ่ม "รับบัตรคิว" ไปหน้าผลคิว (step=new-patient) ได้คิว K ไปจุดคัดแยก แล้วจุดคัดแยกส่งต่อเวชระเบียนทำประวัติ · ใบคิวไม่พิมพ์ HN/สิทธิ · ยกเลิก = กลับหน้าแรก', mock:'เลขคิว K004 ตายตัวใน lib/queueTicket.ts' },
   { id:'p02c', t:'ต่างชาติ ติดต่อเวชระเบียน', s:'02c-enter-id-passport', type:'target', lane:'staff', row:3, same:1 },
 ];
 const SEL = { id:'p01', t:'เลือกบริการ', s:'01-select-service', type:'action', lane:'kiosk' };
 const END = (s, t) => [{ id:'p'+s.slice(0,3), t, s, type:'action', lane:'kiosk', to:[['out']] }, { id:'out', t:'กลับหน้าเลือกบริการ / หน้าหลัก', type:'start', lane:'cust' }];
 const FLOWS = {
-  reception: { n:'รับบริการ / ออกคิว', ic:'confirmation_number', sum:'ยืนยันตัวตน → เพื่อใคร → ถ่ายภาพใบหน้า → ยืนยันข้อมูล → สิทธิ์ → พิมพ์บัตรคิวพร้อม VN',
+  reception: { n:'รับบริการ / ออกคิว', ic:'confirmation_number', sum:'ยืนยันตัวตน → เพื่อใคร → ถ่ายภาพใบหน้า → ยืนยันข้อมูล → สิทธิ์ → มีนัดได้คิวคลินิก (C021) / ไม่มีนัดได้คิวกลาง (21) ไปจุดคัดแยก → พิมพ์บัตรคิว · ผู้ป่วยใหม่ได้คิว K ที่ 03b',
     flow:[...ENTRY, {...SEL,to:[['p04']]},
       { id:'p04', t:'รับบริการเพื่อใคร (ตนเอง / แทนผู้อื่น)', s:'04-select-patient-relation', type:'action', lane:'kiosk', to:[['p06']] },
       { id:'p06', t:'ถ่ายภาพใบหน้า (04b → 05 → 06 → 06b)', s:'06-face-recognition', type:'action', lane:'cust', to:[['dAp'],['eFace','ไม่สำเร็จ']] },
       { id:'eFace', t:'สแกนใบหน้าไม่สำเร็จ', s:'error-face-scan-failed', type:'option', lane:'kiosk', row:2, same:1 },
       { id:'dAp', t:'มีนัดวันนี้?', type:'dec', lane:'sys', to:[['p07','มีนัด'],['p07b','ไม่มีนัด']] },
-      { id:'p07', t:'ยืนยันข้อมูล มีนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', to:[['p08']] },
-      { id:'p07b', t:'ยืนยันข้อมูล ไม่มีนัดหมาย', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['p08']] },
+      { id:'p07', t:'ยืนยันข้อมูล มีนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', note:'นัดคลินิกพิเศษ (TB/HIV) แสดง "นัดคลินิกพิเศษ" + ตึก A ชั้น 2 ไม่แสดงชื่อคลินิก/แพทย์ (ประชุม 9 พ.ย. 69 ข้อ 1)', mock:'มี/ไม่มีนัดและคลินิกพิเศษตัดสินจากเลขเดโม (2222222222222 ไม่มีนัด · 4444444444444 คลินิกพิเศษ) ยังไม่ค้นนัดจริง', to:[['p08']] },
+      { id:'p07b', t:'ยืนยันข้อมูล ไม่มีนัดหมาย (ถัดไป)', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['p08']] },
       { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['dSelf']] },
       { id:'dSelf', t:'ชำระเงินเอง?', type:'dec', lane:'sys', to:[['p13','มีสิทธิ์'],['gPay','ชำระเอง']] },
-      { id:'gPay', t:'ชำระเงินก่อนออกคิว (09 → 14)', type:'option', lane:'kiosk', row:2, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: มติให้ผู้ชำระเงินเองจ่ายก่อนระบบออกคิว แต่โค้ดตอนนี้ออกคิวทันทีหลังหน้าสิทธิ์ และชำระเงินเป็นเมนูแยก', to:[['p13','ชำระแล้ว']] },
-      { id:'p13', t:'ผลคิว + VN', s:'13-queue-result', type:'action', lane:'kiosk', to:[['slip']] },
-      { id:'slip', t:'พิมพ์บัตรคิว (วันนัด = วันนี้)', s:'queue-slip-print', type:'action', lane:'sys', to:[['p15']] },
+      { id:'gPay', t:'ชำระเงินก่อนออกคิว (09 → 14)', type:'option', lane:'kiosk', row:2, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: มติให้ผู้ชำระเงินเองจ่ายก่อนระบบออกคิว แต่โค้ดตอนนี้ออกคิวทันทีหลังหน้าสิทธิ์ และชำระเงินเป็นเมนูแยก (ตรวจล่าสุด 9 พ.ย. 69: ยังไม่มี)', to:[['p13','ชำระแล้ว']] },
+      { id:'p13', t:'ผลคิว + VN (คิวคลินิก C021 / คิวกลาง 21)', s:'13-queue-result', type:'action', lane:'kiosk', note:'lib/queueTicket.ts: มีนัด → คิวคลินิกตัวอักษร+เลข ไปคลินิก (ตึก B ชั้น 2) · ไม่มีนัด → คิวกลางเลขล้วน ไปจุดคัดแยก (Flow คณะทำงาน 27 ต.ค. 69)', mock:'เลขคิวและจำนวนคิวรอเป็นค่าตายตัว', to:[['slip']] },
+      { id:'slip', t:'พิมพ์บัตรคิว (ตามประเภทคิว)', s:'queue-slip-print', type:'action', lane:'sys', note:'มีนัด = พิมพ์วันนัด (วันนี้) · ไม่มีนัด = ไม่พิมพ์วันนัด · ผู้ป่วยใหม่ = ไม่พิมพ์ HN/สิทธิ', to:[['p15']] },
       ...END('15-thank-you','ขอบคุณ')] },
-  appointment: { n:'ตรวจสอบนัดหมาย', ic:'event', sum:'ยืนยันตัวตน → ดูนัดหมาย → ตรวจสอบนัดหมายสำเร็จ',
-    flow:[...ENTRY, {...SEL,to:[['p07']]},
-      { id:'p07', t:'ข้อมูลนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', to:[['p15d']] },
+  appointment: { n:'ตรวจสอบนัดหมาย', ic:'event', sum:'ยืนยันตัวตน → ดูนัดหมาย → ตรวจสอบนัดหมายสำเร็จ · ไม่มีนัดวันนี้ขึ้น "คุณไม่มีนัดหมายวันนี้" แล้วกลับเมนู',
+    flow:[...ENTRY, {...SEL,to:[['dAp']]},
+      { id:'dAp', t:'มีนัดวันนี้?', type:'dec', lane:'sys', mock:'ตัดสินจากเลขเดโม 2222222222222 = ไม่มีนัด', to:[['p07','มีนัด'],['p07b','ไม่มีนัด']] },
+      { id:'p07', t:'ข้อมูลนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', note:'นัดคลินิกพิเศษ (TB/HIV) แสดง "นัดคลินิกพิเศษ" + ตึก/ชั้นเท่านั้น', to:[['p15d']] },
+      { id:'p07b', t:'คุณไม่มีนัดหมายวันนี้ (ตกลง → เมนู)', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['out']] },
       ...END('15d-thank-you-appointment','ตรวจสอบนัดหมายสำเร็จ')] },
   entitlement: { n:'ตรวจสอบสิทธิ์', ic:'verified_user', sum:'ยืนยันตัวตน → รายละเอียดสิทธิ์ ตนเอง/บุตร → สำเร็จ · ต่างชาติไม่มีเมนูนี้ (commit 27 ส.ค.)',
     flow:[...ENTRY, {...SEL,to:[['dWho']]},
@@ -584,10 +586,10 @@ const FLOWS = {
       { id:'p08', t:'รายละเอียดสิทธิ์ ตนเอง', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['p15e']] },
       { id:'p08b', t:'รายละเอียดสิทธิ์ บุตร', s:'08b-entitlement-details-dependent', type:'action', lane:'kiosk', row:2, same:1, to:[['p15e']] },
       ...END('15e-thank-you-entitlement','ตรวจสอบสิทธิสำเร็จ')] },
-  payment: { n:'ชำระเงิน', ic:'payments', sum:'สรุปยอด → เลือกวิธีชำระ (PromptPay / บัตรเครดิต) → ตรวจสอบ → สำเร็จ → พิมพ์ใบเสร็จ → ขอบคุณ มียา/ไม่มียา',
+  payment: { n:'ชำระเงิน', ic:'payments', sum:'สรุปยอด → เลือกวิธีชำระ (PromptPay / บัตรเครดิตเฉพาะยอดตั้งแต่ 1,000 บาท) → ตรวจสอบ → สำเร็จ → พิมพ์ใบเสร็จ → ขอบคุณ มียา/ไม่มียา',
     flow:[...ENTRY, {...SEL,to:[['p09']]},
       { id:'p09', t:'สรุปยอดชำระ', s:'09-payment-bill-summary', type:'action', lane:'kiosk', to:[['p10']] },
-      { id:'p10', t:'เลือกวิธีชำระเงิน', s:'10-select-payment-method', type:'action', lane:'cust', to:[['p11','QR'],['p11b','บัตร']] },
+      { id:'p10', t:'เลือกวิธีชำระเงิน', s:'10-select-payment-method', type:'action', lane:'cust', note:'ยอดต่ำกว่า 1,000 บาท ปุ่มบัตรเครดิตกดไม่ได้ ขึ้น "ชำระได้ด้วยการสแกนเท่านั้น" (9 พ.ย. 69)', mock:'ยอดบิลจาก lib/useMockBill.ts (1,284.00 / เดโม 3333333333333 = 350.00)', to:[['p11','QR'],['p11b','บัตร (ยอด ≥ 1,000)']] },
       { id:'p11', t:'QR PromptPay', s:'11-payment-qr-promptpay', type:'action', lane:'kiosk', to:[['p11c']] },
       { id:'p11b', t:'บัตรเครดิต', s:'11b-payment-credit-card', type:'action', lane:'kiosk', row:2, same:1, to:[['p11c']] },
       { id:'p11c', t:'กำลังตรวจสอบการชำระเงิน', s:'11c-loading-verifying-payment', type:'action', lane:'sys', to:[['dPay']] },
@@ -626,7 +628,7 @@ const PF_ID = [
   { id:'a2', t:'อ่านบัตรประชาชน', type:'action', lane:'dev', mock:'ใช้เลขบัตรคงที่ MOCK_CARD_READER_NATIONAL_ID ยังไม่ต่อเครื่องอ่านจริง', to:[['a3']] },
   { id:'a3', t:'ค้นประวัติผู้ป่วย (HN)', type:'action', lane:'his', mock:'ยังไม่ต่อ HIS จริง ใช้ข้อมูลจำลอง', to:[['a4']] },
   { id:'a4', t:'พบประวัติ?', type:'dec', lane:'his', to:[['a5','พบ'],['a6','ไม่พบ / ต่างชาติ']] },
-  { id:'a6', t:'ลงทะเบียนผู้ป่วยใหม่ / เวชระเบียน', type:'target', lane:'staff', same:1 },
+  { id:'a6', t:'ผู้ป่วยใหม่: รับคิว K ไปจุดคัดแยก → เวชระเบียน · ต่างชาติ: เวชระเบียน', type:'target', lane:'staff', same:1, note:'9 พ.ย. 69: ตู้ออกคิว K004 ให้ผู้ป่วยใหม่ (03b → 13)' },
 ];
 const PF_SEL = (to) => ({ id:'a5', t:'เลือกบริการ (01)', type:'action', lane:'cust', to:[[to]] });
 const PF_END = (t) => ({ id:'z', t, type:'start', lane:'cust' });
@@ -635,16 +637,16 @@ const PF = {
     { id:'b1', t:'เลือกรับบริการเพื่อใคร (04)', type:'action', lane:'cust', to:[['b2']] },
     { id:'b2', t:'ถ่ายภาพใบหน้า (MediaPipe ตรวจหน้าในกรอบ)', type:'action', lane:'dev', mock:'ตรวจแค่ใบหน้าอยู่ในกรอบ ยังไม่ส่งภาพไปเทียบตัวตน', to:[['b3']] },
     { id:'b3', t:'ตรวจนัดวันนี้ + สิทธิ์การรักษา', type:'action', lane:'his', mock:'ข้อมูลนัด/สิทธิ์จำลอง', to:[['b4']] },
-    { id:'b4', t:'ยืนยันข้อมูล + สิทธิ์ (07/08)', type:'action', lane:'kiosk', to:[['bS']] },
+    { id:'b4', t:'ยืนยันข้อมูล + สิทธิ์ (07/08)', type:'action', lane:'kiosk', note:'คลินิกพิเศษ (TB/HIV) ซ่อนชื่อคลินิก แสดงตึก/ชั้นแทน', to:[['bS']] },
     { id:'bS', t:'ผู้ชำระเงินเอง?', type:'dec', lane:'his', to:[['b5','มีสิทธิ์'],['bP','ชำระเอง']] },
     { id:'bP', t:'ชำระเงินก่อนออกคิว', type:'option', lane:'ext', same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: ตอนนี้ออกคิวได้โดยไม่ต้องจ่ายก่อน', to:[['b5','ชำระแล้ว']] },
-    { id:'b5', t:'ออกคิว + เปิด VN', type:'action', lane:'his', q:1, note:'กติกาใหม่จาก bma.health: เลขคิว 2 แบบ — คิวคัดแยกเป็นเลขลำดับ (1, 2, 3…) ส่วนจุดบริการอื่นเป็นตัวอักษร+เลข (A001) · ตู้ต้องแสดง/พิมพ์ให้ถูกแบบ', to:[['b6']] },
+    { id:'b5', t:'ออกคิว + เปิด VN (มีนัด = คิวคลินิก · ไม่มีนัด = คิวกลาง)', type:'action', lane:'his', q:1, note:'9 พ.ย. 69: ตู้แสดง/พิมพ์เลขคิว 2 แบบแล้ว — มีนัด C021 ไปคลินิก · ไม่มีนัด 21 ไปจุดคัดแยก (lib/queueTicket.ts)', mock:'เลขคิวตายตัว ยังไม่ขอเลขจาก HIS', to:[['b6']] },
     { id:'b6', t:'พิมพ์บัตรคิว (13)', type:'action', lane:'dev', to:[['b7']] },
-    { id:'b7', t:'ไปจุดคัดแยก / จุดบริการตามคิว', type:'target', lane:'staff', to:[['z']] },
+    { id:'b7', t:'มีนัด → คลินิก · ไม่มีนัด → จุดคัดแยก', type:'target', lane:'staff', to:[['z']] },
     PF_END('รับบัตรคิว ไปรอเรียก')],
   appointment: [...PF_ID, PF_SEL('c1'),
     { id:'c1', t:'ดึงนัดหมาย', type:'action', lane:'his', mock:'ข้อมูลนัดจำลอง', to:[['c2']] },
-    { id:'c2', t:'แสดงข้อมูลนัด (07)', type:'action', lane:'kiosk', to:[['z']] },
+    { id:'c2', t:'แสดงข้อมูลนัด (07) / ไม่มีนัดวันนี้ (07b)', type:'action', lane:'kiosk', to:[['z']] },
     PF_END('ตรวจสอบนัดหมายสำเร็จ (15d)')],
   entitlement: [...PF_ID, PF_SEL('d1'),
     { id:'d1', t:'เลือกสิทธิ์ตนเอง / บุตร', type:'dec', lane:'cust', to:[['d2']] },
@@ -652,9 +654,9 @@ const PF = {
     { id:'d3', t:'แสดงรายละเอียดสิทธิ์ (08/08b)', type:'action', lane:'kiosk', to:[['z']] },
     PF_END('ตรวจสอบสิทธิสำเร็จ (15e) · ต่างชาติไม่มีเมนูนี้')],
   payment: [...PF_ID, PF_SEL('e1'),
-    { id:'e1', t:'รวมยอดค่าบริการทุกจุดของวันนี้', type:'action', lane:'his', q:1, mock:'ยอดในบิลเขียนตายตัวในโค้ด ยังไม่มีระบบลูกหนี้/เจ้าหนี้', note:'กติกาใหม่จาก bma.health: ใช้หลายบริการในวันเดียว จ่ายครั้งเดียว — ตู้ต้องดึงยอดรวมทุกจุด', to:[['e2']] },
+    { id:'e1', t:'รวมยอดค่าบริการทุกจุดของวันนี้', type:'action', lane:'his', q:1, mock:'ยอดในบิลจำลองที่ lib/useMockBill.ts (ใช้ร่วม 09 · 09b · 11 · 14) ยังไม่มีระบบลูกหนี้/เจ้าหนี้', note:'กติกาใหม่จาก bma.health: ใช้หลายบริการในวันเดียว จ่ายครั้งเดียว — ตู้ต้องดึงยอดรวมทุกจุด', to:[['e2']] },
     { id:'e2', t:'สรุปยอดชำระ (09)', type:'action', lane:'kiosk', to:[['e3']] },
-    { id:'e3', t:'เลือก QR PromptPay / บัตรเครดิต (10–11b)', type:'action', lane:'cust', to:[['e4']] },
+    { id:'e3', t:'เลือก QR PromptPay / บัตรเครดิต (10–11b)', type:'action', lane:'cust', note:'บัตรเครดิตเฉพาะยอดตั้งแต่ 1,000 บาท ต่ำกว่านั้นสแกนได้อย่างเดียว', to:[['e4']] },
     { id:'e4', t:'ตรวจสอบการชำระเงิน', type:'action', lane:'ext', mock:'ยังไม่ต่อช่องทางชำระเงินจริง', to:[['e5']] },
     { id:'e5', t:'ชำระสำเร็จ?', type:'dec', lane:'kiosk', to:[['e6','สำเร็จ'],['e7','ไม่สำเร็จ']] },
     { id:'e7', t:'ติดต่อการเงิน', type:'target', lane:'staff', same:1 },
@@ -733,8 +735,14 @@ window.addEventListener('hashchange', () => { readHash(); render(); });
 
 const RULES = [
   ['หน้าแรก','เดินมาที่ตู้','หน้าแรกคือเสียบบัตร (02) ไม่ถามสัญชาติก่อน · กดเลข 13 หลักได้'],
-  ['ระบุตัวตน','ไม่มีประวัติที่สถานพยาบาลนี้','ไปหน้า 03b ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่ (TOR 1.16.1.4)'],
+  ['ระบุตัวตน','ไม่มีประวัติที่สถานพยาบาลนี้','ไปหน้า 03b · กด "รับบัตรคิว" ได้คิว K004 ไปจุดคัดแยก แล้วส่งต่อเวชระเบียน (TOR 1.16.1.4 · 9 พ.ย. 69)'],
   ['ระบุตัวตน','เลข 1111111111111','เลขเดียวที่จำลองว่า "ไม่พบ"'],
+  ['เลขเดโม','2222222222222 · 3333333333333 · 4444444444444','ไม่มีนัดวันนี้ · ยอดน้อยกว่า 1,000 · นัดคลินิกพิเศษ (lib/mockPatients.ts)'],
+  ['ออกคิว','มีนัดวันนี้','คิวคลินิก ตัวอักษร+เลข (C021) ไปคลินิก ระบุตึก/ชั้น (Flow คณะทำงาน 27 ต.ค. 69)'],
+  ['ออกคิว','ไม่มีนัดวันนี้','คิวกลาง เลขล้วน (21) ไปจุดคัดแยก · ใบคิวไม่พิมพ์วันนัด'],
+  ['ยืนยันข้อมูล / ผลคิว / ใบคิว','นัดคลินิกอ่อนไหว (TB/HIV)','แสดง "นัดคลินิกพิเศษ" + ตึก A ชั้น 2 ไม่แสดงชื่อคลินิก/แพทย์ (ประชุม 9 พ.ย. 69 ข้อ 1)'],
+  ['ตรวจสอบนัดหมาย','ไม่มีนัดวันนี้','ไปหน้า 07b "คุณไม่มีนัดหมายวันนี้" · ตกลง/ยกเลิก กลับเมนู'],
+  ['ชำระเงิน','ยอดสุทธิต่ำกว่า 1,000 บาท','ปุ่มบัตรเครดิตกดไม่ได้ เหลือสแกน QR (lib/useMockBill.ts)'],
   ['ระบุตัวตน','ไม่มีบัตรไทย (ต่างชาติ)','ลิงก์ "ต่างชาติ" → 02c ส่งต่อเวชระเบียน (Kiosk ตรวจ passport ไม่ได้)'],
   ['ระบุตัวตน','ใช้ ThaID','สแกน QR (02d) → สำเร็จ (02e)'],
   ['พิมพ์ซ้ำ','flow=reprint','อ่านบัตรแล้วไปหน้าผลคิว 13 ทันที'],
@@ -746,7 +754,7 @@ const RULES = [
 document.getElementById('rule-body').innerHTML = RULES.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
 const PAGES = [
 ['02-insert-id-card','เสียบบัตร / ระบุเลข 13 หลัก (Home)','Entry'],['02b-insert-id-card-detected','ตรวจพบบัตร','Entry'],['02c-enter-id-passport','ต่างชาติ ติดต่อเวชระเบียน','Entry'],['02d-thaid-qr','สแกน QR ยืนยันด้วย ThaID','Entry'],['02e-thaid-success','ยืนยันตัวตนสำเร็จ (ThaID)','Entry'],['03-loading-verifying-identity','กำลังอ่าน/ตรวจสอบ','Entry'],['01-select-service','เลือกบริการ','Entry'],
-['03b-register-new-patient','ผู้ป่วยใหม่ ติดต่อเจ้าหน้าที่','Identity'],['04-select-patient-relation','รับบริการเพื่อใคร','Identity'],['04b-prepare-face-scan','เตรียมถ่ายภาพ','Identity'],['05-loading-face-scan','กำลังสแกนใบหน้า','Identity'],['06-face-recognition','ถ่ายภาพใบหน้า','Identity'],['06b-face-photo-preview','ตรวจสอบภาพถ่าย','Identity'],
+['03b-register-new-patient','ผู้ป่วยใหม่ · รับบัตรคิวไปจุดคัดแยก','Identity'],['04-select-patient-relation','รับบริการเพื่อใคร','Identity'],['04b-prepare-face-scan','เตรียมถ่ายภาพ','Identity'],['05-loading-face-scan','กำลังสแกนใบหน้า','Identity'],['06-face-recognition','ถ่ายภาพใบหน้า','Identity'],['06b-face-photo-preview','ตรวจสอบภาพถ่าย','Identity'],
 ['07-confirm-patient-has-appointment','ยืนยันข้อมูล มีนัดหมาย','Patient Info'],['07b-confirm-patient-no-appointment','ยืนยันข้อมูล ไม่มีนัดหมาย','Patient Info'],
 ['08-entitlement-details-self','รายละเอียดสิทธิ์ ตนเอง','Entitlement'],['08b-entitlement-details-dependent','รายละเอียดสิทธิ์ บุตร','Entitlement'],['16-close-rights-confirm','ยืนยันปิดสิทธิ','Entitlement'],['16b-close-rights-success','ปิดสิทธิสำเร็จ','Entitlement'],
 ['09-payment-bill-summary','สรุปยอดชำระ','Payment'],['loading-printing-receipt','กำลังพิมพ์ใบเสร็จ','Payment'],['09b-receipt-detail','รายละเอียดใบเสร็จ','Payment'],['10-select-payment-method','เลือกวิธีชำระเงิน','Payment'],['11-payment-qr-promptpay','ชำระด้วย QR PromptPay','Payment'],['11b-payment-credit-card','ชำระด้วยบัตรเครดิต','Payment'],['11c-loading-verifying-payment','กำลังตรวจสอบการชำระเงิน','Payment'],['12-insert-id-card-after-payment','เสียบบัตรหลังชำระเงิน','Payment'],
@@ -756,6 +764,8 @@ const PAGES = [
 let g0=''; document.getElementById('scr-body').innerHTML = PAGES.map(([s,t,g])=>{ const used = Object.entries(FLOWS).filter(([k,f])=>f.flow.some(n=>n.s===s)).map(([k,f])=>`<span class="badge b-green">${esc(f.n)}</span>`).join(' ') || '<span class="badge b-grey">ยังไม่วางใน flow</span>';
   const h = g!==g0 ? `<tr class="gh"><td colspan="3">${g}</td></tr>` : ''; g0=g; return h+`<tr><td><code>/${s}</code></td><td>${esc(t)}</td><td>${used}</td></tr>`; }).join('');
 const LOG = [
+['9 พ.ย. 69','ออกคิวตามนัดหมาย (มีนัด = คิวคลินิก · ไม่มีนัด = คิวกลาง) · ผู้ป่วยใหม่รับคิว K ไปจุดคัดแยก · ซ่อนชื่อคลินิกพิเศษ TB/HIV · ยอดต่ำกว่า 1,000 จ่ายบัตรไม่ได้ (PR #8)'],
+['1 พ.ย. 69','AGENTS.md จาก CLAUDE.md + .claude/rules ให้ทุกเครื่องมือใช้กติกาเดียวกัน (PR #7)'],
 ['24 ต.ค. 69','Kiosk เป็น design system ของตัวเอง — kiosk.css · design.md · Figma variables (PR #6)'],
 ['24 ต.ค. 69','ใช้ design token จาก mih-design — --kiosk-* + agent kit'],
 ['23 ต.ค. 69','Kiosk แสดง VN บนหน้าผลคิวและบัตรคิว ตาม Flow คณะทำงาน (PR #5)'],
