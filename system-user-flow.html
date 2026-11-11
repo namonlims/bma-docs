@@ -360,6 +360,32 @@
   .ed-list li span:first-child { flex: 1 1 auto; min-width: 0; }
   .ed-x { display: inline-flex; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); border: 0; border-radius: var(--dim-radius-full, 9999px); background: transparent; color: var(--icon-neutral-secondary, #636B72); cursor: pointer; }
   .ed-x:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  /* โน้ต · ถามตอบ (BA · Dev · UXUI · ผู้ใช้ 11 พ.ย. 69) */
+  .detail .nt-sec { border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEF0F1); padding-top: var(--dim-space-400, 16px); }
+  .nt-list { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .nt { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); padding: var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); background: var(--surface-card-100, #FFFFFF); }
+  .nt.is-open { border-color: var(--text-colorfulbadge-orange, #C2410C); }
+  .nt-h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .nt-h b { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
+  .nt-t { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
+  .nt-on { align-self: flex-start; display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); min-height: var(--dim-size-900, 44px); padding: 0; border: 0; background: none; color: var(--text-brandPrimary-default, #007549); font: inherit; font-size: var(--type-size-xs, 12px); text-align: left; cursor: pointer; }
+  .nt-on .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .nt-rep { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); margin-left: var(--dim-space-200, 8px); padding-left: var(--dim-space-300, 12px); border-left: var(--dim-stroke-200, 2px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .nt-rep > div { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .nt-act { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dim-space-200, 8px); }
+  .nt-act .nt-who { flex: 1 1 160px; min-width: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); overflow-wrap: anywhere; }
+  .nt-form { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .nt-form[hidden], .nt-err[hidden] { display: none; }
+  .nt-seg { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
+  .nt-seg button { min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); font: inherit; font-size: var(--type-size-xs, 12px); cursor: pointer; }
+  .nt-seg button[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .nt-err { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-colorfulbadge-red, #B91C1C); }
+  .nt-empty { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .nt-gbtn { min-height: var(--dim-size-900, 44px); }
+  .uf-node .nb { position: absolute; top: calc(var(--dim-space-200, 8px) * -1); left: calc(var(--dim-space-200, 8px) * -1); z-index: 2; display: inline-flex; align-items: center; gap: var(--dim-space-050, 2px); height: var(--dim-space-500, 20px); padding: 0 var(--dim-space-150, 6px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-brandPrimary-default, #007549); color: var(--text-content-on-content, #FFFFFF); font-size: var(--type-size-xxs, 10px); font-weight: var(--type-weight-bold, 700); pointer-events: none; }
+  .uf-node .nb.ask { background: var(--text-colorfulbadge-orange, #C2410C); }
+  .uf-node .nb .material-symbols-outlined { font-size: var(--type-size-xs, 12px); }
+  .uf-node.dec .nb { top: var(--dim-space-100, 4px); left: var(--dim-space-100, 4px); }
   /* เส้น: หักมุมโค้ง · ป้ายเป็นแถบบนเส้น · ชี้กล่องแล้วเส้นที่เกี่ยวข้องเด่น ที่เหลือจาง */
   .uf-edges text { stroke: none; dominant-baseline: central; }
   .uf-edges rect.lb { fill: var(--surface-card-100, #FFFFFF); stroke: var(--border-neutral-tertiary, #E2E4E6); stroke-width: var(--dim-stroke-100, 1px); }
@@ -1282,6 +1308,7 @@ function render() {
     tx.before(r);
   });
   hl(activeKey);
+  ntBadges();
 }
 
 /* เส้นที่เกี่ยวกับกล่องที่เลือก/ชี้อยู่ = เด่น · ที่เหลือจาง */
@@ -1420,9 +1447,11 @@ function show(key, push = true) {
   if (r.link) body += `<div class="grp"><a href="${r.link[1]}" data-close>${esc(r.link[0])}</a></div>`;
   if (r.target) body += '<div class="grp"><span class="badge b-purple">เป้าหมาย · เดโมยังไม่เชื่อม</span></div>';
   if (r.unknown) body += `<div class="grp"><span class="badge b-grey">ยังไม่มีในเอกสาร</span> <span class="d-sum">${esc(r.unknown)}</span></div>`;
-  body += critDetailHtml(key) + editorHtml(key);
+  body += critDetailHtml(key) + ntSection(key) + editorHtml(key);
+  detail.dataset.mode = 'node';
   detail.innerHTML = `<div class="d-top"><div><span class="d-kind">${KIND[typeOf(key)]}${parentOf[key] ? ' · ใน ' + esc(index[parentOf[key]].t) : ''}</span><h3>${esc((r.n ? r.n + ' · ' : '') + r.t)}</h3>${r.sum ? `<p class="d-sum">${esc(r.sum)}</p>` : ''}</div><button type="button" class="x" aria-label="ปิด" data-close><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>${body}`;
   detail.classList.add('open'); scrim.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+  ntLoginButtons(); ntLoad();
   if (push) setHash(key);
 }
 function closeSheet() { tipHide(); activeKey = null; hl(null); document.querySelectorAll('.uf-node.is-active').forEach((b) => b.classList.remove('is-active')); detail.classList.remove('open'); scrim.classList.remove('open'); detail.setAttribute('aria-hidden', 'true'); }
@@ -1597,7 +1626,9 @@ detail.addEventListener('keydown', (e) => { if (e.target.id === 'ed-prompt' && e
 const edBarEl = document.getElementById('ed-bar');
 function edBar() {
   const n = editsOf(clinic.key).length, total = Object.values(EDITS).reduce((s, a) => s + a.length, 0);
+  const nAll = ntOfClinic(), nAsk = ntOpenAsk(nAll);
   edBarEl.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">edit_note</span><span class="ed-sum">${n ? `แก้ไว้ ${n} รายการในคลินิกนี้` : 'กดจุดไหนก็ได้ แล้วพิมพ์ Prompt เพื่อแก้ flow'} · เก็บในเบราว์เซอร์นี้</span>
+    <button type="button" class="ed-btn${nAsk ? ' primary' : ''}" data-bar="notes"><span class="material-symbols-outlined" aria-hidden="true">forum</span>โน้ต · ถามตอบ${nAll.length ? ` (${nAll.length})` : ''}${nAsk ? ` · รอตอบ ${nAsk}` : ''}</button>
     <button type="button" class="ed-btn" data-bar="export" ${total ? '' : 'disabled'}><span class="material-symbols-outlined" aria-hidden="true">download</span>ส่งออก</button>
     <button type="button" class="ed-btn" data-bar="import"><span class="material-symbols-outlined" aria-hidden="true">upload</span>นำเข้า</button>
     ${n ? '<button type="button" class="ed-btn" data-bar="clear"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>ล้างคลินิกนี้</button>' : ''}
@@ -1605,6 +1636,7 @@ function edBar() {
 }
 edBarEl.addEventListener('click', (e) => {
   const b = e.target.closest('[data-bar]'); if (!b) return;
+  if (b.dataset.bar === 'notes') { ntPanel(); ntLoad(true); return; }
   if (b.dataset.bar === 'export') {
     const blob = new Blob([JSON.stringify({ type: 'bma-user-flow-edits', version: 1, exportedAt: new Date().toISOString(), edits: EDITS }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `user-flow-edits-${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -1620,6 +1652,180 @@ edBarEl.addEventListener('change', async (e) => {
     saveEdits(); refreshEdits();
   } catch { alert('ไฟล์นี้ไม่ใช่ไฟล์การแก้ User flow'); }
 });
+
+/* ---------- โน้ต · ถามตอบ (ผู้ใช้ 11 พ.ย. 69: BA · Dev · UXUI จดโน้ตและถามตอบกันได้ ทุกคนในทีมเห็น) ----------
+   ที่เก็บกลางเดียวกับ ba-review / docs-hub (Apps Script ชีต edits · แถวเพิ่มอย่างเดียว ไม่ทับของเดิม)
+   doc = user-flow · key = <คลินิก>:<id กล่อง> (":_" = ทั้งคลินิก)
+   where: t|<บทบาท>|<note|ask> = เรื่องใหม่ · r|<บทบาท>|<id เรื่อง> = ตอบ · s|<id เรื่อง> = สถานะ (after done|open)
+   id เรื่อง = เวลา (ms) ของแถวเรื่องนั้น · อ่านได้ทุกคน · เขียนต้องเข้าสู่ระบบ Google (token เดียวกับ ba-review) */
+const NT_URL = 'https://script.google.com/macros/s/AKfycbzB2p0Sj0Dm8OUoXRSSZtnIY2UYgQ110nkEghrq75qX7rwsa-LsbWFgAMp1ib0-p7E/exec';
+const NT_CLIENT = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
+const NT_DOC = 'user-flow';
+const NT_ROLES = { BA: 'b-blue', Dev: 'b-purple', UXUI: 'b-teal', 'อื่น ๆ': 'b-grey' };
+const NT = { threads: {}, loaded: false, err: '', at: 0, filter: 'all' };
+const NA = { tk: '', exp: 0, user: null };
+const nts = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
+const ntWhen = (ms) => new Date(ms).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+const ntB64 = (s) => decodeURIComponent(atob(s.replace(/-/g, '+').replace(/_/g, '/')).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+function ntSetTk(tk) {
+  try { const p = JSON.parse(ntB64(tk.split('.')[1])); if (p.exp * 1000 < Date.now() + 60000) return false; NA.tk = tk; NA.exp = p.exp; NA.user = { email: p.email, name: p.name || p.email.split('@')[0] }; nts.set('bma-docs:tk', tk); return true; } catch { return false; }
+}
+const ntIn = () => !!NA.tk && NA.exp * 1000 > Date.now() + 60000;
+{ const t = nts.get('bma-docs:tk'); if (t) ntSetTk(t); }
+let ntGsiP;
+function ntGsi() {
+  return ntGsiP ||= new Promise((ok, no) => {
+    const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = () => { google.accounts.id.initialize({ client_id: NT_CLIENT, callback: (r) => { if (r?.credential && ntSetTk(r.credential)) { ntLoad(true); } }, cancel_on_tap_outside: false, use_fedcm_for_prompt: true }); ok(); };
+    s.onerror = no; document.head.appendChild(s);
+  });
+}
+function ntLoginButtons() {
+  const els = [...detail.querySelectorAll('.nt-gbtn')]; if (!els.length) return;
+  ntGsi().then(() => els.forEach((el) => google.accounts.id.renderButton(el, { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill', locale: 'th', width: 260 })))
+    .catch(() => els.forEach((el) => { el.innerHTML = '<p class="nt-err">โหลดปุ่มเข้าสู่ระบบของ Google ไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช</p>'; }));
+}
+function ntIndex(rows) {
+  const th = {}, byId = {};
+  rows.sort((a, b) => a.at - b.at).forEach((r) => {
+    const [t, a, b] = String(r.where || '').split('|');
+    if (t === 't') { const x = { id: String(r.at), key: r.key, role: a, kind: b === 'ask' ? 'ask' : 'note', name: r.name, email: r.email, at: r.at, text: r.after, replies: [], status: 'open' }; byId[x.id] = x; (th[r.key] ||= []).push(x); }
+    else if (t === 'r' && byId[b]) byId[b].replies.push({ role: a, name: r.name, email: r.email, at: r.at, text: r.after });
+    else if (t === 's' && byId[a]) byId[a].status = r.after === 'done' ? 'done' : 'open';
+  });
+  NT.threads = th;
+}
+async function ntLoad(force) {
+  if (!force && Date.now() - NT.at < 15000) return;
+  NT.at = Date.now();
+  try {
+    const j = await (await fetch(NT_URL + '?doc=' + NT_DOC + (ntIn() ? '&tk=' + encodeURIComponent(NA.tk) : ''), { cache: 'no-store' })).json();
+    if (!j.ok) throw new Error('load');
+    ntIndex((j.edits || []).filter((e) => e.doc === NT_DOC)); NT.loaded = true; NT.err = '';
+  } catch { NT.err = 'โหลดโน้ตไม่ได้ · ตรวจอินเทอร์เน็ตแล้วลองใหม่'; }
+  ntRefresh();
+}
+async function ntSave(key, where, text) {
+  const r = await fetch(NT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ tk: NA.tk, edit: { doc: NT_DOC, key, where, before: '', after: text } }) });
+  const j = await r.json();
+  if (!j.ok) { if (j.auth) { NA.tk = ''; NA.user = null; nts.del('bma-docs:tk'); throw new Error('หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบอีกครั้ง ข้อความที่พิมพ์ยังอยู่'); } throw new Error('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+}
+const ntKey = (id) => `${clinic.key}:${id}`;
+const ntOfClinic = () => Object.entries(NT.threads).filter(([k]) => k.startsWith(clinic.key + ':')).flatMap(([, v]) => v);
+const ntOpenAsk = (list) => list.filter((x) => x.kind === 'ask' && x.status === 'open').length;
+const ntRole = () => (NT_ROLES[nts.get('bma-uf-note:role')] ? nts.get('bma-uf-note:role') : 'BA');
+const ntDraftK = (key) => 'bma-uf-note:draft:' + key;
+function ntNodeTitle(key) { const id = key.slice(clinic.key.length + 1); return id === '_' ? 'ทั้งคลินิก' : index[id] ? (index[id].n ? index[id].n + ' · ' : '') + index[id].t : 'กล่องที่ไม่มีในแผนภาพแล้ว'; }
+function ntThreadHtml(x, withNode) {
+  const open = x.kind === 'ask' && x.status === 'open', id = x.key.slice(clinic.key.length + 1);
+  const head = (o) => `<div class="nt-h"><span class="badge ${NT_ROLES[o.role] || 'b-grey'}">${esc(o.role || 'อื่น ๆ')}</span>${o === x && x.kind === 'ask' ? (open ? '<span class="badge b-orange">คำถาม · รอตอบ</span>' : '<span class="badge b-green">ตอบแล้ว</span>') : ''}<b>${esc(o.name)}</b><span>${esc(ntWhen(o.at))}</span></div>`;
+  return `<article class="nt${open ? ' is-open' : ''}" data-th="${esc(x.id)}">${head(x)}
+    ${withNode ? `<button type="button" class="nt-on" data-nt-go="${esc(id)}"><span class="material-symbols-outlined" aria-hidden="true">${id === '_' ? 'apps' : 'arrow_outward'}</span>${esc(ntNodeTitle(x.key))}</button>` : ''}
+    <p class="nt-t">${esc(x.text)}</p>
+    ${x.replies.length ? `<div class="nt-rep">${x.replies.map((r) => `<div>${head(r)}<p class="nt-t">${esc(r.text)}</p></div>`).join('')}</div>` : ''}
+    ${ntIn() ? `<div class="nt-act">${x.kind === 'ask' ? `<button type="button" class="ed-btn" data-nt-status="${esc(x.id)}" data-key="${esc(x.key)}" data-to="${open ? 'done' : 'open'}"><span class="material-symbols-outlined" aria-hidden="true">${open ? 'task_alt' : 'help'}</span>${open ? 'ตอบแล้ว' : 'เปิดคำถามอีกครั้ง'}</button>` : ''}<button type="button" class="ed-btn" data-nt-reply="${esc(x.id)}"><span class="material-symbols-outlined" aria-hidden="true">reply</span>ตอบ</button></div>
+    <div class="nt-form" data-nt-rf="${esc(x.id)}" hidden><label class="ed-l" for="nt-r-${esc(x.id)}">ตอบในนาม ${esc(ntRole())}</label><textarea id="nt-r-${esc(x.id)}" class="mih-uf-prompt-input" rows="2" placeholder="พิมพ์คำตอบ"></textarea><div class="nt-act"><button type="button" class="ed-btn primary" data-nt-send="${esc(x.id)}" data-key="${esc(x.key)}"><span class="material-symbols-outlined" aria-hidden="true">send</span>ส่งคำตอบ</button></div></div>` : ''}
+  </article>`;
+}
+function ntFormHtml(key) {
+  if (!ntIn()) return `<div class="nt-form"><p class="d-sum">เข้าสู่ระบบด้วย Google เพื่อเขียนโน้ต ถาม หรือตอบ</p><div class="nt-gbtn"></div></div>`;
+  const role = ntRole();
+  return `<div class="nt-form" data-nt-form="${esc(key)}">
+    <span class="ed-l">ฉันคือ</span><div class="nt-seg" data-nt-seg="role">${Object.keys(NT_ROLES).map((r) => `<button type="button" data-v="${esc(r)}" aria-pressed="${r === role}">${esc(r)}</button>`).join('')}</div>
+    <span class="ed-l">ประเภท</span><div class="nt-seg" data-nt-seg="kind"><button type="button" data-v="note" aria-pressed="true">โน้ต</button><button type="button" data-v="ask" aria-pressed="false">คำถาม</button></div>
+    <label class="ed-l" for="nt-text">ข้อความ</label><textarea id="nt-text" class="mih-uf-prompt-input" rows="3" data-draft="${esc(key)}" placeholder="เช่น ขั้นนี้ Dev ต้องเรียก API อะไร · BA ยืนยันเงื่อนไขนี้แล้วหรือยัง">${esc(nts.get(ntDraftK(key)) || '')}</textarea>
+    <p class="nt-err" hidden></p>
+    <div class="nt-act"><span class="nt-who">${esc(NA.user.name)} · ${esc(NA.user.email)}</span><button type="button" class="ed-btn" data-nt-out><span class="material-symbols-outlined" aria-hidden="true">logout</span>ออกจากระบบ</button><button type="button" class="ed-btn primary" data-nt-add="${esc(key)}"><span class="material-symbols-outlined" aria-hidden="true">add_comment</span>บันทึก</button></div>
+  </div>`;
+}
+function ntListHtml(list, withNode) {
+  if (NT.err) return `<p class="nt-err">${esc(NT.err)}</p>`;
+  if (!NT.loaded) return '<p class="nt-empty">กำลังโหลดโน้ต…</p>';
+  return list.length ? `<div class="nt-list">${list.map((x) => ntThreadHtml(x, withNode)).join('')}</div>` : '<p class="nt-empty">ยังไม่มีโน้ต</p>';
+}
+function ntSection(id) {
+  const key = ntKey(id), list = NT.threads[key] || [], ask = ntOpenAsk(list);
+  return `<div class="grp nt-sec" data-nt-sec="${esc(id)}"><span class="grp-h">โน้ต · ถามตอบ (${list.length}${ask ? ` · รอตอบ ${ask}` : ''})</span><p class="d-sum">BA · Dev · UXUI จดโน้ตหรือถามที่จุดนี้ · ทุกคนในทีมเห็น</p>${ntListHtml(list, false)}${ntFormHtml(key)}</div>`;
+}
+/* แผงรวมโน้ตทั้งคลินิก (ปุ่ม "โน้ต · ถามตอบ" บนแถบเครื่องมือ) */
+function ntPanel() {
+  tipHide(); activeKey = null; hl(null); document.querySelectorAll('.uf-node.is-active').forEach((b) => b.classList.remove('is-active'));
+  const all = ntOfClinic().sort((a, b) => Math.max(b.at, ...b.replies.map((r) => r.at)) - Math.max(a.at, ...a.replies.map((r) => r.at)));
+  const ask = ntOpenAsk(all), me = NA.user?.email;
+  const list = all.filter((x) => NT.filter === 'ask' ? x.kind === 'ask' && x.status === 'open' : NT.filter === 'mine' ? me && (x.email === me || x.replies.some((r) => r.email === me)) : true);
+  detail.dataset.mode = 'notes';
+  detail.innerHTML = `<div class="d-top"><div><span class="d-kind">โน้ต · ถามตอบ</span><h3>${esc(clinic.name)}</h3><p class="d-sum">${all.length} เรื่อง · คำถามรอตอบ ${ask} · ใหม่ล่าสุดอยู่บน</p></div><button type="button" class="x" aria-label="ปิด" data-close><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>
+    <div class="nt-seg" data-nt-seg="filter">${[['all', 'ทั้งหมด'], ['ask', `รอตอบ (${ask})`], ['mine', 'ที่ฉันเกี่ยวข้อง']].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${NT.filter === v}">${esc(l)}</button>`).join('')}</div>
+    <div class="grp">${ntListHtml(list, true)}</div>
+    <div class="grp nt-sec"><span class="grp-h">โน้ตเรื่องทั้งคลินิก</span><p class="d-sum">โน้ตของกล่องใดกล่องหนึ่ง → กดกล่องในแผนภาพแล้วเขียนที่ส่วน "โน้ต · ถามตอบ"</p>${ntFormHtml(ntKey('_'))}</div>`;
+  detail.classList.add('open'); scrim.classList.add('open'); detail.setAttribute('aria-hidden', 'false');
+  ntLoginButtons();
+}
+/* ป้ายจำนวนโน้ตบนกล่อง · กล่องขยายได้นับรวมโน้ตของขั้นย่อย · ส้ม = มีคำถามรอตอบ */
+function ntBadges() {
+  box.querySelectorAll('.uf-node .nb').forEach((b) => b.remove());
+  const cnt = {};
+  ntOfClinic().forEach((x) => {
+    const id = x.key.slice(clinic.key.length + 1); if (id === '_') return;
+    [id, parentOf[id]].filter(Boolean).forEach((k) => { const c = (cnt[k] ||= { n: 0, ask: 0 }); c.n++; if (x.kind === 'ask' && x.status === 'open') c.ask++; });
+  });
+  box.querySelectorAll('.uf-node').forEach((el) => {
+    if (el.classList.contains('cust')) return;
+    const c = cnt[el.id.replace(/^node-/, '')]; if (!c) return;
+    const s = document.createElement('span'); s.className = 'nb' + (c.ask ? ' ask' : ''); s.setAttribute('aria-hidden', 'true');
+    s.innerHTML = `<span class="material-symbols-outlined">${c.ask ? 'help' : 'chat'}</span>${c.n}`;
+    el.appendChild(s); el.setAttribute('aria-label', el.getAttribute('aria-label').replace(/ · โน้ต \d+.*$/, '') + ` · โน้ต ${c.n}${c.ask ? ` รอตอบ ${c.ask}` : ''}`);
+  });
+}
+function ntRefresh() {
+  if (!clinic) return;
+  ntBadges(); edBar();
+  if (!detail.classList.contains('open')) return;
+  if (detail.dataset.mode === 'notes') { ntPanel(); return; }
+  const sec = detail.querySelector('[data-nt-sec]');
+  if (sec) { const typed = detail.querySelector('#nt-text')?.value; sec.outerHTML = ntSection(sec.dataset.ntSec); if (typed) { const ta = detail.querySelector('#nt-text'); if (ta) ta.value = typed; } ntLoginButtons(); }
+}
+function ntGo(id) {
+  if (id === '_' || !index[id]) return;
+  const p = parentOf[id];
+  if (p && expanded !== p) { expanded = p; render(); }
+  document.getElementById('node-' + id)?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  show(id);
+}
+detail.addEventListener('input', (e) => { const d = e.target.dataset?.draft; if (d) nts.set(ntDraftK(d), e.target.value); });
+detail.addEventListener('click', async (e) => {
+  const sg = e.target.closest('.nt-seg button');
+  if (sg) {
+    const box2 = sg.parentElement, k = box2.dataset.ntSeg;
+    if (k === 'filter') { NT.filter = sg.dataset.v; ntPanel(); return; }
+    box2.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === sg)));
+    if (k === 'role') nts.set('bma-uf-note:role', sg.dataset.v);
+    return;
+  }
+  const go = e.target.closest('[data-nt-go]'); if (go) { ntGo(go.dataset.ntGo); return; }
+  if (e.target.closest('[data-nt-out]')) { NA.tk = ''; NA.user = null; nts.del('bma-docs:tk'); try { google.accounts.id.disableAutoSelect(); } catch {} ntRefresh(); return; }
+  const rp = e.target.closest('[data-nt-reply]');
+  if (rp) { const f = detail.querySelector(`[data-nt-rf="${CSS.escape(rp.dataset.ntReply)}"]`); if (f) { f.hidden = !f.hidden; if (!f.hidden) f.querySelector('textarea').focus(); } return; }
+  const act = e.target.closest('[data-nt-add], [data-nt-send], [data-nt-status]'); if (!act) return;
+  const form = act.closest('.nt-form, .nt'); const err = form.querySelector('.nt-err');
+  let key, where, text;
+  if (act.dataset.ntAdd) {
+    key = act.dataset.ntAdd; text = form.querySelector('textarea').value.trim();
+    const role = form.querySelector('[data-nt-seg="role"] [aria-pressed="true"]')?.dataset.v || ntRole();
+    const kind = form.querySelector('[data-nt-seg="kind"] [aria-pressed="true"]')?.dataset.v || 'note';
+    where = `t|${role}|${kind}`;
+  } else if (act.dataset.ntSend) { key = act.dataset.key; text = form.querySelector('textarea').value.trim(); where = `r|${ntRole()}|${act.dataset.ntSend}`; }
+  else { key = act.dataset.key; text = act.dataset.to; where = `s|${act.dataset.ntStatus}`; }
+  if (!text) { form.querySelector('textarea')?.focus(); return; }
+  act.disabled = true;
+  try {
+    await ntSave(key, where, text);
+    if (act.dataset.ntAdd) nts.del(ntDraftK(key));
+    const ta = form.querySelector('textarea'); if (ta && !act.dataset.ntStatus) ta.value = '';
+    await ntLoad(true);
+  } catch (ex) { act.disabled = false; if (err) { err.hidden = false; err.textContent = ex.message; } else alert(ex.message); if (!ntIn()) ntRefresh(); }
+});
+setInterval(() => { if (document.visibilityState === 'visible') ntLoad(true); }, 60000);
 
 function selectClinic(key, push = true) {
   clinic = withEdits(BASE.find((c) => c.key === key) || BASE[0]);
@@ -1667,6 +1873,8 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet
   document.fonts?.ready.then(() => render());   // วัดป้ายบนเส้นใหม่หลังฟอนต์ไทยโหลด
   addEventListener('resize', () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });
   if (h.get('k') && index[h.get('k')]) { document.getElementById('node-' + h.get('k'))?.scrollIntoView({ block: 'center', inline: 'center' }); show(h.get('k'), false); }
+  else if (h.get('n')) ntPanel();   // #c=…&n=1 เปิดแผงโน้ตของคลินิกนั้นเลย
+  ntLoad(true);
 }
 
 /* ---------- conditions table ---------- */
