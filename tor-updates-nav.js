@@ -1,5 +1,6 @@
 /* ตัวเลือก "คลินิก" + "วันที่" บนหัวหน้าทะเบียนรายการปรับปรุง UI/UX (ผู้ใช้ 11 พ.ย. 69)
-   เพิ่มรอบใหม่ = เพิ่มแถวใน TOR_UPDATES (href = หน้า + #รอบ) · หน้าไหนมี <div id="tor-nav"></div> ก็ได้ตัวเลือกนี้ */
+   เพิ่มรอบใหม่ = เพิ่มแถวใน TOR_UPDATES (href = หน้า + #รอบ) · หน้าไหนมี <div id="tor-nav"></div> ก็ได้ตัวเลือกนี้
+   clinic = ชื่อเดียวกับรายการในเมนูซ้ายของหน้ารวมเอกสาร (ตัวอักษรตรงกัน) · ใช้ตั้งหัวเรื่อง h1 และให้เมนูซ้าย highlight รายการของรอบที่เลือก (ผู้ใช้ 15 พ.ย. 69 "หัวข้อ กับ sidemenu และ dropdown ต้องสัมพันธ์กัน") */
 (function () {
   var TOR_UPDATES = [
     { clinic: 'ระบบบริหารจัดการคิว (คทง.1)', date: '15 พ.ย. 2569', note: '6 ข้อที่ BA หาหน้าจอไม่เจอ · เสร็จสิ้นคิว · ตัดคิวออกจากจอ · สถานะเตรียมยา · ประเภทคิว · เตือนเวลารอ · ข้อความบนบัตรคิว', href: 'tor-k9-addiction.html#round-2569-11-15-queue' },
@@ -8,11 +9,12 @@
     { clinic: 'คลินิกบำบัดสารเสพติด (คทง.9)', date: '12 พ.ย. 2569', note: 'Design system ข้อ 4–14', href: 'tor-k9-addiction.html#round-2569-11-12-ds' },
     { clinic: 'คลินิกสุขภาพจิต (คทง.9)', date: '12 พ.ย. 2569', note: 'เสนอแก้ไข คลินิกสุขภาพจิต 12 ต.ค. 69 · 9 แถบตามบทบาท', href: 'tor-k9-addiction.html#mh-clinic' },
     { clinic: 'งานสุขภาพจิตทั่วไป (คทง.9)', date: '12 พ.ย. 2569', note: 'เสนอแก้ไข งานสุขภาพจิตทั่วไป 12 ต.ค. 69 · เชิงรับ/เชิงรุก', href: 'tor-k9-addiction.html#mh-general' },
-    { clinic: 'งานพัฒนาการ สุขภาพจิต (คทง.9)', date: '12 พ.ย. 2569', note: 'เสนอแก้ไข งานพัฒนาการ 12 ต.ค. 69 · DSPM รายข้อ', href: 'tor-k9-addiction.html#round-2569-11-12' },
+    { clinic: 'งานพัฒนาการ (คทง.9)', date: '12 พ.ย. 2569', note: 'เสนอแก้ไข งานพัฒนาการ 12 ต.ค. 69 · DSPM รายข้อ', href: 'tor-k9-addiction.html#round-2569-11-12' },
     { clinic: 'คลินิกบำบัดสารเสพติด (คทง.9)', date: '11 พ.ย. 2569', note: 'SUD-01–18 · Drive คณะ 9', href: 'tor-k9-addiction.html#round-2569-11-11' },
     { clinic: 'คลินิกบำบัดสารเสพติด (คทง.9)', date: '1 พ.ย. 2569', note: 'SUD-01–13 รอบแรก', href: 'tor-k9-addiction.html#round-2569-11-01' },
-    { clinic: 'คลินิกเบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)', date: '9 พ.ย. 2569', note: 'ลำดับ 101–136', href: 'tor-ncd-101-136.html' },
+    { clinic: 'เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)', date: '9 พ.ย. 2569', note: 'ลำดับ 101–136', href: 'tor-ncd-101-136.html' },
   ];
+  window.TOR_UPDATES = TOR_UPDATES;
   /* state ทุกแบบ alias token input ของ design system (ผู้ใช้ 12 พ.ย. 69 "state ของ field ให้ alias from design system"):
      ปกติ --border-input-filled · hover --border-input-hover + --focus-ring-input-hover · เปิด/โฟกัส --border-input-typing + --focus-ring-input-typing
      ข้อความ --text-input-filled · ไอคอน --icon-input-filled · ป้าย --text-input-label
@@ -90,6 +92,13 @@
   var datesOf = function (clinic) { return TOR_UPDATES.filter(function (r) { return r.clinic === clinic; }).map(function (r) { return { value: r.href, label: r.date + ' · ' + r.note }; }); };
   sc.set(clinics.map(function (c) { return { value: c, label: c }; }), current.clinic);
   sd.set(datesOf(current.clinic), current.href);
+  /* หัวเรื่อง = ชื่อคณะทำงาน/ระบบของรอบที่เลือก (ชื่อเดียวกับเมนูซ้าย) · คำอธิบาย .lede[data-clinic] แสดงเฉพาะรอบของ clinic นั้น */
+  var h1 = hd && hd.querySelector('h1');
+  var setTitle = function (clinic) {
+    if (h1) h1.textContent = 'ทะเบียนรายการปรับปรุง UI/UX · ' + clinic;
+    [].forEach.call(document.querySelectorAll('.lede[data-clinic]'), function (p) { p.hidden = p.getAttribute('data-clinic') !== clinic; });
+  };
+  setTitle(current.clinic);
   var go = function (href) {
     var pg = href.split('#')[0];
     if (pg === page()) { location.hash = href.split('#')[1] || ''; if (window.torShowRound) window.torShowRound(); }
@@ -99,6 +108,6 @@
   sd.onChange = function (href) { go(href); };
   window.addEventListener('hashchange', function () {
     var h = page() + location.hash;
-    var r = TOR_UPDATES.filter(function (x) { return x.href === h; })[0]; if (r) { sc.set(sc.items, r.clinic); sd.set(datesOf(r.clinic), r.href); }
+    var r = TOR_UPDATES.filter(function (x) { return x.href === h; })[0]; if (r) { sc.set(sc.items, r.clinic); sd.set(datesOf(r.clinic), r.href); setTitle(r.clinic); }
   });
 })();

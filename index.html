@@ -581,6 +581,8 @@
   var mark = function (key) {
     /* data-also = รอบอื่นของคณะทำงานเดียวกัน (การ์ดเดียว สลับรอบที่ "วันที่ปรับปรุง" · ผู้ใช้ 15 พ.ย. 69) */
     var a = links.filter(function (x) { return x.dataset.doc === key || (x.dataset.also || '').split(' ').indexOf(key) >= 0; })[0];
+    /* รอบที่ไม่มีรายการเมนูของตัวเอง → รายการที่ชื่อตรงกับ clinic ของรอบนั้นใน TOR_UPDATES (tor-updates-nav.js) */
+    if (!a && key) { try { var tu = doc.contentWindow.TOR_UPDATES, r = tu && tu.filter(function (x) { return x.href === key; })[0]; if (r) a = links.filter(function (x) { return label(x) === r.clinic; })[0]; } catch (e) {} }
     if (!a && key) { var f = key.split('#')[0]; a = links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f && x.dataset.doc.indexOf('#') < 0; })[0] || links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f; })[0]; }
     if (!key) a = links[0];
     links.forEach(function (x) { x.classList.toggle('is-active', x === a); if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current'); });
@@ -621,7 +623,7 @@
       if (key !== current) { current = key; history.replaceState(null, '', '#d=' + encodeURIComponent(key)); mark(key); }
     } catch (e) {}
   };
-  doc.addEventListener('load', function () { sync(); try { doc.contentWindow.addEventListener('hashchange', sync); } catch (e) {} });
+  doc.addEventListener('load', function () { sync(); if (current) mark(current); try { doc.contentWindow.addEventListener('hashchange', sync); } catch (e) {} });
   addEventListener('hashchange', route);
   route();
 })();
