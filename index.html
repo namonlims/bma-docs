@@ -14,7 +14,7 @@
   body {
     margin: 0;
     min-height: 100dvh;
-    background: var(--brand-p50, #F4FBF8);
+    background: var(--surface-card-100, #FFFFFF);
     color: var(--text-content-default, #363B3F);
     font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
     font-size: var(--type-size-sm, 14px);
@@ -66,7 +66,7 @@
     min-height: var(--dim-size-900, 44px);
     padding: var(--dim-space-500, 20px);
     background: var(--surface-card-100, #FFFFFF);
-    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5);
+    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
     border-radius: var(--dim-radius-500, 16px);
     color: inherit;
     text-decoration: none;
@@ -136,7 +136,7 @@
   .t-pf { background: var(--surface-colorfulbadge-teal, #D1F6EE); color: var(--text-colorfulbadge-teal, #196C65); }
   .t-sm { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
   .t-ut { background: var(--surface-colorfulbadge-pink, #FCE7F3); color: var(--text-colorfulbadge-pink, #BE185D); }
-  .types { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); padding: var(--dim-space-400, 16px) var(--dim-space-500, 20px); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-500, 16px); }
+  .types { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); padding: var(--dim-space-400, 16px) var(--dim-space-500, 20px); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-500, 16px); }
   .types-h, .sub-h { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
   .sub-h { margin-top: var(--dim-space-200, 8px); }
   .types dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); margin: 0; font-size: var(--type-size-xs, 12px); align-items: center; }
@@ -154,65 +154,64 @@
     .page { padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1000, 40px); }
     .cards { grid-template-columns: 1fr; }
   }
-  /* side menu (ผู้ใช้ 15 พ.ย. 69 "รวมหน้านี้เป็น sidemenu") */
-  .layout { display: flex; align-items: flex-start; width: 100%; max-width: 1400px; margin: 0 auto; }
-  .side { position: sticky; top: 0; flex: 0 0 auto; width: 264px; height: 100dvh; overflow-y: auto; padding: var(--dim-space-800, 32px) var(--dim-space-400, 16px); border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
-  .side-brand { display: block; padding: 0 var(--dim-space-300, 12px) var(--dim-space-400, 16px); font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-decoration: none; }
-  .side-h { margin: var(--dim-space-400, 16px) 0 var(--dim-space-100, 4px); padding: 0 var(--dim-space-300, 12px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  /* เปลือกเอกสาร: เมนูซ้าย + เนื้อหาขวา (ผู้ใช้ 15 พ.ย. 69 "sidemenu" · "กดแล้วด้านขวาแสดงเนื้อหาหัวข้อนั้นเลย ไม่ต้องกดอีกชั้น" · "ทั้งหน้าเป็นสีขาว") */
+  .shell { display: flex; min-height: 100dvh; }
+  .side { position: sticky; top: 0; flex: 0 0 auto; width: 280px; height: 100dvh; overflow-y: auto; padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px); border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
+  .side-brand { display: flex; align-items: center; min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); margin-bottom: var(--dim-space-200, 8px); font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-decoration: none; }
   .side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--dim-space-050, 2px); }
-  .side a.nav { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); color: var(--text-content-default, #363B3F); text-decoration: none; font-size: var(--type-size-sm, 14px); }
-  .side a.nav .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
-  .side a.nav:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .side .grp { margin-top: var(--dim-space-200, 8px); }
+  .grp-h { display: flex; align-items: center; gap: var(--dim-space-200, 8px); width: 100%; min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); border: 0; border-radius: var(--dim-radius-300, 8px); background: none; font: inherit; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); text-align: left; cursor: pointer; }
+  .grp-h:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .grp-h .chev { margin-left: auto; transition: transform 150ms ease-out; }
+  .grp-h[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .grp-items[hidden] { display: none; }
+  .side a.nav { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); color: var(--text-content-secondary, #636B72); text-decoration: none; font-size: var(--type-size-sm, 14px); line-height: 1.4; }
+  .grp-items a.nav { padding-left: calc(var(--dim-space-300, 12px) + 28px); }
+  .side a.nav:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-content-default, #363B3F); }
   .side a.nav.is-active { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
-  .side a.nav.is-active .material-symbols-outlined { color: var(--icon-brandPrimary-default, #007549); }
-  .side a.nav.sub { padding-left: calc(var(--dim-space-300, 12px) + 28px); font-size: var(--type-size-xs, 12px); min-height: 36px; }
+  .side .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
+  .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--icon-brandPrimary-default, #007549); }
   .side a.nav .ext { margin-left: auto; font-size: 16px; }
-  .side a.nav:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
-  .layout .page { flex: 1 1 auto; min-width: 0; max-width: 1120px; }
-  section.group { scroll-margin-top: var(--dim-space-600, 24px); }
-  .menu-btn, .side-close { display: none; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); padding: 0; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); cursor: pointer; }
+  .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
+  .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+  .main .page { margin: 0; max-width: 1120px; }
+  .doc { display: block; flex: 1 1 auto; width: 100%; height: 100dvh; border: 0; background: var(--surface-card-100, #FFFFFF); }
+  .doc[hidden], .page[hidden] { display: none; }
+  body.doc-open { overflow: hidden; }
+  .bar { display: none; }
+  .icon-btn { display: inline-flex; align-items: center; justify-content: center; flex: none; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); padding: 0; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); cursor: pointer; }
+  .side-close { display: none; position: absolute; top: var(--dim-space-400, 16px); right: var(--dim-space-400, 16px); }
   .scrim { display: none; }
   @media (max-width: 1023px) {
-    .side { position: fixed; z-index: 60; left: 0; top: 0; width: min(300px, 85vw); transform: translateX(-100%); transition: transform 200ms ease-out; box-shadow: var(--shadow-dropdown); }
+    .side { position: fixed; z-index: 60; left: 0; top: 0; width: min(320px, 85vw); transform: translateX(-100%); transition: transform 200ms ease-out; box-shadow: var(--shadow-dropdown); }
     body.menu-open .side { transform: none; }
     body.menu-open .scrim { display: block; position: fixed; inset: 0; z-index: 55; background: var(--surface-overlay-default, rgb(100 116 139 / 0.40)); }
-    .menu-btn { display: inline-flex; margin-bottom: var(--dim-space-300, 12px); }
-    .side-close { display: inline-flex; position: absolute; top: var(--dim-space-400, 16px); right: var(--dim-space-400, 16px); }
+    .side-close { display: inline-flex; }
+    .bar { display: flex; position: sticky; top: 0; z-index: 50; align-items: center; gap: var(--dim-space-300, 12px); height: var(--dim-size-1400, 64px); padding: 0 var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+    .bar-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+    .doc { height: calc(100dvh - var(--dim-size-1400, 64px)); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .card, .side { transition: none; }
+    .side, .grp-h .chev { transition: none; }
+    .card { transition: none; }
   }
 </style>
 </head>
 <body>
-<div class="layout">
+<div class="shell">
 <nav class="side" id="side" aria-label="เมนูเอกสาร">
-  <button type="button" class="side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
-  <a class="side-brand" href="#top">เอกสาร PHCIS</a>
-  <p class="side-h">หมวดเอกสาร</p>
-  <ul>
-      <li><a class="nav" href="#g-design"><span class="material-symbols-outlined" aria-hidden="true">palette</span>Design system</a></li>
-      <li><a class="nav" href="#g-plan"><span class="material-symbols-outlined" aria-hidden="true">view_timeline</span>แผนงานทีม UXUI</a></li>
-      <li><a class="nav" href="#g-tor"><span class="material-symbols-outlined" aria-hidden="true">checklist</span>ทะเบียนรายการปรับปรุง</a></li>
-      <li><a class="nav" href="#g-rules"><span class="material-symbols-outlined" aria-hidden="true">gavel</span>กติกาและเงื่อนไข</a></li>
-      <li><a class="nav" href="#g-flow"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span>Flow และ Service Design</a></li>
-      <li><a class="nav" href="#g-app"><span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span>ระบบ Demo</a></li>
-  </ul>
-  <p class="side-h">ทะเบียนรายการปรับปรุง UI/UX</p>
-  <ul>
-      <li><a class="nav" href="tor-k9-addiction.html#mh-clinic"><span class="material-symbols-outlined" aria-hidden="true">psychology</span>คลินิกสุขภาพจิต</a></li>
-      <li><a class="nav" href="tor-k9-addiction.html#mh-general"><span class="material-symbols-outlined" aria-hidden="true">diversity_3</span>งานสุขภาพจิตทั่วไป</a></li>
-      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-12"><span class="material-symbols-outlined" aria-hidden="true">child_care</span>งานพัฒนาการ</a></li>
-      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-11"><span class="material-symbols-outlined" aria-hidden="true">medication</span>คลินิกบำบัดสารเสพติด</a></li>
-      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-14-finance"><span class="material-symbols-outlined" aria-hidden="true">payments</span>งานการเงิน</a></li>
-      <li><a class="nav" href="tor-ncd-101-136.html"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span>เบาหวาน/ความดัน (คทง.3)</a></li>
-      <li><a class="nav" href="tor-checklist.html"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>TOR Checklist (ผนวก ก)</a></li>
-  </ul>
+  <button type="button" class="icon-btn side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+  <a class="side-brand" href="#">เอกสาร PHCIS</a>
+  <ul id="side-list"></ul>
 </nav>
 <div class="scrim" aria-hidden="true"></div>
+<div class="main">
+<div class="bar">
+  <button type="button" class="icon-btn menu-btn" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
+  <span class="bar-t" id="bar-t">เอกสาร PHCIS</span>
+</div>
 <main class="page" id="top">
   <header>
-    <button type="button" class="menu-btn" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
     <h1>เอกสาร PHCIS</h1>
     <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
   </header>
@@ -271,15 +270,35 @@
         <p class="card-sum">เสนอแก้ไข คลินิกสุขภาพจิต 12 ต.ค. 69 · 9 แถบตามบทบาท · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#mh-clinic<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
+      <a class="card" href="tor-k9-addiction.html#mh-general">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">diversity_3</span><span class="card-title">งานสุขภาพจิตทั่วไป (คทง.9)</span></span>
+        <p class="card-sum">เสนอแก้ไข งานสุขภาพจิตทั่วไป 12 ต.ค. 69 · เชิงรับ/เชิงรุก · อัปเดต 12 พ.ย. 69</p>
+        <span class="card-url">tor-k9-addiction#mh-general<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-12">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">child_care</span><span class="card-title">งานพัฒนาการ (คทง.9)</span></span>
+        <p class="card-sum">เสนอแก้ไข งานพัฒนาการ 12 ต.ค. 69 · DSPM รายข้อ · อัปเดต 12 พ.ย. 69</p>
+        <span class="card-url">tor-k9-addiction#round-2569-11-12<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
       <a class="card" href="tor-k9-addiction.html#round-2569-11-11">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">medication</span><span class="card-title">คลินิกบำบัดสารเสพติด (คทง.9)</span></span>
-        <p class="card-sum">SUD-01–18 · Design system ข้อ 4–14 · งานสุขภาพจิตทั่วไป · พัฒนาการ · การเงิน · อัปเดต 14 พ.ย. 69</p>
+        <p class="card-sum">SUD-01–18 · Design system ข้อ 4–14 · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-14-finance">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">payments</span><span class="card-title">งานการเงิน (คอมเมนต์ลูกค้า)</span></span>
+        <p class="card-sum">18 ข้อ · ปิดสิทธิ · ใบเสร็จ · ตัดยอด · นำเข้ารายจ่าย/รายรับอื่นๆ · อัปเดต 14 พ.ย. 69</p>
+        <span class="card-url">tor-k9-addiction#finance<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="tor-ncd-101-136.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">monitor_heart</span><span class="card-title">เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)</span></span>
         <p class="card-sum">ลำดับ 101–136 · อัปเดต 9 พ.ย. 69</p>
         <span class="card-url">tor-ncd-101-136<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="tor-checklist.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">fact_check</span><span class="card-title">TOR Checklist (ผนวก ก)</span></span>
+        <p class="card-sum">ผนวก ก รายละเอียดคุณลักษณะเฉพาะทุกระบบงาน · ผนวก ด ระบบจัดการความยินยอม</p>
+        <span class="card-url">tor-checklist<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
     </div>
   </section>
@@ -440,27 +459,93 @@
 
   <p class="foot">อัปเดต 15 พฤศจิกายน 2569</p>
 </main>
+<iframe class="doc" id="doc" title="เนื้อหาเอกสาร" hidden></iframe>
+</div>
 </div>
 <script>
+/* เมนูสร้างจากการ์ดในหน้าแรก (หมวด = section · รายการ = การ์ด) → เพิ่มการ์ด = เพิ่มเมนูเอง
+   กดเมนู → เปิดเอกสารในช่องขวาทันที (#d=<ไฟล์>) · เอกสารนอกเว็บนี้เปิดแท็บใหม่ · หมวดพับได้ เปิดทีละหมวด */
 (function () {
-  var b = document.body, btn = document.querySelector('.menu-btn');
+  var b = document.body, side = document.getElementById('side'), list = document.getElementById('side-list');
+  var page = document.getElementById('top'), doc = document.getElementById('doc'), barT = document.getElementById('bar-t');
+  var btn = document.querySelector('.menu-btn');
   var setOpen = function (o) { b.classList.toggle('menu-open', o); btn.setAttribute('aria-expanded', String(o)); };
   btn.addEventListener('click', function () { setOpen(true); });
-  document.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
+  side.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
   document.querySelector('.scrim').addEventListener('click', function () { setOpen(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
-  var links = [].slice.call(document.querySelectorAll('.side a.nav[href^="#"]'));
-  links.forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
-  var mark = function (id) { links.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('href') === '#' + id); }); };
-  /* หมวดที่กำลังดู = หมวดสุดท้ายที่หัวเลื่อนผ่านขอบบน (ถึงท้ายหน้า = หมวดสุดท้าย) */
-  var secs = [].slice.call(document.querySelectorAll('section.group'));
-  var spy = function () {
-    var cur = secs[0];
-    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) cur = secs[secs.length - 1];
-    else secs.forEach(function (s) { if (s.getBoundingClientRect().top <= 80) cur = s; });
-    mark(cur.querySelector('h2').id);
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-app': 'desktop_windows' };
+  var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
+  var isLocal = function (href) { var u = new URL(href, location.href); return u.origin === location.origin; };
+  var rel = function (href) { var u = new URL(href, location.href); var base = location.pathname.replace(/[^/]*$/, ''); return u.pathname.indexOf(base) === 0 && u.origin === location.origin ? u.pathname.slice(base.length) + u.hash : u.href; };
+  var groups = [];
+  list.insertAdjacentHTML('beforeend', '<li><a class="nav" href="#" data-home="1">' + ms('home') + '<span>หน้าแรก</span></a></li>');
+  [].slice.call(page.querySelectorAll('section.group')).forEach(function (sec) {
+    var h = sec.querySelector('h2'); if (!h) return;
+    var li = document.createElement('li'); li.className = 'grp';
+    var items = [].slice.call(sec.querySelectorAll('a.card')).map(function (c) {
+      var href = c.getAttribute('href'), local = isLocal(href), key = local ? rel(href) : href;
+      var icon = (c.querySelector('.card-icon') || {}).textContent || 'description';
+      var t = (c.querySelector('.card-title') || {}).textContent || key;
+      return '<li><a class="nav" href="' + (local ? '#d=' + encodeURIComponent(key) : href) + '"' + (local ? ' data-doc="' + key + '"' : ' target="_blank" rel="noopener"') + '>' + ms(icon) + '<span>' + t + '</span>' + (local ? '' : ms('arrow_outward', 'ext')) + '</a></li>';
+    }).join('');
+    li.innerHTML = '<button type="button" class="grp-h" aria-expanded="false" aria-controls="gi-' + h.id + '">' + ms(ICON[h.id] || 'folder') + '<span>' + h.textContent + '</span>' + ms('expand_more', 'chev') + '</button><ul class="grp-items" id="gi-' + h.id + '" hidden>' + items + '</ul>';
+    list.appendChild(li); groups.push(li);
+  });
+  /* เปิดทีละหมวด */
+  var openGroup = function (g, force) {
+    var willOpen = force || g.querySelector('.grp-h').getAttribute('aria-expanded') !== 'true';
+    groups.forEach(function (x) { var on = x === g && willOpen; x.querySelector('.grp-h').setAttribute('aria-expanded', String(on)); x.querySelector('.grp-items').hidden = !on; });
   };
-  addEventListener('scroll', spy, { passive: true }); addEventListener('resize', spy); spy();
+  groups.forEach(function (g) { g.querySelector('.grp-h').addEventListener('click', function () { openGroup(g); }); });
+  var links = [].slice.call(list.querySelectorAll('a.nav'));
+  var current = '';
+  var label = function (a) { var t = a && a.querySelector('span:not(.material-symbols-outlined)'); return t ? t.textContent.trim() : ''; };
+  var mark = function (key) {
+    var a = links.filter(function (x) { return x.dataset.doc === key; })[0];
+    if (!a && key) { var f = key.split('#')[0]; a = links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f && x.dataset.doc.indexOf('#') < 0; })[0] || links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f; })[0]; }
+    if (!key) a = links[0];
+    links.forEach(function (x) { x.classList.toggle('is-active', x === a); if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current'); });
+    groups.forEach(function (g) { g.querySelector('.grp-h').classList.toggle('has-active', !!(a && g.contains(a))); });
+    var g = a && groups.filter(function (x) { return x.contains(a); })[0];
+    if (g) openGroup(g, true);
+    barT.textContent = a && key ? label(a) : 'เอกสาร PHCIS';
+    return a;
+  };
+  var route = function () {
+    var h = location.hash.slice(1);
+    var key = h.indexOf('d=') === 0 ? decodeURIComponent(h.slice(2)) : '';
+    if (key) {
+      page.hidden = true; doc.hidden = false; b.classList.add('doc-open');
+      if (key !== current) { current = key; doc.src = key; }
+      var a = mark(key); document.title = (a ? label(a) + ' · ' : '') + 'เอกสาร PHCIS';
+    } else {
+      current = ''; doc.hidden = true; doc.removeAttribute('src'); page.hidden = false; b.classList.remove('doc-open');
+      mark(''); document.title = 'เอกสาร PHCIS';
+      if (h && document.getElementById(h)) document.getElementById(h).scrollIntoView();
+    }
+  };
+  links.forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  /* การ์ดในหน้าแรกก็เปิดในช่องขวาเหมือนเมนู */
+  [].slice.call(page.querySelectorAll('a.card')).forEach(function (c) {
+    var href = c.getAttribute('href'); if (!isLocal(href)) { c.target = '_blank'; c.rel = 'noopener'; return; }
+    c.addEventListener('click', function (e) { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); location.hash = 'd=' + encodeURIComponent(rel(href)); });
+  });
+  /* เอกสารในช่องขวาเปลี่ยนหน้า/หัวข้อเอง → อัปเดตเมนูและ URL */
+  var sync = function () {
+    try {
+      var w = doc.contentWindow; if (!w || doc.hidden) return;
+      if (w.location.href === 'about:blank') return;
+      var key = rel(w.location.href);
+      /* ลิงก์ "กลับหน้ารวม" ในเอกสาร → กลับหน้าแรกของเปลือก ไม่ซ้อนเมนูในช่องขวา */
+      var f = key.split('#')[0];
+      if (f === '' || f === 'index.html') { var g = key.split('#')[1] || ''; history.pushState(null, '', g && g.indexOf('d=') !== 0 ? '#' + g : location.pathname); route(); return; }
+      if (key !== current) { current = key; history.replaceState(null, '', '#d=' + encodeURIComponent(key)); mark(key); }
+    } catch (e) {}
+  };
+  doc.addEventListener('load', function () { sync(); try { doc.contentWindow.addEventListener('hashchange', sync); } catch (e) {} });
+  addEventListener('hashchange', route);
+  route();
 })();
 </script>
 </body>
