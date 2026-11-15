@@ -2,6 +2,7 @@
    เพิ่มรอบใหม่ = เพิ่มแถวใน TOR_UPDATES (href = หน้า + #รอบ) · หน้าไหนมี <div id="tor-nav"></div> ก็ได้ตัวเลือกนี้ */
 (function () {
   var TOR_UPDATES = [
+    { clinic: 'งานการเงิน (SDD 10.5 สิทธิและการเบิกจ่าย)', date: '15 พ.ย. 2569', note: '10 ข้อที่ BA หาหน้าจอไม่เจอ · ตั้งค่าสิทธิ · เปลี่ยนสิทธิ · ICD10 Coder · Refer · SSOP', href: 'tor-k9-addiction.html#round-2569-11-15-finance' },
     { clinic: 'งานการเงิน (คอมเมนต์ลูกค้า)', date: '14 พ.ย. 2569', note: '18 ข้อ · ปิดสิทธิ · ใบเสร็จ · ตัดยอด · นำเข้ารายจ่าย/รายรับอื่นๆ', href: 'tor-k9-addiction.html#round-2569-11-14-finance' },
     { clinic: 'คลินิกบำบัดสารเสพติด (คทง.9)', date: '12 พ.ย. 2569', note: 'Design system ข้อ 4–14', href: 'tor-k9-addiction.html#round-2569-11-12-ds' },
     { clinic: 'คลินิกสุขภาพจิต (คทง.9)', date: '12 พ.ย. 2569', note: 'เสนอแก้ไข คลินิกสุขภาพจิต 12 ต.ค. 69 · 9 แถบตามบทบาท', href: 'tor-k9-addiction.html#mh-clinic' },
