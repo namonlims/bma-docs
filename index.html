@@ -395,12 +395,6 @@
     </div>
     <span class="sub-h">รายโมดูล</span>
     <div class="cards">
-      <a class="card" href="mobile-usability/2026-10-19-ai3/index.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">smartphone</span><span class="card-title">ทดสอบการใช้งาน Mobile App</span></span>
-        <span class="ctypes"><span class="ctype t-ut">Usability test</span></span>
-        <p class="card-sum">AI สวมบท 4 บทบาท × 6 โจทย์ · 3 รอบ ก่อน/หลังแก้ · ปัญหาเรียงตามความรุนแรง · อัปเดต 19 ต.ค. 69</p>
-        <span class="card-url">mobile-usability<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
-      </a>
       <a class="card" href="finance-demo-walkthrough.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">payments</span><span class="card-title">Demo การเงินและการเบิกจ่าย</span></span>
         <span class="ctypes"><span class="ctype t-sf">Screen flow</span></span>
@@ -433,6 +427,33 @@
         <span class="ctypes"><span class="ctype t-sm">Sitemap</span></span>
         <p class="card-sum">แผนที่หน้าจอและเมนู · ไม่อัปเดตแล้ว</p>
         <span class="card-url">user-flow<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g-ut">
+    <div class="group-head">
+      <h2 id="g-ut">Usability testing</h2>
+      <p>ผลทดสอบการใช้งาน · AI สวมบทผู้ใช้ทำโจทย์ในแอปจริง · ปัญหาเรียงตามความรุนแรง</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="mobile-usability/2026-10-19-ai3/index.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">smartphone</span><span class="card-title">Mobile App · รอบ 3 (ล่าสุด)</span></span>
+        <span class="ctypes"><span class="ctype t-ut">Usability test</span></span>
+        <p class="card-sum">4 บทบาท × 6 โจทย์ · เทียบก่อน/หลังแก้ · อัปเดต 19 ต.ค. 69</p>
+        <span class="card-url">mobile-usability/รอบ 3<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="mobile-usability/2026-10-19-ai2/index.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">smartphone</span><span class="card-title">Mobile App · รอบ 2</span></span>
+        <span class="ctypes"><span class="ctype t-ut">Usability test</span></span>
+        <p class="card-sum">หลังแก้รอบแรก · อัปเดต 19 ต.ค. 69</p>
+        <span class="card-url">mobile-usability/รอบ 2<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="mobile-usability/2026-10-18-ai/index.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">smartphone</span><span class="card-title">Mobile App · รอบ 1</span></span>
+        <span class="ctypes"><span class="ctype t-ut">Usability test</span></span>
+        <p class="card-sum">รอบแรกก่อนแก้ · อัปเดต 18 ต.ค. 69</p>
+        <span class="card-url">mobile-usability/รอบ 1<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
     </div>
   </section>
@@ -478,7 +499,7 @@
   side.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
   document.querySelector('.scrim').addEventListener('click', function () { setOpen(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
-  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-app': 'desktop_windows' };
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-app': 'desktop_windows' };
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
   var isLocal = function (href) { var u = new URL(href, location.href); return u.origin === location.origin; };
   var rel = function (href) { var u = new URL(href, location.href); var base = location.pathname.replace(/[^/]*$/, ''); return u.pathname.indexOf(base) === 0 && u.origin === location.origin ? u.pathname.slice(base.length) + u.hash : u.href; };
