@@ -19,7 +19,7 @@
   var CHEV = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>';
   var CHECK = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>';
   var css = '.tn{display:flex;flex-wrap:wrap;gap:var(--dim-space-300,12px);align-items:flex-end;margin-bottom:var(--dim-space-500,20px)}'
-    + '.tn-f{display:flex;flex-direction:column;gap:var(--dim-space-100,4px);min-width:min(100%,240px);flex:1 1 240px;max-width:440px;position:relative}'
+    + '.tn-f{display:flex;flex-direction:column;gap:var(--dim-space-100,4px);min-width:min(100%,240px);flex:1 1 100%;max-width:none;position:relative}'
     + '.tn-l{font-size:var(--type-size-sm,14px);color:var(--text-input-label,#4D5358);font-weight:var(--type-weight-medium,500)}'
     + '.tn-t{display:flex;align-items:center;gap:var(--dim-space-200,8px);width:100%;min-height:44px;padding:0 var(--dim-space-300,12px);font:inherit;font-size:var(--type-size-sm,14px);color:var(--text-input-filled,#4D5358);background:var(--surface-input-default,#FFFFFF);border:var(--dim-stroke-100,1px) solid var(--border-input-filled,#E2E4E6);border-radius:var(--dim-radius-300,8px);cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}'
     + '.tn-t:hover{border-color:var(--border-input-hover);box-shadow:0 0 0 var(--dim-stroke-400,4px) var(--focus-ring-input-hover)}'
