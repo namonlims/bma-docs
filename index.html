@@ -154,14 +154,65 @@
     .page { padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1000, 40px); }
     .cards { grid-template-columns: 1fr; }
   }
+  /* side menu (ผู้ใช้ 15 พ.ย. 69 "รวมหน้านี้เป็น sidemenu") */
+  .layout { display: flex; align-items: flex-start; width: 100%; max-width: 1400px; margin: 0 auto; }
+  .side { position: sticky; top: 0; flex: 0 0 auto; width: 264px; height: 100dvh; overflow-y: auto; padding: var(--dim-space-800, 32px) var(--dim-space-400, 16px); border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
+  .side-brand { display: block; padding: 0 var(--dim-space-300, 12px) var(--dim-space-400, 16px); font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-decoration: none; }
+  .side-h { margin: var(--dim-space-400, 16px) 0 var(--dim-space-100, 4px); padding: 0 var(--dim-space-300, 12px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  .side ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--dim-space-050, 2px); }
+  .side a.nav { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); color: var(--text-content-default, #363B3F); text-decoration: none; font-size: var(--type-size-sm, 14px); }
+  .side a.nav .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
+  .side a.nav:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .side a.nav.is-active { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .side a.nav.is-active .material-symbols-outlined { color: var(--icon-brandPrimary-default, #007549); }
+  .side a.nav.sub { padding-left: calc(var(--dim-space-300, 12px) + 28px); font-size: var(--type-size-xs, 12px); min-height: 36px; }
+  .side a.nav .ext { margin-left: auto; font-size: 16px; }
+  .side a.nav:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
+  .layout .page { flex: 1 1 auto; min-width: 0; max-width: 1120px; }
+  section.group { scroll-margin-top: var(--dim-space-600, 24px); }
+  .menu-btn, .side-close { display: none; align-items: center; justify-content: center; width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); padding: 0; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); cursor: pointer; }
+  .scrim { display: none; }
+  @media (max-width: 1023px) {
+    .side { position: fixed; z-index: 60; left: 0; top: 0; width: min(300px, 85vw); transform: translateX(-100%); transition: transform 200ms ease-out; box-shadow: var(--shadow-dropdown); }
+    body.menu-open .side { transform: none; }
+    body.menu-open .scrim { display: block; position: fixed; inset: 0; z-index: 55; background: var(--surface-overlay-default, rgb(100 116 139 / 0.40)); }
+    .menu-btn { display: inline-flex; margin-bottom: var(--dim-space-300, 12px); }
+    .side-close { display: inline-flex; position: absolute; top: var(--dim-space-400, 16px); right: var(--dim-space-400, 16px); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .card { transition: none; }
+    .card, .side { transition: none; }
   }
 </style>
 </head>
 <body>
-<main class="page">
+<div class="layout">
+<nav class="side" id="side" aria-label="เมนูเอกสาร">
+  <button type="button" class="side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+  <a class="side-brand" href="#top">เอกสาร PHCIS</a>
+  <p class="side-h">หมวดเอกสาร</p>
+  <ul>
+      <li><a class="nav" href="#g-design"><span class="material-symbols-outlined" aria-hidden="true">palette</span>Design system</a></li>
+      <li><a class="nav" href="#g-plan"><span class="material-symbols-outlined" aria-hidden="true">view_timeline</span>แผนงานทีม UXUI</a></li>
+      <li><a class="nav" href="#g-tor"><span class="material-symbols-outlined" aria-hidden="true">checklist</span>ทะเบียนรายการปรับปรุง</a></li>
+      <li><a class="nav" href="#g-rules"><span class="material-symbols-outlined" aria-hidden="true">gavel</span>กติกาและเงื่อนไข</a></li>
+      <li><a class="nav" href="#g-flow"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span>Flow และ Service Design</a></li>
+      <li><a class="nav" href="#g-app"><span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span>ระบบ Demo</a></li>
+  </ul>
+  <p class="side-h">ทะเบียนรายการปรับปรุง UI/UX</p>
+  <ul>
+      <li><a class="nav" href="tor-k9-addiction.html#mh-clinic"><span class="material-symbols-outlined" aria-hidden="true">psychology</span>คลินิกสุขภาพจิต</a></li>
+      <li><a class="nav" href="tor-k9-addiction.html#mh-general"><span class="material-symbols-outlined" aria-hidden="true">diversity_3</span>งานสุขภาพจิตทั่วไป</a></li>
+      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-12"><span class="material-symbols-outlined" aria-hidden="true">child_care</span>งานพัฒนาการ</a></li>
+      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-11"><span class="material-symbols-outlined" aria-hidden="true">medication</span>คลินิกบำบัดสารเสพติด</a></li>
+      <li><a class="nav" href="tor-k9-addiction.html#round-2569-11-14-finance"><span class="material-symbols-outlined" aria-hidden="true">payments</span>งานการเงิน</a></li>
+      <li><a class="nav" href="tor-ncd-101-136.html"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span>เบาหวาน/ความดัน (คทง.3)</a></li>
+      <li><a class="nav" href="tor-checklist.html"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>TOR Checklist (ผนวก ก)</a></li>
+  </ul>
+</nav>
+<div class="scrim" aria-hidden="true"></div>
+<main class="page" id="top">
   <header>
+    <button type="button" class="menu-btn" aria-label="เปิดเมนู" aria-controls="side" aria-expanded="false"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
     <h1>เอกสาร PHCIS</h1>
     <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
   </header>
@@ -205,6 +256,30 @@
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">cycle</span><span class="card-title">กระบวนการทำงานร่วมกับ AI agent</span></span>
         <p class="card-sum">วงจร 6 ขั้น · เส้นทาง Kiosk → เว็บ → มือถือ · กลไกตรวจอัตโนมัติ · อัปเดต 23 ต.ค. 69</p>
         <span class="card-url">process<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g-tor">
+    <div class="group-head">
+      <h2 id="g-tor">ทะเบียนรายการปรับปรุง UI/UX</h2>
+      <p>Consolidated Checklist ตามคอมเมนต์คณะทำงาน · แต่ละข้อมีสถานะ ภาพ และวิธีดู</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="tor-k9-addiction.html#mh-clinic">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">psychology</span><span class="card-title">คลินิกสุขภาพจิต (คทง.9)</span></span>
+        <p class="card-sum">เสนอแก้ไข คลินิกสุขภาพจิต 12 ต.ค. 69 · 9 แถบตามบทบาท · อัปเดต 12 พ.ย. 69</p>
+        <span class="card-url">tor-k9-addiction#mh-clinic<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-11">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">medication</span><span class="card-title">คลินิกบำบัดสารเสพติด (คทง.9)</span></span>
+        <p class="card-sum">SUD-01–18 · Design system ข้อ 4–14 · งานสุขภาพจิตทั่วไป · พัฒนาการ · การเงิน · อัปเดต 14 พ.ย. 69</p>
+        <span class="card-url">tor-k9-addiction<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="tor-ncd-101-136.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">monitor_heart</span><span class="card-title">เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)</span></span>
+        <p class="card-sum">ลำดับ 101–136 · อัปเดต 9 พ.ย. 69</p>
+        <span class="card-url">tor-ncd-101-136<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
     </div>
   </section>
@@ -363,7 +438,30 @@
     </div>
   </section>
 
-  <p class="foot">อัปเดต 24 ตุลาคม 2569</p>
+  <p class="foot">อัปเดต 15 พฤศจิกายน 2569</p>
 </main>
+</div>
+<script>
+(function () {
+  var b = document.body, btn = document.querySelector('.menu-btn');
+  var setOpen = function (o) { b.classList.toggle('menu-open', o); btn.setAttribute('aria-expanded', String(o)); };
+  btn.addEventListener('click', function () { setOpen(true); });
+  document.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
+  document.querySelector('.scrim').addEventListener('click', function () { setOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+  var links = [].slice.call(document.querySelectorAll('.side a.nav[href^="#"]'));
+  links.forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  var mark = function (id) { links.forEach(function (a) { a.classList.toggle('is-active', a.getAttribute('href') === '#' + id); }); };
+  /* หมวดที่กำลังดู = หมวดสุดท้ายที่หัวเลื่อนผ่านขอบบน (ถึงท้ายหน้า = หมวดสุดท้าย) */
+  var secs = [].slice.call(document.querySelectorAll('section.group'));
+  var spy = function () {
+    var cur = secs[0];
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) cur = secs[secs.length - 1];
+    else secs.forEach(function (s) { if (s.getBoundingClientRect().top <= 80) cur = s; });
+    mark(cur.querySelector('h2').id);
+  };
+  addEventListener('scroll', spy, { passive: true }); addEventListener('resize', spy); spy();
+})();
+</script>
 </body>
 </html>

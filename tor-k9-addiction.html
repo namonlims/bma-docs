@@ -1150,7 +1150,15 @@ window.torShowRound = function () {
   var round = target && (target.classList.contains('round') ? target : target.closest('.round'));
   if (!round) round = rounds[0];
   rounds.forEach(function (r) { r.classList.toggle('on', r === round); });
-  if (target && target !== round) target.scrollIntoView();
+  if (target && target !== round) {
+    /* กระโดดทันที (หน้านี้ scroll-behavior: smooth) แล้วเลื่อนซ้ำจนตำแหน่งนิ่ง เพราะภาพโหลดทีหลังดันเนื้อหาลง */
+    var n = 0, tick = function () {
+      target.scrollIntoView({ behavior: 'instant', block: 'start' });
+      if (++n < 12 && Math.abs(target.getBoundingClientRect().top) > 2) setTimeout(tick, 250);
+      else if (n < 4) setTimeout(tick, 250);
+    };
+    tick();
+  }
 };
 window.addEventListener('hashchange', window.torShowRound);
 window.torShowRound();
