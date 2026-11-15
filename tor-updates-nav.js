@@ -82,6 +82,8 @@
   };
   document.addEventListener('click', function (e) { if (!host.contains(e.target)) all.forEach(function (o) { o.close(); }); });
   var sc = makeSelect('คลินิก', 'tn-clinic');
+  /* ไม่แสดงตัวเลือกคลินิก — side menu มีรายการคลินิกอยู่แล้ว (ผู้ใช้ 15 พ.ย. 69) · คงไว้ภายในเพื่อกรองรายการวันที่ */
+  host.querySelector('#tn-clinic').parentElement.style.display = 'none';
   var sd = makeSelect('วันที่ปรับปรุง', 'tn-date');
   var datesOf = function (clinic) { return TOR_UPDATES.filter(function (r) { return r.clinic === clinic; }).map(function (r) { return { value: r.href, label: r.date + ' · ' + r.note }; }); };
   sc.set(clinics.map(function (c) { return { value: c, label: c }; }), current.clinic);
