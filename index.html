@@ -299,15 +299,10 @@
         <p class="card-sum">SUD-01–18 · Design system ข้อ 4–14 · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-k9-addiction.html#round-2569-11-14-finance">
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-15-finance" data-also="tor-k9-addiction.html#round-2569-11-14-finance">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">payments</span><span class="card-title">งานการเงิน (คทง.8)</span></span>
-        <p class="card-sum">18 ข้อ · ปิดสิทธิ · ใบเสร็จ · ตัดยอด · นำเข้ารายจ่าย/รายรับอื่นๆ · อัปเดต 14 พ.ย. 69</p>
+        <p class="card-sum">2 รอบ: 15 พ.ย. ตาม TOR (SDD 10.5 สิทธิและการเบิกจ่าย) · 14 พ.ย. คอมเมนต์ลูกค้า 18 ข้อ · เลือกรอบที่ "วันที่ปรับปรุง" · อัปเดต 15 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#finance<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
-      </a>
-      <a class="card" href="tor-k9-addiction.html#round-2569-11-15-finance">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">verified_user</span><span class="card-title">งานสิทธิและการเบิกจ่าย (SDD 10.5)</span></span>
-        <p class="card-sum">10 ข้อที่ highlight + ที่ BA หาหน้าจอไม่เจอ · ตั้งค่าสิทธิ · Refer · SSOP · ประวัติตรวจสอบสิทธิ · 43 แฟ้ม · อัปเดต 15 พ.ย. 69</p>
-        <span class="card-url">tor-k9-addiction#sdd-10.5<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="tor-k9-addiction.html#round-2569-11-15-queue">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">confirmation_number</span><span class="card-title">ระบบบริหารจัดการคิว (SDD 10.5)</span></span>
@@ -558,7 +553,7 @@
     var li = document.createElement('li'); li.className = 'grp';
     var navA = function (c, t, icon) {
       var href = c.getAttribute('href'), local = isLocal(href), key = local ? rel(href) : href;
-      return '<a class="nav" href="' + (local ? '#d=' + encodeURIComponent(key) : href) + '"' + (local ? ' data-doc="' + key + '"' : ' target="_blank" rel="noopener"') + '>' + ms(icon) + '<span>' + t + '</span>' + (local ? '' : ms('arrow_outward', 'ext')) + '</a>';
+      return '<a class="nav" href="' + (local ? '#d=' + encodeURIComponent(key) : href) + '"' + (local ? ' data-doc="' + key + '"' : ' target="_blank" rel="noopener"') + (c.dataset.also ? ' data-also="' + c.dataset.also + '"' : '') + '>' + ms(icon) + '<span>' + t + '</span>' + (local ? '' : ms('arrow_outward', 'ext')) + '</a>';
     };
     /* การ์ดที่มี data-clinic → เมนูย่อยตามคลินิก (รายการปรับปรุง UI/UX · ภาพหน้าจอปัจจุบัน · ผู้ใช้ 15 พ.ย. 69) */
     var seen = {}, order = [];
@@ -584,7 +579,8 @@
   var current = '';
   var label = function (a) { var t = a && a.querySelector('span:not(.material-symbols-outlined)'); return t ? t.textContent.trim() : ''; };
   var mark = function (key) {
-    var a = links.filter(function (x) { return x.dataset.doc === key; })[0];
+    /* data-also = รอบอื่นของคณะทำงานเดียวกัน (การ์ดเดียว สลับรอบที่ "วันที่ปรับปรุง" · ผู้ใช้ 15 พ.ย. 69) */
+    var a = links.filter(function (x) { return x.dataset.doc === key || (x.dataset.also || '').split(' ').indexOf(key) >= 0; })[0];
     if (!a && key) { var f = key.split('#')[0]; a = links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f && x.dataset.doc.indexOf('#') < 0; })[0] || links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f; })[0]; }
     if (!key) a = links[0];
     links.forEach(function (x) { x.classList.toggle('is-active', x === a); if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current'); });
