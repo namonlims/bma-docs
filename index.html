@@ -172,6 +172,9 @@
   .side .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
   .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--icon-brandPrimary-default, #007549); }
   .side a.nav .ext { margin-left: auto; font-size: 16px; }
+  .side .sub-h { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-800, 40px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .side .sub > ul { padding-left: var(--dim-space-600, 24px); }
+  .side .sub > ul a.nav { min-height: var(--dim-size-800, 40px); font-size: var(--type-size-xs, 12px); }
   .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
   .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
   .main .page { margin: 0; max-width: 1120px; }
@@ -222,14 +225,9 @@
       <p>token สี ขนาด ตัวอักษร และ component ที่ใช้ในระบบ อัปเดตอัตโนมัติจากโค้ดจริง</p>
     </div>
     <div class="cards">
-      <a class="card" href="https://namonlims.github.io/bma-design-system/">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Tokens</span></span>
-        <p class="card-sum">สี ระยะ ขนาด ตัวอักษร เงา และมุมโค้งทั้งหมด</p>
-        <span class="card-url">bma-design-system<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
-      </a>
       <a class="card" href="https://namonlims.github.io/bma-design-system/reference.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">widgets</span><span class="card-title">Reference</span></span>
-        <p class="card-sum">component พร้อมตัวอย่างและวิธีใช้</p>
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">widgets</span><span class="card-title">Tokens และ Component</span></span>
+        <p class="card-sum">token สี ระยะ ตัวอักษร เงา มุมโค้ง และ component พร้อมตัวอย่างและวิธีใช้ · Desktop/Mobile</p>
         <span class="card-url">bma-design-system/reference<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="https://namonlims.github.io/bma-design-system/history.html">
@@ -261,39 +259,44 @@
 
   <section class="group" aria-labelledby="g-tor">
     <div class="group-head">
-      <h2 id="g-tor">ทะเบียนรายการปรับปรุง UI/UX</h2>
+      <h2 id="g-tor">คลินิก · รายการปรับปรุงและภาพหน้าจอ</h2>
       <p>Consolidated Checklist ตามคอมเมนต์คณะทำงาน · แต่ละข้อมีสถานะ ภาพ และวิธีดู</p>
     </div>
     <div class="cards">
-      <a class="card" href="tor-k9-addiction.html#mh-clinic">
+      <a class="card" href="tor-k9-addiction.html#mh-clinic" data-clinic="สุขภาพจิต (คทง.9)" data-label="รายการปรับปรุง UI/UX · คลินิกสุขภาพจิต">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">psychology</span><span class="card-title">คลินิกสุขภาพจิต (คทง.9)</span></span>
         <p class="card-sum">เสนอแก้ไข คลินิกสุขภาพจิต 12 ต.ค. 69 · 9 แถบตามบทบาท · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#mh-clinic<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-k9-addiction.html#mh-general">
+      <a class="card" href="tor-k9-addiction.html#mh-general" data-clinic="สุขภาพจิต (คทง.9)" data-label="รายการปรับปรุง UI/UX · งานสุขภาพจิตทั่วไป">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">diversity_3</span><span class="card-title">งานสุขภาพจิตทั่วไป (คทง.9)</span></span>
         <p class="card-sum">เสนอแก้ไข งานสุขภาพจิตทั่วไป 12 ต.ค. 69 · เชิงรับ/เชิงรุก · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#mh-general<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-k9-addiction.html#round-2569-11-12">
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-12" data-clinic="สุขภาพจิต (คทง.9)" data-label="รายการปรับปรุง UI/UX · งานพัฒนาการ">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">child_care</span><span class="card-title">งานพัฒนาการ (คทง.9)</span></span>
         <p class="card-sum">เสนอแก้ไข งานพัฒนาการ 12 ต.ค. 69 · DSPM รายข้อ · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#round-2569-11-12<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-k9-addiction.html#round-2569-11-11">
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-11" data-clinic="คลินิกบำบัดสารเสพติด (คทง.9)" data-label="รายการปรับปรุง UI/UX">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">medication</span><span class="card-title">คลินิกบำบัดสารเสพติด (คทง.9)</span></span>
         <p class="card-sum">SUD-01–18 · Design system ข้อ 4–14 · อัปเดต 12 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-k9-addiction.html#round-2569-11-14-finance">
+      <a class="card" href="tor-k9-addiction.html#round-2569-11-14-finance" data-clinic="งานการเงิน" data-label="รายการปรับปรุง UI/UX (คอมเมนต์ลูกค้า)">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">payments</span><span class="card-title">งานการเงิน (คอมเมนต์ลูกค้า)</span></span>
         <p class="card-sum">18 ข้อ · ปิดสิทธิ · ใบเสร็จ · ตัดยอด · นำเข้ารายจ่าย/รายรับอื่นๆ · อัปเดต 14 พ.ย. 69</p>
         <span class="card-url">tor-k9-addiction#finance<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="tor-ncd-101-136.html">
+      <a class="card" href="tor-ncd-101-136.html" data-clinic="เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)" data-label="รายการปรับปรุง UI/UX">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">monitor_heart</span><span class="card-title">เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)</span></span>
         <p class="card-sum">ลำดับ 101–136 · อัปเดต 9 พ.ย. 69</p>
         <span class="card-url">tor-ncd-101-136<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="screens-latest.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ภาพหน้าจอปัจจุบัน · ทุกระบบงาน</span></span>
+        <p class="card-sum">ภาพจากระบบจริง 4 ขนาดจอ แยกตามคลินิก/ระบบงาน · ถ่าย 15 พ.ย. 69</p>
+        <span class="card-url">screens-latest<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
       <a class="card" href="tor-checklist.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">fact_check</span><span class="card-title">TOR Checklist (ผนวก ก)</span></span>
@@ -301,6 +304,7 @@
         <span class="card-url">tor-checklist<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
     </div>
+    <div class="cards" hidden data-menu-only><a class="card" href="screens-latest.html#m-clinic-mental-health" data-clinic="สุขภาพจิต (คทง.9)" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="psychology"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">คลินิกสุขภาพจิต</span></span></a><a class="card" href="screens-latest.html#m-clinic-addiction" data-clinic="คลินิกบำบัดสารเสพติด (คทง.9)" data-label="ภาพหน้าจอปัจจุบัน (5 หน้า)" data-icon="medication"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">คลินิกบำบัดสารเสพติด</span></span></a><a class="card" href="screens-latest.html#m-ncd" data-clinic="เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)" data-label="ภาพหน้าจอปัจจุบัน (5 หน้า)" data-icon="monitor_heart"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">เบาหวาน/ความดัน + จุดคัดกรองกลาง</span></span></a><a class="card" href="screens-latest.html#m-registration" data-clinic="เวชระเบียน" data-label="ภาพหน้าจอปัจจุบัน (2 หน้า)" data-icon="badge"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">เวชระเบียน</span></span></a><a class="card" href="screens-latest.html#m-queue-center" data-clinic="ศูนย์ออกคิว" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="confirmation_number"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ศูนย์ออกคิว</span></span></a><a class="card" href="screens-latest.html#m-treat" data-clinic="ห้องตรวจ" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="stethoscope"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ห้องตรวจ</span></span></a><a class="card" href="screens-latest.html#m-observation" data-clinic="ห้องสังเกตอาการ" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="bed"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ห้องสังเกตอาการ</span></span></a><a class="card" href="screens-latest.html#m-pharmacy" data-clinic="ห้องยา" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="pill"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ห้องยา</span></span></a><a class="card" href="screens-latest.html#m-lab" data-clinic="ห้องชันสูตร" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="biotech"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ห้องชันสูตร</span></span></a><a class="card" href="screens-latest.html#m-xray" data-clinic="รังสี" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="radiology"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">รังสี</span></span></a><a class="card" href="screens-latest.html#m-clinic-anc" data-clinic="ฝากครรภ์" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="pregnant_woman"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ฝากครรภ์</span></span></a><a class="card" href="screens-latest.html#m-clinic-family-planning" data-clinic="วางแผนครอบครัว" data-label="ภาพหน้าจอปัจจุบัน (2 หน้า)" data-icon="family_restroom"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">วางแผนครอบครัว</span></span></a><a class="card" href="screens-latest.html#m-clinic-immunization" data-clinic="สร้างเสริมภูมิคุ้มกัน" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="vaccines"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">สร้างเสริมภูมิคุ้มกัน</span></span></a><a class="card" href="screens-latest.html#m-clinic-tb" data-clinic="วัณโรค" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="pulmonology"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">วัณโรค</span></span></a><a class="card" href="screens-latest.html#m-clinic-hiv-sti" data-clinic="รักปลอดภัย (HIV/STI)" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="volunteer_activism"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">รักปลอดภัย (HIV/STI)</span></span></a><a class="card" href="screens-latest.html#m-clinic-dental" data-clinic="ทันตกรรม" data-label="ภาพหน้าจอปัจจุบัน (5 หน้า)" data-icon="dentistry"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ทันตกรรม</span></span></a><a class="card" href="screens-latest.html#m-clinic-rehab" data-clinic="เวชศาสตร์ฟื้นฟู" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="accessible"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">เวชศาสตร์ฟื้นฟู</span></span></a><a class="card" href="screens-latest.html#m-clinic-social-work" data-clinic="สังคมสงเคราะห์" data-label="ภาพหน้าจอปัจจุบัน (5 หน้า)" data-icon="diversity_1"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">สังคมสงเคราะห์</span></span></a><a class="card" href="screens-latest.html#m-clinic-school-health" data-clinic="อนามัยโรงเรียน" data-label="ภาพหน้าจอปัจจุบัน (2 หน้า)" data-icon="school"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">อนามัยโรงเรียน</span></span></a><a class="card" href="screens-latest.html#m-homevisit" data-clinic="เยี่ยมบ้าน" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="home_health"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">เยี่ยมบ้าน</span></span></a><a class="card" href="screens-latest.html#m-checkup" data-clinic="ตรวจสุขภาพ" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="health_and_safety"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ตรวจสุขภาพ</span></span></a><a class="card" href="screens-latest.html#m-appointment" data-clinic="นัดหมาย" data-label="ภาพหน้าจอปัจจุบัน (5 หน้า)" data-icon="event"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">นัดหมาย</span></span></a><a class="card" href="screens-latest.html#m-telemed" data-clinic="Telemedicine" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="video_call"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">Telemedicine</span></span></a><a class="card" href="screens-latest.html#m-rights" data-clinic="สิทธิและการเบิกจ่าย" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="receipt_long"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">สิทธิและการเบิกจ่าย</span></span></a><a class="card" href="screens-latest.html#m-center-warehouse" data-clinic="คลังเวชภัณฑ์ศูนย์" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="warehouse"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">คลังเวชภัณฑ์ศูนย์</span></span></a><a class="card" href="screens-latest.html#m-consent" data-clinic="ความยินยอม (Consent)" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="assignment_turned_in"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ความยินยอม (Consent)</span></span></a><a class="card" href="screens-latest.html#m-forms" data-clinic="คลังแบบฟอร์ม" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="description"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">คลังแบบฟอร์ม</span></span></a><a class="card" href="screens-latest.html#m-schedule" data-clinic="ตารางเวร" data-label="ภาพหน้าจอปัจจุบัน (1 หน้า)" data-icon="calendar_month"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ตารางเวร</span></span></a><a class="card" href="screens-latest.html#m-users" data-clinic="ผู้ใช้งานและสิทธิ์" data-label="ภาพหน้าจอปัจจุบัน (4 หน้า)" data-icon="manage_accounts"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ผู้ใช้งานและสิทธิ์</span></span></a><a class="card" href="screens-latest.html#m-admin" data-clinic="ผู้ดูแลระบบ" data-label="ภาพหน้าจอปัจจุบัน (3 หน้า)" data-icon="admin_panel_settings"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ผู้ดูแลระบบ</span></span></a><a class="card" href="screens-latest.html#m-audit" data-clinic="ประวัติการใช้งาน (Audit)" data-label="ภาพหน้าจอปัจจุบัน (2 หน้า)" data-icon="history"><span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">photo_library</span><span class="card-title">ประวัติการใช้งาน (Audit)</span></span></a></div>
   </section>
 
   <section class="group" aria-labelledby="g-rules">
@@ -483,12 +487,21 @@
   [].slice.call(page.querySelectorAll('section.group')).forEach(function (sec) {
     var h = sec.querySelector('h2'); if (!h) return;
     var li = document.createElement('li'); li.className = 'grp';
-    var items = [].slice.call(sec.querySelectorAll('a.card')).map(function (c) {
+    var navA = function (c, t, icon) {
       var href = c.getAttribute('href'), local = isLocal(href), key = local ? rel(href) : href;
-      var icon = (c.querySelector('.card-icon') || {}).textContent || 'description';
-      var t = (c.querySelector('.card-title') || {}).textContent || key;
-      return '<li><a class="nav" href="' + (local ? '#d=' + encodeURIComponent(key) : href) + '"' + (local ? ' data-doc="' + key + '"' : ' target="_blank" rel="noopener"') + '>' + ms(icon) + '<span>' + t + '</span>' + (local ? '' : ms('arrow_outward', 'ext')) + '</a></li>';
-    }).join('');
+      return '<a class="nav" href="' + (local ? '#d=' + encodeURIComponent(key) : href) + '"' + (local ? ' data-doc="' + key + '"' : ' target="_blank" rel="noopener"') + '>' + ms(icon) + '<span>' + t + '</span>' + (local ? '' : ms('arrow_outward', 'ext')) + '</a>';
+    };
+    /* การ์ดที่มี data-clinic → เมนูย่อยตามคลินิก (รายการปรับปรุง UI/UX · ภาพหน้าจอปัจจุบัน · ผู้ใช้ 15 พ.ย. 69) */
+    var seen = {}, order = [];
+    [].slice.call(sec.querySelectorAll('a.card')).forEach(function (c) {
+      var cl = c.dataset.clinic, icon = (c.querySelector('.card-icon') || {}).textContent || 'description';
+      var t = (c.querySelector('.card-title') || {}).textContent || c.getAttribute('href');
+      if (!cl) { order.push({ html: '<li>' + navA(c, t, icon) + '</li>' }); return; }
+      if (!seen[cl]) { seen[cl] = { name: cl, icon: c.dataset.icon || icon, subs: [] }; order.push(seen[cl]); }
+      var kind = /^ภาพหน้าจอ/.test(c.dataset.label) ? 'photo_library' : 'checklist';
+      seen[cl].subs.push('<li>' + navA(c, c.dataset.label || t, kind) + '</li>');
+    });
+    var items = order.map(function (o) { return o.html || '<li class="sub"><span class="sub-h">' + ms(o.icon) + '<span>' + o.name + '</span></span><ul>' + o.subs.join('') + '</ul></li>'; }).join('');
     li.innerHTML = '<button type="button" class="grp-h" aria-expanded="false" aria-controls="gi-' + h.id + '">' + ms(ICON[h.id] || 'folder') + '<span>' + h.textContent + '</span>' + ms('expand_more', 'chev') + '</button><ul class="grp-items" id="gi-' + h.id + '" hidden>' + items + '</ul>';
     list.appendChild(li); groups.push(li);
   });
