@@ -8,131 +8,463 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet" />
 <link rel="stylesheet" href="tokens.css" />
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
-  .page { padding: var(--dim-space-800, 32px) clamp(var(--dim-space-400, 16px), 4vw, var(--dim-space-1200, 48px)) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
-  h1, h2 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .page { padding: var(--dim-space-800, 32px) clamp(var(--dim-space-400, 16px), 4vw, var(--dim-space-1200, 48px)) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-800, 32px); }
+  h1, h2, h3 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
   h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
-  h2 { font-size: var(--type-size-base, 16px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-lg, 18px); line-height: 1.4; }
+  h3 { font-size: var(--type-size-sm, 14px); color: var(--text-content-tertiary, #858C92); font-weight: var(--type-weight-medium, 500); }
   p { margin: 0; }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: var(--dim-size-400, 20px); line-height: 1; display: inline-block; -webkit-font-smoothing: antialiased; }
   .lede { color: var(--text-content-secondary, #636B72); margin-top: var(--dim-space-200, 8px); }
-  .meta { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); margin-top: var(--dim-space-300, 12px); align-items: center; }
-  .chip { display: inline-flex; align-items: center; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
+  .src { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); margin-top: var(--dim-space-200, 8px); }
+  .chip { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
   .c-green { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
   .c-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
   .c-grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
-  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
-  .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); box-shadow: var(--shadow-brand-drop-bottom-200); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
-  .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); margin-top: var(--dim-space-100, 4px); }
-  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
-  .tbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-300, 8px); }
-  table { width: 100%; border-collapse: collapse; min-width: 880px; }
-  th { text-align: left; font-weight: var(--type-weight-medium, 500); color: var(--text-table-title, #4D5358); background: var(--surface-table-header, #F4FBF8); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); white-space: nowrap; }
-  td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); vertical-align: top; }
-  td.no { color: var(--text-content-tertiary, #858C92); white-space: nowrap; }
-  td.case { font-weight: var(--type-weight-medium, 500); min-width: 180px; }
-  td .sub { display: block; color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); }
-  .tq td:nth-child(3), .tq td:nth-child(4) { white-space: nowrap; }
-  td.path { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); min-width: 220px; }
-  code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); }
-  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--dim-space-400, 16px); row-gap: var(--dim-space-200, 8px); }
+
+  /* สรุปจำนวน */
+  .hero { display: grid; grid-template-columns: minmax(200px, 260px) minmax(0, 1fr); gap: var(--dim-space-400, 16px); }
+  .total { background: linear-gradient(135deg, #007549 0%, #00A86B 100%); color: var(--text-brandPrimary-on-brand, #FFFFFF); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; justify-content: center; gap: var(--dim-space-100, 4px); }
+  .total b { font-size: var(--type-size-5xl, 48px); line-height: 1.1; font-weight: var(--type-weight-bold, 700); }
+  .total span { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-medium, 500); }
+  .total small { font-size: var(--type-size-xs, 12px); opacity: 0.85; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .tile { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); text-decoration: none; color: inherit; transition: box-shadow var(--motion-duration-popover, 150ms); }
+  .tile:hover { box-shadow: var(--shadow-brand-drop-bottom-200); }
+  .tile .lb { display: flex; align-items: center; gap: var(--dim-space-200, 8px); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .tile .lb .ms { color: var(--icon-brandPrimary-default, #007549); }
+  .tile b { font-size: var(--type-size-2xl, 24px); color: var(--text-content-default, #363B3F); line-height: 1.3; }
+  .tile b small { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-tertiary, #858C92); margin-left: var(--dim-space-100, 4px); }
+  .tile .ds { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+
+  /* ตัวกรอง */
+  .filters { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); align-items: center; }
+  .filters .fl { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); margin-right: var(--dim-space-100, 4px); }
+  .pill { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-full, 9999px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; color: var(--text-content-secondary, #636B72); cursor: pointer; }
+  .pill:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .pill[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .pill .n { min-width: 24px; padding: 0 var(--dim-space-150, 6px); border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); text-align: center; }
+  .pill[aria-pressed="true"] .n { background: var(--surface-colorfulbadge-green, #E2F3EB); }
+
+  /* กลุ่ม + การ์ด */
+  .grp { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .grp-h { display: flex; align-items: center; gap: var(--dim-space-300, 12px); flex-wrap: wrap; }
+  .grp-h .ic { width: 40px; height: 40px; border-radius: var(--dim-radius-300, 8px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .grp-h .t { flex: 1 1 200px; min-width: 0; }
+  .grp-h .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .sub { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--dim-space-400, 16px); }
+  .uc { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); background: var(--surface-card-100, #FFFFFF); }
+  .uc[hidden] { display: none; }
+  .uc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--dim-space-200, 8px); }
+  .uc-no { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  .uc-t { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
+  .uc-t small { display: block; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-tertiary, #858C92); }
+  .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
+  .step { padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 6px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); }
+  .step.q { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); font-weight: var(--type-weight-medium, 500); }
+  .arr { color: var(--icon-neutral-tertiary, #A2A9B0); font-size: var(--dim-size-300, 16px); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--dim-space-300, 12px); row-gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); margin: 0; padding-top: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
   .kv dt { color: var(--text-content-tertiary, #858C92); }
-  .kv dd { margin: 0; }
-  .note { background: var(--surface-brandPrimary-quaternary, #F4FBF8); border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-200, 6px); padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); }
-  .note .gh { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); margin-bottom: var(--dim-space-100, 4px); }
+  .kv dd { margin: 0; color: var(--text-content-secondary, #636B72); }
+  code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); word-break: break-all; }
+
+  /* จุดเปิด Visit */
+  .visit { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .vp { border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .vp b { color: var(--text-brandPrimary-default, #007549); font-size: var(--type-size-base, 16px); }
+  .vp p { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .vp .new { align-self: flex-start; }
+  .dec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .dec > div { border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #99D6BA); padding-left: var(--dim-space-300, 12px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .dec b { font-size: var(--type-size-sm, 14px); }
+  .dec p { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .empty { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
   a { color: var(--text-brandPrimary-default, #007549); }
-  @media (max-width: 639px) { .kv { grid-template-columns: minmax(0, 1fr); row-gap: 0; } .kv dd { margin-bottom: var(--dim-space-200, 8px); } .card { padding: var(--dim-space-400, 16px); } }
+
+  /* โน้ต BA */
+  .nb { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); align-self: flex-start; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
+  .nb:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .nb.has { border-color: var(--border-brandPrimary-tertiary, #99D6BA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .nb[aria-expanded="true"] { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .nb .ms { font-size: var(--dim-size-400, 20px); }
+  .nsec { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); padding-top: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .nsec[hidden] { display: none; }
+  .nlist { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .note { background: var(--surface-neutral-secondary, #F9FAFB); border-radius: var(--dim-radius-300, 8px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .note-h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .note-h b { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
+  .note p { white-space: pre-wrap; word-break: break-word; }
+  .r-BA { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .r-Dev { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .r-UXUI { background: var(--surface-colorfulbadge-teal, #CCFBF1); color: var(--text-colorfulbadge-teal, #0F766E); }
+  .nform { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .nl { font-size: var(--type-size-xs, 12px); color: var(--text-input-label, #4D5358); font-weight: var(--type-weight-medium, 500); }
+  .seg { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
+  .seg button { min-height: 36px; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-full, 9999px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
+  .seg button[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); font-weight: var(--type-weight-medium, 500); }
+  .nform textarea { width: 100%; min-height: 72px; resize: vertical; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
+  .nform textarea:focus { outline: none; border-color: var(--border-input-typing, #007549); box-shadow: 0 0 0 var(--dim-stroke-400, 4px) var(--focus-ring-input-typing, #CCEBDD); }
+  .nact { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); justify-content: flex-end; }
+  .nwho { flex: 1 1 160px; min-width: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); overflow-wrap: anywhere; }
+  .btn { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-sm, 14px); cursor: pointer; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); }
+  .btn.primary { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-brandPrimary-on-brand, #FFFFFF); }
+  .btn[disabled] { opacity: 0.5; cursor: default; }
+  .btn .ms { font-size: var(--dim-size-400, 20px); }
+  .nerr { color: var(--text-danger-default, #DC2626); font-size: var(--type-size-xs, 12px); }
+  .nempty { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+  .gbtn { min-height: 44px; }
+  .pagenote { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-400, 16px); }
+
+  .bar { display: flex; flex-wrap: wrap; gap: var(--dim-space-300, 12px); align-items: center; justify-content: space-between; }
+  .acts { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+  .acts .btn[aria-expanded="true"] { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .panel { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); box-shadow: var(--shadow-brand-drop-bottom-200); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .panel[hidden] { display: none; }
+  .panel h2 { font-size: var(--type-size-base, 16px); }
+  .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .fgrid .wide { grid-column: 1 / -1; }
+  .fld { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); min-width: 0; }
+  .fld input, .fld select { min-height: 44px; width: 100%; padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
+  .fld input:focus, .fld select:focus { outline: none; border-color: var(--border-input-typing, #007549); box-shadow: 0 0 0 var(--dim-stroke-400, 4px) var(--focus-ring-input-typing, #CCEBDD); }
+  .fld .hint { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .req { color: var(--text-input-require, #DC2626); }
+  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  @media (max-width: 639px) { .fgrid { grid-template-columns: minmax(0, 1fr); } .panel { padding: var(--dim-space-400, 16px); } .acts, .acts .btn { width: 100%; } .acts .btn { justify-content: center; } }
+
+  @media (max-width: 1023px) { .hero { grid-template-columns: minmax(0, 1fr); } .visit { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dec { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 639px) { .tiles { grid-template-columns: minmax(0, 1fr); } .visit { grid-template-columns: minmax(0, 1fr); } .total b { font-size: var(--type-size-4xl, 36px); } }
 </style>
 </head>
 <body>
 <main class="page">
   <header>
     <h1>User flow · Scenario ระบบคิว</h1>
-    <p class="lede">ทุกกรณีที่ผู้รับบริการเข้าคิวใน 1 ครั้ง ตั้งแต่มาถึงศูนย์จนกลับบ้าน · ได้คิวจริงที่ไหน · เปิด Visit ที่ไหน · ไปจุดไหนต่อ</p>
-    <div class="meta">
-      <span class="chip c-green">User flow</span>
-      <span class="sum">ที่มา: สรุป 4 ประเด็นจากพี่ BA · บอร์ด FigJam Flow คณะทำงาน (อัปเดต 16 พ.ย. 69) · กติกาในระบบ PHCIS · ผู้ใช้ตัดสิน 1ก 2ก 3ก · อัปเดต 16 พ.ย. 69</span>
-    </div>
+    <p class="lede">ผู้รับบริการ 1 คน 1 ครั้ง เข้าคิวได้กี่แบบ · ได้คิวจริงที่ไหน · ไปต่อจุดไหน · จดโน้ต · เพิ่ม scenario · ดาวน์โหลด CSV ได้หลังเข้าสู่ระบบ Google (ทุกคนในทีมเห็น)</p>
+    <p class="src">ที่มา: สรุป 4 ประเด็นของพี่ BA · บอร์ด FigJam Flow คณะทำงาน (16 พ.ย. 69) · กติกาในระบบ PHCIS · อัปเดต 16 พ.ย. 69</p>
   </header>
 
-  <section class="card" aria-labelledby="h-visit">
-    <div><h2 id="h-visit">จุดที่เปิด Visit (VN) ได้ — 4 จุด</h2><p class="sum">พี่ BA ลิสไว้ 3 จุด · เพิ่มจุดที่ 4 ตามมติ คทง.8 ข้อ 2.2.5 (1 คลินิก 1 Visit)</p></div>
-    <dl class="kv">
-      <dt>1 · Kiosk</dt><dd>เฉพาะคิวนัดหมาย (นัด OPD · นัดคลินิกพิเศษ · นัดทำหัตถการ)</dd>
-      <dt>2 · คัดแยก</dt><dd>ไม่มีนัด · Kiosk พัง ("เพิ่มคิวต่อแถว")</dd>
-      <dt>3 · เวชระเบียน</dt><dd>คนไทยใหม่ / ต่างชาติใหม่ · นัดผ่านแอปมาศูนย์ครั้งแรก</dd>
-      <dt>4 · คัดกรอง</dt><dd>ขั้นเลือกคลินิก: คลินิกที่ 2 เป็นคลินิกเฉพาะ → Visit ใหม่ + VN ใหม่</dd>
-    </dl>
+  <section class="hero" aria-label="สรุปจำนวน use case">
+    <div class="total"><b id="n-total">29</b><span>use cases ระบบคิว</span><small>แบ่ง 3 ช่วงของการมารับบริการ</small></div>
+    <div class="tiles" id="tiles"></div>
   </section>
 
-  <section class="card" aria-labelledby="h-a">
-    <div><h2 id="h-a">ก. มาถึงศูนย์ — ได้คิวจริงที่ไหน</h2><p class="sum">เลขคิว 2 แบบ: คิวคัดแยก = เลขลำดับล้วน (1, 2, 3) · คิวคลินิก / จุดบริการอื่น = ตัวอักษร+เลข (A001)</p></div>
-    <div class="legend"><span class="chip c-green">ทำแล้วในระบบ</span><span class="chip c-orange">เป้าหมาย · ยังไม่เชื่อมในระบบ</span><span class="chip c-grey">ตามบอร์ด · ยังไม่ได้ตรวจในระบบ</span></div>
-    <div class="tbl"><table class="tq">
-      <thead><tr><th>#</th><th>กรณี</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ไปต่อ</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <tr><td class="no">1</td><td class="case">มีนัด OPD<span class="sub">ไม่มีตรวจอื่นเพิ่ม · BA ข้อ 1</span></td><td>Kiosk</td><td>Kiosk</td><td>คัดกรองกลาง</td><td class="path">ศูนย์คิว <code>/queue-center/issue</code> "ออกคิวจากนัดหมาย" → <code>/opd/queue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">2</td><td class="case">มีนัดคลินิกพิเศษ<span class="sub">ทันตกรรม · ยาเสพติด · HIV</span></td><td>Kiosk</td><td>Kiosk</td><td>คัดกรองคลินิกพิเศษ</td><td class="path">คิวคัดกรองของคลินิกนั้น</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">3</td><td class="case">มีนัดทำหัตถการ</td><td>Kiosk</td><td>Kiosk</td><td>ห้องหัตถการ · มีสิทธิ (บัตรทอง) ไม่ต้องจ่าย · ต้องจ่าย → การเงินก่อน</td><td class="path"><code>/procedure</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">4</td><td class="case">นัดผ่านแอป · มาศูนย์ครั้งแรก</td><td>เวชระเบียน</td><td>เวชระเบียน</td><td>ยืนยันตัวตน → จุดที่นัด</td><td class="path">HN 67-00066 · คิว N เวชระเบียน</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">5</td><td class="case">นัดผ่านแอป · คนไข้เก่า</td><td>Kiosk</td><td>Kiosk</td><td>คลินิกที่นัดเลย ไม่ผ่านเวชระเบียน</td><td class="path">HN 67-00001</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">6</td><td class="case">มาสายเกินช่วงเวลานัด + เวลาผ่อนผัน</td><td>Kiosk (คิวทั่วไปใหม่)</td><td>Kiosk</td><td>คัดแยก / คัดกรอง · ป้าย "มาสาย N นาที"</td><td class="path"><code>/queue-center/issue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">7</td><td class="case">ไม่นัด · คนไข้เก่า<span class="sub">BA ข้อ 2</span></td><td>คัดแยก</td><td>คัดแยก</td><td>ซักประวัติ + สัญญาณชีพ → คัดกรองกลาง</td><td class="path">จุดคัดแยก <code>/opd/queue</code> → "บันทึกและส่งคัดกรองกลาง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">8</td><td class="case">ไม่นัด · คนไข้เก่าคลินิกพิเศษ<span class="sub">บอร์ด 16 พ.ย. 69</span></td><td>คัดแยก</td><td>คัดแยก</td><td>คัดกรองคลินิกพิเศษ</td><td class="path">ตอนนี้จุดคัดแยกส่งคัดกรองกลางอย่างเดียว</td><td><span class="chip c-orange">เป้าหมาย</span></td></tr>
-        <tr><td class="no">9</td><td class="case">คนไทยใหม่ / ต่างชาติใหม่<span class="sub">BA ข้อ 3 (อัปเดต) · ผู้ใช้ 3ก</span></td><td>เวชระเบียน</td><td>เวชระเบียน</td><td>คัดกรอง</td><td class="path">จุดคัดแยก "ส่งไปเวชระเบียน" → <code>/registration/queue</code> "บันทึกและส่งต่อ" → แถวคัดกรอง "ออกที่เวชระเบียน · แทน K…"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">10</td><td class="case">คลินิกพิเศษ (เฉพาะบางศูนย์)</td><td>เวชระเบียนคลินิกพิเศษ</td><td>—</td><td>คัดกรองคลินิกพิเศษ · วัณโรค · HIV · สารเสพติด · สุขภาพจิต</td><td class="path">ยังไม่มีหน้า/คิวแยก · รอ BA ยืนยันขอบเขต</td><td><span class="chip c-orange">เป้าหมาย</span></td></tr>
-        <tr><td class="no">11</td><td class="case">ญาติมารับยาแทน<span class="sub">BA ข้อ 4 · ผู้ใช้ 1ก ใช้ตามบอร์ด</span></td><td>Kiosk → คัดแยก</td><td>คัดแยก</td><td>ห้องยาโดยตรง หรือคิวแพทย์คลินิก · ไม่คัดกรอง</td><td class="path">ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มารับยาแทน" → เลือกปลายทาง</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">12</td><td class="case">Kiosk พัง</td><td>คัดแยก</td><td>คัดแยก</td><td>แยกตามนัด เหมือนข้อ 1–9</td><td class="path">จุดคัดแยก <code>/opd/queue</code> "เพิ่มคิวต่อแถว"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">13</td><td class="case">มาฟังผล</td><td>ตามข้อ 1 / 7</td><td>ตามข้อ 1 / 7</td><td>แพทย์ · ไม่คัดกรอง</td><td class="path">ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มาฟังผล"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">14</td><td class="case">ฉุกเฉิน</td><td>เรียกคิวด่วนพิเศษ</td><td>ตามข้อ 1 / 7</td><td>แพทย์ · บันทึกคัดกรองย้อนหลัง</td><td class="path"><code>/queue-center/display/console</code> "เรียกคิวด่วนพิเศษ"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">15</td><td class="case">Fast Track<span class="sub">ผู้สูงอายุ · รถเข็น · อาการวิกฤต</span></td><td>ตามข้อ 1 / 7</td><td>ตามข้อ 1 / 7</td><td>คลินิกทันที · เรียงต่อจากฉุกเฉิน</td><td class="path"><code>/opd/screening</code> ขั้นสัญญาณชีพ "ส่ง Fast Track ทันที"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">16</td><td class="case">ไข้ ไอ เจ็บคอ (ARI)</td><td>Kiosk (คิวหมวด I)</td><td>Kiosk</td><td>จุดรอแยก ARI</td><td class="path"><code>/queue-center/issue</code> "ไข้ ไอ เจ็บคอ (ARI)"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">17</td><td class="case">Telemedicine</td><td>นัดหมาย</td><td>—</td><td>ห้องตรวจทางไกล · ไม่ผ่านคัดแยก</td><td class="path">แถวนัดหมาย Telemedicine ใน <code>/opd/queue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-      </tbody>
-    </table></div>
+  <section class="grp" aria-labelledby="h-visit">
+    <div class="grp-h"><span class="ic ms" aria-hidden="true">how_to_reg</span><div class="t"><h2 id="h-visit">เปิด Visit (VN) ได้ 4 จุด</h2><p class="sum">ทุก use case ด้านล่างเปิด VN ที่จุดใดจุดหนึ่งนี้</p></div></div>
+    <div class="visit">
+      <div class="vp"><b>1 · Kiosk</b><p>เฉพาะคนมีนัด (OPD · คลินิกพิเศษ · หัตถการ)</p></div>
+      <div class="vp"><b>2 · คัดแยก</b><p>ไม่มีนัด · Kiosk พัง</p></div>
+      <div class="vp"><b>3 · เวชระเบียน</b><p>คนไทยใหม่ / ต่างชาติใหม่ · นัดผ่านแอปครั้งแรก</p></div>
+      <div class="vp"><span class="chip c-orange new">เพิ่มจากที่ BA ลิส</span><b>4 · คัดกรอง</b><p>คลินิกที่ 2 เป็นคลินิกเฉพาะ → VN ใหม่</p></div>
+    </div>
   </section>
 
-  <section class="card" aria-labelledby="h-b">
-    <div><h2 id="h-b">ข. ระหว่างการมาครั้งนี้</h2><p class="sum">เปลี่ยนจุด · เปลี่ยนคลินิก · บัตรคิวมีปัญหา</p></div>
-    <div class="tbl"><table>
-      <thead><tr><th>#</th><th>กรณี</th><th>เกิดอะไรกับคิว</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <tr><td class="no">18</td><td class="case">แพ้ยา / ยาประจำ / นำยามา</td><td>ห้องยาประเมินก่อน → กลับมาคัดกรองต่อ</td><td class="path">"รอห้องยาประเมิน" → "รอคัดกรอง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">19</td><td class="case">ตรวจ 2 คลินิก</td><td>คลินิกที่ 2 เข้าคิวรวม "ไม่ระบุแพทย์" หลังคลินิกแรกจบ · คลินิกเฉพาะ → VN ใหม่</td><td class="path">ป๊อปอัปส่งต่อ "คลินิกลำดับที่ 2 · รอคิว"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">20</td><td class="case">ตรวจ Lab · X-ray · ประเมินจิต ก่อนพบแพทย์</td><td>ข้ามการจ่ายเงินไปก่อน · ออกคิวใหม่ตอนส่งต่อ</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
-        <tr><td class="no">21</td><td class="case">บัตรหาย / พิมพ์ผิด / มาผิดคลินิก</td><td>เลขใหม่ "แทน A009" · มาผิดคลินิก → คิวแรกถูกยกเลิก (แถวสีเทา)</td><td class="path"><code>/opd/screening</code> "พิมพ์บัตรคิวใหม่"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">22</td><td class="case">เรียกแล้วไม่มา</td><td>เรียกซ้ำ · ข้ามคิว (ใส่เหตุผล)</td><td class="path"><code>/queue-center/display/console</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">23</td><td class="case">ส่งไปแผนกในศูนย์ / ส่งปรึกษา / ส่งต่อนอกศูนย์</td><td>ในศูนย์ = ปลายทางเดียว · นอกศูนย์ต้องผ่านการเงินก่อน</td><td class="path">ป๊อปอัป "ส่งไปยัง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-      </tbody>
-    </table></div>
+  <div class="bar">
+    <div class="filters" role="group" aria-label="กรองตามสถานะ" id="filters"><span class="fl">กรองตามสถานะ</span></div>
+    <div class="acts">
+      <button type="button" class="btn" data-act="add" aria-expanded="false"><span class="ms" aria-hidden="true">add</span>เพิ่ม scenario</button>
+      <button type="button" class="btn" data-act="csv" aria-expanded="false"><span class="ms" aria-hidden="true">download</span>ดาวน์โหลด CSV</button>
+    </div>
+  </div>
+  <div class="panel" id="panel" hidden></div>
+
+  <div id="groups" class="page" style="padding:0"></div>
+
+  <section class="grp" aria-labelledby="h-pn">
+    <div class="grp-h"><span class="ic ms" aria-hidden="true">edit_note</span><div class="t"><h2 id="h-pn">โน้ตทั้งหน้า</h2><p class="sum">เรื่องที่ไม่ได้อยู่ใน use case ใดโดยเฉพาะ เช่น use case ที่ขาด · โน้ตของแต่ละ use case กด "โน้ต" ที่การ์ดนั้น</p></div></div>
+    <div class="pagenote" data-note-host="_"></div>
   </section>
 
-  <section class="card" aria-labelledby="h-c">
-    <div><h2 id="h-c">ค. หลังตรวจ · จ่ายเงิน · ปิดวัน</h2><p class="sum">ลำดับ: พยาบาลหลังตรวจ → ห้องยา → การเงิน → รับยา</p></div>
-    <div class="tbl"><table>
-      <thead><tr><th>#</th><th>กรณี</th><th>เกิดอะไรกับคิว</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
-      <tbody>
-        <tr><td class="no">24</td><td class="case">มียา</td><td>ห้องยาตรวจสอบ → การเงิน → กลับมารับยา</td><td class="path"><code>/pharmacy/queue</code> → <code>/finance</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">25</td><td class="case">มีหัตถการ</td><td>ห้องหัตถการ → การเงิน (ชำระก่อนทำ) → ทำหัตถการ · มีค่าใช้จ่ายเพิ่ม → กลับมาจ่าย</td><td class="path"><code>/procedure</code> "ส่งชำระเงิน"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-        <tr><td class="no">26</td><td class="case">มาเจาะเลือดอย่างเดียว</td><td>ไปการเงินเลย</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
-        <tr><td class="no">27</td><td class="case">หลายบริการในวันเดียว<span class="sub">X-ray · ทันตกรรม · รับยา</span></td><td>ทำครบทุกอย่างแล้วจ่ายครั้งเดียว</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
-        <tr><td class="no">28</td><td class="case">หัตถการของคลินิก</td><td>ใช้เลขคิวเดิม ส่งเลขคิวไป 2 จุด</td><td class="path">sticky บนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
-        <tr><td class="no">29</td><td class="case">ปิดคิวสิ้นวัน</td><td>คิวค้าง + ไม่มาตามนัด = "ขาดนัด/ไม่มารับบริการ"</td><td class="path"><code>/queue-center/settings</code> "ปิดคิวประจำวัน"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
-      </tbody>
-    </table></div>
-  </section>
-
-  <section class="card" aria-labelledby="h-d">
-    <div><h2 id="h-d">ตัดสินแล้ว 16 พ.ย. 69</h2><p class="sum">จุดที่สรุปของพี่ BA กับบอร์ดไม่ตรงกัน</p></div>
-    <dl class="kv">
-      <dt>1ก มารับยาแทน</dt><dd>ใช้ตามบอร์ด: Kiosk → คัดแยก → ห้องยา / คิวแพทย์ ไม่คัดกรอง (ไม่ใช่ BA ข้อ 4 "คิวจริงที่ Kiosk → คัดกรอง")</dd>
-      <dt>2ก จุดเปิด Visit</dt><dd>4 จุด เพิ่มคัดกรอง (คลินิกที่ 2 เป็นคลินิกเฉพาะ)</dd>
-      <dt>3ก คนใหม่</dt><dd>คิวจริงออกที่เวชระเบียน · บัตร Kiosk K… ใช้รอที่คัดแยกเท่านั้น</dd>
-    </dl>
-    <div class="note"><p class="gh">ที่เกี่ยวข้อง</p><p><a href="system-user-flow.html#cowork-flow">User flow ทั้งระบบ · 1.1 Flow คณะทำงาน</a> · <a href="https://www.figma.com/board/JSuAKXPCBvCCY6LexuDjEF/Untitled?node-id=81-1067" target="_blank" rel="noopener">บอร์ด FigJam ↗</a></p></div>
+  <section class="grp" aria-labelledby="h-dec">
+    <div class="grp-h"><span class="ic ms" aria-hidden="true">gavel</span><div class="t"><h2 id="h-dec">ตัดสินแล้ว 16 พ.ย. 69</h2><p class="sum">จุดที่สรุปของพี่ BA กับบอร์ด FigJam ไม่ตรงกัน</p></div></div>
+    <div class="dec">
+      <div><b>มารับยาแทน → ใช้ตามบอร์ด</b><p>Kiosk → คัดแยก → ห้องยา / คิวแพทย์ ไม่ต้องคัดกรอง (ไม่ใช่ BA ข้อ 4)</p></div>
+      <div><b>เปิด Visit 4 จุด</b><p>เพิ่ม "คัดกรอง" ตอนคลินิกที่ 2 เป็นคลินิกเฉพาะ</p></div>
+      <div><b>คนใหม่ได้คิวที่เวชระเบียน</b><p>บัตร Kiosk K… ใช้รอที่คัดแยกเท่านั้น</p></div>
+    </div>
+    <p class="src"><a href="system-user-flow.html#cowork-flow">User flow ทั้งระบบ · 1.1 Flow คณะทำงาน</a> · <a href="https://www.figma.com/board/JSuAKXPCBvCCY6LexuDjEF/Untitled?node-id=81-1067" target="_blank" rel="noopener">บอร์ด FigJam ↗</a></p>
   </section>
 </main>
+<script>
+(function () {
+  /* ---------- ข้อมูล use case (ผู้ใช้ 16 พ.ย. 69) ---------- */
+  var ST = {
+    done: { label: 'ทำแล้วในระบบ', cls: 'c-green', icon: 'check_circle' },
+    target: { label: 'เป้าหมาย ยังไม่เชื่อม', cls: 'c-orange', icon: 'flag' },
+    board: { label: 'ตามบอร์ด ยังไม่ได้ตรวจ', cls: 'c-grey', icon: 'help' },
+    team: { label: 'ทีมเพิ่ม รอตรวจ', cls: 'c-blue', icon: 'person_add' }
+  };
+  /* path: [จุด…] · q = ลำดับของจุดที่ได้คิวจริง (ตั้งต้น 0) */
+  var GROUPS = [
+    { key: 'arrive', icon: 'login', title: 'มาถึงศูนย์', sum: 'ได้คิวจริงที่ไหน แล้วไปจุดไหนก่อน', subs: [
+      { title: 'มีนัดหมาย', items: [
+        { t: 'นัด OPD', s: 'ไม่มีตรวจอื่นเพิ่ม · BA ข้อ 1', path: ['Kiosk', 'คัดกรองกลาง'], vn: 'Kiosk', where: 'ศูนย์คิว /queue-center/issue "ออกคิวจากนัดหมาย"', st: 'done' },
+        { t: 'นัดคลินิกพิเศษ', s: 'ทันตกรรม · ยาเสพติด · HIV', path: ['Kiosk', 'คัดกรองคลินิกพิเศษ'], vn: 'Kiosk', where: 'คิวคัดกรองของคลินิกนั้น', st: 'done' },
+        { t: 'นัดทำหัตถการ', s: 'บัตรทองไม่ต้องจ่าย · ต้องจ่ายไปการเงินก่อน', path: ['Kiosk', 'ห้องหัตถการ'], vn: 'Kiosk', where: '/procedure', st: 'done' },
+        { t: 'นัดผ่านแอป · มาครั้งแรก', s: 'ยืนยันตัวตนก่อน', path: ['เวชระเบียน', 'จุดที่นัด'], vn: 'เวชระเบียน', where: 'HN 67-00066', st: 'done' },
+        { t: 'นัดผ่านแอป · คนไข้เก่า', s: 'ไม่ผ่านเวชระเบียน', path: ['Kiosk', 'คลินิกที่นัด'], vn: 'Kiosk', where: 'HN 67-00001', st: 'done' },
+        { t: 'มาสายเกินเวลานัด', s: 'เกินช่วงนัด + เวลาผ่อนผัน · ป้าย "มาสาย"', path: ['Kiosk (คิวทั่วไปใหม่)', 'คัดแยก'], vn: 'Kiosk', where: '/queue-center/issue', st: 'done' }
+      ] },
+      { title: 'ไม่มีนัดหมาย', items: [
+        { t: 'คนไข้เก่า', s: 'BA ข้อ 2', path: ['คัดแยก', 'คัดกรองกลาง'], vn: 'คัดแยก', where: 'จุดคัดแยก /opd/queue → "บันทึกและส่งคัดกรองกลาง"', st: 'done' },
+        { t: 'คนไข้เก่า คลินิกพิเศษ', s: 'บอร์ด 16 พ.ย. 69', path: ['คัดแยก', 'คัดกรองคลินิกพิเศษ'], vn: 'คัดแยก', where: 'ตอนนี้จุดคัดแยกส่งคัดกรองกลางอย่างเดียว', st: 'target' },
+        { t: 'คนไทยใหม่ / ต่างชาติใหม่', s: 'BA ข้อ 3', path: ['คัดแยก', 'เวชระเบียน', 'คัดกรอง'], q: 1, vn: 'เวชระเบียน', where: 'แถวคัดกรอง "ออกที่เวชระเบียน · แทน K…"', st: 'done' },
+        { t: 'คลินิกพิเศษ (บางศูนย์)', s: 'วัณโรค · HIV · สารเสพติด · สุขภาพจิต', path: ['เวชระเบียนคลินิกพิเศษ', 'คัดกรองคลินิกพิเศษ'], vn: '—', where: 'ยังไม่มีหน้า/คิวแยก · รอ BA ยืนยัน', st: 'target' },
+        { t: 'ญาติมารับยาแทน', s: 'BA ข้อ 4 · ตัดสินใช้ตามบอร์ด', path: ['Kiosk', 'คัดแยก', 'ห้องยา / คิวแพทย์'], q: 1, vn: 'คัดแยก', where: 'ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มารับยาแทน"', st: 'done' },
+        { t: 'Kiosk พัง', s: 'แยกตามนัดเหมือนเดิม', path: ['คัดแยก', 'ตามนัด'], vn: 'คัดแยก', where: 'จุดคัดแยก "เพิ่มคิวต่อแถว"', st: 'done' }
+      ] },
+      { title: 'กรณีพิเศษ', items: [
+        { t: 'มาฟังผล', s: 'ไม่ต้องคัดกรอง', path: ['Kiosk / คัดแยก', 'แพทย์'], vn: 'ตามนัด', where: 'ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มาฟังผล"', st: 'done' },
+        { t: 'ฉุกเฉิน', s: 'บันทึกคัดกรองย้อนหลัง', path: ['คิวด่วนพิเศษ', 'แพทย์'], vn: 'ตามนัด', where: '/queue-center/display/console', st: 'done' },
+        { t: 'Fast Track', s: 'ผู้สูงอายุ · รถเข็น · อาการวิกฤต', path: ['คัดกรอง', 'คลินิกทันที'], vn: 'ตามนัด', where: '/opd/screening "ส่ง Fast Track ทันที"', st: 'done' },
+        { t: 'ไข้ ไอ เจ็บคอ (ARI)', s: 'คิวหมวด I จุดรอแยก', path: ['Kiosk', 'ARI'], vn: 'Kiosk', where: '/queue-center/issue', st: 'done' },
+        { t: 'Telemedicine', s: 'ไม่ผ่านคัดแยก', path: ['นัดหมาย', 'ห้องตรวจทางไกล'], vn: '—', where: 'แถว Telemedicine ใน /opd/queue', st: 'done' }
+      ] }
+    ] },
+    { key: 'during', icon: 'swap_horiz', title: 'ระหว่างการมาครั้งนี้', sum: 'เปลี่ยนจุด · เปลี่ยนคลินิก · บัตรคิวมีปัญหา', subs: [
+      { title: '', items: [
+        { t: 'แพ้ยา / ยาประจำ / นำยามา', s: '', path: ['คัดกรอง', 'ห้องยาประเมิน', 'คัดกรองต่อ'], vn: '—', where: '"รอห้องยาประเมิน" → "รอคัดกรอง"', st: 'done' },
+        { t: 'ตรวจ 2 คลินิก', s: 'คลินิกเฉพาะ = VN ใหม่', path: ['คลินิกที่ 1', 'คิวรวมคลินิกที่ 2'], vn: 'คัดกรอง (ถ้าคลินิกเฉพาะ)', where: 'ป๊อปอัปส่งต่อ "คลินิกลำดับที่ 2 · รอคิว"', st: 'done' },
+        { t: 'ตรวจ Lab · X-ray ก่อนพบแพทย์', s: 'ข้ามการจ่ายเงินไปก่อน · ออกคิวใหม่ตอนส่งต่อ', path: ['ตรวจ', 'แพทย์', 'จ่ายทีหลัง'], vn: '—', where: 'หมายเหตุบนบอร์ด', st: 'board' },
+        { t: 'บัตรหาย / พิมพ์ผิด / มาผิดคลินิก', s: 'เลขใหม่ "แทน A009"', path: ['คัดกรอง', 'บัตรคิวใหม่'], vn: '—', where: '/opd/screening "พิมพ์บัตรคิวใหม่"', st: 'done' },
+        { t: 'เรียกแล้วไม่มา', s: 'เรียกซ้ำ · ข้ามคิว (ใส่เหตุผล)', path: ['จุดบริการ', 'ข้ามคิว'], vn: '—', where: '/queue-center/display/console', st: 'done' },
+        { t: 'ส่งต่อ / ส่งปรึกษา', s: 'นอกศูนย์ต้องผ่านการเงินก่อน', path: ['แพทย์', 'ปลายทาง'], vn: '—', where: 'ป๊อปอัป "ส่งไปยัง"', st: 'done' }
+      ] }
+    ] },
+    { key: 'after', icon: 'payments', title: 'หลังตรวจ · จ่ายเงิน · ปิดวัน', sum: 'ลำดับปกติ: พยาบาลหลังตรวจ → ห้องยา → การเงิน → รับยา', subs: [
+      { title: '', items: [
+        { t: 'มียา', s: '', path: ['ห้องยา', 'การเงิน', 'รับยา'], vn: '—', where: '/pharmacy/queue → /finance', st: 'done' },
+        { t: 'มีหัตถการ', s: 'ชำระก่อนทำ · ค่าใช้จ่ายเพิ่มกลับมาจ่าย', path: ['ห้องหัตถการ', 'การเงิน', 'ทำหัตถการ'], vn: '—', where: '/procedure "ส่งชำระเงิน"', st: 'done' },
+        { t: 'มาเจาะเลือดอย่างเดียว', s: '', path: ['ห้องหัตถการ', 'การเงิน'], vn: '—', where: 'หมายเหตุบนบอร์ด', st: 'board' },
+        { t: 'หลายบริการในวันเดียว', s: 'X-ray · ทันตกรรม · รับยา', path: ['ทำครบ', 'จ่ายครั้งเดียว'], vn: '—', where: 'หมายเหตุบนบอร์ด', st: 'board' },
+        { t: 'หัตถการของคลินิก', s: 'ใช้เลขคิวเดิม ส่งไป 2 จุด', path: ['คลินิก', 'ห้องหัตถการ'], vn: '—', where: 'sticky บนบอร์ด', st: 'board' },
+        { t: 'ปิดคิวสิ้นวัน', s: 'คิวค้าง = "ขาดนัด/ไม่มารับบริการ"', path: ['ปิดคิวประจำวัน'], vn: '—', where: '/queue-center/settings', st: 'done' }
+      ] }
+    ] }
+  ];
+  var TEAM_SUB = 'ทีมเพิ่ม';
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var ucId = function (n) { return 'UC-' + String(n).padStart(2, '0'); };
+  var all = [];
+  var cur = 'all';
+
+  /* ---------- ที่เก็บกลาง: โน้ต + scenario ที่ทีมเพิ่ม ----------
+     Apps Script เดียวกับ system-user-flow / ba-review (ชีต edits · แถวเพิ่มอย่างเดียว ไม่ทับของเดิม)
+     doc = queue-scenarios · โน้ต: key = UC-NN | "_" · where = t|<บทบาท>|note
+     scenario ใหม่: key = new · where = uc|<บทบาท> · after = JSON {g, t, s, path, q, vn, where}
+     อ่านได้ทุกคน · เขียน / ดาวน์โหลด CSV ต้องเข้าสู่ระบบ Google ก่อนเสมอ (ผู้ใช้ 16 พ.ย. 69) */
+  var NT_URL = 'https://script.google.com/macros/s/AKfycbzB2p0Sj0Dm8OUoXRSSZtnIY2UYgQ110nkEghrq75qX7rwsa-LsbWFgAMp1ib0-p7E/exec';
+  var NT_CLIENT = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
+  var NT_DOC = 'queue-scenarios';
+  var ROLES = ['BA', 'Dev', 'UXUI', 'อื่น ๆ'];
+  var NT = { by: {}, extra: [], loaded: false, err: '' };
+  var NA = { tk: '', exp: 0, user: null };
+  var openKey = null;
+  var panelMode = null;
+  var ls = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del: function (k) { try { localStorage.removeItem(k); } catch (e) {} } };
+  var b64 = function (x) { return decodeURIComponent(atob(x.replace(/-/g, '+').replace(/_/g, '/')).split('').map(function (c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); };
+  function setTk(tk) { try { var p = JSON.parse(b64(tk.split('.')[1])); if (p.exp * 1000 < Date.now() + 60000) return false; NA.tk = tk; NA.exp = p.exp; NA.user = { email: p.email, name: p.name || p.email.split('@')[0] }; ls.set('bma-docs:tk', tk); return true; } catch (e) { return false; } }
+  var signedIn = function () { return !!NA.tk && NA.exp * 1000 > Date.now() + 60000; };
+  (function () { var t = ls.get('bma-docs:tk'); if (t) setTk(t); })();
+  var role = function () { var r = ls.get('bma-qs-note:role'); return ROLES.indexOf(r) >= 0 ? r : 'BA'; };
+  var when = function (ms) { return new Date(ms).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }); };
+  var gsiP = null;
+  function gsi() {
+    return gsiP || (gsiP = new Promise(function (ok, no) {
+      var sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true;
+      sc.onload = function () { google.accounts.id.initialize({ client_id: NT_CLIENT, callback: function (r) { if (r && r.credential && setTk(r.credential)) load(); }, cancel_on_tap_outside: false, use_fedcm_for_prompt: true }); ok(); };
+      sc.onerror = no; document.head.appendChild(sc);
+    }));
+  }
+  function loginBtn(el) {
+    var g = el.querySelector('.gbtn'); if (!g) return;
+    gsi().then(function () { google.accounts.id.renderButton(g, { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill', locale: 'th', width: Math.max(200, Math.min(260, g.clientWidth || 260)) }); })
+      .catch(function () { g.innerHTML = '<p class="nerr">โหลดปุ่มเข้าสู่ระบบของ Google ไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช</p>'; });
+  }
+  function load() {
+    return fetch(NT_URL + '?doc=' + NT_DOC + (signedIn() ? '&tk=' + encodeURIComponent(NA.tk) : ''), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.ok) throw new Error('load');
+        var by = {}, extra = [];
+        (j.edits || []).filter(function (e) { return e.doc === NT_DOC; }).sort(function (a, b) { return a.at - b.at; }).forEach(function (e) {
+          var w = String(e.where || '').split('|');
+          if (w[0] === 't') (by[e.key] = by[e.key] || []).push({ role: w[1], name: e.name, email: e.email, at: e.at, text: e.after });
+          else if (w[0] === 'uc') { try { var d = JSON.parse(e.after); extra.push({ g: d.g, t: d.t, s: d.s || '', path: d.path || [], q: d.q || 0, vn: d.vn || '—', where: d.where || '', st: 'team', by: (w[1] || 'อื่น ๆ') + ' · ' + e.name, at: e.at }); } catch (x) {} }
+        });
+        NT.by = by; NT.extra = extra; NT.loaded = true; NT.err = '';
+      })
+      .catch(function () { NT.err = 'โหลดโน้ตไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช'; })
+      .then(function () { rebuild(); });
+  }
+  function post(edit) {
+    return fetch(NT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ tk: NA.tk, edit: Object.assign({ doc: NT_DOC, before: '' }, edit) }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j.ok) { if (j.auth) { NA.tk = ''; NA.user = null; ls.del('bma-docs:tk'); throw new Error('หมดเวลาเข้าสู่ระบบ · เข้าสู่ระบบอีกครั้ง ข้อความที่พิมพ์ยังอยู่'); } throw new Error('บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง'); } });
+  }
+
+  /* ---------- นับ + เลข UC (scenario ที่ทีมเพิ่มต่อท้ายกลุ่มของตัวเอง เลขต่อจาก 29) ---------- */
+  function rebuild() {
+    all = []; var no = 0;
+    GROUPS.forEach(function (g) {
+      g.subs = g.subs.filter(function (s) { return s.title !== TEAM_SUB; });
+      var ex = NT.extra.filter(function (x) { return x.g === g.key; });
+      if (ex.length) g.subs.push({ title: TEAM_SUB, items: ex });
+    });
+    GROUPS.forEach(function (g) { g.subs.forEach(function (s) { s.items.forEach(function (it) { if (it.st !== 'team') { it.no = ++no; it.g = g.key; all.push(it); } }); }); });
+    NT.extra.forEach(function (it) { it.no = ++no; all.push(it); });
+    GROUPS.forEach(function (g) { g.count = all.filter(function (x) { return x.g === g.key; }).length; });
+    summary(); render(); panel();
+  }
+  var countSt = function (k) { return all.filter(function (x) { return x.st === k; }).length; };
+  function summary() {
+    document.getElementById('n-total').textContent = all.length;
+    document.getElementById('tiles').innerHTML = GROUPS.map(function (g) {
+      var dn = all.filter(function (x) { return x.g === g.key && x.st === 'done'; }).length;
+      return '<a class="tile" href="#g-' + g.key + '"><span class="lb"><span class="ms" aria-hidden="true">' + g.icon + '</span>' + esc(g.title) + '</span><b>' + g.count + '<small>use cases</small></b><span class="ds">ทำแล้ว ' + dn + ' จาก ' + g.count + '</span></a>';
+    }).join('');
+    var opts = [['all', 'ทั้งหมด', all.length]].concat(Object.keys(ST).map(function (k) { return [k, ST[k].label, countSt(k)]; })).filter(function (o) { return o[0] !== 'team' || o[2]; });
+    if (!opts.some(function (o) { return o[0] === cur; })) cur = 'all';
+    document.getElementById('filters').innerHTML = '<span class="fl">กรองตามสถานะ</span>' + opts.map(function (o) {
+      return '<button type="button" class="pill" data-f="' + o[0] + '" aria-pressed="' + (o[0] === cur) + '">' + esc(o[1]) + '<span class="n">' + o[2] + '</span></button>';
+    }).join('');
+  }
+  function card(it) {
+    var q = it.q || 0;
+    var steps = it.path.map(function (p, i) { return '<span class="step' + (i === q ? ' q' : '') + '">' + esc(p) + '</span>'; }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
+    var s = ST[it.st], id = ucId(it.no), n = (NT.by[id] || []).length, open = openKey === id;
+    return '<article class="uc" data-st="' + it.st + '">'
+      + '<div class="uc-top"><span class="uc-no">' + id + '</span><span class="chip ' + s.cls + '"><span class="ms" style="font-size:var(--dim-size-300,16px)" aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</span></div>'
+      + '<p class="uc-t">' + esc(it.t) + (it.s ? '<small>' + esc(it.s) + '</small>' : '') + '</p>'
+      + (it.path.length ? '<div class="path" aria-label="เส้นทาง">' + steps + '</div>' : '')
+      + '<dl class="kv"><dt>ได้คิวจริงที่</dt><dd>' + esc(it.path[q] || '—') + '</dd><dt>เปิด VN ที่</dt><dd>' + esc(it.vn || '—') + '</dd><dt>ดูในระบบ</dt><dd>' + (esc(it.where) || '—').replace(/(\/[a-z][\w\-\/]*)/g, '<code>$1</code>') + '</dd>' + (it.by ? '<dt>เพิ่มโดย</dt><dd>' + esc(it.by) + ' · ' + esc(when(it.at)) + '</dd>' : '') + '</dl>'
+      + '<button type="button" class="nb' + (n ? ' has' : '') + '" data-nb="' + id + '" aria-expanded="' + open + '"><span class="ms" aria-hidden="true">sticky_note_2</span>' + (n ? 'โน้ต ' + n + ' รายการ' : 'โน้ต') + '</button>'
+      + '<div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div>'
+      + '</article>';
+  }
+  function render() {
+    var host = document.getElementById('groups');
+    host.innerHTML = GROUPS.map(function (g) {
+      var mine = all.filter(function (x) { return x.g === g.key; });
+      var vis = mine.filter(function (x) { return cur === 'all' || x.st === cur; }).length;
+      var base = mine.filter(function (x) { return x.st !== 'team'; });
+      var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
+      return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
+        + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + (cur !== 'all' ? ' · แสดง ' + vis + ' รายการ' : '') + '</p></div></div>'
+        + (vis ? g.subs.map(function (s) {
+          var items = s.items.filter(function (x) { return cur === 'all' || x.st === cur; });
+          if (!items.length) return '';
+          return '<div class="sub">' + (s.title ? '<h3>' + esc(s.title) + ' · ' + s.items.length + '</h3>' : '') + '<div class="cards">' + items.map(card).join('') + '</div></div>';
+        }).join('') : '<p class="empty">ไม่มี use case สถานะนี้ในกลุ่มนี้</p>')
+        + '</section>';
+    }).join('');
+    [].forEach.call(host.querySelectorAll('[data-note-host]:not([hidden])'), paintNotes);
+    paintNotes(document.querySelector('[data-note-host="_"]'));
+  }
+
+  /* ---------- โน้ต ---------- */
+  function loginBox(msg) { return '<div class="nform"><p class="nempty">' + esc(msg) + '</p><div class="gbtn"></div></div>'; }
+  function paintNotes(el) {
+    var key = el.dataset.noteHost, list = NT.by[key] || [];
+    var items = NT.err ? '<p class="nerr">' + esc(NT.err) + '</p>'
+      : !NT.loaded ? '<p class="nempty">กำลังโหลดโน้ต…</p>'
+      : list.length ? '<div class="nlist">' + list.slice().reverse().map(function (n) {
+          return '<div class="note"><div class="note-h"><span class="chip ' + (ROLES.indexOf(n.role) < 3 && ROLES.indexOf(n.role) >= 0 ? 'r-' + esc(n.role) : 'c-grey') + '">' + esc(n.role || 'อื่น ๆ') + '</span><b>' + esc(n.name) + '</b><span>' + esc(when(n.at)) + '</span></div><p>' + esc(n.text) + '</p></div>';
+        }).join('') + '</div>'
+      : '<p class="nempty">ยังไม่มีโน้ต</p>';
+    var form = !signedIn() ? loginBox('เข้าสู่ระบบด้วย Google ก่อนเขียนโน้ต')
+      : '<div class="nform">' + roleSeg() + '<label class="nl" for="nt-' + esc(key) + '">โน้ต</label><textarea id="nt-' + esc(key) + '" data-draft="' + esc(key) + '" placeholder="เช่น กรณีนี้ศูนย์ X ทำต่างไป · ต้องยืนยันกับคณะทำงาน">' + esc(ls.get('bma-qs-note:draft:' + key) || '') + '</textarea>'
+        + '<p class="nerr" hidden></p><div class="nact">' + whoLine() + '<button type="button" class="btn primary" data-add-note="' + esc(key) + '"><span class="ms" aria-hidden="true">add_comment</span>บันทึกโน้ต</button></div></div>';
+    el.innerHTML = items + form;
+    loginBtn(el);
+  }
+  function roleSeg() { return '<span class="nl">ฉันคือ</span><div class="seg">' + ROLES.map(function (r) { return '<button type="button" data-role="' + esc(r) + '" aria-pressed="' + (r === role()) + '">' + esc(r) + '</button>'; }).join('') + '</div>'; }
+  function whoLine() { return '<span class="nwho">' + esc(NA.user.name) + ' · ' + esc(NA.user.email) + '</span><button type="button" class="btn" data-out><span class="ms" aria-hidden="true">logout</span>ออกจากระบบ</button>'; }
+
+  /* ---------- แผงเพิ่ม scenario / ดาวน์โหลด CSV (ต้องเข้าสู่ระบบก่อน) ---------- */
+  function panel() {
+    var el = document.getElementById('panel');
+    [].forEach.call(document.querySelectorAll('[data-act]'), function (b) { b.setAttribute('aria-expanded', String(panelMode === b.dataset.act)); });
+    if (!panelMode) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    var title = panelMode === 'add' ? 'เพิ่ม scenario ใหม่' : 'ดาวน์โหลด CSV';
+    var head = '<div class="grp-h"><div class="t"><h2>' + title + '</h2><p class="sum">' + (panelMode === 'add' ? 'เพิ่มแล้วทุกคนในทีมเห็น · ขึ้นสถานะ "ทีมเพิ่ม รอตรวจ" จนกว่าทีมจะตรวจกับระบบ' : 'use case ทุกข้อ (รวมที่ทีมเพิ่ม) + โน้ตของแต่ละข้อ · เปิดใน Excel / Google Sheets ได้') + '</p></div><button type="button" class="btn" data-close aria-label="ปิด"><span class="ms" aria-hidden="true">close</span></button></div>';
+    if (!signedIn()) { el.innerHTML = head + loginBox(panelMode === 'add' ? 'เข้าสู่ระบบด้วย Google ก่อนเพิ่ม scenario' : 'เข้าสู่ระบบด้วย Google ก่อนดาวน์โหลด CSV'); loginBtn(el); return; }
+    if (panelMode === 'csv') {
+      el.innerHTML = head + '<div class="nact" style="justify-content:flex-start">' + whoLine() + '<button type="button" class="btn primary" data-csv><span class="ms" aria-hidden="true">download</span>ดาวน์โหลด ' + all.length + ' use cases</button></div>';
+      return;
+    }
+    var d = {}; try { d = JSON.parse(ls.get('bma-qs-new:draft') || '{}'); } catch (e) {}
+    el.innerHTML = head + '<form class="nform" data-new novalidate>' + roleSeg()
+      + '<div class="fgrid">'
+      + '<label class="fld"><span class="nl">ช่วง <span class="req" aria-hidden="true">*</span></span><select name="g">' + GROUPS.map(function (g) { return '<option value="' + g.key + '"' + (d.g === g.key ? ' selected' : '') + '>' + esc(g.title) + '</option>'; }).join('') + '</select></label>'
+      + '<label class="fld"><span class="nl">ชื่อกรณี <span class="req" aria-hidden="true">*</span></span><input name="t" value="' + esc(d.t || '') + '" placeholder="เช่น ผู้รับบริการพิการทางการได้ยิน" /></label>'
+      + '<label class="fld wide"><span class="nl">รายละเอียดสั้น ๆ</span><input name="s" value="' + esc(d.s || '') + '" placeholder="เช่น ต้องมีจอแสดงเลขคิว ไม่เรียกด้วยเสียงอย่างเดียว" /></label>'
+      + '<label class="fld wide"><span class="nl">เส้นทาง <span class="req" aria-hidden="true">*</span></span><input name="path" value="' + esc(d.path || '') + '" placeholder="เช่น Kiosk > คัดแยก > คัดกรองกลาง" /><span class="hint">คั่นแต่ละจุดด้วย ></span></label>'
+      + '<label class="fld"><span class="nl">ได้คิวจริงที่</span><input name="qAt" value="' + esc(d.qAt || '') + '" placeholder="ชื่อจุดในเส้นทาง · ว่าง = จุดแรก" /></label>'
+      + '<label class="fld"><span class="nl">เปิด VN ที่</span><input name="vn" value="' + esc(d.vn || '') + '" placeholder="เช่น Kiosk" /></label>'
+      + '<label class="fld wide"><span class="nl">ดูในระบบ / ที่มา</span><input name="where" value="' + esc(d.where || '') + '" placeholder="เช่น /opd/queue หรือ คุยในที่ประชุม คทง.1" /></label>'
+      + '</div><p class="nerr" hidden></p><div class="nact">' + whoLine() + '<button type="submit" class="btn primary"><span class="ms" aria-hidden="true">add</span>เพิ่ม scenario</button></div></form>';
+  }
+  function csv() {
+    var cell = function (v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var gname = {}; GROUPS.forEach(function (g) { gname[g.key] = g.title; });
+    var subOf = function (it) { var r = ''; GROUPS.forEach(function (g) { g.subs.forEach(function (s) { if (s.items.indexOf(it) >= 0) r = s.title; }); }); return r; };
+    var rows = [['รหัส', 'ช่วง', 'กลุ่มย่อย', 'กรณี', 'รายละเอียด', 'เส้นทาง', 'ได้คิวจริงที่', 'เปิด VN ที่', 'ดูในระบบ / ที่มา', 'สถานะ', 'เพิ่มโดย', 'จำนวนโน้ต', 'โน้ต']];
+    all.forEach(function (it) {
+      var id = ucId(it.no), ns = NT.by[id] || [];
+      rows.push([id, gname[it.g], subOf(it), it.t, it.s, it.path.join(' → '), it.path[it.q || 0] || '', it.vn, it.where, ST[it.st].label, it.by || '', ns.length, ns.map(function (n) { return '[' + n.role + ' · ' + n.name + ' · ' + when(n.at) + '] ' + n.text; }).join('\n')]);
+    });
+    (NT.by._ || []).forEach(function (n) { rows.push(['โน้ตทั้งหน้า', '', '', '', '', '', '', '', '', '', n.role + ' · ' + n.name, '', when(n.at) + ' ' + n.text]); });
+    var blob = new Blob(['﻿' + rows.map(function (r) { return r.map(cell).join(','); }).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'scenario-ระบบคิว-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+
+  /* ---------- เหตุการณ์ ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.f) { cur = t.dataset.f; summary(); render(); return; }
+    if (t.dataset.nb) { openKey = openKey === t.dataset.nb ? null : t.dataset.nb; render(); return; }
+    if (t.dataset.act) { panelMode = panelMode === t.dataset.act ? null : t.dataset.act; panel(); if (panelMode) document.getElementById('panel').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+    if (t.hasAttribute('data-close')) { panelMode = null; panel(); return; }
+    if (t.hasAttribute('data-csv')) { if (signedIn()) csv(); else panel(); return; }
+    if (t.dataset.role) { ls.set('bma-qs-note:role', t.dataset.role); [].forEach.call(t.parentNode.children, function (x) { x.setAttribute('aria-pressed', String(x === t)); }); return; }
+    if (t.hasAttribute('data-out')) { NA.tk = ''; NA.user = null; ls.del('bma-docs:tk'); render(); panel(); return; }
+    if (t.dataset.addNote) {
+      var key = t.dataset.addNote, f = t.closest('.nform'), ta = f.querySelector('textarea'), er = f.querySelector('.nerr'), txt = ta.value.trim();
+      if (!txt) { er.textContent = 'พิมพ์โน้ตก่อนบันทึก'; er.hidden = false; ta.focus(); return; }
+      t.disabled = true; er.hidden = true;
+      post({ key: key, where: 't|' + role() + '|note', after: txt }).then(function () { ls.del('bma-qs-note:draft:' + key); return load(); })
+        .catch(function (x) { er.textContent = x.message; er.hidden = false; t.disabled = false; if (!signedIn()) render(); });
+    }
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target; if (!f.hasAttribute('data-new')) return;
+    e.preventDefault();
+    var v = function (n) { return (f.elements[n].value || '').trim(); };
+    var er = f.querySelector('.nerr'), btn = f.querySelector('[type=submit]');
+    var path = v('path').split(/\s*(?:>|→)\s*/).filter(Boolean);
+    if (!v('t') || !path.length) { er.textContent = 'กรอกชื่อกรณี และเส้นทางอย่างน้อย 1 จุด'; er.hidden = false; return; }
+    var q = Math.max(0, path.indexOf(v('qAt')));
+    btn.disabled = true; er.hidden = true;
+    post({ key: 'new', where: 'uc|' + role(), after: JSON.stringify({ g: v('g'), t: v('t'), s: v('s'), path: path, q: q, vn: v('vn') || (v('qAt') ? '' : '—'), where: v('where') }) })
+      .then(function () { ls.del('bma-qs-new:draft'); panelMode = null; return load(); })
+      .catch(function (x) { er.textContent = x.message; er.hidden = false; btn.disabled = false; if (!signedIn()) panel(); });
+  });
+  document.addEventListener('input', function (e) {
+    var k = e.target.dataset && e.target.dataset.draft; if (k) { ls.set('bma-qs-note:draft:' + k, e.target.value); return; }
+    var f = e.target.form; if (f && f.hasAttribute('data-new')) { var d = {}; ['g', 't', 's', 'path', 'qAt', 'vn', 'where'].forEach(function (n) { d[n] = f.elements[n].value; }); ls.set('bma-qs-new:draft', JSON.stringify(d)); }
+  });
+
+  rebuild(); load();
+})();
+</script>
 </body>
 </html>
