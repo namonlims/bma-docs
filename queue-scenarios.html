@@ -61,6 +61,27 @@
   .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--dim-space-400, 16px); }
   .uc { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); background: var(--surface-card-100, #FFFFFF); }
   .uc[hidden] { display: none; }
+  /* ตาราง use case (ผู้ใช้ 16 พ.ย. 69) */
+  .utbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); }
+  .utbl table { border-collapse: collapse; width: 100%; min-width: 1040px; font-size: var(--type-size-xs, 12px); }
+  .utbl th, .utbl td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F0F1F2); }
+  .utbl thead th { background: var(--surface-table-header, #F4FBF8); color: var(--text-table-title, #363B3F); font-weight: var(--type-weight-medium, 500); white-space: nowrap; position: sticky; top: 0; }
+  .utbl tr.srow th { background: color-mix(in srgb, var(--surface-brandPrimary-quaternary, #F4FBF8) 70%, var(--surface-card-100, #FFFFFF)); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); font-size: var(--type-size-xs, 12px); }
+  .utbl tbody tr:not(.srow):not(.nrow):hover td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .utbl tr.open td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .utbl tr.nrow > td { background: var(--surface-neutral-quaternary, #FAFAFA); padding: var(--dim-space-400, 16px); }
+  .utbl .c-id { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); white-space: nowrap; }
+  .utbl .c-t { min-width: 180px; }
+  .utbl .c-t b { display: block; font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
+  .utbl .c-t small { display: block; color: var(--text-content-tertiary, #858C92); }
+  .utbl .c-q { color: var(--text-colorfulbadge-green, #007549); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  .utbl .c-w { min-width: 180px; }
+  .utbl .nb { align-self: auto; }
+  .utbl td:nth-child(3) { min-width: 220px; }
+  .utbl .c-id, .utbl thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-card-100, #FFFFFF); }
+  .utbl thead th:first-child { z-index: 2; background: var(--surface-table-header, #F4FBF8); }
+  .utbl tr.open .c-id { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .utbl .nsec { max-width: 720px; }
   .uc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--dim-space-200, 8px); }
   .uc-no { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
   .uc-t { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
@@ -334,18 +355,23 @@
       return '<button type="button" class="pill" data-f="' + o[0] + '" aria-pressed="' + (o[0] === cur) + '">' + esc(o[1]) + '<span class="n">' + o[2] + '</span></button>';
     }).join('');
   }
-  function card(it) {
+  /* ตารางให้ Dev ดูง่าย (ผู้ใช้ 16 พ.ย. 69 "ทำเป็นตารางให้เดฟดูง่ายๆ") — 1 แถว = 1 use case · โน้ตกางเป็นแถวใต้แถวนั้น (ทีละแถว) */
+  var COLS = 8;
+  function row(it) {
     var q = it.q || 0;
     var steps = it.path.map(function (p, i) { return '<span class="step' + (i === q ? ' q' : '') + '">' + esc(p) + '</span>'; }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
     var s = ST[it.st], id = ucId(it.no), n = (NT.by[id] || []).length, open = openKey === id;
-    return '<article class="uc" data-st="' + it.st + '">'
-      + '<div class="uc-top"><span class="uc-no">' + id + '</span><span class="chip ' + s.cls + '"><span class="ms" style="font-size:var(--dim-size-300,16px)" aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</span></div>'
-      + '<p class="uc-t">' + esc(it.t) + (it.s ? '<small>' + esc(it.s) + '</small>' : '') + '</p>'
-      + (it.path.length ? '<div class="path" aria-label="เส้นทาง">' + steps + '</div>' : '')
-      + '<dl class="kv"><dt>ได้คิวจริงที่</dt><dd>' + esc(it.path[q] || '—') + '</dd><dt>เปิด VN ที่</dt><dd>' + esc(it.vn || '—') + '</dd><dt>ดูในระบบ</dt><dd>' + (esc(it.where) || '—').replace(/(\/[a-z][\w\-\/]*)/g, '<code>$1</code>') + '</dd>' + (it.by ? '<dt>เพิ่มโดย</dt><dd>' + esc(it.by) + ' · ' + esc(when(it.at)) + '</dd>' : '') + '</dl>'
-      + '<button type="button" class="nb' + (n ? ' has' : '') + '" data-nb="' + id + '" aria-expanded="' + open + '"><span class="ms" aria-hidden="true">sticky_note_2</span>' + (n ? 'โน้ต ' + n + ' รายการ' : 'โน้ต') + '</button>'
-      + '<div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div>'
-      + '</article>';
+    return '<tr data-st="' + it.st + '"' + (open ? ' class="open"' : '') + '>'
+      + '<td class="c-id">' + id + '</td>'
+      + '<td class="c-t"><b>' + esc(it.t) + '</b>' + (it.s ? '<small>' + esc(it.s) + '</small>' : '') + (it.by ? '<small>เพิ่มโดย ' + esc(it.by) + ' · ' + esc(when(it.at)) + '</small>' : '') + '</td>'
+      + '<td>' + (it.path.length ? '<div class="path" aria-label="เส้นทาง">' + steps + '</div>' : '—') + '</td>'
+      + '<td class="c-q">' + esc(it.path[q] || '—') + '</td>'
+      + '<td>' + esc(it.vn || '—') + '</td>'
+      + '<td class="c-w">' + (esc(it.where) || '—').replace(/(\/[a-z][\w\-\/]*)/g, '<code>$1</code>') + '</td>'
+      + '<td><span class="chip ' + s.cls + '"><span class="ms" style="font-size:var(--dim-size-300,16px)" aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</span></td>'
+      + '<td><button type="button" class="nb' + (n ? ' has' : '') + '" data-nb="' + id + '" aria-expanded="' + open + '" aria-label="โน้ต ' + id + '"><span class="ms" aria-hidden="true">sticky_note_2</span>' + (n ? n : '') + '</button></td>'
+      + '</tr>'
+      + '<tr class="nrow"' + (open ? '' : ' hidden') + '><td colspan="' + COLS + '"><div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div></td></tr>';
   }
   function render() {
     var host = document.getElementById('groups');
@@ -356,11 +382,11 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + (cur !== 'all' ? ' · แสดง ' + vis + ' รายการ' : '') + '</p></div></div>'
-        + (vis ? g.subs.map(function (s) {
+        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง (สีเขียว = ได้คิวจริง)</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ดูในระบบ</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items.filter(function (x) { return cur === 'all' || x.st === cur; });
           if (!items.length) return '';
-          return '<div class="sub">' + (s.title ? '<h3>' + esc(s.title) + ' · ' + s.items.length + '</h3>' : '') + '<div class="cards">' + items.map(card).join('') + '</div></div>';
-        }).join('') : '<p class="empty">ไม่มี use case สถานะนี้ในกลุ่มนี้</p>')
+          return (s.title ? '<tr class="srow"><th colspan="' + COLS + '" scope="rowgroup">' + esc(s.title) + ' · ' + s.items.length + '</th></tr>' : '') + items.map(row).join('');
+        }).join('') + '</tbody></table></div>' : '<p class="empty">ไม่มี use case สถานะนี้ในกลุ่มนี้</p>')
         + '</section>';
     }).join('');
     [].forEach.call(host.querySelectorAll('[data-note-host]:not([hidden])'), paintNotes);
