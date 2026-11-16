@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<script src="docs-frame.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>User flow · Scenario ระบบคิว</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
+  .page { padding: var(--dim-space-800, 32px) clamp(var(--dim-space-400, 16px), 4vw, var(--dim-space-1200, 48px)) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  h1, h2 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-base, 16px); line-height: 1.4; }
+  p { margin: 0; }
+  .lede { color: var(--text-content-secondary, #636B72); margin-top: var(--dim-space-200, 8px); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); margin-top: var(--dim-space-300, 12px); align-items: center; }
+  .chip { display: inline-flex; align-items: center; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
+  .c-green { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .c-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .c-grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); box-shadow: var(--shadow-brand-drop-bottom-200); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); margin-top: var(--dim-space-100, 4px); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+  .tbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-300, 8px); }
+  table { width: 100%; border-collapse: collapse; min-width: 880px; }
+  th { text-align: left; font-weight: var(--type-weight-medium, 500); color: var(--text-table-title, #4D5358); background: var(--surface-table-header, #F4FBF8); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); white-space: nowrap; }
+  td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); vertical-align: top; }
+  td.no { color: var(--text-content-tertiary, #858C92); white-space: nowrap; }
+  td.case { font-weight: var(--type-weight-medium, 500); min-width: 180px; }
+  td .sub { display: block; color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); }
+  .tq td:nth-child(3), .tq td:nth-child(4) { white-space: nowrap; }
+  td.path { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); min-width: 220px; }
+  code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--dim-space-400, 16px); row-gap: var(--dim-space-200, 8px); }
+  .kv dt { color: var(--text-content-tertiary, #858C92); }
+  .kv dd { margin: 0; }
+  .note { background: var(--surface-brandPrimary-quaternary, #F4FBF8); border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-200, 6px); padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); }
+  .note .gh { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); margin-bottom: var(--dim-space-100, 4px); }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  @media (max-width: 639px) { .kv { grid-template-columns: minmax(0, 1fr); row-gap: 0; } .kv dd { margin-bottom: var(--dim-space-200, 8px); } .card { padding: var(--dim-space-400, 16px); } }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>User flow · Scenario ระบบคิว</h1>
+    <p class="lede">ทุกกรณีที่ผู้รับบริการเข้าคิวใน 1 ครั้ง ตั้งแต่มาถึงศูนย์จนกลับบ้าน · ได้คิวจริงที่ไหน · เปิด Visit ที่ไหน · ไปจุดไหนต่อ</p>
+    <div class="meta">
+      <span class="chip c-green">User flow</span>
+      <span class="sum">ที่มา: สรุป 4 ประเด็นจากพี่ BA · บอร์ด FigJam Flow คณะทำงาน (อัปเดต 16 พ.ย. 69) · กติกาในระบบ PHCIS · ผู้ใช้ตัดสิน 1ก 2ก 3ก · อัปเดต 16 พ.ย. 69</span>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="h-visit">
+    <div><h2 id="h-visit">จุดที่เปิด Visit (VN) ได้ — 4 จุด</h2><p class="sum">พี่ BA ลิสไว้ 3 จุด · เพิ่มจุดที่ 4 ตามมติ คทง.8 ข้อ 2.2.5 (1 คลินิก 1 Visit)</p></div>
+    <dl class="kv">
+      <dt>1 · Kiosk</dt><dd>เฉพาะคิวนัดหมาย (นัด OPD · นัดคลินิกพิเศษ · นัดทำหัตถการ)</dd>
+      <dt>2 · คัดแยก</dt><dd>ไม่มีนัด · Kiosk พัง ("เพิ่มคิวต่อแถว")</dd>
+      <dt>3 · เวชระเบียน</dt><dd>คนไทยใหม่ / ต่างชาติใหม่ · นัดผ่านแอปมาศูนย์ครั้งแรก</dd>
+      <dt>4 · คัดกรอง</dt><dd>ขั้นเลือกคลินิก: คลินิกที่ 2 เป็นคลินิกเฉพาะ → Visit ใหม่ + VN ใหม่</dd>
+    </dl>
+  </section>
+
+  <section class="card" aria-labelledby="h-a">
+    <div><h2 id="h-a">ก. มาถึงศูนย์ — ได้คิวจริงที่ไหน</h2><p class="sum">เลขคิว 2 แบบ: คิวคัดแยก = เลขลำดับล้วน (1, 2, 3) · คิวคลินิก / จุดบริการอื่น = ตัวอักษร+เลข (A001)</p></div>
+    <div class="legend"><span class="chip c-green">ทำแล้วในระบบ</span><span class="chip c-orange">เป้าหมาย · ยังไม่เชื่อมในระบบ</span><span class="chip c-grey">ตามบอร์ด · ยังไม่ได้ตรวจในระบบ</span></div>
+    <div class="tbl"><table class="tq">
+      <thead><tr><th>#</th><th>กรณี</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ไปต่อ</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="no">1</td><td class="case">มีนัด OPD<span class="sub">ไม่มีตรวจอื่นเพิ่ม · BA ข้อ 1</span></td><td>Kiosk</td><td>Kiosk</td><td>คัดกรองกลาง</td><td class="path">ศูนย์คิว <code>/queue-center/issue</code> "ออกคิวจากนัดหมาย" → <code>/opd/queue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">2</td><td class="case">มีนัดคลินิกพิเศษ<span class="sub">ทันตกรรม · ยาเสพติด · HIV</span></td><td>Kiosk</td><td>Kiosk</td><td>คัดกรองคลินิกพิเศษ</td><td class="path">คิวคัดกรองของคลินิกนั้น</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">3</td><td class="case">มีนัดทำหัตถการ</td><td>Kiosk</td><td>Kiosk</td><td>ห้องหัตถการ · มีสิทธิ (บัตรทอง) ไม่ต้องจ่าย · ต้องจ่าย → การเงินก่อน</td><td class="path"><code>/procedure</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">4</td><td class="case">นัดผ่านแอป · มาศูนย์ครั้งแรก</td><td>เวชระเบียน</td><td>เวชระเบียน</td><td>ยืนยันตัวตน → จุดที่นัด</td><td class="path">HN 67-00066 · คิว N เวชระเบียน</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">5</td><td class="case">นัดผ่านแอป · คนไข้เก่า</td><td>Kiosk</td><td>Kiosk</td><td>คลินิกที่นัดเลย ไม่ผ่านเวชระเบียน</td><td class="path">HN 67-00001</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">6</td><td class="case">มาสายเกินช่วงเวลานัด + เวลาผ่อนผัน</td><td>Kiosk (คิวทั่วไปใหม่)</td><td>Kiosk</td><td>คัดแยก / คัดกรอง · ป้าย "มาสาย N นาที"</td><td class="path"><code>/queue-center/issue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">7</td><td class="case">ไม่นัด · คนไข้เก่า<span class="sub">BA ข้อ 2</span></td><td>คัดแยก</td><td>คัดแยก</td><td>ซักประวัติ + สัญญาณชีพ → คัดกรองกลาง</td><td class="path">จุดคัดแยก <code>/opd/queue</code> → "บันทึกและส่งคัดกรองกลาง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">8</td><td class="case">ไม่นัด · คนไข้เก่าคลินิกพิเศษ<span class="sub">บอร์ด 16 พ.ย. 69</span></td><td>คัดแยก</td><td>คัดแยก</td><td>คัดกรองคลินิกพิเศษ</td><td class="path">ตอนนี้จุดคัดแยกส่งคัดกรองกลางอย่างเดียว</td><td><span class="chip c-orange">เป้าหมาย</span></td></tr>
+        <tr><td class="no">9</td><td class="case">คนไทยใหม่ / ต่างชาติใหม่<span class="sub">BA ข้อ 3 (อัปเดต) · ผู้ใช้ 3ก</span></td><td>เวชระเบียน</td><td>เวชระเบียน</td><td>คัดกรอง</td><td class="path">จุดคัดแยก "ส่งไปเวชระเบียน" → <code>/registration/queue</code> "บันทึกและส่งต่อ" → แถวคัดกรอง "ออกที่เวชระเบียน · แทน K…"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">10</td><td class="case">คลินิกพิเศษ (เฉพาะบางศูนย์)</td><td>เวชระเบียนคลินิกพิเศษ</td><td>—</td><td>คัดกรองคลินิกพิเศษ · วัณโรค · HIV · สารเสพติด · สุขภาพจิต</td><td class="path">ยังไม่มีหน้า/คิวแยก · รอ BA ยืนยันขอบเขต</td><td><span class="chip c-orange">เป้าหมาย</span></td></tr>
+        <tr><td class="no">11</td><td class="case">ญาติมารับยาแทน<span class="sub">BA ข้อ 4 · ผู้ใช้ 1ก ใช้ตามบอร์ด</span></td><td>Kiosk → คัดแยก</td><td>คัดแยก</td><td>ห้องยาโดยตรง หรือคิวแพทย์คลินิก · ไม่คัดกรอง</td><td class="path">ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มารับยาแทน" → เลือกปลายทาง</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">12</td><td class="case">Kiosk พัง</td><td>คัดแยก</td><td>คัดแยก</td><td>แยกตามนัด เหมือนข้อ 1–9</td><td class="path">จุดคัดแยก <code>/opd/queue</code> "เพิ่มคิวต่อแถว"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">13</td><td class="case">มาฟังผล</td><td>ตามข้อ 1 / 7</td><td>ตามข้อ 1 / 7</td><td>แพทย์ · ไม่คัดกรอง</td><td class="path">ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มาฟังผล"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">14</td><td class="case">ฉุกเฉิน</td><td>เรียกคิวด่วนพิเศษ</td><td>ตามข้อ 1 / 7</td><td>แพทย์ · บันทึกคัดกรองย้อนหลัง</td><td class="path"><code>/queue-center/display/console</code> "เรียกคิวด่วนพิเศษ"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">15</td><td class="case">Fast Track<span class="sub">ผู้สูงอายุ · รถเข็น · อาการวิกฤต</span></td><td>ตามข้อ 1 / 7</td><td>ตามข้อ 1 / 7</td><td>คลินิกทันที · เรียงต่อจากฉุกเฉิน</td><td class="path"><code>/opd/screening</code> ขั้นสัญญาณชีพ "ส่ง Fast Track ทันที"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">16</td><td class="case">ไข้ ไอ เจ็บคอ (ARI)</td><td>Kiosk (คิวหมวด I)</td><td>Kiosk</td><td>จุดรอแยก ARI</td><td class="path"><code>/queue-center/issue</code> "ไข้ ไอ เจ็บคอ (ARI)"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">17</td><td class="case">Telemedicine</td><td>นัดหมาย</td><td>—</td><td>ห้องตรวจทางไกล · ไม่ผ่านคัดแยก</td><td class="path">แถวนัดหมาย Telemedicine ใน <code>/opd/queue</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-b">
+    <div><h2 id="h-b">ข. ระหว่างการมาครั้งนี้</h2><p class="sum">เปลี่ยนจุด · เปลี่ยนคลินิก · บัตรคิวมีปัญหา</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>กรณี</th><th>เกิดอะไรกับคิว</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="no">18</td><td class="case">แพ้ยา / ยาประจำ / นำยามา</td><td>ห้องยาประเมินก่อน → กลับมาคัดกรองต่อ</td><td class="path">"รอห้องยาประเมิน" → "รอคัดกรอง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">19</td><td class="case">ตรวจ 2 คลินิก</td><td>คลินิกที่ 2 เข้าคิวรวม "ไม่ระบุแพทย์" หลังคลินิกแรกจบ · คลินิกเฉพาะ → VN ใหม่</td><td class="path">ป๊อปอัปส่งต่อ "คลินิกลำดับที่ 2 · รอคิว"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">20</td><td class="case">ตรวจ Lab · X-ray · ประเมินจิต ก่อนพบแพทย์</td><td>ข้ามการจ่ายเงินไปก่อน · ออกคิวใหม่ตอนส่งต่อ</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
+        <tr><td class="no">21</td><td class="case">บัตรหาย / พิมพ์ผิด / มาผิดคลินิก</td><td>เลขใหม่ "แทน A009" · มาผิดคลินิก → คิวแรกถูกยกเลิก (แถวสีเทา)</td><td class="path"><code>/opd/screening</code> "พิมพ์บัตรคิวใหม่"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">22</td><td class="case">เรียกแล้วไม่มา</td><td>เรียกซ้ำ · ข้ามคิว (ใส่เหตุผล)</td><td class="path"><code>/queue-center/display/console</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">23</td><td class="case">ส่งไปแผนกในศูนย์ / ส่งปรึกษา / ส่งต่อนอกศูนย์</td><td>ในศูนย์ = ปลายทางเดียว · นอกศูนย์ต้องผ่านการเงินก่อน</td><td class="path">ป๊อปอัป "ส่งไปยัง"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-c">
+    <div><h2 id="h-c">ค. หลังตรวจ · จ่ายเงิน · ปิดวัน</h2><p class="sum">ลำดับ: พยาบาลหลังตรวจ → ห้องยา → การเงิน → รับยา</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>กรณี</th><th>เกิดอะไรกับคิว</th><th>ดูในระบบ</th><th>สถานะ</th></tr></thead>
+      <tbody>
+        <tr><td class="no">24</td><td class="case">มียา</td><td>ห้องยาตรวจสอบ → การเงิน → กลับมารับยา</td><td class="path"><code>/pharmacy/queue</code> → <code>/finance</code></td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">25</td><td class="case">มีหัตถการ</td><td>ห้องหัตถการ → การเงิน (ชำระก่อนทำ) → ทำหัตถการ · มีค่าใช้จ่ายเพิ่ม → กลับมาจ่าย</td><td class="path"><code>/procedure</code> "ส่งชำระเงิน"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+        <tr><td class="no">26</td><td class="case">มาเจาะเลือดอย่างเดียว</td><td>ไปการเงินเลย</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
+        <tr><td class="no">27</td><td class="case">หลายบริการในวันเดียว<span class="sub">X-ray · ทันตกรรม · รับยา</span></td><td>ทำครบทุกอย่างแล้วจ่ายครั้งเดียว</td><td class="path">หมายเหตุบนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
+        <tr><td class="no">28</td><td class="case">หัตถการของคลินิก</td><td>ใช้เลขคิวเดิม ส่งเลขคิวไป 2 จุด</td><td class="path">sticky บนบอร์ด</td><td><span class="chip c-grey">ตามบอร์ด</span></td></tr>
+        <tr><td class="no">29</td><td class="case">ปิดคิวสิ้นวัน</td><td>คิวค้าง + ไม่มาตามนัด = "ขาดนัด/ไม่มารับบริการ"</td><td class="path"><code>/queue-center/settings</code> "ปิดคิวประจำวัน"</td><td><span class="chip c-green">ทำแล้ว</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-d">
+    <div><h2 id="h-d">ตัดสินแล้ว 16 พ.ย. 69</h2><p class="sum">จุดที่สรุปของพี่ BA กับบอร์ดไม่ตรงกัน</p></div>
+    <dl class="kv">
+      <dt>1ก มารับยาแทน</dt><dd>ใช้ตามบอร์ด: Kiosk → คัดแยก → ห้องยา / คิวแพทย์ ไม่คัดกรอง (ไม่ใช่ BA ข้อ 4 "คิวจริงที่ Kiosk → คัดกรอง")</dd>
+      <dt>2ก จุดเปิด Visit</dt><dd>4 จุด เพิ่มคัดกรอง (คลินิกที่ 2 เป็นคลินิกเฉพาะ)</dd>
+      <dt>3ก คนใหม่</dt><dd>คิวจริงออกที่เวชระเบียน · บัตร Kiosk K… ใช้รอที่คัดแยกเท่านั้น</dd>
+    </dl>
+    <div class="note"><p class="gh">ที่เกี่ยวข้อง</p><p><a href="system-user-flow.html#cowork-flow">User flow ทั้งระบบ · 1.1 Flow คณะทำงาน</a> · <a href="https://www.figma.com/board/JSuAKXPCBvCCY6LexuDjEF/Untitled?node-id=81-1067" target="_blank" rel="noopener">บอร์ด FigJam ↗</a></p></div>
+  </section>
+</main>
+</body>
+</html>
