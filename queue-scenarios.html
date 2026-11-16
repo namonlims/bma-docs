@@ -76,7 +76,19 @@
   .uc-t small { display: block; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-tertiary, #858C92); }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
   .step { padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 6px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); }
-  .step.q { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); font-weight: var(--type-weight-medium, 500); }
+  .step.t-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .step.t-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .step.t-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .step.t-teal { background: var(--surface-colorfulbadge-teal, #D1F6EE); color: var(--text-colorfulbadge-teal, #196C65); }
+  .step.t-indigo { background: var(--surface-colorfulbadge-indigo, #EEF2FF); color: var(--text-colorfulbadge-indigo, #4F46E5); }
+  .step.t-pink { background: var(--surface-colorfulbadge-pink, #FCE7F3); color: var(--text-colorfulbadge-pink, #BE185D); }
+  .step.t-yellow { background: var(--surface-colorfulbadge-yellow, #FEF9C3); color: var(--text-colorfulbadge-yellow, #A16207); }
+  .step.t-magenta { background: var(--surface-colorfulbadge-magenta, #FAE8FF); color: var(--text-colorfulbadge-magenta, #A21CAF); }
+  .step { display: inline-flex; align-items: center; gap: var(--dim-space-050, 2px); }
+  .step.q { font-weight: var(--type-weight-bold, 700); box-shadow: inset 0 0 0 var(--dim-stroke-150, 1.5px) currentColor; }
+  .step .ms { font-size: var(--dim-size-300, 16px); }
+  .lg-q { display: inline-flex; align-items: center; gap: var(--dim-space-050, 2px); font-weight: var(--type-weight-regular, 400); }
+  .lg-q .ms { font-size: var(--dim-size-300, 16px); }
   .arr { color: var(--icon-neutral-tertiary, #A2A9B0); font-size: var(--dim-size-300, 16px); }
   .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--dim-space-300, 12px); row-gap: var(--dim-space-100, 4px); font-size: var(--type-size-xs, 12px); margin: 0; padding-top: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
   .kv dt { color: var(--text-content-tertiary, #858C92); }
@@ -319,9 +331,14 @@
   }
   /* ตารางให้ Dev ดูง่าย (ผู้ใช้ 16 พ.ย. 69 "ทำเป็นตารางให้เดฟดูง่ายๆ") — 1 แถว = 1 use case · โน้ตกางเป็นแถวใต้แถวนั้น (ทีละแถว) */
   var COLS = 9;
+  // สีประจำจุดบริการ: จุดเดียวกัน = สีเดียวกันทุกแถว (ผู้ใช้ 17 พ.ย. 69)
+  var TONES = [[/^Kiosk/, 't-blue'], [/^คัดแยก/, 't-orange'], [/^เวชระเบียน/, 't-purple'], [/^คัดกรอง/, 't-teal'],
+    [/^(แพทย์|ตรวจ|ห้องตรวจ|คลินิก|คิวรวมคลินิก|คิวด่วน|ARI)/, 't-indigo'], [/หัตถการ/, 't-pink'], [/^(ห้องยา|รับยา)/, 't-yellow'],
+    [/^(การเงิน|จ่าย)/, 't-magenta']];
+  function tone(p) { for (var i = 0; i < TONES.length; i++) if (TONES[i][0].test(p)) return TONES[i][1]; return ''; }
   function row(it) {
     var q = it.q || 0;
-    var steps = it.path.map(function (p, i) { return '<span class="step' + (i === q ? ' q' : '') + '">' + esc(p) + '</span>'; }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
+    var steps = it.path.map(function (p, i) { return '<span class="step ' + tone(p) + (i === q ? ' q' : '') + '">' + (i === q ? '<span class="ms" aria-label="ได้คิวจริง">confirmation_number</span>' : '') + esc(p) + '</span>'; }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
     var s = ST[it.st], id = ucId(it.no), n = (NT.by[id] || []).length, open = openKey === id;
     return '<tr data-st="' + it.st + '"' + (open ? ' class="open"' : '') + '>'
       + '<td class="c-id">' + id + '</td>'
@@ -345,7 +362,7 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + (cur !== 'all' ? ' · แสดง ' + vis + ' รายการ' : '') + '</p></div></div>'
-        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง (สีเขียว = ได้คิวจริง)</th><th>เลขคิวจาก Kiosk</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ดูในระบบ</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
+        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ดูในระบบ</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items.filter(function (x) { return cur === 'all' || x.st === cur; });
           if (!items.length) return '';
           return (s.title ? '<tr class="srow"><th colspan="' + COLS + '" scope="rowgroup">' + esc(s.title) + ' · ' + s.items.length + '</th></tr>' : '') + items.map(row).join('');
