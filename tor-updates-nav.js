@@ -4,7 +4,7 @@
 (function () {
   var TOR_UPDATES = [
     { clinic: 'ระบบสั่งการรักษา CPOE (SDD 10.5)', date: '16 พ.ย. 2569', note: '2 ข้อที่ BA หาหน้าจอไม่เจอ · แจ้งเตือนแนบเอกสารประกอบการสั่งยา (NED) · วันที่มารับบริการในใบส่งต่อภายนอก', href: 'tor-k9-addiction.html#round-2569-11-16-cpoe' },
-    { clinic: 'ระบบสั่งการรักษา CPOE (SDD 10.5)', date: '16 พ.ย. 2569', note: 'ตรวจภาพหน้าจอ SDD เทียบหัวข้อ · 125 หัวข้อ 187 ภาพ · ต้องแก้ 14 · แก้เล็กน้อย 44 · ตรง 67', href: 'tor-k9-addiction.html#round-2569-11-16-cpoe-shots' },
+    { clinic: 'ระบบสั่งการรักษา CPOE (SDD 10.5)', date: '16 พ.ย. 2569', note: 'ตรวจภาพหน้าจอ SDD เทียบหัวข้อ · 125 หัวข้อ 187 ภาพ · ต้องแก้ 7 · แก้เล็กน้อย 51 · ตรง 67', href: 'tor-k9-addiction.html#round-2569-11-16-cpoe-shots' },
     { clinic: 'ระบบ Telemedicine (SDD 10.5)', date: '16 พ.ย. 2569', note: '2 ข้อที่ BA หาหน้าจอไม่เจอ · สิทธิ์เพิ่ม/แก้ไขข้อมูลการประเมิน · รายงานระยะเวลาปรึกษา · สถิติโทรเข้า-ออก · สถิติแพทย์', href: 'tor-k9-addiction.html#round-2569-11-16-telemed' },
     { clinic: 'ระบบ Telemedicine (SDD 10.5)', date: '16 พ.ย. 2569', note: 'ตรวจภาพหน้าจอ SDD เทียบหัวข้อ · 24 หัวข้อ 49 ภาพ · ต้องแก้ 8 · แก้เล็กน้อย 10 · ตรง 6 + ภาพที่ควรใช้', href: 'tor-k9-addiction.html#round-2569-11-16-telemed-shots' },
     { clinic: 'ระบบบริหารจัดการคิว (คทง.1)', date: '16 พ.ย. 2569', note: 'ตรวจภาพหน้าจอ SDD เทียบหัวข้อ · 51 หัวข้อ 75 ภาพ · ต้องแก้ 7 · แก้เล็กน้อย 35 · ตรง 9', href: 'tor-k9-addiction.html#round-2569-11-16-queue-shots' },
