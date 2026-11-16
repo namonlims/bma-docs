@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<script src="docs-frame.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ตรวจเอกสารกับ Claude</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
+  .page { padding: var(--dim-space-800, 32px) clamp(var(--dim-space-400, 16px), 4vw, var(--dim-space-1200, 48px)) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); max-width: 1280px; }
+  h1, h2, h3 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-base, 16px); line-height: 1.4; }
+  p { margin: 0; }
+  a { color: var(--text-brandPrimary-default, #007549); }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal; font-size: var(--dim-size-400, 20px); line-height: 1; display: inline-block; -webkit-font-smoothing: antialiased; }
+  .lede { color: var(--text-content-secondary, #636B72); margin-top: var(--dim-space-200, 8px); }
+  .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .chip { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; white-space: nowrap; }
+  .c-green { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .c-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .c-red { background: var(--surface-colorfulbadge-red, #FEE2E2); color: var(--text-colorfulbadge-red, #B91C1C); }
+  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .c-grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+
+  .panel { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); box-shadow: var(--shadow-brand-drop-bottom-200); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); background: var(--surface-card-100, #FFFFFF); }
+  .panel[hidden], [hidden] { display: none !important; }
+  .grp { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .grp + .grp { border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F0F1F2); padding-top: var(--dim-space-600, 24px); }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .fld { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); min-width: 0; }
+  .nl { font-size: var(--type-size-xs, 12px); color: var(--text-input-label, #4D5358); font-weight: var(--type-weight-medium, 500); }
+  .req { color: var(--text-input-require, #DC2626); }
+  .hint { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  input[type=text], input[type=password], input[type=url], select { min-height: 44px; width: 100%; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); border: var(--dim-stroke-100, 1px) solid var(--border-input-default, #D1D5DB); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-content-default, #363B3F); background: var(--surface-card-100, #FFFFFF); }
+  input:focus, select:focus { outline: none; border-color: var(--border-brandPrimary-default, #007549); box-shadow: 0 0 0 3px var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .seg { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+  .seg button { min-height: 44px; padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-full, 9999px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; color: var(--text-content-secondary, #636B72); cursor: pointer; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .seg button[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); font-weight: var(--type-weight-medium, 500); }
+  .drop { border: var(--dim-stroke-200, 2px) dashed var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; align-items: center; gap: var(--dim-space-200, 8px); text-align: center; cursor: pointer; color: var(--text-content-secondary, #636B72); }
+  .drop.over { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .drop .ms { font-size: var(--dim-size-800, 40px); color: var(--icon-brandPrimary-default, #007549); }
+  .file { display: flex; align-items: center; gap: var(--dim-space-200, 8px); padding: var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .file b { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: var(--type-weight-medium, 500); }
+  .btn { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--dim-space-200, 8px); padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-sm, 14px); cursor: pointer; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); text-decoration: none; }
+  .btn:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .btn.primary { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-brandPrimary-on-brand, #FFFFFF); font-weight: var(--type-weight-medium, 500); }
+  .btn.ghost { border-color: transparent; }
+  .btn.icon { padding: 0; width: 44px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); justify-content: flex-end; }
+  .who { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); margin-right: auto; }
+  .nerr { color: var(--text-danger-default, #DC2626); font-size: var(--type-size-xs, 12px); }
+  .gate { display: flex; flex-direction: column; align-items: flex-start; gap: var(--dim-space-400, 16px); }
+  .gbtn { min-height: 44px; }
+  .keyrow { display: flex; gap: var(--dim-space-200, 8px); }
+  .keyrow input { flex: 1; min-width: 0; }
+  .ok { color: var(--text-colorfulbadge-green, #007549); font-size: var(--type-size-xs, 12px); display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); }
+  .ok .ms { font-size: var(--dim-size-300, 16px); }
+
+  /* ความคืบหน้า */
+  .prog { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .bar { height: 8px; border-radius: var(--dim-radius-full, 9999px); background: var(--surface-neutral-tertiary, #F4F5F5); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #007549 0%, #00A86B 100%); transition: width 0.3s; }
+  .log { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+
+  /* ผล */
+  .rhead { display: flex; flex-wrap: wrap; gap: var(--dim-space-400, 16px); align-items: flex-start; justify-content: space-between; }
+  .rhead > div { min-width: 0; flex: 1 1 320px; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .tbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-300, 8px); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; }
+  th, td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F0F1F2); }
+  th { background: var(--surface-table-header, #F4FBF8); color: var(--text-table-title, #363B3F); font-weight: var(--type-weight-medium, 500); font-size: var(--type-size-xs, 12px); white-space: nowrap; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.fix td { background: color-mix(in srgb, var(--surface-colorfulbadge-red, #FEE2E2) 45%, var(--surface-card-100, #FFFFFF)); }
+  tr.fix td:first-child { box-shadow: inset 4px 0 0 var(--text-alert-error, #B91C1C); }
+  .sec { border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-quaternary, #CCEBDD); border-radius: var(--dim-radius-400, 12px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); scroll-margin-top: var(--dim-space-400, 16px); }
+  .sec .top { display: flex; gap: var(--dim-space-300, 12px); align-items: flex-start; justify-content: space-between; }
+  .sec .top h3 { font-size: var(--type-size-base, 16px); color: var(--text-brandPrimary-default, #007549); }
+  .gh { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  blockquote { margin: 0; padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-left: 3px solid var(--border-brandPrimary-tertiary, #99D6BA); background: var(--surface-neutral-quaternary, #FAFAFA); color: var(--text-content-secondary, #636B72); white-space: pre-wrap; max-height: 240px; overflow: auto; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: var(--dim-space-400, 16px); }
+  figure { margin: 0; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  figure button { padding: 0; border: 0; background: none; cursor: zoom-in; display: block; }
+  figure img { width: 100%; height: 200px; object-fit: contain; object-position: center top; background: var(--surface-neutral-quaternary, #FAFAFA); border-radius: var(--dim-radius-200, 8px); border: 2px solid var(--border-neutral-tertiary, #E2E4E6); display: block; }
+  figure.v-ok img { border-color: var(--text-colorfulbadge-green, #007549); }
+  figure.v-part img { border-color: var(--text-colorfulbadge-orange, #C2410C); }
+  figure.v-bad img { border-color: var(--text-alert-error, #B91C1C); }
+  figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .noimg { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+  .fixbox { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-content-default, #363B3F); }
+  .fixbox.red { background: var(--surface-colorfulbadge-red, #FEE2E2); }
+  .hist { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .hist button.row { text-align: left; min-height: 44px; display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; cursor: pointer; color: inherit; }
+  .hist button.row:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .hrow { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: var(--dim-space-200, 8px); align-items: center; }
+  .hist .t { font-weight: var(--type-weight-medium, 500); flex: 1 1 240px; min-width: 0; }
+  dialog { border: 0; padding: 0; max-width: min(96vw, 1200px); max-height: 94vh; border-radius: var(--dim-radius-400, 12px); }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+  dialog img { display: block; max-width: 100%; max-height: 86vh; }
+  dialog .dcap { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  dialog .dcap span { flex: 1; }
+
+  @media (max-width: 767px) {
+    .grid2 { grid-template-columns: minmax(0, 1fr); }
+    .panel, .sec { padding: var(--dim-space-400, 16px); }
+    .acts { justify-content: stretch; }
+    .acts .btn { flex: 1 1 auto; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) body { background: var(--surface-card-100, #FFFFFF); }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>ตรวจเอกสารกับ Claude</h1>
+    <p class="lede">เลือกคณะ · เลือกฟังก์ชัน · ใส่ลิงก์ Google Doc หรืออัปโหลดไฟล์ · กด "เริ่มตรวจ" → ผลเทียบหน้าจอทีละหัวข้อ แบบเดียวกับรอบตรวจภาพหน้าจอ SDD ในรายการปรับปรุง UI/UX</p>
+  </header>
+
+  <!-- ต้องเข้าสู่ระบบก่อน -->
+  <section class="panel" id="gate" hidden>
+    <div class="gate">
+      <h2>เข้าสู่ระบบก่อนใช้งาน</h2>
+      <p class="sum">ใช้บัญชี Google · ผลที่รันไว้เก็บในเบราว์เซอร์ของคุณเท่านั้น</p>
+      <div class="gbtn" id="gbtn"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="form" hidden>
+    <div class="grp">
+      <div class="acts"><span class="who" id="who"></span><button type="button" class="btn ghost" data-out><span class="ms" aria-hidden="true">logout</span>ออกจากระบบ</button></div>
+      <h2>1 · เชื่อม Claude ของคุณ</h2>
+      <div class="fld">
+        <label class="nl" for="key">Anthropic API key <span class="req" aria-hidden="true">*</span></label>
+        <div class="keyrow"><input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." /><button type="button" class="btn icon" id="keyshow" title="แสดง/ซ่อน key" aria-label="แสดง/ซ่อน key"><span class="ms" aria-hidden="true">visibility</span></button></div>
+        <span class="hint">สร้าง key ที่ <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a> · คิดเงินตามการใช้กับบัญชีของคุณ (แยกจากแพ็กเกจ Claude Pro/Max) · เก็บไว้ในเบราว์เซอร์นี้เท่านั้น ส่งไปที่ Anthropic อย่างเดียว</span>
+        <span id="keyok"></span>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2>2 · ตรวจอะไร</h2>
+      <div class="grid2">
+        <div class="fld">
+          <label class="nl" for="com">คณะ / ระบบที่ต้องการปรับปรุง <span class="req" aria-hidden="true">*</span></label>
+          <select id="com"></select>
+          <input id="comOther" type="text" placeholder="พิมพ์ชื่อคณะ / ระบบ" hidden />
+        </div>
+        <div class="fld">
+          <span class="nl">ฟังก์ชัน <span class="req" aria-hidden="true">*</span></span>
+          <div class="seg" id="fn"></div>
+          <span class="hint" id="fnHint"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h2>3 · เอกสาร</h2>
+      <div class="seg" id="srcTabs">
+        <button type="button" data-src="link" aria-pressed="true"><span class="ms" aria-hidden="true">link</span>ลิงก์ Google Doc</button>
+        <button type="button" data-src="file" aria-pressed="false"><span class="ms" aria-hidden="true">upload_file</span>อัปโหลดไฟล์</button>
+      </div>
+      <div class="fld" id="srcLink">
+        <label class="nl" for="link">ลิงก์ Google Doc หรือไฟล์ .docx ใน Google Drive</label>
+        <input id="link" type="url" placeholder="https://docs.google.com/document/d/..." />
+        <span class="hint">ตอนกด "เริ่มตรวจ" ครั้งแรก Google จะถามสิทธิ์อ่านไฟล์ใน Drive ของคุณ · อ่านได้เฉพาะไฟล์ที่บัญชีคุณเปิดได้</span>
+      </div>
+      <div class="fld" id="srcFile" hidden>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="เลือกไฟล์ .docx">
+          <span class="ms" aria-hidden="true">file_save</span>
+          <b>ลากไฟล์ .docx มาวาง หรือกดเพื่อเลือก</b>
+          <span class="hint">Google Docs: ไฟล์ › ดาวน์โหลด › Microsoft Word (.docx)</span>
+        </div>
+        <input id="fileIn" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+        <div class="file" id="fileBox" hidden><span class="ms" aria-hidden="true">description</span><b id="fileName"></b><button type="button" class="btn icon ghost" id="fileDel" title="เอาไฟล์ออก" aria-label="เอาไฟล์ออก"><span class="ms" aria-hidden="true">delete</span></button></div>
+      </div>
+    </div>
+
+    <div class="grp">
+      <p class="nerr" id="err" hidden></p>
+      <div class="prog" id="prog" hidden><div class="bar"><i id="barFill"></i></div><p class="log" id="log"></p></div>
+      <div class="acts">
+        <button type="button" class="btn" id="stop" hidden><span class="ms" aria-hidden="true">stop_circle</span>หยุด</button>
+        <button type="button" class="btn primary" id="run"><span class="ms" aria-hidden="true">play_arrow</span>เริ่มตรวจ</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="histP" hidden>
+    <h2>ผลที่รันไว้ในเบราว์เซอร์นี้</h2>
+    <div class="hist" id="hist"></div>
+  </section>
+
+  <section id="result" hidden></section>
+</main>
+
+<dialog id="zoom"><img id="zimg" alt="" /><div class="dcap"><span id="zcap"></span><button type="button" class="btn" id="zclose">ปิด</button></div></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script type="module">
+import Anthropic from 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.3.0/+esm';
+
+/* ---------- ค่าคงที่ (ผู้ใช้ 16 พ.ย. 69) ---------- */
+const CLIENT_ID = '815797516574-cu790prjgq3t9476liqfloldf0a4fdg7.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
+const MODEL = 'claude-opus-5-5';
+const COMMITTEES = [
+  'ระบบบริหารจัดการคิว (คทง.1)',
+  'OPD (คทง.1)',
+  'เบาหวาน/ความดัน + จุดคัดกรองกลาง (คทง.3)',
+  'งานการเงิน (คทง.8)',
+  'คลินิกสุขภาพจิต (คทง.9)',
+  'งานสุขภาพจิตทั่วไป (คทง.9)',
+  'งานพัฒนาการ (คทง.9)',
+  'คลินิกบำบัดสารเสพติด (คทง.9)',
+  'ระบบสั่งการรักษา CPOE (SDD 10.5)',
+  'ระบบ Telemedicine (SDD 10.5)',
+];
+const FUNCTIONS = [
+  { key: 'shots', icon: 'image_search', label: 'ตรวจหน้าจอ', hint: 'ไล่ทุกหัวข้อ ทุกภาพที่วางใต้หัวข้อ ว่าภาพตรงกับข้อความไหม · กรอบเขียว ตรง · ส้ม ตรงบางส่วน · แดง ไม่ตรง/ควรลบ' },
+];
+const MAX_IMG_PER_CALL = 16;
+const MAX_SEC_PER_CALL = 30;
+const IMG_MAX_SIDE = 1568;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ls = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }, del: (k) => { try { localStorage.removeItem(k); } catch (e) {} } };
+
+/* ---------- เข้าสู่ระบบ Google (เหมือนหน้าอื่นใน bma-docs) ---------- */
+const NA = { tk: '', exp: 0, user: null, drive: null };
+const b64u = (x) => decodeURIComponent(atob(x.replace(/-/g, '+').replace(/_/g, '/')).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+function setTk(tk) {
+  try {
+    const p = JSON.parse(b64u(tk.split('.')[1]));
+    if (p.exp * 1000 < Date.now() + 60000) return false;
+    Object.assign(NA, { tk, exp: p.exp, user: { email: p.email, name: p.name || p.email.split('@')[0] } });
+    ls.set('bma-docs:tk', tk); return true;
+  } catch (e) { return false; }
+}
+const signedIn = () => !!NA.tk && NA.exp * 1000 > Date.now() + 60000;
+{ const t = ls.get('bma-docs:tk'); if (t) setTk(t); }
+let gsiP = null;
+function gsi() {
+  return gsiP || (gsiP = new Promise((ok, no) => {
+    const sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true;
+    sc.onload = () => { google.accounts.id.initialize({ client_id: CLIENT_ID, callback: (r) => { if (r && r.credential && setTk(r.credential)) view(); }, cancel_on_tap_outside: false, use_fedcm_for_prompt: true }); ok(); };
+    sc.onerror = no; document.head.appendChild(sc);
+  }));
+}
+function driveToken() {
+  if (NA.drive && NA.drive.exp > Date.now() + 60000) return Promise.resolve(NA.drive.tk);
+  return gsi().then(() => new Promise((ok, no) => {
+    const c = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: DRIVE_SCOPE, hint: NA.user && NA.user.email,
+      callback: (r) => { if (r && r.access_token) { NA.drive = { tk: r.access_token, exp: Date.now() + (r.expires_in || 3000) * 1000 }; ok(r.access_token); } else no(new Error('ไม่ได้รับสิทธิ์อ่านไฟล์ใน Google Drive')); },
+      error_callback: () => no(new Error('ไม่ได้รับสิทธิ์อ่านไฟล์ใน Google Drive (ปิดหน้าต่างขอสิทธิ์ก่อนกดอนุญาต)')),
+    });
+    c.requestAccessToken({ prompt: '' });
+  }));
+}
+
+/* ---------- API key ต่อผู้ใช้ ---------- */
+const keyName = () => 'bma-review:anthropic-key:' + (NA.user ? NA.user.email : '');
+function showKeyState() {
+  const k = $('key').value.trim();
+  $('keyok').innerHTML = k ? '<span class="ok"><span class="ms" aria-hidden="true">check_circle</span>บันทึก key ไว้ในเบราว์เซอร์นี้แล้ว</span>' : '';
+}
+
+/* ---------- หน้าจอ ---------- */
+const state = { src: 'link', fn: 'shots', file: null, running: false, abort: null, current: null };
+function view() {
+  const inn = signedIn();
+  $('gate').hidden = inn; $('form').hidden = !inn; $('histP').hidden = !inn;
+  if (!inn) { gsi().then(() => google.accounts.id.renderButton($('gbtn'), { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill', locale: 'th' })).catch(() => { $('gbtn').innerHTML = '<p class="nerr">โหลดปุ่มเข้าสู่ระบบของ Google ไม่ได้ · ตรวจอินเทอร์เน็ตแล้วรีเฟรช</p>'; }); $('result').hidden = true; return; }
+  $('who').innerHTML = '<span class="ms" aria-hidden="true">account_circle</span>' + esc(NA.user.name) + ' · ' + esc(NA.user.email);
+  $('key').value = ls.get(keyName()) || ''; showKeyState();
+  renderHist();
+}
+$('com').innerHTML = COMMITTEES.map((c) => '<option>' + esc(c) + '</option>').join('') + '<option value="__other">อื่น ๆ (พิมพ์เอง)</option>';
+$('com').addEventListener('change', () => { $('comOther').hidden = $('com').value !== '__other'; });
+$('fn').innerHTML = FUNCTIONS.map((f) => '<button type="button" data-fn="' + f.key + '" aria-pressed="' + (f.key === state.fn) + '"><span class="ms" aria-hidden="true">' + f.icon + '</span>' + esc(f.label) + '</button>').join('');
+$('fnHint').textContent = FUNCTIONS.find((f) => f.key === state.fn).hint;
+$('fn').addEventListener('click', (e) => { const b = e.target.closest('[data-fn]'); if (!b) return; state.fn = b.dataset.fn; [...$('fn').children].forEach((x) => x.setAttribute('aria-pressed', String(x === b))); $('fnHint').textContent = FUNCTIONS.find((f) => f.key === state.fn).hint; });
+$('srcTabs').addEventListener('click', (e) => { const b = e.target.closest('[data-src]'); if (!b) return; state.src = b.dataset.src; [...$('srcTabs').children].forEach((x) => x.setAttribute('aria-pressed', String(x === b))); $('srcLink').hidden = state.src !== 'link'; $('srcFile').hidden = state.src !== 'file'; });
+$('key').addEventListener('input', () => { const k = $('key').value.trim(); if (k) ls.set(keyName(), k); else ls.del(keyName()); showKeyState(); });
+$('keyshow').addEventListener('click', () => { $('key').type = $('key').type === 'password' ? 'text' : 'password'; });
+document.addEventListener('click', (e) => { if (e.target.closest('[data-out]')) { NA.tk = ''; NA.user = null; NA.drive = null; ls.del('bma-docs:tk'); view(); } });
+function setFile(f) {
+  if (f && !/\.docx$/i.test(f.name)) { showErr('รองรับเฉพาะไฟล์ .docx'); return; }
+  state.file = f || null; $('fileBox').hidden = !f; $('drop').hidden = !!f; $('fileName').textContent = f ? f.name + ' · ' + (f.size / 1048576).toFixed(1) + ' MB' : ''; hideErr();
+}
+$('drop').addEventListener('click', () => $('fileIn').click());
+$('drop').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileIn').click(); } });
+$('fileIn').addEventListener('change', () => setFile($('fileIn').files[0]));
+$('fileDel').addEventListener('click', () => { $('fileIn').value = ''; setFile(null); });
+['dragover', 'dragenter'].forEach((t) => $('drop').addEventListener(t, (e) => { e.preventDefault(); $('drop').classList.add('over'); }));
+['dragleave', 'drop'].forEach((t) => $('drop').addEventListener(t, (e) => { e.preventDefault(); $('drop').classList.remove('over'); }));
+$('drop').addEventListener('drop', (e) => setFile(e.dataTransfer.files[0]));
+const showErr = (m) => { $('err').textContent = m; $('err').hidden = false; };
+const hideErr = () => { $('err').hidden = true; };
+const progress = (pct, msg) => { $('prog').hidden = false; $('barFill').style.width = Math.max(2, Math.min(100, pct)) + '%'; $('log').textContent = msg; };
+
+/* ---------- อ่านเอกสาร ---------- */
+async function loadDocx() {
+  if (state.src === 'file') {
+    if (!state.file) throw new Error('เลือกไฟล์ .docx ก่อน');
+    return { name: state.file.name, buf: await state.file.arrayBuffer(), when: new Date(state.file.lastModified) };
+  }
+  const url = $('link').value.trim();
+  const id = (url.match(/\/d\/([\w-]{20,})/) || url.match(/[?&]id=([\w-]{20,})/) || [])[1];
+  if (!id) throw new Error('ลิงก์ไม่ถูกต้อง · ใช้ลิงก์ที่มี /d/<รหัสไฟล์>/');
+  progress(3, 'ขอสิทธิ์อ่านไฟล์ใน Google Drive…');
+  const tk = await driveToken();
+  const H = { Authorization: 'Bearer ' + tk };
+  const meta = await fetch('https://www.googleapis.com/drive/v3/files/' + id + '?fields=name,mimeType,modifiedTime&supportsAllDrives=true', { headers: H });
+  if (!meta.ok) throw new Error(meta.status === 404 ? 'หาไฟล์ไม่เจอ หรือบัญชีนี้ไม่มีสิทธิ์เปิดไฟล์' : 'อ่านข้อมูลไฟล์จาก Drive ไม่ได้ (' + meta.status + ')');
+  const m = await meta.json();
+  progress(6, 'ดาวน์โหลด "' + m.name + '"…');
+  const DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const dl = m.mimeType === 'application/vnd.google-apps.document'
+    ? 'https://www.googleapis.com/drive/v3/files/' + id + '/export?mimeType=' + encodeURIComponent(DOCX)
+    : m.mimeType === DOCX ? 'https://www.googleapis.com/drive/v3/files/' + id + '?alt=media&supportsAllDrives=true' : null;
+  if (!dl) throw new Error('ไฟล์นี้ไม่ใช่ Google Doc หรือ .docx');
+  const r = await fetch(dl, { headers: H });
+  if (!r.ok) throw new Error('ดาวน์โหลดไฟล์ไม่ได้ (' + r.status + ')' + (r.status === 403 ? ' · ไฟล์ใหญ่เกิน 10 MB ให้ดาวน์โหลดเป็น .docx แล้วอัปโหลดแทน' : ''));
+  return { name: m.name, buf: await r.arrayBuffer(), when: new Date(m.modifiedTime) };
+}
+
+const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
+async function parseDocx(buf) {
+  const zip = await JSZip.loadAsync(buf);
+  const P = new DOMParser();
+  const xml = async (p) => { const f = zip.file(p); return f ? P.parseFromString(await f.async('string'), 'application/xml') : null; };
+  const doc = await xml('word/document.xml');
+  if (!doc) throw new Error('ไฟล์ไม่ใช่ .docx ที่อ่านได้');
+  const rels = {};
+  const relX = await xml('word/_rels/document.xml.rels');
+  if (relX) [...relX.getElementsByTagName('Relationship')].forEach((r) => { rels[r.getAttribute('Id')] = r.getAttribute('Target'); });
+  /* หัวข้อ = style ที่ชื่อ Heading/หัวเรื่อง หรือมี outlineLvl */
+  const heads = {};
+  const styX = await xml('word/styles.xml');
+  if (styX) [...styX.getElementsByTagNameNS(W, 'style')].forEach((s) => {
+    const id = s.getAttributeNS(W, 'styleId'); const nmEl = s.getElementsByTagNameNS(W, 'name')[0]; const nm = nmEl ? nmEl.getAttributeNS(W, 'val') : '';
+    const ol = s.getElementsByTagNameNS(W, 'outlineLvl')[0];
+    const m = /^(heading|หัวเรื่อง)\s*(\d)/i.exec(nm || '');
+    if (m) heads[id] = +m[2]; else if (ol) heads[id] = +ol.getAttributeNS(W, 'val') + 1;
+  });
+  const sections = [];
+  let cur = { heading: '(ก่อนหัวข้อแรก)', level: 0, text: [], imgs: [] };
+  const push = () => { if (!cur.pushed && (cur.text.length || cur.imgs.length || cur.level)) { cur.pushed = true; sections.push(cur); } };
+  let lastTbl = null;
+  const CAP = /^(ภาพที่|รูปที่|Figure|Fig\.)\s*\d/i;
+  const paraText = (p) => [...p.getElementsByTagNameNS(W, 't')].map((t) => t.textContent).join('').trim();
+  const paraImgs = (p) => [...p.getElementsByTagNameNS(A, 'blip')].map((b) => b.getAttributeNS(R, 'embed')).filter(Boolean);
+  const walk = (node) => {
+    for (const el of node.children) {
+      if (el.localName === 'p') {
+        const ps = el.getElementsByTagNameNS(W, 'pStyle')[0];
+        const sid = ps ? ps.getAttributeNS(W, 'val') : '';
+        const ol = el.getElementsByTagNameNS(W, 'outlineLvl')[0];
+        const lvl = heads[sid] || (ol ? +ol.getAttributeNS(W, 'val') + 1 : 0);
+        const t = paraText(el);
+        if (lvl && t && lvl <= 6) { push(); cur = { heading: t, level: lvl, text: [], imgs: [] }; lastTbl = null; }
+        else if (t && lastTbl && CAP.test(t)) { if (lastTbl.placeholder) { lastTbl.heading = t; lastTbl.placeholder = false; } lastTbl.text.push(t); lastTbl = null; }
+        else if (t) { cur.text.push(t); lastTbl = null; }
+        paraImgs(el).forEach((rid) => rels[rid] && cur.imgs.push('word/' + rels[rid].replace(/^\//, '').replace(/^word\//, '')));
+      } else if (el.localName === 'tbl') {
+        /* ตารางที่มีภาพ = 1 ข้อ (SDD วางแต่ละข้อ เช่น FIN-36 / REQ-… ไว้ในตารางพร้อมภาพ) · ตารางไม่มีภาพ = ข้อความของหัวข้อเดิม */
+        const hasImg = el.getElementsByTagNameNS(A, 'blip').length > 0;
+        const parent = cur;
+        let target = cur;
+        if (hasImg) { push(); target = { heading: '', parent: parent.heading, level: parent.level + 1, text: [], imgs: [], pushed: true }; }
+        [...el.getElementsByTagNameNS(W, 'tr')].forEach((tr) => {
+          const cells = [...tr.getElementsByTagNameNS(W, 'tc')].map((tc) => [...tc.getElementsByTagNameNS(W, 'p')].map(paraText).filter(Boolean).join(' ')).filter(Boolean);
+          if (cells.length) target.text.push(cells.join(' · '));
+          [...tr.getElementsByTagNameNS(A, 'blip')].forEach((b) => { const rid = b.getAttributeNS(R, 'embed'); if (rels[rid]) target.imgs.push('word/' + rels[rid].replace(/^\//, '').replace(/^word\//, '')); });
+        });
+        if (hasImg) {
+          const first = target.text[0] || '';
+          target.placeholder = !first;
+          target.heading = first ? (first.length > 140 ? first.slice(0, 140) + '…' : first) : 'ภาพประกอบ ' + target.imgs.length + ' ภาพ';
+          sections.push(target);
+          lastTbl = target;
+        }
+      } else if (el.localName === 'sdt' || el.localName === 'sdtContent' || el.localName === 'body') walk(el);
+    }
+  };
+  walk(doc.getElementsByTagNameNS(W, 'body')[0]);
+  push();
+  /* ภาพ → data URL ย่อด้าน ≤ 1568 px (ส่ง Claude + แสดงผล) */
+  const cache = {};
+  const imgOf = async (path) => {
+    if (cache[path] !== undefined) return cache[path];
+    const f = zip.file(path); const ext = (path.split('.').pop() || '').toLowerCase();
+    if (!f || !/^(png|jpe?g|gif|webp|bmp)$/.test(ext)) return (cache[path] = null);
+    const blob = new Blob([await f.async('uint8array')], { type: 'image/' + (ext === 'jpg' ? 'jpeg' : ext) });
+    try {
+      const bmp = await createImageBitmap(blob);
+      const s = Math.min(1, IMG_MAX_SIDE / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      const g = c.getContext('2d'); g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, c.width, c.height); g.drawImage(bmp, 0, 0, c.width, c.height);
+      return (cache[path] = { name: path.split('/').pop(), data: c.toDataURL('image/jpeg', 0.85) });
+    } catch (e) { return (cache[path] = null); }
+  };
+  let skipped = 0;
+  for (const s of sections) {
+    const out = [];
+    for (const p of s.imgs) { const im = await imgOf(p); if (im) out.push(im); else skipped++; }
+    s.imgs = out; s.text = s.text.join('\n').slice(0, 4000);
+  }
+  return { sections: sections.filter((s) => (s.text || s.imgs.length) && !(s.level === 0 && !s.imgs.length)), skipped };
+}
+
+/* ---------- Claude ---------- */
+const SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['sections'],
+  properties: { sections: { type: 'array', items: {
+    type: 'object', additionalProperties: false, required: ['id', 'verdict', 'fix', 'images'],
+    properties: {
+      id: { type: 'string' },
+      verdict: { type: 'string', enum: ['ok', 'minor', 'fix'] },
+      fix: { type: 'string' },
+      images: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['id', 'verdict', 'caption'], properties: { id: { type: 'string' }, verdict: { type: 'string', enum: ['ok', 'part', 'bad'] }, caption: { type: 'string' } } } },
+    },
+  } } },
+};
+const SYSTEM = [
+  'คุณเป็นผู้ตรวจเอกสารออกแบบระบบ (SDD / TOR) ของระบบ PHCIS สำนักอนามัย กรุงเทพมหานคร',
+  'งาน: ตรวจทุกหัวข้อที่ได้รับ ว่าภาพหน้าจอ/แผนภาพที่วางไว้ใต้หัวข้อ แสดงสิ่งที่ข้อความของหัวข้อนั้นบอกจริงหรือไม่',
+  'ผลต่อภาพ: ok = ตรงกับข้อความ · part = ตรงบางส่วน (เห็นบางข้อ ขาดบางข้อ หรือต้องชี้จุดเพิ่ม) · bad = ไม่ตรง ซ้ำ หรือควรลบ',
+  'caption ของภาพ: บอกสั้น ๆ ว่าภาพแสดงอะไร (ชื่อหน้า ปุ่ม/ช่องที่เห็น) แล้วต่อด้วยเหตุผลของผล · ไม่เกิน 2 ประโยค',
+  'ผลต่อหัวข้อ: ok = ทุกภาพตรงและครบตามข้อความ · minor = แก้เล็กน้อย (ภาพตรงบางส่วน ชื่อ/เลขภาพไม่ตรง ขาดคำอธิบาย) · fix = ต้องแก้ (ไม่มีภาพทั้งที่ข้อความต้องการ ภาพไม่ตรง หรือข้อความขัดกับภาพ)',
+  'fix: บอกสิ่งที่ต้องแก้เป็นข้อ ๆ คั่นด้วย " · " ระบุชื่อภาพ (เช่น image12) เมื่อพูดถึงภาพ · ถ้า ok ให้เป็นสตริงว่าง',
+  'หัวข้อที่ไม่มีภาพ: ถ้าข้อความเป็นข้อกำหนดที่ควรมีภาพหน้าจอ ให้ fix และบอกว่าควรใส่ภาพอะไร · ถ้าเป็นคำอธิบายทั่วไปที่ไม่ต้องมีภาพ ให้ ok',
+  'ตอบเป็นภาษาไทย · ตอบทุกหัวข้อและทุกภาพที่ได้รับ ใช้ id ตามที่ให้ไว้',
+].join('\n');
+function batches(sections) {
+  const out = []; let b = []; let n = 0;
+  sections.forEach((s, i) => {
+    const k = s.imgs.length;
+    if (b.length && (n + k > MAX_IMG_PER_CALL || b.length >= MAX_SEC_PER_CALL)) { out.push(b); b = []; n = 0; }
+    b.push(i); n += k;
+  });
+  if (b.length) out.push(b);
+  return out;
+}
+function contentFor(idxs, secs, committee) {
+  const c = [{ type: 'text', text: 'คณะ/ระบบ: ' + committee + '\nตรวจ ' + idxs.length + ' หัวข้อต่อไปนี้' }];
+  idxs.forEach((i) => {
+    const s = secs[i];
+    c.push({ type: 'text', text: '\n### [S' + i + '] ' + (s.parent ? s.parent + ' › ' : '') + s.heading + '\nข้อความ:\n' + (s.text || '(ไม่มีข้อความ)') + '\nจำนวนภาพ: ' + s.imgs.length });
+    s.imgs.forEach((im, j) => {
+      c.push({ type: 'text', text: 'ภาพ [S' + i + '-I' + j + '] ไฟล์ ' + im.name });
+      c.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: im.data.split(',')[1] } });
+    });
+  });
+  return c;
+}
+async function ask(client, content, signal) {
+  const stream = client.beta.messages.stream({
+    model: MODEL, max_tokens: 32000,
+    betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default',
+    output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA } },
+    system: SYSTEM, messages: [{ role: 'user', content }],
+  }, { signal });
+  const msg = await stream.finalMessage();
+  if (msg.stop_reason === 'refusal') throw new Error('Claude ปฏิเสธการตรวจชุดนี้' + (msg.stop_details && msg.stop_details.explanation ? ' · ' + msg.stop_details.explanation : ''));
+  if (msg.stop_reason === 'max_tokens') throw new Error('คำตอบยาวเกินกำหนด · ลองแบ่งเอกสารให้เล็กลง');
+  const txt = msg.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
+  return { data: JSON.parse(txt), usage: msg.usage };
+}
+const friendly = (e) => {
+  if (e instanceof Anthropic.AuthenticationError) return 'API key ไม่ถูกต้อง หรือถูกยกเลิกแล้ว · ตรวจ key ที่ console.anthropic.com';
+  if (e instanceof Anthropic.PermissionDeniedError) return 'API key นี้ไม่มีสิทธิ์ใช้โมเดล ' + MODEL;
+  if (e instanceof Anthropic.RateLimitError) return 'ใช้งานถี่เกินโควตาของ key · รอสักครู่แล้วกดเริ่มตรวจใหม่';
+  if (e instanceof Anthropic.BadRequestError) return 'Claude รับคำขอไม่ได้: ' + (e.message || '') + (/credit/i.test(e.message || '') ? ' · เติมเครดิตในบัญชี Anthropic' : '');
+  if (e instanceof Anthropic.APIConnectionError) return 'ติดต่อ Claude ไม่ได้ · ตรวจอินเทอร์เน็ต';
+  if (e instanceof Anthropic.APIUserAbortError || (e && e.name === 'AbortError')) return 'หยุดการตรวจแล้ว';
+  return (e && e.message) || 'ตรวจไม่สำเร็จ';
+};
+
+/* ---------- รัน ---------- */
+$('run').addEventListener('click', run);
+$('stop').addEventListener('click', () => state.abort && state.abort.abort());
+async function run() {
+  if (state.running) return;
+  hideErr();
+  if (!signedIn()) { view(); return; }
+  const key = $('key').value.trim();
+  if (!key) { showErr('ใส่ Anthropic API key ก่อน'); $('key').focus(); return; }
+  const committee = $('com').value === '__other' ? $('comOther').value.trim() : $('com').value;
+  if (!committee) { showErr('พิมพ์ชื่อคณะ / ระบบก่อน'); $('comOther').focus(); return; }
+  if (state.src === 'link' && !$('link').value.trim()) { showErr('ใส่ลิงก์ Google Doc หรือเปลี่ยนเป็นอัปโหลดไฟล์'); $('link').focus(); return; }
+  if (state.src === 'file' && !state.file) { showErr('เลือกไฟล์ .docx ก่อน'); return; }
+  state.running = true; state.abort = new AbortController();
+  $('run').disabled = true; $('stop').hidden = false;
+  const client = new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true, maxRetries: 3 });
+  try {
+    progress(2, 'กำลังอ่านเอกสาร…');
+    const src = await loadDocx();
+    progress(10, 'แยกหัวข้อและภาพใน "' + src.name + '"…');
+    const { sections, skipped } = await parseDocx(src.buf);
+    if (!sections.length) throw new Error('ไม่พบหัวข้อในเอกสาร · ตรวจว่าใช้ Heading/หัวเรื่อง ในไฟล์');
+    const groups = batches(sections);
+    const res = {}; const usage = { input: 0, output: 0 };
+    for (let g = 0; g < groups.length; g++) {
+      if (state.abort.signal.aborted) throw new DOMException('abort', 'AbortError');
+      const idxs = groups[g];
+      progress(12 + Math.round((g / groups.length) * 86), 'Claude กำลังตรวจชุดที่ ' + (g + 1) + '/' + groups.length + ' · หัวข้อ ' + (idxs[0] + 1) + '–' + (idxs[idxs.length - 1] + 1) + ' จาก ' + sections.length);
+      const { data, usage: u } = await ask(client, contentFor(idxs, sections, committee), state.abort.signal);
+      usage.input += (u.input_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0); usage.output += u.output_tokens || 0;
+      (data.sections || []).forEach((s) => { res[s.id] = s; });
+    }
+    const out = {
+      id: 'r' + Date.now(), at: Date.now(), by: NA.user.email, committee, fn: state.fn, doc: src.name, docWhen: src.when ? src.when.getTime() : null, skipped, usage,
+      sections: sections.map((s, i) => {
+        const r = res['S' + i] || { verdict: 'minor', fix: 'Claude ไม่ได้ตอบหัวข้อนี้ · กดเริ่มตรวจใหม่', images: [] };
+        const iv = {}; (r.images || []).forEach((x) => { iv[x.id] = x; });
+        return { heading: s.heading, parent: s.parent || '', level: s.level, text: s.text, verdict: r.verdict, fix: r.fix, images: s.imgs.map((im, j) => ({ name: im.name, data: im.data, verdict: (iv['S' + i + '-I' + j] || {}).verdict || 'part', caption: (iv['S' + i + '-I' + j] || {}).caption || '' })) };
+      }),
+    };
+    progress(100, 'เสร็จแล้ว · ใช้ไป ' + usage.input.toLocaleString() + ' + ' + usage.output.toLocaleString() + ' token');
+    await saveRun(out); renderHist(); showResult(out);
+  } catch (e) { showErr(friendly(e)); $('prog').hidden = true; }
+  finally { state.running = false; $('run').disabled = false; $('stop').hidden = true; }
+}
+
+/* ---------- เก็บผลในเบราว์เซอร์ (IndexedDB) ---------- */
+const db = () => new Promise((ok, no) => { const r = indexedDB.open('bma-review', 1); r.onupgradeneeded = () => r.result.createObjectStore('runs', { keyPath: 'id' }); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
+const tx = (mode, fn) => db().then((d) => new Promise((ok, no) => { const t = d.transaction('runs', mode); const q = fn(t.objectStore('runs')); t.oncomplete = () => ok(q && q.result); t.onerror = () => no(t.error); }));
+const saveRun = (r) => tx('readwrite', (s) => s.put(r)).catch(() => {});
+const allRuns = () => tx('readonly', (s) => s.getAll()).catch(() => []);
+const delRun = (id) => tx('readwrite', (s) => s.delete(id)).catch(() => {});
+const fmt = (ms) => new Date(ms).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+async function renderHist() {
+  const runs = ((await allRuns()) || []).filter((r) => !NA.user || r.by === NA.user.email).sort((a, b) => b.at - a.at);
+  $('hist').innerHTML = runs.length ? runs.map((r) => {
+    const c = counts(r);
+    return '<div class="hrow"><button type="button" class="row" data-open="' + r.id + '"><span class="t">' + esc(r.committee) + ' · ' + esc(r.doc) + '</span><span class="chip c-blue">' + c.secs + ' หัวข้อ · ' + c.imgs + ' ภาพ</span><span class="chip c-red">ต้องแก้ ' + c.fix + '</span><span class="sum">' + fmt(r.at) + '</span></button><button type="button" class="btn icon ghost" data-del="' + r.id + '" title="ลบผลนี้" aria-label="ลบผลนี้"><span class="ms" aria-hidden="true">delete</span></button></div>';
+  }).join('') : '<p class="sum">ยังไม่มี · กด "เริ่มตรวจ" แล้วผลจะเก็บไว้ที่นี่</p>';
+}
+$('hist').addEventListener('click', async (e) => {
+  const o = e.target.closest('[data-open]'); const d = e.target.closest('[data-del]');
+  if (o) { const r = ((await allRuns()) || []).find((x) => x.id === o.dataset.open); if (r) showResult(r); }
+  if (d && confirm('ลบผลการตรวจนี้ออกจากเบราว์เซอร์?')) { await delRun(d.dataset.del); if (state.current && state.current.id === d.dataset.del) { $('result').hidden = true; state.current = null; } renderHist(); }
+});
+
+/* ---------- แสดงผล (แบบเดียวกับรอบตรวจภาพ SDD) ---------- */
+const VS = { ok: ['c-green', 'ตรงทั้งหมด'], minor: ['c-orange', 'แก้เล็กน้อย'], fix: ['c-red', 'ต้องแก้'] };
+const VI = { ok: ['v-ok', 'c-green', 'ตรง'], part: ['v-part', 'c-orange', 'ตรงบางส่วน'], bad: ['v-bad', 'c-red', 'ไม่ตรง / ควรลบ'] };
+function counts(r) {
+  const c = { secs: r.sections.length, imgs: 0, ok: 0, part: 0, bad: 0, sOk: 0, sMinor: 0, fix: 0 };
+  r.sections.forEach((s) => { c.imgs += s.images.length; s.images.forEach((im) => { c[im.verdict] = (c[im.verdict] || 0) + 1; }); c[s.verdict === 'ok' ? 'sOk' : s.verdict === 'minor' ? 'sMinor' : 'fix']++; });
+  return c;
+}
+function showResult(r) {
+  state.current = r;
+  const c = counts(r);
+  const numOf = (t) => ((t || '').match(/^\s*(\d+(?:\.\d+)*)/) || (t || '').match(/^\s*([A-Z][A-Z0-9]*-[\w.-]*\d)/) || [])[1];
+  const secNo = (s, i) => numOf(s.heading) || numOf(s.parent) || String(i + 1);
+  const under = (s) => (s.parent && s.parent !== '(ก่อนหัวข้อแรก)' ? '<span class="sum">' + esc(s.parent) + '</span><br>' : '');
+  const rows = r.sections.map((s, i) => '<tr class="' + (s.verdict === 'fix' ? 'fix' : '') + '"><td><a href="#rs-' + i + '">§' + esc(secNo(s, i)) + '</a></td><td>' + under(s) + esc(s.heading) + '</td><td class="num">' + s.images.length + '</td><td><span class="chip ' + VS[s.verdict][0] + '">' + VS[s.verdict][1] + '</span></td><td>' + esc(s.fix || '—') + '</td></tr>').join('');
+  const cards = r.sections.map((s, i) => '<article class="sec" id="rs-' + i + '"><div class="top"><div><h3>§' + esc(secNo(s, i)) + ' · ' + esc(s.heading) + '</h3><p class="sum">' + (s.parent && s.parent !== '(ก่อนหัวข้อแรก)' ? esc(s.parent) + ' · ' : '') + 'ภาพในเอกสาร ' + s.images.length + ' ภาพ</p></div><span class="chip ' + VS[s.verdict][0] + '">' + VS[s.verdict][1] + '</span></div>'
+    + '<p class="gh">ข้อความต้นฉบับ</p><blockquote>' + esc(s.text || '(ไม่มีข้อความ)') + '</blockquote>'
+    + '<p class="gh">ภาพในเอกสาร</p>' + (s.images.length ? '<div class="shots">' + s.images.map((im, j) => '<figure class="' + VI[im.verdict][0] + '"><button type="button" data-zoom="' + i + ':' + j + '" aria-label="ขยายภาพ ' + esc(im.name) + '"><img src="' + im.data + '" alt="' + esc(im.name + ': ' + im.caption) + '" loading="lazy" /></button><figcaption><span><span class="chip ' + VI[im.verdict][1] + '">' + VI[im.verdict][2] + '</span> ' + esc(im.name) + '</span><span>' + esc(im.caption) + '</span></figcaption></figure>').join('') + '</div>' : '<p class="noimg">ไม่มีภาพ</p>')
+    + (s.fix ? '<p class="gh">ต้องแก้</p><div class="fixbox' + (s.verdict === 'fix' ? ' red' : '') + '">' + esc(s.fix) + '</div>' : '') + '</article>').join('');
+  $('result').innerHTML = '<div class="panel"><div class="rhead"><div><h2>' + esc(r.committee) + ': ตรวจภาพหน้าจอในเอกสารเทียบหัวข้อ</h2><p class="sum">ต้นฉบับ: ' + esc(r.doc) + (r.docWhen ? ' (ฉบับ ' + fmt(r.docWhen) + ')' : '') + ' · ตรวจเมื่อ ' + fmt(r.at) + ' โดย ' + esc(r.by) + ' · ' + MODEL + ' · กรอบเขียว ตรง · ส้ม ตรงบางส่วน · แดง ไม่ตรง/ควรลบ · กดภาพเพื่อดูขยาย' + (r.skipped ? ' · ข้ามภาพที่เปิดไม่ได้ (EMF/WMF) ' + r.skipped + ' ภาพ' : '') + '</p></div>'
+    + '<div class="acts" style="flex:0 1 auto"><button type="button" class="btn" id="csv"><span class="ms" aria-hidden="true">download</span>ดาวน์โหลด CSV</button></div></div>'
+    + '<div class="legend"><span class="chip c-blue">' + c.secs + ' หัวข้อ · ' + c.imgs + ' ภาพ</span><span class="chip c-green">ตรง ' + c.ok + ' ภาพ</span><span class="chip c-orange">ตรงบางส่วน ' + c.part + ' ภาพ</span><span class="chip c-red">ไม่ตรง / ควรลบ ' + c.bad + ' ภาพ</span></div>'
+    + '<div class="legend"><span class="chip c-red">ต้องแก้ ' + c.fix + ' หัวข้อ</span><span class="chip c-orange">แก้เล็กน้อย ' + c.sMinor + ' หัวข้อ</span><span class="chip c-green">ตรงทั้งหมด ' + c.sOk + ' หัวข้อ</span></div>'
+    + '<div class="tbl"><table><thead><tr><th>ส่วน</th><th>หัวข้อ</th><th>ภาพ</th><th>ผล</th><th>ต้องแก้</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>' + cards;
+  $('result').hidden = false;
+  $('result').style.display = 'flex'; $('result').style.flexDirection = 'column'; $('result').style.gap = 'var(--dim-space-600, 24px)';
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('result').addEventListener('click', (e) => {
+  const z = e.target.closest('[data-zoom]');
+  if (z && state.current) { const [i, j] = z.dataset.zoom.split(':').map(Number); const im = state.current.sections[i].images[j]; $('zimg').src = im.data; $('zimg').alt = im.name; $('zcap').textContent = im.name + ' · ' + VI[im.verdict][2] + ' · ' + im.caption; $('zoom').showModal(); }
+  if (e.target.closest('#csv') && state.current) csv(state.current);
+});
+$('zclose').addEventListener('click', () => $('zoom').close());
+$('zoom').addEventListener('click', (e) => { if (e.target === $('zoom')) $('zoom').close(); });
+function csv(r) {
+  const cell = (v) => { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const rows = [['หัวข้อ', 'จำนวนภาพ', 'ผล', 'ต้องแก้', 'ภาพ', 'ผลภาพ', 'คำอธิบายภาพ']];
+  r.sections.forEach((s) => { if (!s.images.length) rows.push([s.heading, 0, VS[s.verdict][1], s.fix, '', '', '']); s.images.forEach((im, j) => rows.push([j ? '' : s.heading, j ? '' : s.images.length, j ? '' : VS[s.verdict][1], j ? '' : s.fix, im.name, VI[im.verdict][2], im.caption])); });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + rows.map((x) => x.map(cell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'ตรวจเอกสาร-' + r.committee.replace(/[^\wก-๙.-]+/g, '-') + '-' + new Date(r.at).toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+view();
+</script>
+</body>
+</html>
