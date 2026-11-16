@@ -93,6 +93,8 @@
   .ft-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); min-height: var(--dim-size-700, 36px); }
   .ft-row .arr { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
   .ft-id { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); margin-left: var(--dim-space-100, 4px); white-space: nowrap; }
+  .board-img { display: block; overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEEFF0); border-radius: var(--dim-radius-300, 10px); background: var(--surface-card-100, #FFFFFF); }
+  .board-img img { display: block; width: 100%; min-width: 1600px; height: auto; }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
   .step { padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 6px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); }
   .step.t-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
@@ -197,6 +199,11 @@
   <section class="grp" aria-labelledby="h-pn">
     <div class="grp-h"><span class="ic ms" aria-hidden="true">edit_note</span><div class="t"><h2 id="h-pn">โน้ตทั้งหน้า</h2><p class="sum">เรื่องที่ไม่ได้อยู่ใน use case ใดโดยเฉพาะ เช่น use case ที่ขาด · โน้ตของแต่ละ use case กด "โน้ต" ที่การ์ดนั้น</p></div></div>
     <div class="pagenote" data-note-host="_"></div>
+  </section>
+
+  <section class="grp" aria-labelledby="h-board">
+    <div class="grp-h"><span class="ic ms" aria-hidden="true">account_tree</span><div class="t"><h2 id="h-board">ภาพบอร์ด Flow (อัปเดต 17 พ.ย. 69)</h2><p class="sum">วาดจากตารางในหน้านี้ · Queue → Check → Payment · เลื่อนซ้าย–ขวาในกรอบ หรือกดเปิดภาพเต็ม</p></div></div>
+    <a class="board-img" href="flow-shots/queue-board-2026-11-17.png" target="_blank" rel="noopener" aria-label="เปิดภาพบอร์ด Flow ขนาดเต็ม"><img src="flow-shots/queue-board-2026-11-17.png" alt="ภาพบอร์ด Flow ระบบคิว อัปเดต 17 พ.ย. 69" loading="lazy" width="4000" height="815" /></a>
   </section>
 
   <section class="grp" aria-labelledby="h-dec">
