@@ -41,7 +41,7 @@
   /* กลุ่ม + การ์ด */
   .grp { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
   .grp-h { display: flex; align-items: center; gap: var(--dim-space-300, 12px); flex-wrap: wrap; }
-  .grp-h .ic { width: 40px; height: 40px; border-radius: var(--dim-radius-300, 8px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .grp-h .ic { width: 40px; height: 40px; border-radius: var(--dim-radius-300, 10px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--icon-brandPrimary-default, #007549); display: inline-flex; align-items: center; justify-content: center; flex: none; }
   .grp-h .t { flex: 1 1 200px; min-width: 0; }
   .grp-h .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
   .sub { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
@@ -74,6 +74,25 @@
   .uc-no { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
   .uc-t { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
   .uc-t small { display: block; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-tertiary, #858C92); }
+  /* แผนภาพเส้นทาง (สร้างจากแถวในตาราง) */
+  .fd { margin-bottom: var(--dim-space-400, 16px); }
+  .fd-h { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-bold, 700); color: var(--text-content-default, #363B3F); }
+  .fd-s { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); margin-bottom: var(--dim-space-300, 12px); }
+  .fd-s .ms { font-size: var(--dim-size-300, 16px); vertical-align: -3px; }
+  .fd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--dim-space-400, 16px); }
+  .fd-card { border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEEFF0); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); min-width: 0; }
+  .fd-card h3 { margin: 0 0 var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-brandPrimary-default, #007549); }
+  .ft { list-style: none; margin: 0; padding: 0 0 0 var(--dim-space-300, 12px); }
+  .ft.root { padding-left: 0; }
+  .ft li { position: relative; padding: var(--dim-space-100, 4px) 0 var(--dim-space-100, 4px) var(--dim-space-400, 16px); }
+  .ft.root > li { padding-left: 0; }
+  .ft li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .ft li:last-child::before { bottom: auto; height: var(--dim-size-400, 20px); }
+  .ft li::after { content: ''; position: absolute; left: 0; top: var(--dim-size-400, 20px); width: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .ft.root > li::before, .ft.root > li::after { display: none; }
+  .ft-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); min-height: var(--dim-size-700, 36px); }
+  .ft-row .arr { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
+  .ft-id { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); margin-left: var(--dim-space-100, 4px); white-space: nowrap; }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
   .step { padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 6px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); }
   .step.t-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
@@ -104,7 +123,7 @@
   a { color: var(--text-brandPrimary-default, #007549); }
 
   /* โน้ต BA */
-  .nb { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); align-self: flex-start; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 8px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
+  .nb { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); align-self: flex-start; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 10px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
   .nb:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
   .nb.has { border-color: var(--border-brandPrimary-tertiary, #99D6BA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
   .nb[aria-expanded="true"] { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
@@ -112,7 +131,7 @@
   .nsec { display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); padding-top: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
   .nsec[hidden] { display: none; }
   .nlist { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
-  .note { background: var(--surface-neutral-secondary, #F9FAFB); border-radius: var(--dim-radius-300, 8px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .note { background: var(--surface-neutral-secondary, #F9FAFB); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
   .note-h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   .note-h b { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
   .note p { white-space: pre-wrap; word-break: break-word; }
@@ -124,11 +143,11 @@
   .seg { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
   .seg button { min-height: 36px; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-full, 9999px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
   .seg button[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); font-weight: var(--type-weight-medium, 500); }
-  .nform textarea { width: 100%; min-height: 72px; resize: vertical; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
+  .nform textarea { width: 100%; min-height: 72px; resize: vertical; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 10px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
   .nform textarea:focus { outline: none; border-color: var(--border-input-typing, #007549); box-shadow: 0 0 0 var(--dim-stroke-400, 4px) var(--focus-ring-input-typing, #CCEBDD); }
   .nact { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); justify-content: flex-end; }
   .nwho { flex: 1 1 160px; min-width: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); overflow-wrap: anywhere; }
-  .btn { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-sm, 14px); cursor: pointer; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); }
+  .btn { min-height: 44px; display: inline-flex; align-items: center; gap: var(--dim-space-200, 8px); padding: 0 var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 10px); font: inherit; font-size: var(--type-size-sm, 14px); cursor: pointer; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); }
   .btn.primary { background: var(--surface-brandPrimary-default, #007549); border-color: var(--surface-brandPrimary-default, #007549); color: var(--text-brandPrimary-on-brand, #FFFFFF); }
   .btn[disabled] { opacity: 0.5; cursor: default; }
   .btn .ms { font-size: var(--dim-size-400, 20px); }
@@ -146,7 +165,7 @@
   .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
   .fgrid .wide { grid-column: 1 / -1; }
   .fld { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); min-width: 0; }
-  .fld input, .fld select { min-height: 44px; width: 100%; padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 8px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
+  .fld input, .fld select { min-height: 44px; width: 100%; padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 10px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
   .fld input:focus, .fld select:focus { outline: none; border-color: var(--border-input-typing, #007549); box-shadow: 0 0 0 var(--dim-stroke-400, 4px) var(--focus-ring-input-typing, #CCEBDD); }
   .fld .hint { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   .req { color: var(--text-input-require, #DC2626); }
@@ -223,7 +242,7 @@
         { t: 'มาฟังผล / ฟังผลแทน', s: 'เป็นการนัด · ตู้ออกได้ · คัดแยก > เวชระเบียน > คัดกรอง', qt: 'เลขคิวคลินิก', path: ['Kiosk', 'คัดแยก', 'เวชระเบียน', 'คัดกรอง', 'แพทย์'], vn: 'Kiosk', where: 'ตอนนี้: คัดแยกติ๊ก "มาฟังผล" แล้วข้ามคัดกรอง', st: 'target' },
         { t: 'ฉุกเฉิน', s: 'บันทึกคัดกรองย้อนหลัง', qt: 'มีนัด = คลินิก · ไม่มีนัด = run', path: ['Kiosk', 'คิวด่วนพิเศษ', 'แพทย์'], q: 1, vn: 'ตามนัด', where: '/queue-center/display/console', st: 'done' },
         { t: 'Fast Track', s: 'ผู้สูงอายุ · รถเข็น · อาการวิกฤต', qt: 'มีนัด = คลินิก · ไม่มีนัด = run', path: ['Kiosk', 'คัดกรอง', 'คลินิกทันที'], q: 1, vn: 'ตามนัด', where: '/opd/screening "ส่ง Fast Track ทันที"', st: 'done' },
-        { t: 'ไข้ ไอ เจ็บคอ (ARI)', s: 'คิวหมวด I จุดรอแยก', qt: 'คิวหมวด I', path: ['Kiosk', 'ARI'], vn: 'Kiosk', where: '/queue-center/issue', st: 'done' },
+        { t: 'ไข้ ไอ เจ็บคอ (ARI)', s: 'คิวหมวด I จุดรอตรวจแยก · ผ่านคัดแยกก่อน', qt: 'คิวหมวด I', path: ['Kiosk', 'คัดแยก', 'คลินิก ARI'], vn: 'Kiosk', where: 'ตอนนี้: ตู้ออกคิว I (/queue-center/issue) · คัดแยก/คัดกรองติ๊ก "มีอาการ" → แนะนำส่ง ARI Clinic (คลินิกวัณโรค) · ไม่ส่งตรงห้องแพทย์', st: 'target' },
         { t: 'Telemedicine', s: 'ไม่ผ่านคัดแยก', path: ['นัดหมาย', 'ห้องตรวจทางไกล'], vn: '—', where: 'แถว Telemedicine ใน /opd/queue', st: 'done' }
       ] }
     ] },
@@ -354,6 +373,36 @@
       + '</tr>'
       + '<tr class="nrow"' + (open ? '' : ' hidden') + '><td colspan="' + COLS + '"><div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div></td></tr>';
   }
+  /* แผนภาพเส้นทาง: รวมเส้นทางที่ขึ้นต้นเหมือนกันเป็นกิ่งเดียว (สร้างจากแถวในตาราง) */
+  function flowTree(items) {
+    var root = { k: {}, order: [], ids: [] };
+    items.forEach(function (it) {
+      var node = root, q = it.q || 0;
+      it.path.forEach(function (p, i) {
+        if (!node.k[p]) { node.k[p] = { label: p, k: {}, order: [], ids: [], q: false }; node.order.push(p); }
+        node = node.k[p]; if (i === q) node.q = true;
+      });
+      node.ids.push(ucId(it.no));
+    });
+    return root;
+  }
+  function ftBadge(n) { return '<span class="step ' + tone(n.label) + (n.q ? ' q' : '') + '">' + (n.q ? '<span class="ms" aria-label="ได้คิวจริง">confirmation_number</span>' : '') + esc(n.label) + '</span>'; }
+  function ftList(n, cls) {
+    return '<ul class="ft' + (cls || '') + '">' + n.order.map(function (key) {
+      var c = n.k[key], h = ftBadge(c);
+      while (c.order.length === 1 && !c.ids.length) { c = c.k[c.order[0]]; h += '<span class="ms arr" aria-hidden="true">arrow_forward</span>' + ftBadge(c); }
+      if (c.ids.length) h += '<span class="ft-id">' + c.ids.join(' · ') + '</span>';
+      return '<li><div class="ft-row">' + h + '</div>' + (c.order.length ? ftList(c) : '') + '</li>';
+    }).join('') + '</ul>';
+  }
+  function flowDiagram(g) {
+    var cards = g.subs.map(function (s) {
+      var items = s.items.filter(function (x) { return x.st !== 'team' && x.path.length; });
+      if (!items.length) return '';
+      return '<div class="fd-card"><h3>' + esc(s.title || g.title) + ' · ' + items.length + '</h3>' + ftList(flowTree(items), ' root') + '</div>';
+    }).join('');
+    return '<div class="fd"><div class="fd-h">แผนภาพเส้นทาง</div><p class="fd-s">รวมจากแถวในตารางด้านล่าง · <span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง · สีป้ายตามจุดบริการ</p><div class="fd-grid">' + cards + '</div></div>';
+  }
   function render() {
     var host = document.getElementById('groups');
     host.innerHTML = GROUPS.map(function (g) {
@@ -363,6 +412,7 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + (cur !== 'all' ? ' · แสดง ' + vis + ' รายการ' : '') + '</p></div></div>'
+        + (g.key === 'arrive' ? flowDiagram(g) : '')
         + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ดูในระบบ</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items.filter(function (x) { return cur === 'all' || x.st === cur; });
           if (!items.length) return '';
