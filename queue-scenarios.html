@@ -241,8 +241,8 @@
       ] },
       { title: 'กรณีพิเศษ', items: [
         { t: 'มาฟังผล', s: 'ไม่ต้องคัดกรอง', path: ['Kiosk', 'คัดแยก', 'แพทย์'], vn: 'ตามนัด', where: 'ป๊อปอัป "ยืนยันรับผู้ป่วย" ติ๊ก "มาฟังผล"', st: 'done' },
-        { t: 'ฉุกเฉิน', s: 'บันทึกคัดกรองย้อนหลัง', path: ['คิวด่วนพิเศษ', 'แพทย์'], vn: 'ตามนัด', where: '/queue-center/display/console', st: 'done' },
-        { t: 'Fast Track', s: 'ผู้สูงอายุ · รถเข็น · อาการวิกฤต', path: ['คัดกรอง', 'คลินิกทันที'], vn: 'ตามนัด', where: '/opd/screening "ส่ง Fast Track ทันที"', st: 'done' },
+        { t: 'ฉุกเฉิน', s: 'บันทึกคัดกรองย้อนหลัง', path: ['Kiosk', 'คิวด่วนพิเศษ', 'แพทย์'], q: 1, vn: 'ตามนัด', where: '/queue-center/display/console', st: 'done' },
+        { t: 'Fast Track', s: 'ผู้สูงอายุ · รถเข็น · อาการวิกฤต', path: ['Kiosk', 'คัดกรอง', 'คลินิกทันที'], q: 1, vn: 'ตามนัด', where: '/opd/screening "ส่ง Fast Track ทันที"', st: 'done' },
         { t: 'ไข้ ไอ เจ็บคอ (ARI)', s: 'คิวหมวด I จุดรอแยก', path: ['Kiosk', 'ARI'], vn: 'Kiosk', where: '/queue-center/issue', st: 'done' },
         { t: 'Telemedicine', s: 'ไม่ผ่านคัดแยก', path: ['นัดหมาย', 'ห้องตรวจทางไกล'], vn: '—', where: 'แถว Telemedicine ใน /opd/queue', st: 'done' }
       ] }
