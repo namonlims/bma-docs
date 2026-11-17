@@ -142,6 +142,50 @@
   .types dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); margin: 0; font-size: var(--type-size-xs, 12px); align-items: center; }
   .types dd { margin: 0; color: var(--text-content-default, #363B3F); }
   @media (max-width: 767px) { .types dl { grid-template-columns: 1fr; gap: var(--dim-space-100, 4px); } .types dd { margin-bottom: var(--dim-space-200, 8px); } }
+  /* หน้าแรก Namon Desk (ผู้ใช้ 17 พ.ย. 69): พื้นไล่สีแบบหน้าเข้าสู่ระบบ PHCIS (ไม่มีภาพ illus) · ค้นหา · ทางลัด · อัปเดตล่าสุด · หมวดเอกสาร */
+  body:not(.doc-open) .main {
+    background:
+      radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%),
+      radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%),
+      var(--surface-card-100, #FFFFFF);
+    background-attachment: fixed;
+  }
+  .hero { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .search { position: relative; max-width: 640px; }
+  .search .material-symbols-outlined { position: absolute; left: var(--dim-space-400, 16px); top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); pointer-events: none; }
+  .search input { width: 100%; height: var(--dim-size-1200, 56px); padding: 0 var(--dim-space-400, 16px) 0 calc(var(--dim-space-400, 16px) + 28px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-content-default, #363B3F); box-shadow: var(--shadow-card); -webkit-appearance: none; appearance: none; }
+  .search input::placeholder { color: var(--text-content-tertiary, #858C92); }
+  .search input:focus { outline: none; border-color: var(--border-brandPrimary-default, #007549); }
+  .search-meta { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .dash { display: flex; flex-direction: column; gap: var(--dim-space-800, 32px); }
+  .dash[hidden], .group[hidden], .card[hidden], .all-h[hidden], .empty[hidden] { display: none; }
+  .quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--dim-space-300, 12px); }
+  .qlink { display: flex; align-items: center; gap: var(--dim-space-300, 12px); min-height: var(--dim-size-1200, 56px); padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); color: var(--text-content-default, #363B3F); text-decoration: none; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); transition: box-shadow 200ms ease-out, border-color 200ms ease-out; }
+  .qlink:hover, .grow:hover, .gtile:hover { box-shadow: var(--shadow-card); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); }
+  .qlink .card-icon { width: var(--dim-size-700, 36px); height: var(--dim-size-700, 36px); }
+  .qlink .go { margin-left: auto; font-size: 18px; color: var(--icon-content-secondary, #ADB2B7); }
+  .qlink span.t { min-width: 0; }
+  .two { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--dim-space-600, 24px); align-items: start; }
+  .panel { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .recent { list-style: none; margin: 0; padding: 0; background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-500, 16px); overflow: hidden; }
+  .recent li + li { border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); }
+  .grow { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; align-items: center; gap: var(--dim-space-300, 12px); min-height: var(--dim-size-1200, 56px); padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); color: inherit; text-decoration: none; border: var(--dim-stroke-100, 1px) solid transparent; }
+  .grow .card-icon { width: var(--dim-size-700, 36px); height: var(--dim-size-700, 36px); }
+  .grow b { display: block; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .grow small { display: block; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  .grow time { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); white-space: nowrap; text-align: right; }
+  .gtiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--dim-space-300, 12px); }
+  .gtile { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); color: inherit; text-decoration: none; }
+  .gtile .card-icon { width: var(--dim-size-700, 36px); height: var(--dim-size-700, 36px); }
+  .gtile b { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
+  .gtile small { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  body.searching .group .types, body.searching .group .sub-h { display: none; }
+  .all-h { padding-top: var(--dim-space-600, 24px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .all-h h2 { font-size: var(--type-size-lg, 18px); }
+  .empty { margin: 0; padding: var(--dim-space-800, 32px); text-align: center; color: var(--text-content-secondary, #636B72); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) dashed var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-500, 16px); }
+  @media (max-width: 1279px) { .two { grid-template-columns: 1fr; } .gtiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 1023px) { .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 639px) { .quick { grid-template-columns: 1fr; } .grow { grid-template-columns: max-content minmax(0, 1fr); } .grow time { grid-column: 2; text-align: left; } }
   .foot {
     margin: 0;
     color: var(--text-content-tertiary, #858C92);
@@ -231,10 +275,37 @@
   <span class="bar-t" id="bar-t">เอกสาร PHCIS</span>
 </div>
 <main class="page" id="top">
-  <header>
-    <h1>เอกสาร PHCIS</h1>
-    <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
+  <header class="hero">
+    <div>
+      <h1>เอกสาร PHCIS</h1>
+      <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
+    </div>
+    <div class="search" role="search">
+      <span class="material-symbols-outlined" aria-hidden="true">search</span>
+      <input type="search" id="q" placeholder="ค้นหาเอกสาร เช่น ความยินยอม · คิว · TOR" aria-label="ค้นหาเอกสาร" autocomplete="off" />
+    </div>
+    <p class="search-meta" id="q-meta" aria-live="polite"></p>
   </header>
+
+  <div class="dash" id="dash">
+    <section class="panel" aria-labelledby="h-quick">
+      <div class="group-head"><h2 id="h-quick">ทางลัด</h2><p>เอกสารที่ทีมเปิดบ่อย</p></div>
+      <div class="quick" id="quick"></div>
+    </section>
+    <div class="two">
+      <section class="panel" aria-labelledby="h-recent">
+        <div class="group-head"><h2 id="h-recent">อัปเดตล่าสุด</h2><p>เรียงจากวันที่อัปเดตในการ์ด ใหม่สุดก่อน</p></div>
+        <ul class="recent" id="recent"></ul>
+      </section>
+      <section class="panel" aria-labelledby="h-cats">
+        <div class="group-head"><h2 id="h-cats">หมวดเอกสาร</h2><p>กดเพื่อเลื่อนไปที่หมวดนั้น</p></div>
+        <div class="gtiles" id="gtiles"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="group-head all-h" id="all-h"><h2>เอกสารทั้งหมด</h2><p>ทุกการ์ดตามหมวด · ตรงกับเมนูซ้าย</p></div>
+  <p class="empty" id="empty" hidden>ไม่พบเอกสารที่ตรงกับคำค้น</p>
 
   <section class="group" aria-labelledby="g-design">
     <div class="group-head">
@@ -521,11 +592,62 @@
     </div>
   </section>
 
-  <p class="foot">อัปเดต 15 พฤศจิกายน 2569</p>
+  <p class="foot">อัปเดต 17 พฤศจิกายน 2569</p>
 </main>
 <iframe class="doc" id="doc" title="เนื้อหาเอกสาร" hidden></iframe>
 </div>
 </div>
+<script>
+/* หน้าแรก Namon Desk: ทางลัด · อัปเดตล่าสุด · หมวด · ค้นหา — ดึงจากการ์ดใน section.group ทั้งหมด (การ์ดเป็นแหล่งเดียว) */
+(function () {
+  var page = document.getElementById('top');
+  var secs = [].slice.call(page.querySelectorAll('section.group'));
+  var cards = [].slice.call(page.querySelectorAll('section.group .cards:not([hidden]) a.card'));
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-app': 'desktop_windows' };
+  var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
+  var info = function (c) {
+    var href = c.getAttribute('href'), u = new URL(href, location.href), local = u.origin === location.origin;
+    var sec = c.closest('section.group'), h = sec && sec.querySelector('h2');
+    return { href: local ? '#d=' + encodeURIComponent(href) : href, ext: !local, icon: (c.querySelector('.card-icon') || {}).textContent || 'description',
+      title: (c.querySelector('.card-title') || {}).textContent || href, sum: (c.querySelector('.card-sum') || {}).textContent || '', group: h ? h.textContent : '' };
+  };
+  var attrs = function (i) { return ' href="' + esc(i.href) + '"' + (i.ext ? ' target="_blank" rel="noopener"' : ''); };
+  /* ทางลัด */
+  var QUICK = ['uxui-timeline.html', 'tor-checklist.html', 'screens-latest.html', 'system-user-flow.html', 'https://namonlims.github.io/bma-design-system/reference.html', 'https://bma-health.mih.co.th/'];
+  document.getElementById('quick').innerHTML = QUICK.map(function (h) {
+    var c = cards.filter(function (x) { return x.getAttribute('href') === h; })[0]; if (!c) return '';
+    var i = info(c); if (h === 'screens-latest.html') i.title = 'ภาพหน้าจอปัจจุบัน ทุกระบบงาน';
+    return '<a class="qlink"' + attrs(i) + '>' + ms(i.icon, 'card-icon') + '<span class="t">' + esc(i.title) + '</span>' + ms(i.ext ? 'arrow_outward' : 'chevron_right', 'go') + '</a>';
+  }).join('');
+  /* อัปเดตล่าสุด: "อัปเดต 17 พ.ย. 69" ในคำอธิบายการ์ด */
+  var MON = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  var dated = cards.map(function (c) {
+    var i = info(c), m = i.sum.match(/อัปเดต\s*(\d{1,2})\s*(ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.)\s*(\d{2})/);
+    if (!m) return null; i.label = m[1] + ' ' + m[2] + ' ' + m[3]; i.key = (+m[3]) * 10000 + MON.indexOf(m[2]) * 100 + (+m[1]); return i;
+  }).filter(Boolean).sort(function (a, b) { return b.key - a.key; }).slice(0, 6);
+  document.getElementById('recent').innerHTML = dated.map(function (i) {
+    return '<li><a class="grow"' + attrs(i) + '>' + ms(i.icon, 'card-icon') + '<span><b>' + esc(i.title) + '</b><small>' + esc(i.group) + '</small></span><time>' + esc(i.label) + '</time></a></li>';
+  }).join('');
+  /* หมวดเอกสาร */
+  document.getElementById('gtiles').innerHTML = secs.map(function (s) {
+    var h = s.querySelector('h2'); if (!h) return '';
+    var n = s.querySelectorAll('.cards:not([hidden]) a.card').length;
+    return '<a class="gtile" href="#' + h.id + '">' + ms(ICON[h.id] || 'folder', 'card-icon') + '<b>' + esc(h.textContent) + '</b><small>' + n + ' เอกสาร</small></a>';
+  }).join('');
+  /* ค้นหา: กรองการ์ดในเอกสารทั้งหมด ซ่อนแดชบอร์ดระหว่างค้น */
+  var q = document.getElementById('q'), meta = document.getElementById('q-meta'), dash = document.getElementById('dash'), allH = document.getElementById('all-h'), empty = document.getElementById('empty');
+  var norm = function (t) { return (t || '').toLowerCase().replace(/\s+/g, ' '); };
+  q.addEventListener('input', function () {
+    var v = norm(q.value).trim(), hits = 0;
+    dash.hidden = !!v; allH.hidden = !!v; document.body.classList.toggle('searching', !!v);
+    cards.forEach(function (c) { var ok = !v || norm(c.textContent).indexOf(v) >= 0; c.hidden = !ok; if (ok) hits++; });
+    secs.forEach(function (s) { s.hidden = !!v && !s.querySelector('.cards:not([hidden]) a.card:not([hidden])'); });
+    empty.hidden = !v || hits > 0;
+    meta.textContent = v ? 'พบ ' + hits + ' เอกสาร' : '';
+  });
+})();
+</script>
 <script>
 /* เมนูสร้างจากการ์ดในหน้าแรก (หมวด = section · รายการ = การ์ด) → เพิ่มการ์ด = เพิ่มเมนูเอง
    กดเมนู → เปิดเอกสารในช่องขวาทันที (#d=<ไฟล์>) · เอกสารนอกเว็บนี้เปิดแท็บใหม่ · หมวดพับได้ เปิดทีละหมวด */
