@@ -686,30 +686,8 @@ a.btn{text-decoration:none}
 .rtagx{position:absolute;top:0;z-index:3;pointer-events:none;font-size:9px;font-weight:700;line-height:12px;padding:0 3px;border-radius:4px;background:var(--card);color:var(--text-content-default);box-shadow:inset 0 0 0 1px currentColor}
 .rtagx.todo{color:var(--text-statusbadge-info)}.rtagx.prog{color:var(--text-statusbadge-warning)}.rtagx.done{color:var(--text-statusbadge-success)}
 
-/* สรุปรอบงาน */
 .phd-r{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.rs-total{font-size:14px;font-weight:500;color:var(--brand-p700)}
-table.rs{min-width:720px}
-table.rs th,table.rs td{text-align:center;padding:8px 12px;vertical-align:middle}
-table.rs th:first-child,table.rs td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;min-width:220px}
-table.rs thead th{background:var(--card)}
-table.rs .rs-c th,table.rs .rs-c td{background:var(--brand-p50);font-weight:700;color:var(--text-content-default);border-top:1px solid var(--border-brandPrimary-tertiary)}
-table.rs .rs-c th{font-size:14px}
-table.rs .rs-it{padding-left:28px;color:var(--text-content-secondary)}
-table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space:nowrap}
-.rs-frac{font-size:12px;font-weight:500;color:var(--text-content-secondary);font-variant-numeric:tabular-nums}
-.rs-frac.all{color:var(--text-statusbadge-success)}
-.rs-none{color:var(--text-content-tertiary)}
-.rs-empty{text-align:center !important;color:var(--text-content-tertiary);padding:24px !important}
-.rsb{display:inline-flex;align-items:center;gap:4px;min-height:28px;padding:0 10px;border:0;border-radius:999px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
-.rsb .ms{font-size:16px}
-.rsb.done{background:var(--surface-statusbadge-success);color:var(--text-statusbadge-success)}
-.rsb.prog{background:var(--surface-statusbadge-warning);color:var(--text-statusbadge-warning)}
-.rsb.todo{background:var(--surface-statusbadge-info);color:var(--text-statusbadge-info)}
-.rsb:hover{box-shadow:inset 0 0 0 1px currentColor}
-.rsb:focus{outline:none}.rsb:focus-visible{box-shadow:0 0 0 2px currentColor}
-@media (max-width:640px){ table.rs th:first-child,table.rs td:first-child{min-width:150px} .phd{flex-wrap:wrap} .rs-total{width:100%} }
-@media (pointer:coarse){ .rsb{min-height:36px} }
+@media (max-width:640px){ .phd{flex-wrap:wrap} }
 .lab.c .cn{white-space:nowrap}
 
 /* ลากย้ายแถบ */
@@ -733,8 +711,6 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 /* วิธีส่ง: ไอคอนในป้ายรอบ + ใต้สถานะในตารางสรุป · ปุ่มลบ 2 แบบ */
 .rtagx{display:inline-flex;align-items:center;gap:1px}
 .rtagx .ms{font-size:10px}
-.rs-m{display:flex;align-items:center;justify-content:center;gap:2px;margin-top:2px;font-size:11px;color:var(--text-content-tertiary)}
-.rs-m .ms{font-size:13px}
 .dels{display:flex;flex-wrap:wrap;gap:4px}
 @media (max-width:640px){ .dels{width:100%} .dels .btn{flex:1 1 100%;justify-content:center;white-space:normal;text-align:center} }
 
@@ -763,7 +739,6 @@ table.rs .rs-last{font-size:13px;color:var(--text-content-secondary);white-space
 .itsub:focus{outline:none}.itsub:focus-visible{box-shadow:0 0 0 2px var(--brand-p700)}
 .lab.sub.subadd{padding-left:58px}
 @media (pointer:coarse){ .itsub{opacity:.7;width:36px;height:36px} }
-table.rs .rs-it.kid{padding-left:48px;font-size:13px}
 .checks label.kid{font-size:13px}
 
 /* ใครกำลังดูอยู่ */
@@ -912,17 +887,11 @@ html{scroll-padding-top:72px}
   </div>
 
   <section class="panel">
-    <div class="phd"><h2>Timeline รายคณะ</h2><div class="phd-r"><a class="btn subdue sm" href="#roundSum"><span class="ms">checklist</span><span>สรุปรอบงาน</span></a><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div></div>
+    <div class="phd"><h2>Timeline รายคณะ</h2><div class="phd-r"><button type="button" class="btn subdue sm" id="togAll"><span class="ms">unfold_less</span><span>ย่อทั้งหมด</span></button></div></div>
     <p class="hint">เรียงคณะตามวันเริ่มงาน · แถบงานแสดง ผู้รับผิดชอบ-หัวข้อ</p>
     <div class="scroller" id="scroller"><div class="gantt" id="gantt"></div></div>
   </section>
 
-  <!-- สรุปรอบงานตามคณะ › ระบบย่อย (ผู้ใช้สั่ง 21 ต.ค. 69 "สรุปว่าอะไรรอบสอง รอบสาม ส่งลิงก์ อะไรเสร็จแล้ว") -->
-  <section class="panel" id="roundSum">
-    <div class="phd"><h2>สรุปรอบงาน</h2><span class="rs-total" id="rsTotal"></span></div>
-    <p class="hint">แต่ละระบบย่อยอยู่รอบไหน ส่งแบบไหน และเสร็จหรือยัง · ตามตัวกรองผู้รับผิดชอบและประเภทงานด้านบน · คลิกสถานะเพื่อเปิดงาน</p>
-    <div class="tblwrap"><table class="rs" id="rsTable"></table></div>
-  </section>
 
 
   <p class="foot" id="footNote">แก้แล้วบันทึกในเบราว์เซอร์นี้อัตโนมัติ (Refresh ไม่หาย) · จะส่งให้คนอื่นหรือเปิดเครื่องอื่น กด "บันทึกเป็นไฟล์ HTML" แล้วส่งไฟล์ใหม่ไป ·
@@ -1249,7 +1218,7 @@ function committeeStart(c){
 // ---------- render ----------
 function render(){
   renderSaved(); renderFilters();   // กล่องสรุป manday ลบออก (ผู้ใช้สั่ง 21 ต.ค. 69 "ลบ")
-  renderGantt(); renderRoundSum();
+  renderGantt();
 }
 function renderSaved(){
   const el = document.getElementById('saved');
@@ -1385,35 +1354,6 @@ function renderTable(){
   document.getElementById('mdTable').innerHTML = h;
 }
 
-
-// ---------- สรุปรอบงาน ----------
-const RS_ST = {done:{t:'Done', i:'check_circle'}, prog:{t:'กำลังทำ', i:''}, todo:{t:'To do', i:''}};   // ไอคอนเฉพาะ Done (ผู้ใช้ 21 ต.ค. 69)
-function renderRoundSum(){
-  const rounds = [1,2,3, ...(state.tasks.some(t=>roundOf(t)===4)?[4]:[])];
-  const cell = (st, ids) => st ? `<button type="button" class="rsb ${st}" data-open="${esc(ids[0])}" data-it="${esc(ids[1]||'')}">${RS_ST[st].i?`<span class="ms">${RS_ST[st].i}</span>`:''}${RS_ST[st].t}</button>` : '<span class="rs-none">—</span>';
-  let h = `<thead><tr><th>คณะ › ระบบย่อย</th>${rounds.map(r=>`<th>${esc(ROUND[r])}${ROUND_SUB[r]?`<small class="thsub">${esc(ROUND_SUB[r])}</small>`:''}</th>`).join('')}<th>ล่าสุด</th></tr></thead>`;
-  let totDone = 0, totAll = 0;
-  [...state.committees].sort((p,q)=>committeeStart(p).localeCompare(committeeStart(q))).forEach(c=>{
-    const ts = state.tasks.filter(t=>t.c===c.id && visTask(t));
-    const rows = orderedItems(c).map(it=>{
-      const mine = ts.filter(t=>t.items.includes(it));
-      const byR = {}; rounds.forEach(r=>{ const L = mine.filter(t=>roundOf(t)===r).sort((x,y)=>(y.end+y.start).localeCompare(x.end+x.start)); byR[r] = {st:L[0] ? stAt(L[0], it) : null, id:L[0]?.id, m:L[0] ? methodOf(L[0]) : ''}; });   // ใช้งานล่าสุดของรอบนั้น (ผู้ใช้ 21 ต.ค. 69: ปรับ Done แล้วสรุปต้องตาม)
-      const last = [...rounds].reverse().find(r=>byR[r].st);
-      return {it, byR, last};
-    }).filter(r=>r.last!==undefined);
-    if(!rows.length) return;
-    const done = rows.filter(r=>r.byR[r.last].st==='done').length; totDone += done; totAll += rows.length;
-    h += `<tbody><tr class="rs-c"><th scope="rowgroup">${esc(c.name)}</th>${rounds.map(r=>{ const n = rows.filter(x=>x.byR[r].st).length, d = rows.filter(x=>x.byR[r].st==='done').length; return `<td>${n?`<span class="rs-frac${d===n?' all':''}">${d}/${n}</span>`:''}</td>`; }).join('')}<td><span class="rs-frac${done===rows.length?' all':''}">เสร็จ ${done}/${rows.length}</span></td></tr>`;
-    rows.forEach(r=>{
-      h += `<tr><td class="rs-it${parentOf(c,r.it)?' kid':''}">${parentOf(c,r.it)?'↳ ':''}${esc(r.it)}</td>${rounds.map(x=>`<td>${cell(r.byR[x].st, [r.byR[x].id, r.it])}${r.byR[x].m?`<span class="rs-m"><span class="ms">${METHOD_I[r.byR[x].m]}</span>${METHOD_S[r.byR[x].m]}</span>`:''}</td>`).join('')}<td class="rs-last">${esc(ROUND[r.last])}${r.byR[r.last].m?' · '+METHOD_S[r.byR[r.last].m]:''} · ${RS_ST[r.byR[r.last].st].t}</td></tr>`;
-    });
-    h += '</tbody>';
-  });
-  const tb = document.getElementById('rsTable');
-  tb.innerHTML = totAll ? h : '<tbody><tr><td class="rs-empty">ยังไม่มีงานตามตัวกรองนี้</td></tr></tbody>';
-  document.getElementById('rsTotal').textContent = totAll ? `เสร็จแล้ว ${totDone} จาก ${totAll} ระบบย่อย (นับจากรอบล่าสุด)` : '';
-  tb.querySelectorAll('.rsb').forEach(b=>b.onclick=()=>openTask(b.dataset.open, null, b.dataset.it));
-}
 
 // ---------- tooltip สีขาว (หมุดนัด/วันสำคัญ · แถบงาน) ----------
 const tipEl = document.getElementById('tipcard');
@@ -2406,7 +2346,7 @@ const stamp = () => { const d=new Date(); return iso(d).replace(/-/g,'')+'-'+Str
 $('saveFile').onclick = ()=>{
   if(!state.savedAt) state.savedAt = Date.now();
   const doc = document.documentElement.cloneNode(true);
-  ['gantt','cards','mdTable','saved','hList','hMe','rsTable','rsTotal'].forEach(id=>{ const n=doc.querySelector('#'+id); if(n) n.innerHTML=''; });
+  ['gantt','cards','mdTable','saved','hList','hMe'].forEach(id=>{ const n=doc.querySelector('#'+id); if(n) n.innerHTML=''; });
   doc.querySelectorAll('#fWho .chip').forEach(n=>n.remove());
   doc.querySelectorAll('dialog').forEach(d=>d.removeAttribute('open'));
   doc.querySelector('#embedded-data').textContent = JSON.stringify(state).replace(/</g,'\\u003c');
