@@ -99,6 +99,8 @@
   .step { display: inline-flex; align-items: center; gap: var(--dim-space-050, 2px); }
   .step { box-shadow: inset 0 0 0 var(--dim-stroke-100, 1px) color-mix(in srgb, currentColor 35%, transparent); }
   .step .ms { font-size: var(--dim-size-300, 16px); }
+  .alt { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
+  .alt .or { font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   .lg-q { display: inline-flex; align-items: center; gap: var(--dim-space-050, 2px); font-weight: var(--type-weight-regular, 400); }
   .lg-q .ms { font-size: var(--dim-size-300, 16px); }
   .arr { color: var(--icon-neutral-tertiary, #A2A9B0); font-size: var(--dim-size-300, 16px); }
@@ -369,12 +371,17 @@
   var COLS = 9;
   // สีประจำจุดบริการ: จุดเดียวกัน = สีเดียวกันทุกแถว (ผู้ใช้ 17 พ.ย. 69)
   var TONES = [[/^Kiosk/, 't-blue'], [/^คัดแยก/, 't-orange'], [/^เวชระเบียน/, 't-purple'], [/^คัดกรอง/, 't-teal'],
-    [/^(แพทย์|ตรวจ|ห้องตรวจ|คลินิก|คิวรวมคลินิก|คิวด่วน|ARI)/, 't-indigo'], [/หัตถการ/, 't-pink'], [/^(ห้องยา|รับยา)/, 't-yellow'],
+    [/^(แพทย์|คิวแพทย์|ตรวจ|ห้องตรวจ|คลินิก|คิวรวมคลินิก|คิวด่วน|ARI)/, 't-indigo'], [/หัตถการ/, 't-pink'], [/^(ห้องยา|รับยา)/, 't-yellow'],
     [/^(การเงิน|จ่าย)/, 't-magenta']];
   function tone(p) { for (var i = 0; i < TONES.length; i++) if (TONES[i][0].test(p)) return TONES[i][1]; return ''; }
   function row(it) {
     var q = it.q || 0;
-    var steps = it.path.map(function (p, i) { return '<span class="step ' + tone(p) + (i === q ? ' q' : '') + '">' + (i === q ? '<span class="ms" aria-label="ได้คิวจริง">confirmation_number</span>' : '') + esc(p) + '</span>'; }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
+    /* จุดที่เป็นทางเลือก ("ก / ข") = ป้ายแยกกัน คั่นด้วย "หรือ" */
+    var badge = function (p, isQ) { return '<span class="step ' + tone(p) + (isQ ? ' q' : '') + '">' + (isQ ? '<span class="ms" aria-label="ได้คิวจริง">confirmation_number</span>' : '') + esc(p) + '</span>'; };
+    var steps = it.path.map(function (p, i) {
+      var alts = String(p).split(/\s+\/\s+/);
+      return alts.length > 1 ? '<span class="alt">' + alts.map(function (a) { return badge(a, i === q); }).join('<span class="or">หรือ</span>') + '</span>' : badge(p, i === q);
+    }).join('<span class="ms arr" aria-hidden="true">arrow_forward</span>');
     var s = ST[it.st], id = ucId(it.no), n = (NT.by[id] || []).length, open = openKey === id;
     return '<tr data-st="' + it.st + '"' + (open ? ' class="open"' : '') + '>'
       + '<td class="c-id">' + id + '</td>'
