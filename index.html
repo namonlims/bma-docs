@@ -188,6 +188,7 @@
   /* ซ่อนเมนูซ้าย (จอ ≥1024) เหลือแถบแคบ = ปุ่มเปิด · ผู้ใช้ 15 พ.ย. 69 "กดซ่อน sidemenu ได้ เพื่อพื้นที่ content เยอะๆ" */
   .side-top { display: flex; align-items: center; gap: var(--dim-space-200, 8px); margin-bottom: var(--dim-space-200, 8px); }
   .side-top .side-brand { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
+  .side-logo { display: block; height: var(--dim-size-700, 36px); width: auto; max-width: 100%; }
   .side-toggle { border-color: transparent; color: var(--icon-content-secondary, #ADB2B7); }
   .side-toggle:hover { background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-content-default, #363B3F); }
   .side { transition: width 200ms ease-out, padding 200ms ease-out; }
@@ -218,7 +219,7 @@
 <nav class="side" id="side" aria-label="เมนูเอกสาร">
   <button type="button" class="icon-btn side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
   <div class="side-top">
-    <a class="side-brand" href="#">เอกสาร PHCIS</a>
+    <a class="side-brand" href="#" aria-label="Namon Desk · หน้าแรก"><img class="side-logo" src="assets/namon-desk-logo.png?v=1" alt="Namon Desk" /></a>
     <button type="button" class="icon-btn side-toggle" aria-label="ซ่อนเมนู" aria-controls="side" aria-expanded="true" title="ซ่อนเมนู"><span class="material-symbols-outlined" aria-hidden="true">left_panel_close</span></button>
   </div>
   <ul id="side-list"></ul>
@@ -588,6 +589,8 @@
     /* data-also = รอบอื่นของคณะทำงานเดียวกัน (การ์ดเดียว สลับรอบที่ "วันที่ปรับปรุง" · ผู้ใช้ 15 พ.ย. 69) */
     var a = links.filter(function (x) { return x.dataset.doc === key || (x.dataset.also || '').split(' ').indexOf(key) >= 0; })[0];
     /* รอบที่ไม่มีรายการเมนูของตัวเอง → รายการที่ชื่อตรงกับ clinic ของรอบนั้นใน TOR_UPDATES (tor-updates-nav.js) */
+    /* ลิงก์ลึกถึงการ์ดในเอกสาร (#osc-66 ฯลฯ) → ไฮไลต์เมนูของรอบ (section.round) ที่การ์ดนั้นอยู่ (ผู้ใช้ 17 พ.ย. 69) */
+    if (!a && key && key.indexOf('#') > 0) { try { var el = doc.contentDocument.getElementById(key.split('#')[1]), sec = el && el.closest('section.round[id], [id^="mh-"]'); if (sec) { var k2 = key.split('#')[0] + '#' + sec.id; a = links.filter(function (x) { return x.dataset.doc === k2 || (x.dataset.also || '').split(' ').indexOf(k2) >= 0; })[0]; } } catch (e) {} }
     if (!a && key) { try { var tu = doc.contentWindow.TOR_UPDATES, r = tu && tu.filter(function (x) { return x.href === key; })[0]; if (r) a = links.filter(function (x) { return label(x) === r.clinic; })[0]; } catch (e) {} }
     if (!a && key) { var f = key.split('#')[0]; a = links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f && x.dataset.doc.indexOf('#') < 0; })[0] || links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f; })[0]; }
     if (!key) a = links[0];
