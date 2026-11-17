@@ -137,6 +137,8 @@
   .nform { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
   .nl { font-size: var(--type-size-xs, 12px); color: var(--text-input-label, #4D5358); font-weight: var(--type-weight-medium, 500); }
   .seg { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px); }
+  .iam { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px) var(--dim-space-300, 12px); }
+  .iam-name { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); overflow-wrap: anywhere; }
   .seg button { min-height: 36px; padding: 0 var(--dim-space-300, 12px); border-radius: var(--dim-radius-full, 9999px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); cursor: pointer; }
   .seg button[aria-pressed="true"] { border-color: var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); font-weight: var(--type-weight-medium, 500); }
   .nform textarea { width: 100%; min-height: 72px; resize: vertical; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-input-filled, #E2E4E6); border-radius: var(--dim-radius-300, 10px); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-input-filled, #4D5358); background: var(--surface-input-default, #FFFFFF); }
@@ -423,7 +425,7 @@
     el.innerHTML = items + form;
     loginBtn(el);
   }
-  function roleSeg() { return '<span class="nl">ฉันคือ</span><div class="seg">' + ROLES.map(function (r) { return '<button type="button" data-role="' + esc(r) + '" aria-pressed="' + (r === role()) + '">' + esc(r) + '</button>'; }).join('') + '</div>'; }
+  function roleSeg() { return '<div class="iam" role="group" aria-label="ฉันคือ"><span class="nl">ฉันคือ</span><span class="iam-name">' + esc(NA.user ? NA.user.name : '') + '</span><div class="seg">' + ROLES.map(function (r) { return '<button type="button" data-role="' + esc(r) + '" aria-pressed="' + (r === role()) + '">' + esc(r) + '</button>'; }).join('') + '</div></div>'; }
   function whoLine() { return '<span class="nwho">' + esc(NA.user.name) + ' · ' + esc(NA.user.email) + '</span><button type="button" class="btn" data-out><span class="ms" aria-hidden="true">logout</span>ออกจากระบบ</button>'; }
 
   /* ---------- แผงเพิ่ม scenario / ดาวน์โหลด CSV (ต้องเข้าสู่ระบบก่อน) ---------- */
