@@ -78,7 +78,8 @@
     .utbl .c-t, .utbl thead th:nth-child(2) { position: sticky; left: var(--dim-size-1600, 72px); z-index: 1; background: var(--surface-card-100, #FFFFFF); box-shadow: inset calc(-1 * var(--dim-stroke-100, 1px)) 0 0 var(--border-neutral-quaternary, #F0F1F2); }
     .utbl thead th:nth-child(2) { z-index: 2; background: var(--surface-table-header, #F4FBF8); }
   }
-  .utbl .nsec { max-width: 720px; }
+  .utbl { container-type: inline-size; }
+  .utbl .nsec { position: sticky; left: var(--dim-space-400, 16px); box-sizing: border-box; width: min(720px, calc(100cqi - 2 * var(--dim-space-400, 16px))); }
   .uc-top { display: flex; align-items: center; justify-content: space-between; gap: var(--dim-space-200, 8px); }
   .uc-no { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
   .uc-t { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
@@ -127,6 +128,9 @@
   .note-h { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
   .note-h b { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); }
   .note p { white-space: pre-wrap; word-break: break-word; }
+  .note-h .ndel { margin-left: auto; min-height: 44px; padding: 0 var(--dim-space-300, 12px); border-color: transparent; background: transparent; color: var(--text-danger-default, #B91C1C); font-size: var(--type-size-xs, 12px); }
+  .note-h .ndel:hover { background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .note-h .ndel .ms { font-size: var(--dim-size-300, 16px); }
   .r-BA { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
   .r-Dev { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
   .r-UXUI { background: var(--surface-colorfulbadge-teal, #CCFBF1); color: var(--text-colorfulbadge-teal, #0F766E); }
@@ -314,11 +318,18 @@
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (!j.ok) throw new Error('load');
-        var by = {}, extra = [];
+        var by = {}, extra = [], dels = [];
         (j.edits || []).filter(function (e) { return e.doc === NT_DOC; }).sort(function (a, b) { return a.at - b.at; }).forEach(function (e) {
           var w = String(e.where || '').split('|');
-          if (w[0] === 't') (by[e.key] = by[e.key] || []).push({ role: w[1], name: e.name, email: e.email, at: e.at, text: e.after });
+          if (w[0] === 'tdel') dels.push({ key: e.key, at: String(e.after), email: e.email || '' });
+          else if (w[0] === 't') (by[e.key] = by[e.key] || []).push({ role: w[1], name: e.name, email: e.email, at: e.at, text: e.after });
           else if (w[0] === 'uc') { try { var d = JSON.parse(e.after); extra.push({ g: d.g, t: d.t, s: d.s || '', path: d.path || [], q: d.q || 0, vn: d.vn || '—', where: d.where || '', st: 'team', by: (w[1] || 'อื่น ๆ') + ' · ' + e.name, at: e.at }); } catch (x) {} }
+        });
+        /* ลบโน้ต = แถว tdel (เก็บต่อท้าย ไม่ลบจริง) · ลบได้เฉพาะโน้ตของตัวเอง */
+        dels.forEach(function (d) {
+          if (!by[d.key]) return;
+          by[d.key] = by[d.key].filter(function (n) { return !(String(n.at) === d.at && (!d.email || !n.email || d.email.toLowerCase() === String(n.email).toLowerCase())); });
+          if (!by[d.key].length) delete by[d.key];
         });
         NT.by = by; NT.extra = extra; NT.loaded = true; NT.err = '';
       })
@@ -403,7 +414,7 @@
     var items = NT.err ? '<p class="nerr">' + esc(NT.err) + '</p>'
       : !NT.loaded ? '<p class="nempty">กำลังโหลดโน้ต…</p>'
       : list.length ? '<div class="nlist">' + list.slice().reverse().map(function (n) {
-          return '<div class="note"><div class="note-h"><span class="chip ' + (ROLES.indexOf(n.role) < 3 && ROLES.indexOf(n.role) >= 0 ? 'r-' + esc(n.role) : 'c-grey') + '">' + esc(n.role || 'อื่น ๆ') + '</span><b>' + esc(n.name) + '</b><span>' + esc(when(n.at)) + '</span></div><p>' + esc(n.text) + '</p></div>';
+          return '<div class="note"><div class="note-h"><span class="chip ' + (ROLES.indexOf(n.role) < 3 && ROLES.indexOf(n.role) >= 0 ? 'r-' + esc(n.role) : 'c-grey') + '">' + esc(n.role || 'อื่น ๆ') + '</span><b>' + esc(n.name) + '</b><span>' + esc(when(n.at)) + '</span>' + (signedIn() && n.email && String(n.email).toLowerCase() === String(NA.user.email).toLowerCase() ? '<button type="button" class="btn ndel" data-del-note="' + esc(key) + '" data-at="' + esc(String(n.at)) + '" aria-label="ลบโน้ตนี้"><span class="ms" aria-hidden="true">delete</span>ลบ</button>' : '') + '</div><p>' + esc(n.text) + '</p></div>';
         }).join('') + '</div>'
       : '<p class="nempty">ยังไม่มีโน้ต</p>';
     var form = !signedIn() ? loginBox('เข้าสู่ระบบด้วย Google ก่อนเขียนโน้ต')
@@ -466,6 +477,14 @@
     if (t.hasAttribute('data-csv')) { if (signedIn()) csv(); else panel(); return; }
     if (t.dataset.role) { ls.set('bma-qs-note:role', t.dataset.role); [].forEach.call(t.parentNode.children, function (x) { x.setAttribute('aria-pressed', String(x === t)); }); return; }
     if (t.hasAttribute('data-out')) { NA.tk = ''; NA.user = null; ls.del('bma-docs:tk'); render(); panel(); return; }
+    if (t.dataset.delNote) {
+      if (!signedIn()) { render(); return; }
+      if (!window.confirm('ลบโน้ตนี้? ลบแล้วทุกคนจะไม่เห็นโน้ตนี้อีก')) return;
+      t.disabled = true;
+      post({ key: t.dataset.delNote, where: 'tdel|' + role(), after: t.dataset.at }).then(function () { return load(); })
+        .catch(function (x) { t.disabled = false; window.alert(x.message); if (!signedIn()) render(); });
+      return;
+    }
     if (t.dataset.addNote) {
       var key = t.dataset.addNote, f = t.closest('.nform'), ta = f.querySelector('textarea'), er = f.querySelector('.nerr'), txt = ta.value.trim();
       if (!txt) { er.textContent = 'พิมพ์โน้ตก่อนบันทึก'; er.hidden = false; ta.focus(); return; }
