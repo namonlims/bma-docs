@@ -590,7 +590,21 @@
     var a = links.filter(function (x) { return x.dataset.doc === key || (x.dataset.also || '').split(' ').indexOf(key) >= 0; })[0];
     /* รอบที่ไม่มีรายการเมนูของตัวเอง → รายการที่ชื่อตรงกับ clinic ของรอบนั้นใน TOR_UPDATES (tor-updates-nav.js) */
     /* ลิงก์ลึกถึงการ์ดในเอกสาร (#osc-66 ฯลฯ) → ไฮไลต์เมนูของรอบ (section.round) ที่การ์ดนั้นอยู่ (ผู้ใช้ 17 พ.ย. 69) */
-    if (!a && key && key.indexOf('#') > 0) { try { var el = doc.contentDocument.getElementById(key.split('#')[1]), sec = el && el.closest('section.round[id], [id^="mh-"]'); if (sec) { var k2 = key.split('#')[0] + '#' + sec.id; a = links.filter(function (x) { return x.dataset.doc === k2 || (x.dataset.also || '').split(' ').indexOf(k2) >= 0; })[0]; } } catch (e) {} }
+    /* ไล่ทุกชั้นที่ครอบการ์ด (การ์ดกลุ่ม mh-clinic → section รอบ) · ชั้นแรกที่ตรงเมนู (href/data-also) หรือแถว TOR_UPDATES ชนะ — ไม่ตกไปเมนูแรกของไฟล์ (ผู้ใช้ 17 พ.ย. 69 "คลิกจากลิงก์ในคลินิกไหน sidemenu ต้องตรง") */
+    if (!a && key && key.indexOf('#') > 0) { try {
+      var f0 = key.split('#')[0], el = doc.contentDocument.getElementById(key.split('#')[1]), tu0 = doc.contentWindow.TOR_UPDATES || [];
+      var byId = function (id) {
+        if (!id) return null; var k2 = f0 + '#' + id;
+        var hit = links.filter(function (x) { return x.dataset.doc === k2 || (x.dataset.also || '').split(' ').indexOf(k2) >= 0; })[0];
+        if (!hit) { var r0 = tu0.filter(function (x) { return x.href === k2; })[0]; if (r0) hit = links.filter(function (x) { return label(x) === r0.clinic; })[0]; }
+        return hit || null;
+      };
+      /* ชั้นเดียวกันดูการ์ดหัวกลุ่มที่อยู่ก่อนหน้าด้วย (เช่น การ์ดหลัง #mh-clinic ใน section รอบ 12 พ.ย. = คลินิกสุขภาพจิต) */
+      for (var n = el; n && n.nodeType === 1 && !a; n = n.parentElement) {
+        a = byId(n.id);
+        for (var p = n.previousElementSibling; p && !a; p = p.previousElementSibling) a = byId(p.id);
+      }
+    } catch (e) {} }
     if (!a && key) { try { var tu = doc.contentWindow.TOR_UPDATES, r = tu && tu.filter(function (x) { return x.href === key; })[0]; if (r) a = links.filter(function (x) { return label(x) === r.clinic; })[0]; } catch (e) {} }
     if (!a && key) { var f = key.split('#')[0]; a = links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f && x.dataset.doc.indexOf('#') < 0; })[0] || links.filter(function (x) { return x.dataset.doc && x.dataset.doc.split('#')[0] === f; })[0]; }
     if (!key) a = links[0];
