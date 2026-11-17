@@ -288,9 +288,9 @@
   var panelMode = null;
   var ls = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del: function (k) { try { localStorage.removeItem(k); } catch (e) {} } };
   var b64 = function (x) { return decodeURIComponent(atob(x.replace(/-/g, '+').replace(/_/g, '/')).split('').map(function (c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); };
-  function setTk(tk) { try { var p = JSON.parse(b64(tk.split('.')[1])); if (p.exp * 1000 < Date.now() + 60000) return false; NA.tk = tk; NA.exp = p.exp; NA.user = { email: p.email, name: p.name || p.email.split('@')[0] }; ls.set('bma-docs:tk', tk); return true; } catch (e) { return false; } }
+  function setTk(tk) { try { var p = JSON.parse(b64(tk.split('.')[1])); if (p.exp * 1000 < Date.now() + 60000) return false; NA.tk = tk; NA.exp = p.exp; NA.user = { email: p.email, name: p.name || p.email.split('@')[0] }; ls.set('bma-docs:tk', tk); ls.set('bma-qs:who', p.email); return true; } catch (e) { return false; } }
   var signedIn = function () { return !!NA.tk && NA.exp * 1000 > Date.now() + 60000; };
-  (function () { var t = ls.get('bma-docs:tk'); if (t) setTk(t); })();
+  (function () { var t = ls.get('bma-docs:tk'); if (t && !setTk(t)) { try { var e = JSON.parse(b64(t.split('.')[1])).email; if (e) ls.set('bma-qs:who', e); } catch (x) {} } })();
   var role = function () { var r = ls.get('bma-qs-note:role'); return ROLES.indexOf(r) >= 0 ? r : 'BA'; };
   var when = function (ms) { return new Date(ms).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }); };
   var gsiP = null;
@@ -405,7 +405,7 @@
     var items = NT.err ? '<p class="nerr">' + esc(NT.err) + '</p>'
       : !NT.loaded ? '<p class="nempty">กำลังโหลดโน้ต…</p>'
       : list.length ? '<div class="nlist">' + list.slice().reverse().map(function (n) {
-          return '<div class="note"><div class="note-h"><span class="chip ' + (ROLES.indexOf(n.role) < 3 && ROLES.indexOf(n.role) >= 0 ? 'r-' + esc(n.role) : 'c-grey') + '">' + esc(n.role || 'อื่น ๆ') + '</span><b>' + esc(n.name) + '</b><span>' + esc(when(n.at)) + '</span>' + (signedIn() && n.email && String(n.email).toLowerCase() === String(NA.user.email).toLowerCase() ? '<button type="button" class="btn ndel" data-del-note="' + esc(key) + '" data-at="' + esc(String(n.at)) + '" aria-label="ลบโน้ตนี้"><span class="ms" aria-hidden="true">delete</span>ลบ</button>' : '') + '</div><p>' + esc(n.text) + '</p></div>';
+          return '<div class="note"><div class="note-h"><span class="chip ' + (ROLES.indexOf(n.role) < 3 && ROLES.indexOf(n.role) >= 0 ? 'r-' + esc(n.role) : 'c-grey') + '">' + esc(n.role || 'อื่น ๆ') + '</span><b>' + esc(n.name) + '</b><span>' + esc(when(n.at)) + '</span>' + (n.email && String(n.email).toLowerCase() === String(signedIn() ? NA.user.email : (ls.get('bma-qs:who') || '-')).toLowerCase() ? '<button type="button" class="btn ndel" data-del-note="' + esc(key) + '" data-at="' + esc(String(n.at)) + '" aria-label="ลบโน้ตนี้"><span class="ms" aria-hidden="true">delete</span>ลบ</button>' : '') + '</div><p>' + esc(n.text) + '</p></div>';
         }).join('') + '</div>'
       : '<p class="nempty">ยังไม่มีโน้ต</p>';
     var form = !signedIn() ? loginBox('เข้าสู่ระบบด้วย Google ก่อนเขียนโน้ต')
@@ -466,9 +466,9 @@
     if (t.hasAttribute('data-close')) { panelMode = null; panel(); return; }
     if (t.hasAttribute('data-csv')) { if (signedIn()) csv(); else panel(); return; }
     if (t.dataset.role) { ls.set('bma-qs-note:role', t.dataset.role); [].forEach.call(t.parentNode.children, function (x) { x.setAttribute('aria-pressed', String(x === t)); }); return; }
-    if (t.hasAttribute('data-out')) { NA.tk = ''; NA.user = null; ls.del('bma-docs:tk'); render(); panel(); return; }
+    if (t.hasAttribute('data-out')) { NA.tk = ''; NA.user = null; ls.del('bma-docs:tk'); ls.del('bma-qs:who'); render(); panel(); return; }
     if (t.dataset.delNote) {
-      if (!signedIn()) { render(); return; }
+      if (!signedIn()) { var lb = t.closest('[data-note-host]'), gb = lb && lb.querySelector('.gbtn'); window.alert('เข้าสู่ระบบด้วย Google ก่อน แล้วกด "ลบ" อีกครั้ง'); if (gb) gb.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
       if (!window.confirm('ลบโน้ตนี้? ลบแล้วทุกคนจะไม่เห็นโน้ตนี้อีก')) return;
       t.disabled = true;
       post({ key: t.dataset.delNote, where: 'tdel|' + role(), after: t.dataset.at }).then(function () { return load(); })
