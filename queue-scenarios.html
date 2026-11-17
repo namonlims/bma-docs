@@ -74,30 +74,6 @@
   .uc-no { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
   .uc-t { font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); line-height: 1.4; }
   .uc-t small { display: block; font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-regular, 400); color: var(--text-content-tertiary, #858C92); }
-  /* แผนภาพเส้นทาง (สร้างจากแถวในตาราง) */
-  .fd { margin-bottom: var(--dim-space-400, 16px); }
-  .fd-h { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-bold, 700); color: var(--text-content-default, #363B3F); }
-  .fd-s { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); margin-bottom: var(--dim-space-300, 12px); }
-  .fd-s .ms { font-size: var(--dim-size-300, 16px); vertical-align: -3px; }
-  .fd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--dim-space-400, 16px); }
-  .fd-card { border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEEFF0); border-radius: var(--dim-radius-300, 10px); padding: var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); min-width: 0; }
-  .fd-card h3 { margin: 0 0 var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-brandPrimary-default, #007549); }
-  .ft { list-style: none; margin: 0; padding: 0 0 0 var(--dim-space-300, 12px); }
-  .ft.root { padding-left: 0; }
-  .ft li { position: relative; padding: var(--dim-space-100, 4px) 0 var(--dim-space-100, 4px) var(--dim-space-400, 16px); }
-  .ft.root > li { padding-left: 0; }
-  .ft li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--dim-stroke-150, 1.5px) solid var(--icon-neutral-tertiary, #ADB2B7); }
-  .ft li:last-child::before { bottom: auto; height: var(--dim-size-400, 20px); }
-  .ft li::after { content: ''; position: absolute; left: 0; top: var(--dim-size-400, 20px); width: var(--dim-space-200, 8px); border-top: var(--dim-stroke-150, 1.5px) solid var(--icon-neutral-tertiary, #ADB2B7); }
-  .ft-row .tip { font-size: var(--dim-size-400, 20px); color: var(--icon-neutral-tertiary, #ADB2B7); margin-left: calc(-1 * var(--dim-space-200, 8px)); margin-right: calc(-1 * var(--dim-space-150, 6px)); }
-  .ft.root > li::before, .ft.root > li::after { display: none; }
-  .ft-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); min-height: var(--dim-size-700, 36px); }
-  .ft-row .arr { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
-  .ft-id { display: flex; flex-direction: column; flex-basis: 100%; gap: var(--dim-space-050, 2px); margin: var(--dim-space-050, 2px) 0 0 var(--dim-space-200, 8px); padding-left: var(--dim-space-200, 8px); border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #C5EDDA); font-size: var(--type-size-xs, 12px); color: var(--text-content-default, #363B3F); }
-  .ft-id b { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); margin-right: var(--dim-space-100, 4px); }
-  .fd-key { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px) var(--dim-space-400, 16px); margin: calc(-1 * var(--dim-space-100, 4px)) 0 var(--dim-space-300, 12px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
-  .fd-key span { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); }
-  .fd-key .ms { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
   .board-img { display: block; overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEEFF0); border-radius: var(--dim-radius-300, 10px); background: var(--surface-card-100, #FFFFFF); }
   .board-img img { display: block; width: 100%; min-width: 1600px; height: auto; }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
@@ -391,36 +367,6 @@
       + '</tr>'
       + '<tr class="nrow"' + (open ? '' : ' hidden') + '><td colspan="' + COLS + '"><div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div></td></tr>';
   }
-  /* แผนภาพเส้นทาง: รวมเส้นทางที่ขึ้นต้นเหมือนกันเป็นกิ่งเดียว (สร้างจากแถวในตาราง) */
-  function flowTree(items) {
-    var root = { k: {}, order: [], ids: [] };
-    items.forEach(function (it) {
-      var node = root, q = it.q || 0;
-      it.path.forEach(function (p, i) {
-        if (!node.k[p]) { node.k[p] = { label: p, k: {}, order: [], ids: [], q: false }; node.order.push(p); }
-        node = node.k[p]; if (i === q) node.q = true;
-      });
-      node.ids.push('<span><b>' + ucId(it.no) + '</b>' + esc(it.t) + '</span>');
-    });
-    return root;
-  }
-  function ftBadge(n) { return '<span class="step ' + tone(n.label) + (n.q ? ' q' : '') + '">' + (n.q ? '<span class="ms" aria-label="ได้คิวจริง">confirmation_number</span>' : '') + esc(n.label) + '</span>'; }
-  function ftList(n, cls) {
-    return '<ul class="ft' + (cls || '') + '">' + n.order.map(function (key) {
-      var c = n.k[key], h = ftBadge(c);
-      while (c.order.length === 1 && !c.ids.length) { c = c.k[c.order[0]]; h += '<span class="ms arr" aria-hidden="true">arrow_forward</span>' + ftBadge(c); }
-      if (c.ids.length) h += '<span class="ft-id">' + c.ids.join('') + '</span>';
-      return '<li><div class="ft-row">' + (cls ? '' : '<span class="ms tip" aria-hidden="true">arrow_right</span>') + h + '</div>' + (c.order.length ? ftList(c) : '') + '</li>';
-    }).join('') + '</ul>';
-  }
-  function flowDiagram(g) {
-    var cards = g.subs.map(function (s) {
-      var items = s.items.filter(function (x) { return x.st !== 'team' && x.path.length; });
-      if (!items.length) return '';
-      return '<div class="fd-card"><h3>' + esc(s.title || g.title) + ' · ' + items.length + '</h3>' + ftList(flowTree(items), ' root') + '</div>';
-    }).join('');
-    return '<div class="fd"><div class="fd-h">แผนภาพเส้นทาง</div><p class="fd-s">รวมจากแถวในตารางด้านล่าง · อ่านจากซ้ายไปขวา บนลงล่าง</p><div class="fd-key"><span><span class="ms" aria-hidden="true">arrow_forward</span>ไปจุดถัดไป</span><span><span class="ms" aria-hidden="true">arrow_right</span>แยกทางตามกรณี</span><span><span class="ms" aria-hidden="true">confirmation_number</span>ได้คิวจริงที่จุดนี้</span><span>ท้ายเส้น = รหัส + ชื่อกรณีในตาราง</span></div><div class="fd-grid">' + cards + '</div></div>';
-  }
   function render() {
     var host = document.getElementById('groups');
     host.innerHTML = GROUPS.map(function (g) {
@@ -430,7 +376,6 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + (cur !== 'all' ? ' · แสดง ' + vis + ' รายการ' : '') + '</p></div></div>'
-        + (g.key === 'arrive' ? flowDiagram(g) : '')
         + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th>ได้คิวจริงที่</th><th>เปิด VN ที่</th><th>ดูในระบบ</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items.filter(function (x) { return cur === 'all' || x.st === cur; });
           if (!items.length) return '';
