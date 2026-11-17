@@ -57,6 +57,8 @@
   .utbl .c-q { color: var(--text-colorfulbadge-green, #007549); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
   .utbl .c-w { min-width: 180px; }
   .utbl .c-k { min-width: 96px; }
+  /* คอลัมน์ "สถานะ vibe code" ซ่อนไว้ก่อน (ผู้ใช้ 17 พ.ย. 69) · ลบบรรทัดนี้เพื่อแสดง */
+  .utbl .c-st { display: none; }
   .utbl .nb { align-self: auto; }
 
   .utbl .c-id, .utbl thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-card-100, #FFFFFF); }
@@ -394,7 +396,7 @@
       + '<td class="c-t"><b>' + esc(it.t) + '</b>' + (it.s ? '<small>' + esc(it.s) + '</small>' : '') + (it.by ? '<small>เพิ่มโดย ' + esc(it.by) + ' · ' + esc(when(it.at)) + '</small>' : '') + '</td>'
       + '<td>' + (it.path.length ? '<div class="path" aria-label="เส้นทาง">' + steps + '</div>' : '—') + '</td>'
       + '<td class="c-k">' + esc(it.qt || '—') + '</td>'
-      + '<td><span class="chip ' + s.cls + '"><span class="ms" style="font-size:var(--dim-size-300,16px)" aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</span></td>'
+      + '<td class="c-st"><span class="chip ' + s.cls + '"><span class="ms" style="font-size:var(--dim-size-300,16px)" aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</span></td>'
       + '<td class="c-n"><button type="button" class="nb' + (n ? ' has' : '') + '" data-nb="' + id + '" aria-expanded="' + open + '" aria-label="โน้ต ' + id + '"><span class="ms" aria-hidden="true">sticky_note_2</span>' + (n ? n : '') + '</button></td>'
       + '</tr>'
       + '<tr class="nrow"' + (open ? '' : ' hidden') + '><td colspan="' + COLS + '"><div class="nsec" data-note-host="' + id + '"' + (open ? '' : ' hidden') + '></div></td></tr>';
@@ -408,7 +410,7 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + '</p></div></div>'
-        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th>สถานะ</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
+        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th class="c-st">สถานะ vibe code</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items;
           if (!items.length) return '';
           return (s.title ? '<tr class="srow"><th colspan="' + COLS + '" scope="rowgroup"><span>' + esc(s.title) + ' · ' + s.items.length + '</span></th></tr>' : '') + items.map(row).join('');
