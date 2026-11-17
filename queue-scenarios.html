@@ -50,7 +50,7 @@
   .uc[hidden] { display: none; }
   /* ตาราง use case (ผู้ใช้ 16 พ.ย. 69) */
   .utbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); }
-  .utbl table { border-collapse: collapse; width: 100%; min-width: 1160px; font-size: var(--type-size-xs, 12px); }
+  .utbl table { border-collapse: collapse; width: 100%; min-width: 1400px; font-size: var(--type-size-xs, 12px); }
   .utbl th, .utbl td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F0F1F2); }
   .utbl thead th { background: var(--surface-table-header, #F4FBF8); color: var(--text-table-title, #363B3F); font-weight: var(--type-weight-medium, 500); white-space: nowrap; position: sticky; top: 0; }
   .utbl tr.srow th { background: color-mix(in srgb, var(--surface-brandPrimary-quaternary, #F4FBF8) 70%, var(--surface-card-100, #FFFFFF)); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); font-size: var(--type-size-xs, 12px); }
@@ -65,7 +65,7 @@
   .utbl .c-w { min-width: 180px; }
   .utbl .c-k { min-width: 96px; }
   .utbl .nb { align-self: auto; }
-  .utbl td:nth-child(3) { min-width: 220px; }
+  .utbl td:nth-child(3) { min-width: 460px; }
   .utbl .c-id, .utbl thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface-card-100, #FFFFFF); }
   .utbl thead th:first-child { z-index: 2; background: var(--surface-table-header, #F4FBF8); }
   .utbl tr.open .c-id { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
@@ -86,13 +86,18 @@
   .ft.root { padding-left: 0; }
   .ft li { position: relative; padding: var(--dim-space-100, 4px) 0 var(--dim-space-100, 4px) var(--dim-space-400, 16px); }
   .ft.root > li { padding-left: 0; }
-  .ft li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .ft li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--dim-stroke-150, 1.5px) solid var(--icon-neutral-tertiary, #ADB2B7); }
   .ft li:last-child::before { bottom: auto; height: var(--dim-size-400, 20px); }
-  .ft li::after { content: ''; position: absolute; left: 0; top: var(--dim-size-400, 20px); width: var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .ft li::after { content: ''; position: absolute; left: 0; top: var(--dim-size-400, 20px); width: var(--dim-space-200, 8px); border-top: var(--dim-stroke-150, 1.5px) solid var(--icon-neutral-tertiary, #ADB2B7); }
+  .ft-row .tip { font-size: var(--dim-size-400, 20px); color: var(--icon-neutral-tertiary, #ADB2B7); margin-left: calc(-1 * var(--dim-space-200, 8px)); margin-right: calc(-1 * var(--dim-space-150, 6px)); }
   .ft.root > li::before, .ft.root > li::after { display: none; }
   .ft-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); min-height: var(--dim-size-700, 36px); }
   .ft-row .arr { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
-  .ft-id { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); margin-left: var(--dim-space-100, 4px); white-space: nowrap; }
+  .ft-id { display: flex; flex-direction: column; flex-basis: 100%; gap: var(--dim-space-050, 2px); margin: var(--dim-space-050, 2px) 0 0 var(--dim-space-200, 8px); padding-left: var(--dim-space-200, 8px); border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #C5EDDA); font-size: var(--type-size-xs, 12px); color: var(--text-content-default, #363B3F); }
+  .ft-id b { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); margin-right: var(--dim-space-100, 4px); }
+  .fd-key { display: flex; flex-wrap: wrap; gap: var(--dim-space-100, 4px) var(--dim-space-400, 16px); margin: calc(-1 * var(--dim-space-100, 4px)) 0 var(--dim-space-300, 12px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .fd-key span { display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px); }
+  .fd-key .ms { font-size: var(--dim-size-300, 16px); color: var(--icon-neutral-tertiary, #ADB2B7); }
   .board-img { display: block; overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #EEEFF0); border-radius: var(--dim-radius-300, 10px); background: var(--surface-card-100, #FFFFFF); }
   .board-img img { display: block; width: 100%; min-width: 1600px; height: auto; }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
@@ -395,7 +400,7 @@
         if (!node.k[p]) { node.k[p] = { label: p, k: {}, order: [], ids: [], q: false }; node.order.push(p); }
         node = node.k[p]; if (i === q) node.q = true;
       });
-      node.ids.push(ucId(it.no));
+      node.ids.push('<span><b>' + ucId(it.no) + '</b>' + esc(it.t) + '</span>');
     });
     return root;
   }
@@ -404,8 +409,8 @@
     return '<ul class="ft' + (cls || '') + '">' + n.order.map(function (key) {
       var c = n.k[key], h = ftBadge(c);
       while (c.order.length === 1 && !c.ids.length) { c = c.k[c.order[0]]; h += '<span class="ms arr" aria-hidden="true">arrow_forward</span>' + ftBadge(c); }
-      if (c.ids.length) h += '<span class="ft-id">' + c.ids.join(' · ') + '</span>';
-      return '<li><div class="ft-row">' + h + '</div>' + (c.order.length ? ftList(c) : '') + '</li>';
+      if (c.ids.length) h += '<span class="ft-id">' + c.ids.join('') + '</span>';
+      return '<li><div class="ft-row">' + (cls ? '' : '<span class="ms tip" aria-hidden="true">arrow_right</span>') + h + '</div>' + (c.order.length ? ftList(c) : '') + '</li>';
     }).join('') + '</ul>';
   }
   function flowDiagram(g) {
@@ -414,7 +419,7 @@
       if (!items.length) return '';
       return '<div class="fd-card"><h3>' + esc(s.title || g.title) + ' · ' + items.length + '</h3>' + ftList(flowTree(items), ' root') + '</div>';
     }).join('');
-    return '<div class="fd"><div class="fd-h">แผนภาพเส้นทาง</div><p class="fd-s">รวมจากแถวในตารางด้านล่าง · <span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง · สีป้ายตามจุดบริการ</p><div class="fd-grid">' + cards + '</div></div>';
+    return '<div class="fd"><div class="fd-h">แผนภาพเส้นทาง</div><p class="fd-s">รวมจากแถวในตารางด้านล่าง · อ่านจากซ้ายไปขวา บนลงล่าง</p><div class="fd-key"><span><span class="ms" aria-hidden="true">arrow_forward</span>ไปจุดถัดไป</span><span><span class="ms" aria-hidden="true">arrow_right</span>แยกทางตามกรณี</span><span><span class="ms" aria-hidden="true">confirmation_number</span>ได้คิวจริงที่จุดนี้</span><span>ท้ายเส้น = รหัส + ชื่อกรณีในตาราง</span></div><div class="fd-grid">' + cards + '</div></div>';
   }
   function render() {
     var host = document.getElementById('groups');
