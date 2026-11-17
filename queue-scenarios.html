@@ -43,7 +43,10 @@
   .uc[hidden] { display: none; }
   /* ตาราง use case (ผู้ใช้ 16 พ.ย. 69) */
   .utbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-400, 12px); }
-  .utbl table { border-collapse: collapse; width: 100%; min-width: 1000px; font-size: var(--type-size-xs, 12px); }
+  .utbl table { border-collapse: collapse; table-layout: fixed; width: 100%; min-width: var(--qs-tw, 1000px); font-size: var(--type-size-xs, 12px); }
+  /* ทุกตารางคอลัมน์กว้างเท่ากัน (ผู้ใช้ 17 พ.ย. 69) · เส้นทาง = ยาวสุดของทั้งหน้า (JS ตั้ง --qs-tw) */
+  .utbl thead th:nth-child(4) { white-space: normal; }
+  .utbl col.w-id { width: 72px; } .utbl col.w-t { width: 184px; } .utbl col.w-k { width: 128px; } .utbl col.w-n { width: 72px; }
   .utbl th, .utbl td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F0F1F2); }
   .utbl thead th { background: var(--surface-table-header, #F4FBF8); color: var(--text-table-title, #363B3F); font-weight: var(--type-weight-medium, 500); white-space: nowrap; position: sticky; top: 0; }
   .utbl tr.srow th { background: color-mix(in srgb, var(--surface-brandPrimary-quaternary, #F4FBF8) 70%, var(--surface-card-100, #FFFFFF)); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-bold, 700); font-size: var(--type-size-xs, 12px); }
@@ -51,7 +54,7 @@
   .utbl tr.open td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
   .utbl tr.nrow > td { background: var(--surface-neutral-quaternary, #FAFAFA); padding: var(--dim-space-400, 16px); }
   .utbl .c-id { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); white-space: nowrap; }
-  .utbl .c-t { min-width: 180px; }
+  .utbl .c-t { min-width: 0; }
   .utbl .c-t b { display: block; font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
   .utbl .c-t small { display: block; color: var(--text-content-tertiary, #858C92); }
   .utbl .c-q { color: var(--text-colorfulbadge-green, #007549); font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
@@ -83,6 +86,7 @@
   .board-img img { display: block; width: 100%; min-width: 1600px; height: auto; }
   .path { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-100, 4px); }
   .utbl .path, .utbl .alt { flex-wrap: nowrap; white-space: nowrap; }
+  .utbl .path { display: inline-flex; }
   .step { padding: var(--dim-space-050, 2px) var(--dim-space-200, 8px); border-radius: var(--dim-radius-200, 6px); background: var(--surface-neutral-tertiary, #F4F5F5); font-size: var(--type-size-xs, 12px); }
   .step.t-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
   .step.t-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
@@ -380,7 +384,7 @@
   }
 
   /* ตารางให้ Dev ดูง่าย (ผู้ใช้ 16 พ.ย. 69 "ทำเป็นตารางให้เดฟดูง่ายๆ") — 1 แถว = 1 use case · โน้ตกางเป็นแถวใต้แถวนั้น (ทีละแถว) */
-  var COLS = 6;
+  var COLS = 5; // คอลัมน์ที่เห็น (สถานะ vibe code ซ่อนอยู่ · แสดงอีกครั้ง = 6 + เพิ่ม <col>)
   // สีประจำจุดบริการ: จุดเดียวกัน = สีเดียวกันทุกแถว (ผู้ใช้ 17 พ.ย. 69)
   var TONES = [[/^Kiosk/, 't-blue'], [/^คัดแยก/, 't-orange'], [/^เวชระเบียน/, 't-purple'], [/^คัดกรอง/, 't-teal'],
     [/^(แพทย์|ตรวจ|ห้องตรวจ|คลินิก|คิวรวมคลินิก|คิวด่วน|ARI)/, 't-indigo'], [/หัตถการ/, 't-pink'], [/^(ห้องยา|รับยา)/, 't-yellow'],
@@ -414,13 +418,15 @@
       var range = base.length ? ucId(base[0].no) + ' – ' + ucId(base[base.length - 1].no) + ' · ' : '';
       return '<section class="grp" id="g-' + g.key + '" aria-labelledby="h-' + g.key + '">'
         + '<div class="grp-h"><span class="ic ms" aria-hidden="true">' + g.icon + '</span><div class="t"><h2 id="h-' + g.key + '">' + esc(g.title) + ' · ' + g.count + ' use cases</h2><p class="sum">' + range + esc(g.sum) + '</p></div></div>'
-        + (vis ? '<div class="utbl"><table><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th class="c-st">สถานะ vibe code</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
+        + (vis ? '<div class="utbl"><table><colgroup><col class="w-id"><col class="w-t"><col class="w-p"><col class="w-k"><col class="w-n"></colgroup><thead><tr><th>รหัส</th><th>กรณี</th><th>เส้นทาง <span class="lg-q">(<span class="ms" aria-hidden="true">confirmation_number</span> = ได้คิวจริง)</span></th><th>เลขคิวจาก Kiosk</th><th class="c-st">สถานะ vibe code</th><th>โน้ต</th></tr></thead><tbody>' + g.subs.map(function (s) {
           var items = s.items;
           if (!items.length) return '';
           return (s.title ? '<tr class="srow"><th colspan="' + COLS + '" scope="rowgroup"><span>' + esc(s.title) + ' · ' + s.items.length + '</span></th></tr>' : '') + items.map(row).join('');
         }).join('') + '</tbody></table></div>' : '<p class="empty">ไม่มี use case สถานะนี้ในกลุ่มนี้</p>')
         + '</section>';
     }).join('');
+    var pw = 0; [].forEach.call(host.querySelectorAll('.utbl .path'), function (x) { pw = Math.max(pw, x.scrollWidth); });
+    host.style.setProperty('--qs-tw', (72 + 184 + 128 + 72 + pw + 24 + 2) + 'px');
     [].forEach.call(host.querySelectorAll('[data-note-host]:not([hidden])'), paintNotes);
     paintNotes(document.querySelector('[data-note-host="_"]'));
   }
