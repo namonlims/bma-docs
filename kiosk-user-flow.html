@@ -451,7 +451,7 @@
   <p class="lede">เส้นทางผู้รับบริการที่ตู้บริการตนเอง 1080×1920 แนวตั้ง ตั้งแต่เสียบบัตรจนรับบัตรคิว/ใบเสร็จ แยกตามบริการที่เลือก กดกล่องเพื่อดูหน้าจอ (slug) และกลุ่มหน้าจอในโค้ด</p>
   <div class="meta">
     <span><b>อ้างอิง</b> src/pagesRegistry.tsx · src/flow.ts · design.md · .claude/rules · commit log</span>
-    <span><b>อัปเดต</b> <span id="upd">11 พ.ย. 69</span> (commit ล่าสุด 9 พ.ย. 69 · 5f9b534)</span>
+    <span><b>อัปเดต</b> <span id="upd">18 พ.ย. 69</span> (commit ล่าสุด 16 พ.ย. 69 · 68902ff)</span>
   </div>
 </header>
 <nav class="toc" aria-label="หัวข้อในหน้า">
@@ -568,11 +568,11 @@ const FLOWS = {
       { id:'dAp', t:'มีนัดวันนี้?', type:'dec', lane:'sys', to:[['p07','มีนัด'],['p07b','ไม่มีนัด']] },
       { id:'p07', t:'ยืนยันข้อมูล มีนัดหมาย', s:'07-confirm-patient-has-appointment', type:'action', lane:'kiosk', note:'นัดคลินิกพิเศษ (TB/HIV) แสดง "นัดคลินิกพิเศษ" + ตึก A ชั้น 2 ไม่แสดงชื่อคลินิก/แพทย์ (ประชุม 9 พ.ย. 69 ข้อ 1)', mock:'มี/ไม่มีนัดและคลินิกพิเศษตัดสินจากเลขเดโม (2222222222222 ไม่มีนัด · 4444444444444 คลินิกพิเศษ) ยังไม่ค้นนัดจริง', to:[['p08']] },
       { id:'p07b', t:'ยืนยันข้อมูล ไม่มีนัดหมาย (ถัดไป)', s:'07b-confirm-patient-no-appointment', type:'action', lane:'kiosk', row:2, same:1, to:[['p08']] },
-      { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['dSelf']] },
+      { id:'p08', t:'รายละเอียดสิทธิ์ (ตนเอง / บุตร)', s:'08-entitlement-details-self', type:'action', lane:'kiosk', note:'ผู้มีสิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว: แสดงเต็มความกว้าง พร้อมสถานะสิทธิ "ใช้สิทธิได้" และหน่วยบริการประจำ (rights=nhso · 15 พ.ย. 69)', mock:'สิทธิ์จำลอง · เคส สปสช. ตัดสินจากเลขเดโม 5555555555555 ยังไม่เรียก สปสช. จริง', to:[['dSelf']] },
       { id:'dSelf', t:'ชำระเงินเอง?', type:'dec', lane:'sys', to:[['p13','มีสิทธิ์'],['gPay','ชำระเอง']] },
       { id:'gPay', t:'ชำระเงินก่อนออกคิว (09 → 14)', type:'option', lane:'kiosk', row:2, same:1, gap:1, mock:'มติ 26 ต.ค. — ยังไม่มีในโค้ด: มติให้ผู้ชำระเงินเองจ่ายก่อนระบบออกคิว แต่โค้ดตอนนี้ออกคิวทันทีหลังหน้าสิทธิ์ และชำระเงินเป็นเมนูแยก (ตรวจล่าสุด 9 พ.ย. 69: ยังไม่มี)', to:[['p13','ชำระแล้ว']] },
       { id:'p13', t:'ผลคิว + VN (คิวคลินิก C021 / คิวกลาง 21)', s:'13-queue-result', type:'action', lane:'kiosk', note:'lib/queueTicket.ts: มีนัด → คิวคลินิกตัวอักษร+เลข ไปคลินิก (ตึก B ชั้น 2) · ไม่มีนัด → คิวกลางเลขล้วน ไปจุดคัดแยก (Flow คณะทำงาน 27 ต.ค. 69)', mock:'เลขคิวและจำนวนคิวรอเป็นค่าตายตัว', to:[['slip']] },
-      { id:'slip', t:'พิมพ์บัตรคิว (ตามประเภทคิว)', s:'queue-slip-print', type:'action', lane:'sys', note:'มีนัด = พิมพ์วันนัด (วันนี้) · ไม่มีนัด = ไม่พิมพ์วันนัด · ผู้ป่วยใหม่ = ไม่พิมพ์ HN/สิทธิ', to:[['p15']] },
+      { id:'slip', t:'พิมพ์บัตรคิว (ตามประเภทคิว)', s:'queue-slip-print', type:'action', lane:'sys', note:'มีนัด = พิมพ์วันนัด (วันนี้) · ไม่มีนัด = ไม่พิมพ์วันนัด · ผู้ป่วยใหม่ = ไม่พิมพ์ HN/สิทธิ · ผู้มีสิทธิ สปสช. = การ์ดสิทธิพิมพ์ "หลักประกันสุขภาพแห่งชาติ (สปสช.)" แทนประกันสังคม', to:[['p15']] },
       ...END('15-thank-you','ขอบคุณ')] },
   appointment: { n:'ตรวจสอบนัดหมาย', ic:'event', sum:'ยืนยันตัวตน → ดูนัดหมาย → ตรวจสอบนัดหมายสำเร็จ · ไม่มีนัดวันนี้ขึ้น "คุณไม่มีนัดหมายวันนี้" แล้วกลับเมนู',
     flow:[...ENTRY, {...SEL,to:[['dAp']]},
@@ -583,7 +583,7 @@ const FLOWS = {
   entitlement: { n:'ตรวจสอบสิทธิ์', ic:'verified_user', sum:'ยืนยันตัวตน → รายละเอียดสิทธิ์ ตนเอง/บุตร → สำเร็จ · ต่างชาติไม่มีเมนูนี้ (commit 27 ส.ค.)',
     flow:[...ENTRY, {...SEL,to:[['dWho']]},
       { id:'dWho', t:'สิทธิ์ของใคร', type:'dec', lane:'cust', to:[['p08','ตนเอง'],['p08b','บุตร / ผู้อยู่ในอุปการะ']] },
-      { id:'p08', t:'รายละเอียดสิทธิ์ ตนเอง', s:'08-entitlement-details-self', type:'action', lane:'kiosk', to:[['p15e']] },
+      { id:'p08', t:'รายละเอียดสิทธิ์ ตนเอง', s:'08-entitlement-details-self', type:'action', lane:'kiosk', note:'ผู้มีสิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว: แสดงเต็มความกว้าง พร้อมสถานะสิทธิ "ใช้สิทธิได้" และหน่วยบริการประจำ (rights=nhso · 15 พ.ย. 69)', mock:'สิทธิ์จำลอง · เคส สปสช. ตัดสินจากเลขเดโม 5555555555555 ยังไม่เรียก สปสช. จริง', to:[['p15e']] },
       { id:'p08b', t:'รายละเอียดสิทธิ์ บุตร', s:'08b-entitlement-details-dependent', type:'action', lane:'kiosk', row:2, same:1, to:[['p15e']] },
       ...END('15e-thank-you-entitlement','ตรวจสอบสิทธิสำเร็จ')] },
   payment: { n:'ชำระเงิน', ic:'payments', sum:'สรุปยอด → เลือกวิธีชำระ (PromptPay / บัตรเครดิตเฉพาะยอดตั้งแต่ 1,000 บาท) → ตรวจสอบ → สำเร็จ → พิมพ์ใบเสร็จ → ขอบคุณ มียา/ไม่มียา',
@@ -650,7 +650,7 @@ const PF = {
     PF_END('ตรวจสอบนัดหมายสำเร็จ (15d)')],
   entitlement: [...PF_ID, PF_SEL('d1'),
     { id:'d1', t:'เลือกสิทธิ์ตนเอง / บุตร', type:'dec', lane:'cust', to:[['d2']] },
-    { id:'d2', t:'ตรวจสิทธิ์การรักษา', type:'action', lane:'ext', mock:'ยังไม่เรียก สปสช. จริง แสดงสิทธิ์จำลอง', to:[['d3']] },
+    { id:'d2', t:'ตรวจสิทธิ์การรักษา', type:'action', lane:'ext', mock:'ยังไม่เรียก สปสช. จริง แสดงสิทธิ์จำลอง (เลขเดโม 5555555555555 = สปสช. บัตรทอง สิทธิ์เดียว)', to:[['d3']] },
     { id:'d3', t:'แสดงรายละเอียดสิทธิ์ (08/08b)', type:'action', lane:'kiosk', to:[['z']] },
     PF_END('ตรวจสอบสิทธิสำเร็จ (15e) · ต่างชาติไม่มีเมนูนี้')],
   payment: [...PF_ID, PF_SEL('e1'),
@@ -737,7 +737,7 @@ const RULES = [
   ['หน้าแรก','เดินมาที่ตู้','หน้าแรกคือเสียบบัตร (02) ไม่ถามสัญชาติก่อน · กดเลข 13 หลักได้'],
   ['ระบุตัวตน','ไม่มีประวัติที่สถานพยาบาลนี้','ไปหน้า 03b · กด "รับบัตรคิว" ได้คิว K004 ไปจุดคัดแยก แล้วส่งต่อเวชระเบียน (TOR 1.16.1.4 · 9 พ.ย. 69)'],
   ['ระบุตัวตน','เลข 1111111111111','เลขเดียวที่จำลองว่า "ไม่พบ"'],
-  ['เลขเดโม','2222222222222 · 3333333333333 · 4444444444444','ไม่มีนัดวันนี้ · ยอดน้อยกว่า 1,000 · นัดคลินิกพิเศษ (lib/mockPatients.ts)'],
+  ['เลขเดโม','2222222222222 · 3333333333333 · 4444444444444 · 5555555555555','ไม่มีนัดวันนี้ · ยอดน้อยกว่า 1,000 · นัดคลินิกพิเศษ · สิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว (lib/mockPatients.ts · คู่มือ docs/kiosk-demo-id-guide.pdf)'],
   ['ออกคิว','มีนัดวันนี้','คิวคลินิก ตัวอักษร+เลข (C021) ไปคลินิก ระบุตึก/ชั้น (Flow คณะทำงาน 27 ต.ค. 69)'],
   ['ออกคิว','ไม่มีนัดวันนี้','คิวกลาง เลขล้วน (21) ไปจุดคัดแยก · ใบคิวไม่พิมพ์วันนัด'],
   ['ยืนยันข้อมูล / ผลคิว / ใบคิว','นัดคลินิกอ่อนไหว (TB/HIV)','แสดง "นัดคลินิกพิเศษ" + ตึก A ชั้น 2 ไม่แสดงชื่อคลินิก/แพทย์ (ประชุม 9 พ.ย. 69 ข้อ 1)'],
@@ -756,7 +756,7 @@ const PAGES = [
 ['02-insert-id-card','เสียบบัตร / ระบุเลข 13 หลัก (Home)','Entry'],['02b-insert-id-card-detected','ตรวจพบบัตร','Entry'],['02c-enter-id-passport','ต่างชาติ ติดต่อเวชระเบียน','Entry'],['02d-thaid-qr','สแกน QR ยืนยันด้วย ThaID','Entry'],['02e-thaid-success','ยืนยันตัวตนสำเร็จ (ThaID)','Entry'],['03-loading-verifying-identity','กำลังอ่าน/ตรวจสอบ','Entry'],['01-select-service','เลือกบริการ','Entry'],
 ['03b-register-new-patient','ผู้ป่วยใหม่ · รับบัตรคิวไปจุดคัดแยก','Identity'],['04-select-patient-relation','รับบริการเพื่อใคร','Identity'],['04b-prepare-face-scan','เตรียมถ่ายภาพ','Identity'],['05-loading-face-scan','กำลังสแกนใบหน้า','Identity'],['06-face-recognition','ถ่ายภาพใบหน้า','Identity'],['06b-face-photo-preview','ตรวจสอบภาพถ่าย','Identity'],
 ['07-confirm-patient-has-appointment','ยืนยันข้อมูล มีนัดหมาย','Patient Info'],['07b-confirm-patient-no-appointment','ยืนยันข้อมูล ไม่มีนัดหมาย','Patient Info'],
-['08-entitlement-details-self','รายละเอียดสิทธิ์ ตนเอง','Entitlement'],['08b-entitlement-details-dependent','รายละเอียดสิทธิ์ บุตร','Entitlement'],['16-close-rights-confirm','ยืนยันปิดสิทธิ','Entitlement'],['16b-close-rights-success','ปิดสิทธิสำเร็จ','Entitlement'],
+['08-entitlement-details-self','รายละเอียดสิทธิ์ ตนเอง (มีตัวอย่าง ?rights=nhso สปสช. สิทธิ์เดียว)','Entitlement'],['08b-entitlement-details-dependent','รายละเอียดสิทธิ์ บุตร','Entitlement'],['16-close-rights-confirm','ยืนยันปิดสิทธิ','Entitlement'],['16b-close-rights-success','ปิดสิทธิสำเร็จ','Entitlement'],
 ['09-payment-bill-summary','สรุปยอดชำระ','Payment'],['loading-printing-receipt','กำลังพิมพ์ใบเสร็จ','Payment'],['09b-receipt-detail','รายละเอียดใบเสร็จ','Payment'],['10-select-payment-method','เลือกวิธีชำระเงิน','Payment'],['11-payment-qr-promptpay','ชำระด้วย QR PromptPay','Payment'],['11b-payment-credit-card','ชำระด้วยบัตรเครดิต','Payment'],['11c-loading-verifying-payment','กำลังตรวจสอบการชำระเงิน','Payment'],['12-insert-id-card-after-payment','เสียบบัตรหลังชำระเงิน','Payment'],
 ['13-queue-result','ผลลัพธ์คิว','Queue'],['loading-printing-queue-slip','กำลังพิมพ์บัตรคิว','Queue'],['queue-slip-print','ใบคิว','Queue'],
 ['14-payment-success','ชำระเงินสำเร็จ','Completion'],['15-thank-you','ขอบคุณ','Completion'],['15b-thank-you-no-medicine','ขอบคุณ ไม่มียา','Completion'],['15c-thank-you-with-medicine','ขอบคุณ มียา','Completion'],['15d-thank-you-appointment','ตรวจสอบนัดหมายสำเร็จ','Completion'],['15e-thank-you-entitlement','ตรวจสอบสิทธิสำเร็จ','Completion'],['15f-thank-you-reprint','พิมพ์บัตรคิวสำเร็จ','Completion'],['15g-thank-you-cancel','ยกเลิก — รับบัตรคืน','Completion'],
@@ -764,6 +764,7 @@ const PAGES = [
 let g0=''; document.getElementById('scr-body').innerHTML = PAGES.map(([s,t,g])=>{ const used = Object.entries(FLOWS).filter(([k,f])=>f.flow.some(n=>n.s===s)).map(([k,f])=>`<span class="badge b-green">${esc(f.n)}</span>`).join(' ') || '<span class="badge b-grey">ยังไม่วางใน flow</span>';
   const h = g!==g0 ? `<tr class="gh"><td colspan="3">${g}</td></tr>` : ''; g0=g; return h+`<tr><td><code>/${s}</code></td><td>${esc(t)}</td><td>${used}</td></tr>`; }).join('');
 const LOG = [
+['15 พ.ย. 69','เคสผู้มีสิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว: เลขเดโม 5555555555555 → หน้าสิทธิ์ 08 แสดงสิทธิ์เดียวพร้อมสถานะและหน่วยบริการประจำ · ใบคิวพิมพ์สิทธิ สปสช. · คู่มือเลขบัตรเดโม (PDF) (PR #9)'],
 ['9 พ.ย. 69','ออกคิวตามนัดหมาย (มีนัด = คิวคลินิก · ไม่มีนัด = คิวกลาง) · ผู้ป่วยใหม่รับคิว K ไปจุดคัดแยก · ซ่อนชื่อคลินิกพิเศษ TB/HIV · ยอดต่ำกว่า 1,000 จ่ายบัตรไม่ได้ (PR #8)'],
 ['1 พ.ย. 69','AGENTS.md จาก CLAUDE.md + .claude/rules ให้ทุกเครื่องมือใช้กติกาเดียวกัน (PR #7)'],
 ['24 ต.ค. 69','Kiosk เป็น design system ของตัวเอง — kiosk.css · design.md · Figma variables (PR #6)'],
