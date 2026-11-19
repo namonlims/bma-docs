@@ -5,28 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>สร้าง ticket</title>
-<link rel="stylesheet" href="tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
 <style>
-  body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: var(--dim-space-400, 16px); background: radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%), var(--surface-card-100, #FFFFFF); background-attachment: fixed; color: var(--text-content-default, #363B3F); font-family: 'Anuphan', system-ui, sans-serif; font-size: var(--type-size-sm, 14px); }
-  .box { box-sizing: border-box;  width: min(440px, 100%); background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #E5E8EB); border-radius: var(--dim-radius-300, 12px); padding: var(--dim-space-600, 24px); }
+  body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: var(--nd-space-400,16px); background: radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%), var(--nd-surface-card,#FFFFFF); background-attachment: fixed; color: var(--nd-text-default,#363B3F); font-family: var(--nd-type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--nd-type-size-sm,14px); }
+  .box { box-sizing: border-box;  width: min(440px, 100%); background: var(--nd-surface-card,#FFFFFF); border: var(--nd-stroke-100,1px) solid var(--nd-border-quiet,#F4F5F5); border-radius: var(--nd-radius-300,10px); padding: var(--nd-space-600,24px); }
   /* การ์ดมี brand drop shadow ตลอด (ผู้ใช้ 19 พ.ย. 69) · hover เพิ่มขอบ brand */
-  .box { box-shadow: var(--shadow-brand-drop-bottom-200, 0 1px 4px rgb(0 117 73 / 0.08), 0 1px 8px rgb(0 117 73 / 0.10)); transition: border-color .15s; }
-  .box:hover { border-color: var(--border-brandPrimary-default, #007549); }
-  h1 { margin: 0; font-size: var(--type-size-base, 16px); font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
-  p { margin: var(--dim-space-200, 8px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); line-height: 1.5; }
-  input { width: 100%; min-height: var(--dim-size-900, 44px); margin-top: var(--dim-space-400, 16px); padding: 0 var(--dim-space-300, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-secondary, #C9CED3); border-radius: var(--dim-radius-200, 8px); font: inherit; background: var(--surface-card-100, #FFFFFF); color: inherit; box-sizing: border-box; }
-  input.err { border-color: var(--border-semanticDanger-default, #D92D20); }
-  .err-t { min-height: 1.4em; color: var(--text-semanticDanger-default, #D92D20); font-size: var(--type-size-xs, 12px); }
-  .act { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); justify-content: flex-end; margin-top: var(--dim-space-400, 16px); }
-  .btn { min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-500, 20px); display: inline-flex; align-items: center; border-radius: var(--dim-radius-200, 8px); border: var(--dim-stroke-100, 1px) solid var(--surface-brandPrimary-default, #007549); background: var(--surface-brandPrimary-default, #007549); color: var(--text-brandPrimaryButton-on-brand, #FFFFFF); font: inherit; cursor: pointer; text-decoration: none; }
-  .btn:hover { background: var(--surface-brandPrimary-default-hover, #004C31); }
-  .btn.out { background: var(--surface-card-100, #FFFFFF); color: var(--text-brandPrimaryButton-default, #007549); }
+  .box { box-shadow: var(--nd-shadow-card,0 1px 4px rgb(8 167 104 / 0.08), 0 1px 8px rgb(8 167 104 / 0.10)); transition: border-color .15s; }
+  .box:hover { border-color: var(--nd-border-brand,#007549); }
+  h1 { margin: 0; font-size: var(--nd-type-size-base,16px); font-weight: var(--nd-type-weight-bold,700); color: var(--nd-text-brand,#007549); }
+  p { margin: var(--nd-space-200,8px) 0 0; color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.5; }
+  input { width: 100%; min-height: var(--nd-size-900,44px); margin-top: var(--nd-space-400,16px); padding: 0 var(--nd-space-300,12px); border: var(--nd-stroke-100,1px) solid var(--nd-border-input,#E2E4E6); border-radius: var(--nd-radius-200,8px); font: inherit; background: var(--nd-surface-card,#FFFFFF); color: inherit; box-sizing: border-box; }
+  input.err { border-color: var(--nd-border-danger,#DC2626); }
+  .err-t { min-height: 1.4em; color: var(--nd-text-danger,#DC2626); font-size: var(--nd-type-size-xs,12px); }
+  .act { display: flex; flex-wrap: wrap; gap: var(--nd-space-200,8px); justify-content: flex-end; margin-top: var(--nd-space-400,16px); }
+  .btn { min-height: var(--nd-size-900,44px); padding: 0 var(--nd-space-500,20px); display: inline-flex; align-items: center; border-radius: var(--nd-radius-200,8px); border: var(--nd-stroke-100,1px) solid var(--nd-surface-brand,#007549); background: var(--nd-surface-brand,#007549); color: var(--nd-text-on-brand,#FFFFFF); font: inherit; cursor: pointer; text-decoration: none; }
+  .btn:hover { background: var(--nd-surface-brand-hover,#004C31); }
+  .btn.out { background: var(--nd-surface-card,#FFFFFF); color: var(--nd-text-brand,#007549); }
   code { overflow-wrap: anywhere; }
-  ul { margin: var(--dim-space-300, 12px) 0 0; padding-left: var(--dim-space-500, 20px); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); line-height: 1.6; }
+  ul { margin: var(--nd-space-300,12px) 0 0; padding-left: var(--nd-space-500,20px); color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.6; }
   body.on { display: block; padding: 0; background: transparent; }
-  #studio { display: block; width: 100%; height: calc(100dvh - var(--dim-size-900, 44px)); border: 0; }
-  #bar { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dim-space-300, 12px); min-height: var(--dim-size-900, 44px); box-sizing: border-box; padding: 0 var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
-  #bar a { display: inline-flex; align-items: center; min-height: var(--dim-size-900, 44px); color: var(--text-brandPrimaryButton-default, #007549); }
+  #studio { display: block; width: 100%; height: calc(100dvh - var(--nd-size-900,44px)); border: 0; }
+  #bar { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--nd-space-300,12px); min-height: var(--nd-size-900,44px); box-sizing: border-box; padding: 0 var(--nd-space-400,16px); font-size: var(--nd-type-size-xs,12px); color: var(--nd-text-secondary,#636B72); }
+  #bar a { display: inline-flex; align-items: center; min-height: var(--nd-size-900,44px); color: var(--nd-text-brand,#007549); }
   /* พื้นหลัง + element ลอย เหมือนหน้าแรก Namon Desk (ผู้ใช้ 19 พ.ย. 69) · สีในลาย = ภาพประกอบ */
   .stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .stage .deco { position: absolute; animation: deco-float 6s ease-in-out infinite; }
@@ -61,7 +63,7 @@
   <section id="signin">
     <h1>สร้าง ticket</h1>
     <p id="msg">เข้าสู่ระบบด้วยบัญชี Google ของเจ้าของ แล้วหน้าสร้าง ticket จะแสดงที่นี่</p>
-    <div id="gbtn" style="margin-top:var(--dim-space-400, 16px);min-height:44px"></div>
+    <div id="gbtn" style="margin-top:var(--nd-space-400,16px);min-height:44px"></div>
     <ul>
       <li>การตรวจสิทธิ์ทำที่ Studio ในเครื่องเจ้าของ ไม่ได้ทำที่หน้านี้</li>
       <li>ข้อมูล ticket และไฟล์ที่อัปโหลดอยู่ในเครื่อง ไม่อยู่บนเว็บ</li>
