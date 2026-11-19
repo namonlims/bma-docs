@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="tokens.css" />
 <style>
@@ -150,12 +151,51 @@
       var(--surface-card-100, #FFFFFF);
     background-attachment: fixed;
   }
-  .hero { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
-  .search { position: relative; max-width: 640px; }
-  .search .material-symbols-outlined { position: absolute; left: var(--dim-space-400, 16px); top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); pointer-events: none; }
-  .search input { width: 100%; height: var(--dim-size-1200, 56px); padding: 0 var(--dim-space-400, 16px) 0 calc(var(--dim-space-400, 16px) + 28px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); background: var(--surface-card-100, #FFFFFF); font: inherit; font-size: var(--type-size-base, 16px); color: var(--text-content-default, #363B3F); box-shadow: var(--shadow-card); -webkit-appearance: none; appearance: none; }
-  .search input::placeholder { color: var(--text-content-tertiary, #858C92); }
-  .search input:focus { outline: none; border-color: var(--border-brandPrimary-default, #007549); }
+  /* หัวหน้าแรก: คำทักกลางจอ ฟอนต์เรขาคณิตหนา + ลายตกแต่งพาสเทล (ภาพอ้างอิง "Hello" · ผู้ใช้ 17 พ.ย. 69) · สีในลาย = ภาพประกอบ (ข้อยกเว้น token) */
+  .hero { display: flex; flex-direction: column; align-items: center; gap: var(--dim-space-400, 16px); text-align: center; padding-top: var(--dim-space-600, 24px); }
+  .hero .lede { margin-left: auto; margin-right: auto; }
+  .hero .search { width: 100%; margin: var(--dim-space-200, 8px) auto 0; }
+  .greet { position: relative; padding: var(--dim-space-800, 32px) var(--dim-space-1200, 48px) var(--dim-size-1400, 64px); }
+  .greet h1 { position: relative; z-index: 1; font-family: 'Poppins', var(--type-family-heading-content, 'Sarabun'), system-ui, sans-serif; font-weight: 800; font-size: clamp(32px, 5.2vw, 64px); line-height: 1.1; letter-spacing: -0.02em; color: var(--text-content-default, #363B3F); }
+  .greet h1 .o { position: relative; display: inline-block; }
+  .greet h1 .o::after { content: ''; position: absolute; left: 50%; top: 58%; width: 0.82em; height: 0.82em; transform: translate(-50%, -50%); border: 0.08em solid #F4B9A0; border-radius: 50%; z-index: -1; }
+  .greet .deco { position: absolute; pointer-events: none; }
+  .greet .d-star { left: 0; top: 18%; width: 30px; }
+  .greet .d-wave { left: 34%; top: -2px; width: 52px; }
+  .greet .d-dots { right: -6px; top: 4%; width: 54px; }
+  .greet .d-sun { left: 2%; bottom: 24px; width: 46px; }
+  .greet .d-heart { left: 26%; bottom: 14px; width: 22px; }
+  .greet .d-zig { left: 44%; bottom: 8px; width: 92px; }
+  .greet .d-heart2 { right: 16%; bottom: 20px; width: 18px; }
+  /* element ด้านหลังหัวข้อลอยเบา ๆ (ผู้ใช้ 19 พ.ย. 69) · ใช้ property translate/rotate แยกจาก transform เดิม · ปิดเมื่อผู้ใช้ตั้งลดการเคลื่อนไหว */
+  @keyframes deco-float { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -9px; rotate: 5deg; } }
+  @keyframes deco-bob { 0%, 100% { translate: 0 0; } 50% { translate: 4px -6px; } }
+  .greet .deco { animation: deco-float 6s ease-in-out infinite; }
+  .greet .d-star { animation-duration: 7s; animation-delay: -1s; }
+  .greet .d-wave { animation-duration: 5.5s; animation-delay: -2.5s; }
+  .greet .d-dots { animation: deco-bob 6.5s ease-in-out infinite; animation-delay: -3s; }
+  .greet .d-sun { animation-duration: 8s; animation-delay: -4s; }
+  .greet .d-heart { animation-duration: 4.8s; animation-delay: -1.5s; }
+  .greet .d-zig { animation: deco-bob 7s ease-in-out infinite; animation-delay: -2s; }
+  .greet .d-heart2 { animation-duration: 5.2s; animation-delay: -3.5s; }
+  .greet h1 .o::after { animation: deco-bob 8s ease-in-out infinite; animation-delay: -5s; }
+  @media (prefers-reduced-motion: reduce) { .greet .deco, .greet h1 .o::after { animation: none; } }
+  @media (max-width: 639px) { .greet { padding: var(--dim-space-600, 24px) var(--dim-space-600, 24px) var(--dim-space-1200, 48px); } .greet .d-star { top: 8%; } .greet .d-sun { bottom: 12px; } .greet .d-dots, .greet .d-heart2 { display: none; } .greet .d-zig { width: 64px; } }
+  /* ช่องค้นหา = PrimarySearch ของ design system (Figma 2056:4246 · pill 56 · ขอบ 2 brand · เงา brand · ปุ่ม X ตอนพิมพ์ · ผู้ใช้ 17 พ.ย. 69) */
+  .search { position: relative; max-width: 640px; display: flex; align-items: center; gap: var(--dim-space-400, 16px); height: var(--dim-size-1200, 56px); box-sizing: border-box; padding: 0 var(--dim-size-500, 24px); background: var(--surface-search-default, #FFFFFF); border: var(--dim-stroke-200, 2px) solid var(--border-primarysearch-default, #08A768); border-radius: var(--dim-radius-full, 9999px); box-shadow: var(--shadow-primarysearch); cursor: text; transition: border-color 200ms ease-out; }
+  .search:hover { border-color: var(--border-primarysearch-hover, #007549); }
+  .search:focus-within.filled { border-color: var(--border-primarysearch-typing, #007549); }
+  .search > .material-symbols-outlined { flex: none; font-size: 20px; color: var(--icon-primarysearch-default, #08A768); pointer-events: none; }
+  .search:hover > .material-symbols-outlined, .search.filled:focus-within > .material-symbols-outlined { color: var(--icon-primarysearch-hover, #007549); }
+  .search input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; font: inherit; font-size: var(--type-size-sm, 14px); line-height: 1.5; color: var(--text-primarysearch-filled, #4D5358); outline: none; box-shadow: none; -webkit-appearance: none; appearance: none; }
+  .search input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+  .search input::placeholder { color: var(--text-primarysearch-default, #ADB2B7); }
+  .search .s-x { flex: none; display: none; align-items: center; justify-content: center; width: var(--dim-size-800, 40px); height: var(--dim-size-800, 40px); padding: 0; border: 0; border-radius: var(--dim-radius-600, 24px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); cursor: pointer; transition: background-color 150ms ease-out; }
+  .search .s-x:hover { background: var(--surface-brandPrimary-quaternary-hover, #E2F3EB); }
+  .search .s-x .material-symbols-outlined { font-size: 16px; }
+  .search.filled .s-x { display: inline-flex; }
+  @media (max-width: 1023px) { .search .s-x { width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); } }
+  @media (max-width: 767px) { .search input { font-size: var(--type-size-base, 16px); } }  /* iOS ไม่ซูมเมื่อช่องกรอก ≥16px */
   .search-meta { margin: 0; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
   .dash { display: flex; flex-direction: column; gap: var(--dim-space-800, 32px); }
   .dash[hidden], .group[hidden], .card[hidden], .all-h[hidden], .empty[hidden] { display: none; }
@@ -296,12 +336,22 @@
 <main class="page" id="top">
   <header class="hero">
     <div>
-      <h1>เอกสาร PHCIS</h1>
+      <div class="greet">
+        <svg class="deco d-star" viewBox="0 0 40 40" aria-hidden="true"><path fill="#FFFFFF" stroke="#E8E2F4" stroke-width="1" d="M20 2l3.6 8.2 8.7-3.1-3.1 8.7L38 20l-8.8 4.2 3.1 8.7-8.7-3.1L20 38l-3.6-8.2-8.7 3.1 3.1-8.7L2 20l8.8-4.2-3.1-8.7 8.7 3.1z"/></svg>
+        <svg class="deco d-wave" viewBox="0 0 60 40" aria-hidden="true"><g fill="none" stroke="#D7E77A" stroke-width="7" stroke-linecap="round"><path d="M5 12c8-8 14 6 25 0s16-8 25-2"/><path d="M5 30c8-8 14 6 25 0s16-8 25-2"/></g></svg>
+        <svg class="deco d-dots" viewBox="0 0 60 70" aria-hidden="true"><g fill="#C9B8E8"><circle cx="8" cy="6" r="5"/><circle cx="26" cy="8" r="5"/><circle cx="41" cy="18" r="5"/><circle cx="50" cy="34" r="5"/><circle cx="52" cy="52" r="5"/></g></svg>
+        <svg class="deco d-sun" viewBox="0 0 50 50" aria-hidden="true"><g stroke="#F2D06B" stroke-width="4" stroke-linecap="round"><path d="M4 8h9"/><path d="M4 18l9 2"/><path d="M6 28l8 4"/><path d="M11 37l7 6"/><path d="M19 44l5 6"/></g></svg>
+        <svg class="deco d-heart" viewBox="0 0 24 22" aria-hidden="true"><path fill="#EDA6C6" d="M12 21S1 14 1 7.2A5.6 5.6 0 0 1 12 4.6 5.6 5.6 0 0 1 23 7.2C23 14 12 21 12 21z"/></svg>
+        <svg class="deco d-zig" viewBox="0 0 100 30" aria-hidden="true"><path fill="none" stroke="#A9DED6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" d="M5 24L22 8l17 16 17-16 17 16 17-16"/></svg>
+        <svg class="deco d-heart2" viewBox="0 0 24 22" aria-hidden="true"><path fill="#9FB4E6" d="M12 21S1 14 1 7.2A5.6 5.6 0 0 1 12 4.6 5.6 5.6 0 0 1 23 7.2C23 14 12 21 12 21z"/></svg>
+        <h1>Have a g<span class="o">o</span>od day namon.</h1>
+      </div>
       <p class="lede">รวมลิงก์เอกสารที่เปิดดูได้โดยไม่ต้องเข้าระบบ สำหรับทีมออกแบบ BA และนักพัฒนา</p>
     </div>
     <div class="search" role="search">
       <span class="material-symbols-outlined" aria-hidden="true">search</span>
       <input type="search" id="q" placeholder="ค้นหาเอกสาร เช่น ความยินยอม · คิว · TOR" aria-label="ค้นหาเอกสาร" autocomplete="off" />
+      <button type="button" class="s-x" id="q-x" aria-label="ล้างคำค้น"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
     </div>
     <p class="search-meta" id="q-meta" aria-live="polite"></p>
   </header>
@@ -697,6 +747,11 @@
     empty.hidden = !v || hits > 0;
     meta.textContent = v ? 'พบ ' + hits + ' เอกสาร' : '';
   });
+  var sb = q.closest('.search');
+  q.addEventListener('input', function () { sb.classList.toggle('filled', !!q.value); });
+  sb.addEventListener('click', function (e) { if (e.target === sb) q.focus(); });
+  document.getElementById('q-x').addEventListener('mousedown', function (e) { e.preventDefault(); });
+  document.getElementById('q-x').addEventListener('click', function () { q.value = ''; q.dispatchEvent(new Event('input')); q.focus(); });
 })();
 </script>
 <div class="lock-pop" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lock-t">
