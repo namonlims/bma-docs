@@ -24,7 +24,9 @@
   code { overflow-wrap: anywhere; }
   ul { margin: var(--dim-space-300, 12px) 0 0; padding-left: var(--dim-space-500, 20px); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); line-height: 1.6; }
   body.on { display: block; padding: 0; background: transparent; }
-  #studio { display: block; width: 100%; height: 100dvh; border: 0; }
+  #studio { display: block; width: 100%; height: calc(100dvh - var(--dim-size-900, 44px)); border: 0; }
+  #bar { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--dim-space-300, 12px); min-height: var(--dim-size-900, 44px); box-sizing: border-box; padding: 0 var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  #bar a { display: inline-flex; align-items: center; min-height: var(--dim-size-900, 44px); color: var(--text-brandPrimaryButton-default, #007549); }
   /* พื้นหลัง + element ลอย เหมือนหน้าแรก Namon Desk (ผู้ใช้ 19 พ.ย. 69) · สีในลาย = ภาพประกอบ */
   .stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .stage .deco { position: absolute; animation: deco-float 6s ease-in-out infinite; }
@@ -69,6 +71,7 @@
     <div class="act"><a class="btn out" href="index.html">กลับ</a></div>
   </section>
 </main>
+<div id="bar" hidden><span>ถ้าหน้าด้านล่างไม่ขึ้น</span><a id="newtab" href="#" target="_blank" rel="noopener">เปิดในแท็บใหม่ ↗</a></div>
 <iframe id="studio" title="สร้าง ticket" allow="local-network-access; local-network; loopback-network" hidden></iframe>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
@@ -81,7 +84,7 @@ function init() {
   var go = function (cred) {
     document.getElementById('msg').textContent = 'กำลังเปิดหน้าสร้าง ticket…';
     var f = document.getElementById('studio'); f.src = STUDIO + '#token=' + encodeURIComponent(cred);
-    f.hidden = false; document.querySelector('.box').hidden = true; document.body.classList.add('on');
+    f.hidden = false; document.querySelector('.box').hidden = true; document.body.classList.add('on'); document.getElementById('newtab').href = STUDIO + '#token=' + encodeURIComponent(cred); document.getElementById('bar').hidden = false;
     try { sessionStorage.setItem('ticket-cred', cred); } catch (e) {}
   };
   try { var c = sessionStorage.getItem('ticket-cred'); if (c && JSON.parse(atob(c.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000 > Date.now() + 60000) { go(c); return; } } catch (e) {}
