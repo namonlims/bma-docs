@@ -63,12 +63,13 @@
     <ul>
       <li>การตรวจสิทธิ์ทำที่ Studio ในเครื่องเจ้าของ ไม่ได้ทำที่หน้านี้</li>
       <li>ข้อมูล ticket และไฟล์ที่อัปโหลดอยู่ในเครื่อง ไม่อยู่บนเว็บ</li>
+      <li>ถ้า Chrome ถามสิทธิ์เข้าถึงอุปกรณ์ในเครือข่ายภายใน ให้กด <b>อนุญาต</b> (ใช้เปิด Studio ในเครื่องคุณ)</li>
       <li>ถ้าเปิดไม่ติด ให้รัน <code>npm start</code> ใน <code>ticket-studio</code></li>
     </ul>
     <div class="act"><a class="btn out" href="index.html">กลับ</a></div>
   </section>
 </main>
-<iframe id="studio" title="สร้าง ticket" hidden></iframe>
+<iframe id="studio" title="สร้าง ticket" allow="local-network-access; local-network; loopback-network" hidden></iframe>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* Client ID ไม่ใช่ความลับ (ใส่ในหน้าเว็บได้) · ห้ามใส่ Client secret หรืออีเมลที่นี่ */
