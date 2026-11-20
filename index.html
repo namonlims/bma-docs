@@ -160,13 +160,15 @@
   .types dd { margin: 0; color: var(--text-content-default, #363B3F); }
   @media (max-width: 767px) { .types dl { grid-template-columns: 1fr; gap: var(--dim-space-100, 4px); } .types dd { margin-bottom: var(--dim-space-200, 8px); } }
   /* หน้าแรก Namon Playground (ผู้ใช้ 17 พ.ย. 69): พื้นไล่สีแบบหน้าเข้าสู่ระบบ PHCIS (ไม่มีภาพ illus) · ค้นหา · ทางลัด · อัปเดตล่าสุด · หมวดเอกสาร */
-  body:not(.doc-open) .main {
+  /* พื้นขาว · แสงฟุ้งเฉพาะรอบช่องค้นหา (ผู้ใช้ 21 พ.ย. 69) */
+  body:not(.doc-open) .main { background: var(--surface-card-100, #FFFFFF); }
+  .hero { position: relative; overflow-x: clip; isolation: isolate; }
+  .hero .search { position: relative; }
+  .hero .search::before { content: ""; position: absolute; inset: -70px -14% -80px; z-index: -1; border-radius: 50%; pointer-events: none; filter: blur(42px);
     background:
-      radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%),
-      radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%),
-      var(--surface-card-100, #FFFFFF);
-    background-attachment: fixed;
-  }
+      radial-gradient(42% 60% at 30% 50%, rgba(63, 91, 250, 0.34) 0%, rgba(63, 91, 250, 0) 100%),
+      radial-gradient(38% 55% at 70% 45%, rgba(198, 244, 50, 0.42) 0%, rgba(198, 244, 50, 0) 100%),
+      radial-gradient(30% 50% at 52% 70%, rgba(240, 111, 163, 0.22) 0%, rgba(240, 111, 163, 0) 100%); }
   /* หัวหน้าแรก: คำทักกลางจอ ฟอนต์เรขาคณิตหนา + ลายตกแต่งพาสเทล (ภาพอ้างอิง "Hello" · ผู้ใช้ 17 พ.ย. 69) · สีในลาย = ภาพประกอบ (ข้อยกเว้น token) */
   .hero { display: flex; flex-direction: column; align-items: center; gap: var(--dim-space-400, 16px); text-align: center; padding-top: var(--dim-space-600, 24px); }
   .hero .lede { margin-left: auto; margin-right: auto; }
