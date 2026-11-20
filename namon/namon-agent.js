@@ -81,8 +81,8 @@ function animate(R, pose, t) {
   if (pose === 'sleep') { R.extras.forEach((z) => { const k = ((t * 0.5 + z.userData.i * 0.33) % 1); z.position.y = 1.9 + k * 0.7 + z.userData.i * 0.08; z.material.opacity = 1 - k; z.material.transparent = true }) }
 }
 
-export function createNamon(canvas, { pose = 'idle', size = 160, still = false } = {}) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: still })
+export function createNamon(canvas, { pose = 'idle', size = 160, still = false, turn = 0, keep = false, offscreen = false } = {}) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: still || keep })
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); renderer.setSize(size, size, false); renderer.setClearColor(0x000000, 0)
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05; renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -93,14 +93,19 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false }
   Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 20 }); scene.add(key)
   const rim = new THREE.DirectionalLight(0xdbe6ff, 0.6); rim.position.set(4, 3, -3); scene.add(rim)
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: 0.16 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground)
-  let R = build(pose), cur = pose; scene.add(R.root)
+  const holder = new THREE.Group(); holder.rotation.y = turn; scene.add(holder)
+  let R = build(pose), cur = pose; holder.add(R.root)
   const reduce = still || matchMedia('(prefers-reduced-motion: reduce)').matches
   let raf = 0, visible = true, t0 = performance.now()
   const frame = (now) => { animate(R, cur, reduce ? 1.0 : (now - t0) / 1000); renderer.render(scene, cam); if (!reduce && visible) raf = requestAnimationFrame(frame) }
   const io = new IntersectionObserver((es) => { visible = es.some((e) => e.isIntersecting); cancelAnimationFrame(raf); if (visible && !reduce) raf = requestAnimationFrame(frame) }); io.observe(canvas)
-  raf = requestAnimationFrame(frame)
+  if (offscreen) { io.disconnect(); visible = false } else raf = requestAnimationFrame(frame)
   return {
-    setPose(p) { if (!POSES.includes(p) || p === cur) return; scene.remove(R.root); R = build(p); cur = p; scene.add(R.root); if (reduce) requestAnimationFrame(frame) },
+    setPose(p) { if (!POSES.includes(p) || p === cur) return; holder.remove(R.root); R = build(p); cur = p; holder.add(R.root); if (reduce) requestAnimationFrame(frame) },
+    setTurn(r) { holder.rotation.y = r; if (reduce) requestAnimationFrame(frame) },
+    // ภาพนิ่ง ณ เวลา t (วินาที) — คืน canvas ที่วาดแล้ว ใช้ทำ PNG
+    renderAt(tSec = 1) { animate(R, cur, tSec); renderer.render(scene, cam); return canvas },
+    get canvas() { return canvas },
     dispose() { cancelAnimationFrame(raf); io.disconnect(); renderer.dispose(); renderer.forceContextLoss() },
   }
 }
