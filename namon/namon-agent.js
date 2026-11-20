@@ -3,7 +3,7 @@
 // เคารพ prefers-reduced-motion (ภาพนิ่ง) · หยุดวาดเมื่อมองไม่เห็น · ?still=1 = ภาพนิ่งสำหรับถ่ายภาพ
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js'
 
-const C = { body: 0x5CC4C0, shade: 0x4BB3AF, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x3FA39F, leafDark: 0x2B3A55, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432, dabBlue: 0x6FA2FF, dabGreen: 0x7BD8A4, dabPink: 0xF58FB5, dabYellow: 0xFFD66B, wood: 0xE9B98A, metal: 0xC9CED6 }
+const C = { body: 0x5CC4C0, shade: 0x4BB3AF, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x3FA39F, leafDark: 0x2B3A55, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
 export const POSES = ['idle', 'thinking', 'working', 'done', 'waiting', 'sleep']
 const LABEL = { idle: 'Namon พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่' }
 
@@ -15,45 +15,27 @@ function blob(a = 1.06, b = 1.1, n = 2.35, seg = 96) {
   return new THREE.LatheGeometry(pts, 128)
 }
 
-// ทรงจานสี: วงรีมีรอยเว้า + รูนิ้วโป้ง แล้ว extrude ให้หนานุ่มแบบดินเหนียว
-const PAL = { rx: 1.18, ry: 1.0, cy: 1.18, depth: 0.5, bevel: 0.2 }
-export const FRONT = PAL.depth / 2 + PAL.bevel
-function paletteGeo() {
-  const sh = new THREE.Shape(), N = 160
-  for (let i = 0; i <= N; i++) {
-    const a = (i / N) * Math.PI * 2, d = Math.atan2(Math.sin(a - (-0.42)), Math.cos(a - (-0.42)))
-    const k = 1 - 0.13 * Math.exp(-(d * d) / 0.03) + 0.03 * Math.sin(a * 3 + 0.6)
-    const x = Math.cos(a) * PAL.rx * k, y = PAL.cy + Math.sin(a) * PAL.ry * k
-    i ? sh.lineTo(x, y) : sh.moveTo(x, y)
-  }
-  const hole = new THREE.Path(); hole.absellipse(0.42, PAL.cy - 0.42, 0.2, 0.16, 0, Math.PI * 2, true, 0); sh.holes.push(hole)
-  const g = new THREE.ExtrudeGeometry(sh, { depth: PAL.depth, bevelEnabled: true, bevelThickness: PAL.bevel, bevelSize: 0.17, bevelSegments: 10, curveSegments: 96 })
-  g.translate(0, 0, -PAL.depth / 2); g.computeVertexNormals(); return g
-}
 function build(pose) {
   const eyeM = new THREE.MeshPhysicalMaterial({ color: C.eye, roughness: 0.18, clearcoat: 1 }), hiM = new THREE.MeshBasicMaterial({ color: 0xffffff })
   const root = new THREE.Group(), hop = new THREE.Group(), bodyG = new THREE.Group(); root.add(hop); hop.add(bodyG)
   const R = { root, hop, bodyG, eyes: [], extras: [] }
-  const body = mesh(paletteGeo(), clay(C.body)); bodyG.add(body)
-  // หยดสีบนจาน (gimmick)
-  ;[[-0.72, 1.86, 0.17, C.dabBlue], [-0.25, 2.08, 0.14, C.dabGreen], [0.3, 2.05, 0.15, C.dabPink], [0.8, 1.72, 0.13, C.dabYellow], [-0.9, 1.12, 0.12, C.dabPink]].forEach(([x, y, r, col]) => { const d = mesh(new THREE.SphereGeometry(r, 40, 28), clay(col, { roughness: 0.4, clearcoat: 0.6 }), false); d.scale.set(1.15, 0.95, 0.38); d.position.set(x, y, FRONT - 0.02); bodyG.add(d) })
+  const body = mesh(blob(), clay(C.body)); body.scale.set(1, 1, 0.86); bodyG.add(body)
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
     const w = mesh(new THREE.SphereGeometry(0.17, 48, 32), clay(C.white, { roughness: 0.35, clearcoat: 0.3 }), false); w.scale.set(1, 1.08 * squash, 0.5); g.add(w)
     const e = mesh(new THREE.SphereGeometry(0.105, 40, 32), eyeM, false); e.scale.set(1, 1.1 * squash, 0.5); e.position.set(look[0], look[1] * squash, 0.06); g.add(e)
     const h = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), hiM); h.position.set(look[0] + 0.035, look[1] * squash + 0.045 * squash, 0.115); g.add(h)
-    g.position.set(x, 1.38, FRONT - 0.04); g.scale.setScalar(1.25); R.eyes.push(g); return g
+    g.position.set(x, 1.52, 0.9); R.eyes.push(g); return g
   }
-  const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.026, 16, 48, Math.PI), eyeM); t.position.set(x, up ? 1.36 : 1.42, FRONT + 0.02); if (!up) t.rotation.z = Math.PI; return t }
-  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.018, 12, 40, Math.PI), eyeM); t.rotation.z = Math.PI; t.position.set(0.02, 1.16, FRONT + 0.01); return t }
-  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); ch.position.set(sx * 0.52, 1.19, FRONT - 0.02); bodyG.add(ch) }
-  const sprout = new THREE.Group(); sprout.position.set(0.42, 2.02, -0.05)
-  const handle = mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.7, 24), clay(C.wood, { roughness: 0.5 })); handle.position.y = 0.35; sprout.add(handle)
-  const ferrule = mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.16, 24), clay(C.metal, { roughness: 0.3, metalness: 0.5 })); ferrule.position.y = 0.76; sprout.add(ferrule)
-  const tip = mesh(new THREE.ConeGeometry(0.085, 0.26, 24), clay(C.dabPink, { roughness: 0.45 })); tip.position.y = 0.97; sprout.add(tip)
-  sprout.rotation.z = -0.35; bodyG.add(sprout); R.sprout = sprout
-  const arm = (side, rz = 0, rx = 0, y = 1.0) => { const a = mesh(new THREE.CapsuleGeometry(0.17, 0.32, 12, 24), clay(C.shade)); const piv = new THREE.Group(); piv.position.set(side * 1.12, y + 0.05, 0.05); a.position.set(0, -0.22, 0); piv.add(a); piv.rotation.z = side * rz; piv.rotation.x = rx; piv.userData = { side, rz, rx }; return piv }
-  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.SphereGeometry(0.26, 40, 28), clay(C.shade)); f.scale.set(1.15, 0.55, 1.2); f.position.set(sx * 0.5, 0.12, 0.05); root.add(f); feet.push(f) }
+  const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.026, 16, 48, Math.PI), eyeM); t.position.set(x, up ? 1.5 : 1.56, 0.95); if (!up) t.rotation.z = Math.PI; return t }
+  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.018, 12, 40, Math.PI), eyeM); t.rotation.z = Math.PI; t.position.set(0.02, 1.3, 0.97); return t }
+  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); ch.position.set(sx * 0.5, 1.33, 0.86); bodyG.add(ch) }
+  const sprout = new THREE.Group(); sprout.position.set(0.05, 2.32, 0)
+  const stem = mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.22, 20), clay(C.leaf)); stem.position.y = 0.08; sprout.add(stem)
+  const leaf = (col, rz, x) => { const l = mesh(new THREE.SphereGeometry(0.2, 40, 28), clay(col, { roughness: 0.55 })); l.scale.set(1.35, 0.45, 0.7); l.position.set(x, 0.24, 0); l.rotation.z = rz; return l }
+  sprout.add(leaf(C.leaf, 0.55, -0.16), leaf(C.leafDark, -0.6, 0.17)); sprout.rotation.z = -0.15; bodyG.add(sprout); R.sprout = sprout
+  const arm = (side, rz = 0, rx = 0, y = 1.0) => { const a = mesh(new THREE.CapsuleGeometry(0.17, 0.32, 12, 24), clay(C.shade)); const piv = new THREE.Group(); piv.position.set(side * 0.9, y + 0.15, 0.25); a.position.set(0, -0.22, 0); piv.add(a); piv.rotation.z = side * rz; piv.rotation.x = rx; piv.userData = { side, rz, rx }; return piv }
+  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.SphereGeometry(0.26, 40, 28), clay(C.shade)); f.scale.set(1.15, 0.55, 1.2); f.position.set(sx * 0.42, 0.1, 0.18); root.add(f); feet.push(f) }
   R.feet = feet
   let L = arm(-1, 0.35), Rr = arm(1, 0.35)
   if (pose === 'idle') { bodyG.add(eye(-0.24), eye(0.24), mouth()) }
@@ -66,7 +48,7 @@ function build(pose) {
     const pad = new THREE.Group(); pad.add(mesh(new THREE.BoxGeometry(1.1, 0.72, 0.07), clay(0x1A1B22, { roughness: 0.35 })))
     const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.98, 0.6), new THREE.MeshBasicMaterial({ color: C.blue })); scr.position.z = 0.04; pad.add(scr)
     ;[[0.6, 0.15, 0xffffff], [0.4, 0, C.lime], [0.5, -0.15, 0xffffff]].forEach(([w, y, c], i) => { const ln = new THREE.Mesh(new THREE.PlaneGeometry(w, 0.06), new THREE.MeshBasicMaterial({ color: c })); ln.position.set(-0.4 + w / 2, y, 0.045); ln.userData = { w, i }; pad.add(ln); R.extras.push(ln) })
-    pad.position.set(0, 0.85, 0.85); pad.rotation.x = -0.35; hop.add(pad); bodyG.rotation.x = 0.06
+    pad.position.set(0, 0.95, 1.08); pad.rotation.x = -0.35; hop.add(pad); bodyG.rotation.x = 0.06
   }
   if (pose === 'done') { bodyG.add(arcEye(-0.24, true), arcEye(0.24, true), mouth()); Rr = arm(1, 2.6, 0, 1.15) }
   if (pose === 'waiting') {
@@ -87,9 +69,9 @@ function animate(R, pose, t) {
   // หายใจ: ยุบ-ยืดเล็กน้อย
   const sq = pose === 'sleep' ? 0.02 : 0.025
   R.bodyG.scale.y = (pose === 'sleep' ? 0.86 : 1) * (1 + br * sq); R.bodyG.scale.x = (pose === 'sleep' ? 1.08 : 1) * (1 - br * sq * 0.6)
-  R.sprout.rotation.z = -0.35 + s(t * 1.7) * 0.1
+  R.sprout.rotation.z = -0.15 + s(t * 1.7) * 0.12
   // กะพริบตาทุก ~3.2 วินาที
-  const bl = (t % 3.2) < 0.12 ? 0.15 : 1.25; R.eyes.forEach((e) => { e.scale.y = bl })
+  const bl = (t % 3.2) < 0.12 ? 0.12 : 1; R.eyes.forEach((e) => { e.scale.y = bl })
   const swing = (a, amt, sp, ph = 0) => { a.rotation.z = a.userData.side * a.userData.rz + s(t * sp + ph) * amt }
   if (pose === 'idle') { R.hop.position.y = Math.abs(s(t * 2.2)) * 0.05; R.root.rotation.y = -0.32 + s(t * 0.7) * 0.12; swing(R.L, 0.12, 2.2); swing(R.R, 0.12, 2.2, Math.PI) }
   if (pose === 'thinking') { R.root.rotation.y = -0.32 + s(t * 0.6) * 0.08; R.bodyG.rotation.z = 0.06 + s(t * 1.1) * 0.03; R.extras.forEach((d) => { d.position.y = d.userData.base + s(t * 2 + d.userData.i) * 0.06; d.scale.setScalar(0.85 + 0.15 * (0.5 + 0.5 * s(t * 2.5 + d.userData.i))) }) }
@@ -105,7 +87,7 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false }
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05; renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap
   const scene = new THREE.Scene()
-  const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0.9, 1.8, 9.4); cam.lookAt(0, 1.38, 0)
+  const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0.9, 1.6, 8.6); cam.lookAt(0, 1.2, 0)
   scene.add(new THREE.HemisphereLight(0xffffff, 0xcfe0e6, 1.35)); const fill = new THREE.DirectionalLight(0xfff4ea, 0.55); fill.position.set(3, 2, 5); scene.add(fill)
   const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(-3, 6, 4); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8; key.shadow.bias = -0.0004
   Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 20 }); scene.add(key)

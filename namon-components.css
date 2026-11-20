@@ -1,4 +1,4 @@
-/* Namon Desk components — ใช้ร่วมกันทั้ง Ticket Studio และหน้า "สร้าง ticket" ใน bma-docs (ผู้ใช้ 20 พ.ย. 69)
+/* Namon Playground components — ใช้ร่วมกันทั้ง Ticket Studio และหน้า "สร้าง ticket" ใน bma-docs (ผู้ใช้ 20 พ.ย. 69)
    ต้องโหลด namon-tokens.css ก่อน · ทุกค่าอ้าง --nd-* พร้อม fallback เท่าค่าจริง (โหมดสว่าง) · ห้ามใช้ token ของ bma
    คลาสทั้งหมดขึ้นต้น nd- · modifier = nd-<ชื่อ>--<แบบ> */
 

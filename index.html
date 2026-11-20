@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="namon-tokens.css">
 <style>
-  :root { /* Namon Desk: brand primary = ฟ้า (ผู้ใช้ 20 พ.ย. 69) — หน้า portal นี้ใช้ token ฟ้าแทนเขียว bma */
+  :root { /* Namon Playground: brand primary = ฟ้า (ผู้ใช้ 20 พ.ย. 69) — หน้า portal นี้ใช้ token ฟ้าแทนเขียว bma */
     --border-brandPrimary-default: var(--nd-border-brand, #1B5FC1);
     --icon-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
     --text-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
@@ -153,7 +153,7 @@
   .types dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); margin: 0; font-size: var(--type-size-xs, 12px); align-items: center; }
   .types dd { margin: 0; color: var(--text-content-default, #363B3F); }
   @media (max-width: 767px) { .types dl { grid-template-columns: 1fr; gap: var(--dim-space-100, 4px); } .types dd { margin-bottom: var(--dim-space-200, 8px); } }
-  /* หน้าแรก Namon Desk (ผู้ใช้ 17 พ.ย. 69): พื้นไล่สีแบบหน้าเข้าสู่ระบบ PHCIS (ไม่มีภาพ illus) · ค้นหา · ทางลัด · อัปเดตล่าสุด · หมวดเอกสาร */
+  /* หน้าแรก Namon Playground (ผู้ใช้ 17 พ.ย. 69): พื้นไล่สีแบบหน้าเข้าสู่ระบบ PHCIS (ไม่มีภาพ illus) · ค้นหา · ทางลัด · อัปเดตล่าสุด · หมวดเอกสาร */
   body:not(.doc-open) .main {
     background:
       radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%),
@@ -285,6 +285,8 @@
   .side-top { display: flex; align-items: center; gap: var(--dim-space-200, 8px); margin-bottom: var(--dim-space-200, 8px); }
   .side-top .side-brand { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
   .side-logo { display: block; height: var(--dim-size-700, 36px); width: auto; max-width: 100%; }
+  .side-brand-name { display: flex; flex-direction: column; margin-left: var(--dim-space-200, 8px); font-family: 'Fredoka', 'Prompt', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.05; color: #2B2F5E; white-space: nowrap; min-width: 0; }
+  .side-brand-name small { font-size: 14px; font-weight: 600; letter-spacing: 0.3px; color: #5B6B9A; }
   .side-toggle { border-color: transparent; color: var(--icon-content-secondary, #ADB2B7); }
   .side-toggle:hover { background: var(--surface-neutral-tertiary, #F4F5F5); color: var(--text-content-default, #363B3F); }
   .side { transition: width 200ms ease-out, padding 200ms ease-out; }
@@ -327,13 +329,14 @@
   .lock-act .b-fill { background: var(--surface-brandPrimary-default, #007549); border: var(--dim-stroke-100, 1px) solid var(--surface-brandPrimary-default, #007549); color: var(--text-brandPrimaryButton-on-brand, #FFFFFF); }
   .lock-act .b-fill:hover { background: var(--surface-brandPrimary-default-hover, #004C31); }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="shell">
 <nav class="side" id="side" aria-label="เมนูเอกสาร">
   <button type="button" class="icon-btn side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
   <div class="side-top">
-    <a class="side-brand" href="#" aria-label="Namon Desk · หน้าแรก"><img class="side-logo" src="assets/namon-desk-logo.png?v=1" alt="Namon Desk" /></a>
+    <a class="side-brand" href="#" aria-label="Namon Playground · หน้าแรก"><img class="side-logo" src="assets/namon-playground-icon.png?v=1" alt="" /><span class="side-brand-name">Namon<small>Playground</small></span></a>
     <button type="button" class="icon-btn side-toggle" aria-label="ซ่อนเมนู" aria-controls="side" aria-expanded="true" title="ซ่อนเมนู"><span class="material-symbols-outlined" aria-hidden="true">left_panel_close</span></button>
   </div>
   <ul id="side-list"></ul>
@@ -403,13 +406,13 @@
         <p class="card-sum">ประวัติการแก้ component และ token ของ bma</p>
         <span class="card-url">bma-design-system/history<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="namon-design-library.html" data-clinic="Namon Desk" data-icon="palette" data-label="Tokens และ Component" data-sub-icon="widgets">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Namon Desk · Tokens และ Component</span></span>
-        <p class="card-sum">design system ของ Namon Desk (ธีมฟ้า · เขียว · ชมพู · โหมดมืด) แยกจาก bma · token --nd-* · คอมโพเนนต์ nd-*</p>
+      <a class="card" href="namon-design-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="Tokens และ Component" data-sub-icon="widgets">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Namon Playground · Tokens และ Component</span></span>
+        <p class="card-sum">design system ของ Namon Playground (ธีมฟ้า · เขียว · ชมพู · โหมดมืด) แยกจาก bma · token --nd-* · คอมโพเนนต์ nd-*</p>
         <span class="card-url">namon-design-library</span>
       </a>
-      <a class="card" href="namon-ui-library.html" data-clinic="Namon Desk" data-icon="palette" data-label="UI Library" data-sub-icon="grid_view">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">grid_view</span><span class="card-title">Namon Desk · UI Library</span></span>
+      <a class="card" href="namon-ui-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="UI Library" data-sub-icon="grid_view">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">grid_view</span><span class="card-title">Namon Playground · UI Library</span></span>
         <p class="card-sum">ดูคอมโพเนนต์ทีละชิ้น · ตัวอย่างสด · โค้ด HTML คัดลอกได้ · คลาสและ token · โหมดมืด</p>
         <span class="card-url">namon-ui-library</span>
       </a>
@@ -760,7 +763,7 @@
 </div>
 </div>
 <script>
-/* หน้าแรก Namon Desk: ทางลัด · อัปเดตล่าสุด · หมวด · ค้นหา — ดึงจากการ์ดใน section.group ทั้งหมด (การ์ดเป็นแหล่งเดียว) */
+/* หน้าแรก Namon Playground: ทางลัด · อัปเดตล่าสุด · หมวด · ค้นหา — ดึงจากการ์ดใน section.group ทั้งหมด (การ์ดเป็นแหล่งเดียว) */
 (function () {
   var page = document.getElementById('top');
   var secs = [].slice.call(page.querySelectorAll('section.group'));

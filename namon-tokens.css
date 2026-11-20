@@ -1,7 +1,7 @@
-/* Namon Desk design tokens — ของโปรเจกต์ Namon Desk เอง (ไม่ผูกกับ bma/PHCIS · ผู้ใช้ 19 พ.ย. 69)
+/* Namon Playground design tokens — ของโปรเจกต์ Namon Playground เอง (ไม่ผูกกับ bma/PHCIS · ผู้ใช้ 19 พ.ย. 69)
    ธีม: ฟ้า · เขียว · ชมพู (ผู้ใช้ 20 พ.ย. 69) — ฟ้า = แบรนด์/ปุ่มหลัก · เขียว = สำเร็จ/เลือกแล้ว · ชมพู = เน้น/ป้ายพิเศษ
    Source of truth = ไฟล์นี้ · สำเนาใน bma-docs/namon-tokens.css และ ticket-studio/public/namon-tokens.css (npm run sync)
-   ทุกค่าที่หน้า Namon Desk ใช้ต้องอ้างตัวแปร --nd-* พร้อม fallback เท่าค่าจริง (npm run fallbacks) · ข้อยกเว้น: gradient · สีลายตกแต่ง (SVG) */
+   ทุกค่าที่หน้า Namon Playground ใช้ต้องอ้างตัวแปร --nd-* พร้อม fallback เท่าค่าจริง (npm run fallbacks) · ข้อยกเว้น: gradient · สีลายตกแต่ง (SVG) */
 :root {
   /* ── Primitive: ฟ้า (แบรนด์) ── */
   --nd-blue-50:  #F0F7FF;
