@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>วิเคราะห์ผลผู้ใช้จริง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="../../tokens.css" />
+  <link rel="stylesheet" href="ut.css?v=63042483" />
+  <style>
+    /* หน้าวิเคราะห์ผลรวมของเจ้าของ (ผู้ใช้ 20 พ.ย. 69) · ใช้ชิ้นของ Usability Studio (ut.css) · ตัวเลขจาก metrics.js ชุดเดียวกับหน้าผู้ทดสอบ */
+    body { background: var(--surface-neutral-quaternary, #F9FBFB); }
+    .page { max-width: 72rem; margin: 0 auto; padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: var(--dim-space-300, 12px); }
+    .kpi { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+    .kpi b { font-size: var(--type-size-2xl, 24px); font-weight: var(--type-weight-bold, 700); color: var(--text-content-default, #363B3F); font-variant-numeric: tabular-nums; }
+    .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--dim-space-200, 8px); padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px); border: var(--dim-stroke-200, 2px) dashed var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-400, 12px); background: var(--surface-card-100, #FFFFFF); text-align: center; }
+    .drop.is-over { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+    .drop > .ms { font-size: var(--dim-size-800, 40px); color: var(--icon-brandPrimary-default, #007549); }
+    .fix-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
+    .fix-list li { display: grid; grid-template-columns: minmax(8rem, 14rem) minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); align-items: start; }
+    .fix-list .row { gap: var(--dim-space-100, 4px); }
+    .quotes { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+    td.wrap { white-space: normal; min-width: 10rem; }
+    @media (max-width: 639px) { .fix-list li { grid-template-columns: minmax(0, 1fr); } .kpi b { font-size: var(--type-size-xl, 20px); } }
+  </style>
+  <script>
+    (function () {
+      var ready = function () { document.documentElement.classList.add('icons-ready'); };
+      if (!document.fonts || !document.fonts.load) { ready(); return; }
+      var tries = 0;
+      (function poll() { document.fonts.load('20px "Material Symbols Outlined"').then(function (f) { if (f.length) ready(); else if ((tries += 1) < 60) setTimeout(poll, 500); }, function () {}); })();
+    })();
+  </script>
+</head>
+<body>
+  <main class="page stack-lg" id="root"></main>
+  <script src="metrics.js?v=f7119e3a"></script>
+  <script src="analysis.js?v=c4ad7bbb"></script>
+</body>
+</html>
