@@ -36,6 +36,7 @@ export const PROPS = {
   chess: { th: 'หมากรุก', role: 'วางกลยุทธ์' },
   mouse: { th: 'เมาส์', role: 'ทดสอบ usability' },
   flower: { th: 'ดอกไม้', role: 'ขอบคุณ / เสร็จงาน' },
+  board: { th: 'กระดานนำเสนอ', role: 'Presentation' },
 }
 
 // กล่องขอบมน (soft clay) — extrude สี่เหลี่ยมมุมมน + bevel
@@ -66,6 +67,8 @@ function makeProp(id) {
   if (id === 'chess') { const k = M(0x6B5A5A); add(new THREE.CylinderGeometry(0.24, 0.28, 0.12, 32), k, 0, -0.42, 0); add(new THREE.TorusGeometry(0.25, 0.05, 12, 32), k, 0, -0.38, 0, Math.PI / 2); add(new THREE.CylinderGeometry(0.12, 0.22, 0.5, 32), k, 0, -0.12, 0); add(new THREE.SphereGeometry(0.17, 24, 18), k, 0, 0.2, 0); cap(0.045, 0.12, 0x6B5A5A, 0, 0.44, 0); cap(0.045, 0.1, 0x6B5A5A, 0, 0.46, 0, Math.PI / 2) }
   if (id === 'mouse') { const mo = add(new THREE.SphereGeometry(0.25, 32, 24), M(0xF7F7FA), 0, 0, 0); mo.scale.set(0.82, 1.2, 0.6); add(rbox(0.035, 0.14, 0.06, 0.015), M(0xC9CED6), 0, 0.17, 0.14); add(new THREE.TorusGeometry(0.2, 0.025, 10, 24, Math.PI), M(0xC9CED6), 0.18, 0.28, 0) }
   if (id === 'flower') { cap(0.035, 0.7, 0x86C25A, 0, -0.1, 0); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(new THREE.SphereGeometry(0.11, 24, 16), M(0xF7A3C2), Math.cos(a) * 0.14, 0.38 + Math.sin(a) * 0.14, 0).scale.set(1, 1, 0.55) } add(new THREE.SphereGeometry(0.09, 20, 14), M(0xFFDA77), 0, 0.38, 0.04); add(new THREE.SphereGeometry(0.1, 16, 12), M(0x9AD36A), 0.12, -0.05, 0).scale.set(1.6, 0.6, 0.45) }
+  // กระดานนำเสนอ: จอขอบมน + กราฟแท่ง 3 สี + ขาตั้ง (เมนู Presentation · ผู้ใช้ 21 พ.ย. 69 "ไมค์ดูไม่ออก")
+  if (id === 'board') { add(rbox(0.86, 0.6, 0.1, 0.06), M(0x7C8CF8), 0, 0.12, 0); add(rbox(0.74, 0.48, 0.06, 0.04), M(0xFFF8EE), 0, 0.12, 0.04); [[-0.2, 0.16, 0xF28FB2], [0, 0.26, 0x3FB98A], [0.2, 0.34, 0x4A57C9]].forEach(([x, h, c]) => add(rbox(0.13, h, 0.06, 0.03), M(c), x, -0.1 + h / 2, 0.08)); cap(0.04, 0.34, 0x4A57C9, -0.24, -0.36, -0.04, -0.35); cap(0.04, 0.34, 0x4A57C9, 0.24, -0.36, -0.04, 0.35) }
   if (id === 'house') { add(rbox(0.66, 0.5, 0.52, 0.09), M(0xFFF1DC), 0, -0.13, 0); add(rtri(0.86, 0.42, 0.6, 0.06), M(0xF28FB2), 0, 0.1, 0); add(rbox(0.17, 0.26, 0.06, 0.04), M(0x7C8CF8), 0, -0.25, 0.27); add(rbox(0.14, 0.14, 0.05, 0.03), M(0xC6F432), 0.19, -0.07, 0.27) }
   return g
 }
@@ -79,10 +82,10 @@ function build(pose, prop) {
   // ตาจุดดำ (ไม่มีตาขาว) ตามภาพอ้างอิง 21 พ.ย. 69
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
-    // ตาน่ารัก: วงรีดำเงา สูงกว่ากว้าง + ประกายใหญ่/เล็ก 2 จุด (ผู้ใช้ 21 พ.ย. 69)
-    const e = mesh(new THREE.SphereGeometry(0.1, 40, 32), new THREE.MeshPhysicalMaterial({ color: 0x14152A, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }), false); e.scale.set(0.92, 1.28 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.02); g.add(e)
-    const h1 = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 12), hiM); h1.position.set(look[0] * 0.5 + 0.03, look[1] * 0.5 * squash + 0.05 * squash, 0.065); g.add(h1)
-    const h2 = new THREE.Mesh(new THREE.SphereGeometry(0.016, 12, 10), hiM); h2.position.set(look[0] * 0.5 - 0.03, look[1] * 0.5 * squash - 0.045 * squash, 0.06); g.add(h2)
+    // ตาแบบเดิม: จุดดำมีขอบขาว + ประกาย 1 จุด (ผู้ใช้ 21 พ.ย. 69 "ปรับตากลับมาแบบเดิม") · ยังแปะบนผิวตัว
+    const rim = mesh(new THREE.SphereGeometry(0.118, 40, 32), clay(C.white, { roughness: 0.35 }), false); rim.scale.set(1, 1.05 * squash, 0.4); g.add(rim)
+    const e = mesh(new THREE.SphereGeometry(0.096, 40, 32), eyeM, false); e.scale.set(1, 1.05 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.025); g.add(e)
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.03, 14, 10), hiM); h.position.set(look[0] * 0.5 + 0.035, look[1] * 0.5 * squash + 0.04 * squash, 0.07); g.add(h)
     onSurface(g, x * 1.05, 1.98, -0.01); R.eyes.push(g); return g
   }
   const arcEye = (x, up = true) => { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.024, 16, 48, Math.PI), eyeM); if (!up) t.rotation.z = Math.PI; g.add(t); onSurface(g, x * 1.05, up ? 1.95 : 2.0, 0.005); return g }
