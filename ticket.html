@@ -39,6 +39,7 @@
   :root[data-theme="dark"] body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); }
   [hidden] { display: none !important; }
 </style>
+<script type="module" src="namon/namon-agent.js"></script>
 </head>
 <body class="nd-root">
 <div class="stage" aria-hidden="true">
@@ -53,6 +54,7 @@
 </div>
 <main class="nd-card nd-card--raised nd-card--page">
   <section id="signin">
+    <namon-agent pose="waiting" size="112" label="Namon รอคุณเข้าสู่ระบบ" style="display:block;margin:0 auto 4px"></namon-agent>
     <h1 class="nd-title">สร้าง ticket</h1>
     <p class="nd-summary" id="msg">เข้าสู่ระบบด้วยบัญชี Google ของเจ้าของ แล้วหน้าสร้าง ticket จะแสดงที่นี่</p>
     <div id="gbtn" style="margin-top:var(--nd-space-400,16px);min-height:44px"></div>
