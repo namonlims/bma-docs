@@ -672,6 +672,18 @@
     </div>
   </section>
 
+  <section class="group" aria-labelledby="g-pres" data-nav-solo>
+    <div class="group-head">
+      <h2 id="g-pres">Presentation</h2>
+      <p>สไลด์นำเสนอผลงาน · เปิดได้เฉพาะบัญชี Google ของเจ้าของ</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="presentation.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">slideshow</span><span class="card-title">Presentation</span></span>
+      </a>
+    </div>
+  </section>
+
   <section class="group" aria-labelledby="g-ut">
     <div class="group-head">
       <h2 id="g-ut">Usability testing</h2>
@@ -747,7 +759,7 @@
   var page = document.getElementById('top');
   var secs = [].slice.call(page.querySelectorAll('section.group'));
   var cards = [].slice.call(page.querySelectorAll('section.group .cards:not([hidden]) a.card'));
-  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-app': 'desktop_windows' };
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-app': 'desktop_windows' };
   var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
   var info = function (c) {
@@ -830,7 +842,7 @@
   side.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
   document.querySelector('.scrim').addEventListener('click', function () { setOpen(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
-  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-app': 'desktop_windows' };
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-app': 'desktop_windows' };
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
   var isLocal = function (href) { var u = new URL(href, location.href); return u.origin === location.origin; };
   var rel = function (href) { var u = new URL(href, location.href); var base = location.pathname.replace(/[^/]*$/, ''); return u.pathname.indexOf(base) === 0 && u.origin === location.origin ? u.pathname.slice(base.length) + u.hash : u.href; };
