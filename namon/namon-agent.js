@@ -46,10 +46,12 @@ function makeProp(id) {
   if (id === 'chess') { const k = M(0x3B2A2A); add(new THREE.CylinderGeometry(0.24, 0.28, 0.12, 32), k, 0, -0.42, 0); add(new THREE.CylinderGeometry(0.12, 0.22, 0.5, 32), k, 0, -0.12, 0); add(new THREE.SphereGeometry(0.16, 24, 18), k, 0, 0.2, 0); add(new THREE.BoxGeometry(0.06, 0.2, 0.06), k, 0, 0.42, 0); add(new THREE.BoxGeometry(0.16, 0.06, 0.06), k, 0, 0.44, 0) }
   if (id === 'mouse') { const mo = add(new THREE.SphereGeometry(0.25, 32, 24), M(0xF4F4F6), 0, 0, 0); mo.scale.set(0.8, 1.2, 0.55); add(new THREE.BoxGeometry(0.02, 0.14, 0.05), M(0xC9CED6), 0, 0.17, 0.13); add(new THREE.TorusGeometry(0.2, 0.015, 8, 24, Math.PI), M(0xC9CED6), 0.18, 0.28, 0) }
   if (id === 'flower') { add(new THREE.CylinderGeometry(0.025, 0.03, 0.8, 12), M(0x6BAE3C), 0, -0.1, 0); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(new THREE.SphereGeometry(0.1, 20, 14), M(0xF58FB5), Math.cos(a) * 0.13, 0.36 + Math.sin(a) * 0.13, 0).scale.set(1, 1, 0.45) } add(new THREE.SphereGeometry(0.08, 20, 14), M(0xFFD66B), 0, 0.36, 0.03); add(new THREE.SphereGeometry(0.09, 16, 12), M(0x7BC24A), 0.1, -0.05, 0).scale.set(1.6, 0.6, 0.4) }
+  if (id === 'house') { add(new THREE.BoxGeometry(0.62, 0.46, 0.5), M(0xFFF3E2), 0, -0.12, 0); const roof = add(new THREE.ConeGeometry(0.55, 0.36, 4), M(0xE0607E), 0, 0.29, 0, 0, Math.PI / 4, 0); roof.scale.set(1, 1, 0.8); add(new THREE.BoxGeometry(0.16, 0.26, 0.04), M(0x5C7BFF), 0, -0.22, 0.26); add(new THREE.BoxGeometry(0.13, 0.13, 0.03), M(0xC6F432), 0.18, -0.06, 0.26) }
   return g
 }
 
 function build(pose, prop) {
+  if (pose === 'object') { const root = new THREE.Group(), hop = new THREE.Group(); root.add(hop); const pr = makeProp(prop || 'house'); pr.position.set(0, 1.45, 0); pr.scale.setScalar(2.5); pr.rotation.y = 0.35; hop.add(pr); return { root, hop, bodyG: hop, eyes: [], extras: [], feet: [], sprout: hop, L: hop, R: hop, prop: pr, object: true } }
   const eyeM = new THREE.MeshPhysicalMaterial({ color: C.eye, roughness: 0.18, clearcoat: 1 }), hiM = new THREE.MeshBasicMaterial({ color: 0xffffff })
   const root = new THREE.Group(), hop = new THREE.Group(), bodyG = new THREE.Group(); root.add(hop); hop.add(bodyG)
   const R = { root, hop, bodyG, eyes: [], extras: [] }
@@ -107,6 +109,7 @@ function build(pose, prop) {
 }
 
 function animate(R, pose, t) {
+  if (R.object) { R.hop.position.y = Math.sin(t * 2) * 0.05; R.prop.rotation.y = 0.35 + Math.sin(t * 0.9) * 0.15; return }
   const s = Math.sin, br = s(t * 2.2)
   // หายใจ: ยุบ-ยืดเล็กน้อย
   const sq = pose === 'sleep' ? 0.02 : 0.025

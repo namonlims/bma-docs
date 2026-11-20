@@ -15,6 +15,7 @@
   code { overflow-wrap: anywhere; }
   ul { margin: var(--nd-space-300,12px) 0 0; padding-left: var(--nd-space-500,20px); color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.6; }
   body.on { display: block; padding: 0; background: transparent; }
+  body.on .deco, body.on .stage { display: none; } /* หลังเข้าสู่ระบบ ลายตกแต่งไม่ทับหน้า Studio (ผู้ใช้ 21 พ.ย. 69) */
   #studio { display: block; width: 100%; height: 100dvh; border: 0; }
   /* พื้นหลัง + element ลอย เหมือนหน้าแรก Namon Playground (ผู้ใช้ 19 พ.ย. 69) · สีในลาย = ภาพประกอบ */
   .stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }

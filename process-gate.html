@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>กระบวนการทำงานร่วมกับ AI agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-components.css">
+<style>
+  body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: var(--nd-space-400,16px); background: radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%), var(--nd-surface-card,#FFFFFF); background-attachment: fixed; color: var(--nd-text-default,#363B3F); font-family: var(--nd-type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--nd-type-size-sm,14px); }
+  .act { display: flex; flex-wrap: wrap; gap: var(--nd-space-200,8px); justify-content: flex-end; margin-top: var(--nd-space-400,16px); }
+  code { overflow-wrap: anywhere; }
+  ul { margin: var(--nd-space-300,12px) 0 0; padding-left: var(--nd-space-500,20px); color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.6; }
+  body.on { display: block; padding: 0; background: transparent; }
+  body.on .deco, body.on .stage { display: none; } /* หลังเข้าสู่ระบบ ลายตกแต่งไม่ทับหน้า Studio (ผู้ใช้ 21 พ.ย. 69) */
+  #studio { display: block; width: 100%; height: 100dvh; border: 0; }
+  /* พื้นหลัง + element ลอย เหมือนหน้าแรก Namon Playground (ผู้ใช้ 19 พ.ย. 69) · สีในลาย = ภาพประกอบ */
+  .stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .stage .deco { position: absolute; animation: deco-float 6s ease-in-out infinite; }
+  .stage .d-star { left: 9%; top: 16%; width: 30px; animation-duration: 7s; animation-delay: -1s; }
+  .stage .d-wave { left: 38%; top: 9%; width: 52px; animation-duration: 5.5s; animation-delay: -2.5s; }
+  .stage .d-dots { right: 7%; top: 12%; width: 54px; animation: deco-bob 6.5s ease-in-out infinite; animation-delay: -3s; }
+  .stage .d-sun { left: 7%; bottom: 20%; width: 46px; animation-duration: 8s; animation-delay: -4s; }
+  .stage .d-heart { left: 24%; bottom: 26%; width: 22px; animation-duration: 4.8s; animation-delay: -1.5s; }
+  .stage .d-zig { left: 46%; bottom: 12%; width: 92px; animation: deco-bob 7s ease-in-out infinite; animation-delay: -2s; }
+  .stage .d-heart2 { right: 17%; bottom: 24%; width: 18px; animation-duration: 5.2s; animation-delay: -3.5s; }
+  .stage .d-ring { right: 26%; top: 24%; width: 56px; height: 56px; box-sizing: border-box; border: 5px solid #F4B9A0; border-radius: 50%; animation: deco-bob 8s ease-in-out infinite; animation-delay: -5s; }
+  @keyframes deco-float { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -9px; rotate: 5deg; } }
+  @keyframes deco-bob { 0%, 100% { translate: 0 0; } 50% { translate: 4px -6px; } }
+  @media (max-width: 639px) { .stage .d-dots, .stage .d-heart2, .stage .d-ring { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage .deco { animation: none; } }
+  .nd-card--page, #studio { position: relative; z-index: 1; }
+  .nd-card--page { width: min(440px, 100%); padding: var(--nd-space-600, 24px); }
+  .nd-card--page .nd-summary { margin-top: var(--nd-space-200, 8px); line-height: 1.5; }
+  /* พื้นหลังไล่สี (ข้อยกเว้น gradient) · โหมดมืด = พื้นมืด + แสงเขียวจาง */
+  @media (prefers-color-scheme: dark) { body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); } }
+  :root[data-theme="dark"] body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); }
+  [hidden] { display: none !important; }
+</style>
+<script type="module" src="namon/namon-agent.js"></script>
+</head>
+<body class="nd-root">
+<div class="stage" aria-hidden="true">
+  <svg class="deco d-star" viewBox="0 0 40 40" aria-hidden="true"><path fill="#FFFFFF" stroke="#E8E2F4" stroke-width="1" d="M20 2l3.6 8.2 8.7-3.1-3.1 8.7L38 20l-8.8 4.2 3.1 8.7-8.7-3.1L20 38l-3.6-8.2-8.7 3.1 3.1-8.7L2 20l8.8-4.2-3.1-8.7 8.7 3.1z"/></svg>
+  <svg class="deco d-wave" viewBox="0 0 60 40" aria-hidden="true"><g fill="none" stroke="#D7E77A" stroke-width="7" stroke-linecap="round"><path d="M5 12c8-8 14 6 25 0s16-8 25-2"/><path d="M5 30c8-8 14 6 25 0s16-8 25-2"/></g></svg>
+  <svg class="deco d-dots" viewBox="0 0 60 70" aria-hidden="true"><g fill="#C9B8E8"><circle cx="8" cy="6" r="5"/><circle cx="26" cy="8" r="5"/><circle cx="41" cy="18" r="5"/><circle cx="50" cy="34" r="5"/><circle cx="52" cy="52" r="5"/></g></svg>
+  <svg class="deco d-sun" viewBox="0 0 50 50" aria-hidden="true"><g stroke="#F2D06B" stroke-width="4" stroke-linecap="round"><path d="M4 8h9"/><path d="M4 18l9 2"/><path d="M6 28l8 4"/><path d="M11 37l7 6"/><path d="M19 44l5 6"/></g></svg>
+  <svg class="deco d-heart" viewBox="0 0 24 22" aria-hidden="true"><path fill="#EDA6C6" d="M12 21S1 14 1 7.2A5.6 5.6 0 0 1 12 4.6 5.6 5.6 0 0 1 23 7.2C23 14 12 21 12 21z"/></svg>
+  <svg class="deco d-zig" viewBox="0 0 100 30" aria-hidden="true"><path fill="none" stroke="#A9DED6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" d="M5 24L22 8l17 16 17-16 17 16 17-16"/></svg>
+  <svg class="deco d-heart2" viewBox="0 0 24 22" aria-hidden="true"><path fill="#9FB4E6" d="M12 21S1 14 1 7.2A5.6 5.6 0 0 1 12 4.6 5.6 5.6 0 0 1 23 7.2C23 14 12 21 12 21z"/></svg>
+  <span class="deco d-ring"></span>
+</div>
+<main class="nd-card nd-card--raised nd-card--page">
+  <section id="signin">
+    <namon-agent pose="waiting" size="112" label="Namon รอคุณเข้าสู่ระบบ" style="display:block;margin:0 auto 4px"></namon-agent>
+    <h1 class="nd-title">กระบวนการทำงานร่วมกับ AI agent</h1>
+    <p class="nd-summary" id="msg">เข้าสู่ระบบด้วยบัญชี Google ของเจ้าของ แล้วหน้า กระบวนการทำงานร่วมกับ AI agent จะแสดงที่นี่</p>
+    <div id="gbtn" style="margin-top:var(--nd-space-400,16px);min-height:44px"></div>
+    <ul>
+      <li>การตรวจสิทธิ์ทำที่ Studio ในเครื่องเจ้าของ ไม่ได้ทำที่หน้านี้</li>
+      <li>ข้อมูล ticket และไฟล์ที่อัปโหลดอยู่ในเครื่อง ไม่อยู่บนเว็บ</li>
+      <li>ถ้า Chrome ถามสิทธิ์เข้าถึงอุปกรณ์ในเครือข่ายภายใน ให้กด <b>อนุญาต</b> (ใช้เปิด Studio ในเครื่องคุณ)</li>
+      <li>ถ้าเปิดไม่ติด ให้รัน <code>npm start</code> ใน <code>ticket-studio</code></li>
+    </ul>
+    <div class="act"><a class="nd-btn" href="index.html">กลับ</a></div>
+  </section>
+</main>
+<iframe id="studio" title="กระบวนการทำงานร่วมกับ AI agent" allow="local-network-access; local-network; loopback-network; fullscreen" hidden></iframe>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+/* Client ID ไม่ใช่ความลับ (ใส่ในหน้าเว็บได้) · ห้ามใส่ Client secret หรืออีเมลที่นี่ */
+var GOOGLE_CLIENT_ID = '815797516574-00m2cmpb25fkl2ip9cecqmpfogt5952l.apps.googleusercontent.com';
+var STUDIO = 'http://127.0.0.1:4400/';
+function init() {
+  if (!GOOGLE_CLIENT_ID) { document.getElementById('msg').textContent = 'ยังไม่ได้ตั้ง Google Client ID'; return; }
+  if (!window.google || !google.accounts) { return setTimeout(init, 200); }
+  var go = function (cred) {
+    document.getElementById('msg').textContent = 'กำลังเปิดหน้าสร้าง ticket…';
+    var f = document.getElementById('studio'); f.src = STUDIO + '#token=' + encodeURIComponent(cred) + '&tab=doc&doc=process';
+    f.hidden = false; document.querySelector('.nd-card--page').hidden = true; document.body.classList.add('on'); 
+    try { sessionStorage.setItem('ticket-cred', cred); } catch (e) {}
+  };
+  try { var c = sessionStorage.getItem('ticket-cred'); if (c && JSON.parse(atob(c.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000 > Date.now() + 60000) { go(c); return; } } catch (e) {}
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: function (r) { go(r.credential); } });
+  google.accounts.id.renderButton(document.getElementById('gbtn'), { theme: 'outline', size: 'large', text: 'signin_with', locale: 'th' });
+}
+init();
+</script>
+</body>
+</html>
