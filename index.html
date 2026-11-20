@@ -10,7 +10,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="namon-tokens.css">
 <style>
+  :root { /* Namon Desk: brand primary = ฟ้า (ผู้ใช้ 20 พ.ย. 69) — หน้า portal นี้ใช้ token ฟ้าแทนเขียว bma */
+    --border-brandPrimary-default: var(--nd-border-brand, #1B5FC1);
+    --icon-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
+    --text-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
+    --surface-brandPrimary-default: var(--nd-surface-brand, #1B5FC1);
+    --surface-brandPrimary-default-hover: var(--nd-surface-brand-hover, #164C9D);
+    --surface-brandPrimary-quaternary: var(--nd-surface-brand-quiet, #F0F7FF);
+    --surface-brandPrimary-quaternary-hover: var(--nd-surface-brand-quiet, #F0F7FF);
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -253,15 +263,15 @@
   .grp-items[hidden], .cards[hidden] { display: none; }
   .side a.nav { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-200, 8px); color: var(--text-content-secondary, #636B72); text-decoration: none; font-size: var(--type-size-sm, 14px); line-height: 1.4; }
   .grp-items a.nav { padding-left: calc(var(--dim-space-300, 12px) + 28px); }
-  .side a.nav:hover { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-content-default, #363B3F); }
-  .side a.nav.is-active { background: var(--surface-brandPrimary-quaternary, #F4FBF8); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
+  .side a.nav:hover { background: var(--nd-surface-brand-quiet, #EAF2FD); color: var(--text-content-default, #363B3F); }
+  .side a.nav.is-active { background: var(--nd-surface-brand-quiet, #EAF2FD); color: var(--nd-text-brand, #1B5FC1); font-weight: var(--type-weight-medium, 500); }
   .side .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
-  .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--icon-brandPrimary-default, #007549); }
+  .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--nd-text-brand, #1B5FC1); }
   .side a.nav .ext { margin-left: auto; font-size: 16px; }
   .side .sub-h { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-800, 40px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
   .side .sub > ul { padding-left: var(--dim-space-600, 24px); }
   .side .sub > ul a.nav { min-height: var(--dim-size-800, 40px); font-size: var(--type-size-xs, 12px); }
-  .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-default, #007549); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
+  .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--nd-border-brand, #1B5FC1); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
   .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
   .main .page { margin: 0; max-width: 1120px; }
   .doc { display: block; flex: 1 1 auto; width: 100%; height: 100dvh; border: 0; background: var(--surface-card-100, #FFFFFF); }
