@@ -3,7 +3,7 @@
 // เคารพ prefers-reduced-motion (ภาพนิ่ง) · หยุดวาดเมื่อมองไม่เห็น · ?still=1 = ภาพนิ่งสำหรับถ่ายภาพ
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js'
 
-const C = { body: 0x5470FB, shade: 0x3F5BFA, clover: 0xC6F432, cloverDark: 0x9CCB1C, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x9CCB1C, leafDark: 0xC6F432, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
+const C = { body: 0x5C7BFF, shade: 0x4A68FF, clover: 0xC6F432, cloverDark: 0x9CCB1C, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x9CCB1C, leafDark: 0xC6F432, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
 export const POSES = ['idle', 'thinking', 'working', 'done', 'waiting', 'sleep']
 const LABEL = { idle: 'Namon เดินเล่น พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่' }
 
@@ -20,22 +20,23 @@ function build(pose) {
   const root = new THREE.Group(), hop = new THREE.Group(), bodyG = new THREE.Group(); root.add(hop); hop.add(bodyG)
   const R = { root, hop, bodyG, eyes: [], extras: [] }
   const body = mesh(blob(), clay(C.body)); body.scale.set(1, 1, 0.86); bodyG.add(body)
+  // ตาจุดดำ (ไม่มีตาขาว) ตามภาพอ้างอิง 21 พ.ย. 69
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
-    const w = mesh(new THREE.SphereGeometry(0.17, 48, 32), clay(C.white, { roughness: 0.35, clearcoat: 0.3 }), false); w.scale.set(1, 1.08 * squash, 0.5); g.add(w)
-    const e = mesh(new THREE.SphereGeometry(0.105, 40, 32), eyeM, false); e.scale.set(1, 1.1 * squash, 0.5); e.position.set(look[0], look[1] * squash, 0.06); g.add(e)
-    const h = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), hiM); h.position.set(look[0] + 0.035, look[1] * squash + 0.045 * squash, 0.115); g.add(h)
-    g.position.set(x, 1.52, 0.9); R.eyes.push(g); return g
+    const e = mesh(new THREE.SphereGeometry(0.095, 40, 32), eyeM, false); e.scale.set(1, 1.05 * squash, 0.45); e.position.set(look[0] * 0.6, look[1] * 0.6 * squash, 0.02); g.add(e)
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 10), hiM); h.position.set(look[0] * 0.6 + 0.03, look[1] * 0.6 * squash + 0.035 * squash, 0.065); g.add(h)
+    g.position.set(x * 1.45, 1.52, 0.92); R.eyes.push(g); return g
   }
-  const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.026, 16, 48, Math.PI), eyeM); t.position.set(x, up ? 1.5 : 1.56, 0.95); if (!up) t.rotation.z = Math.PI; return t }
-  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.018, 12, 40, Math.PI), eyeM); t.rotation.z = Math.PI; t.position.set(0.02, 1.3, 0.97); return t }
+  const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.024, 16, 48, Math.PI), eyeM); t.position.set(x * 1.45, up ? 1.49 : 1.55, 0.95); if (!up) t.rotation.z = Math.PI; return t }
+  // ปากขีดสั้น หางงอนสองข้าง
+  const mouth = () => { const g = new THREE.Group(); const bar = new THREE.Mesh(new THREE.CapsuleGeometry(0.016, 0.1, 6, 12), eyeM); bar.rotation.z = Math.PI / 2; g.add(bar); for (const sx of [-1, 1]) { const tk = new THREE.Mesh(new THREE.CapsuleGeometry(0.015, 0.035, 6, 12), eyeM); tk.position.set(sx * 0.066, 0.026, 0); g.add(tk) } g.position.set(0.02, 1.38, 0.99); return g }
   for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); ch.position.set(sx * 0.5, 1.33, 0.86); bodyG.add(ch) }
   // ใบโคลเวอร์ 4 แฉก (หัวใจ) สีเขียวมะนาว
   const sprout = new THREE.Group(); sprout.position.set(0.05, 2.17, 0)
-  const stem = mesh(new THREE.CylinderGeometry(0.03, 0.045, 0.36, 20), clay(C.cloverDark)); stem.position.y = 0.16; stem.rotation.z = 0.1; sprout.add(stem)
+  const stem = mesh(new THREE.CylinderGeometry(0.028, 0.04, 0.56, 20), clay(C.cloverDark)); stem.position.set(0.03, 0.26, 0); stem.rotation.z = -0.1; sprout.add(stem)
   const heart = new THREE.Shape(); heart.moveTo(0, 0); heart.bezierCurveTo(-0.02, 0.1, -0.2, 0.16, -0.2, 0.3); heart.bezierCurveTo(-0.2, 0.42, -0.06, 0.45, 0, 0.36); heart.bezierCurveTo(0.06, 0.45, 0.2, 0.42, 0.2, 0.3); heart.bezierCurveTo(0.2, 0.16, 0.02, 0.1, 0, 0)
   const heartGeo = new THREE.ExtrudeGeometry(heart, { depth: 0.04, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 6, curveSegments: 24 }); heartGeo.translate(0, 0, -0.02)
-  const head = new THREE.Group(); head.position.set(0.04, 0.36, 0.02); head.rotation.x = -0.1; head.scale.setScalar(0.72)
+  const head = new THREE.Group(); head.position.set(0.06, 0.6, 0.02); head.rotation.x = -0.08; head.scale.setScalar(0.72)
   ;[0, 1, 2, 3].forEach((i) => { const lf = mesh(heartGeo, clay(i % 2 ? C.clover : 0xA9D61F, { roughness: 0.5 })); const pv = new THREE.Group(); pv.rotation.z = (i * Math.PI) / 2 + Math.PI / 4; lf.position.y = 0.03; lf.rotation.x = 0.12; pv.add(lf); head.add(pv) })
   const dot = mesh(new THREE.SphereGeometry(0.045, 16, 12), clay(C.cloverDark)); head.add(dot)
   sprout.add(head); bodyG.add(sprout); R.sprout = sprout
@@ -102,7 +103,7 @@ function shared(px) {
   if (!SH) {
     const c = document.createElement('canvas')
     const r = new THREE.WebGLRenderer({ canvas: c, antialias: true, alpha: true, preserveDrawingBuffer: true })
-    r.setPixelRatio(1); r.setClearColor(0x000000, 0); r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05; r.outputColorSpace = THREE.SRGBColorSpace
+    r.setPixelRatio(1); r.setClearColor(0x000000, 0); r.toneMapping = THREE.LinearToneMapping; r.toneMappingExposure = 1.0; r.outputColorSpace = THREE.SRGBColorSpace
     r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.setScissorTest(true); r.autoClear = false
     SH = { r, c, w: 0 }
   }
@@ -122,7 +123,7 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false, 
   canvas.width = px; canvas.height = px
   const ctx = canvas.getContext('2d')
   const scene = new THREE.Scene()
-  const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0.9, 1.6, 8.6); cam.lookAt(0, 1.2, 0)
+  const cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0.9, 1.8, 9.4); cam.lookAt(0, 1.42, 0)
   scene.add(new THREE.HemisphereLight(0xffffff, 0xcfe0e6, 1.35)); const fill = new THREE.DirectionalLight(0xfff4ea, 0.55); fill.position.set(3, 2, 5); scene.add(fill)
   const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(-2, 9, 4); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8; key.shadow.bias = -0.0004
   Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 20 }); scene.add(key)
