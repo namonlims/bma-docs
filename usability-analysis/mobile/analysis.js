@@ -83,7 +83,7 @@
     const kpis = h('section', { class: 'kpis', 'aria-label': 'ภาพรวม' },
       kpi('อัตราสำเร็จ', M.pct(o.success), `95% CI ${ci(o.successCI)}`, M.level.success(o.success)),
       kpi('สำเร็จตรงทาง', M.pct(o.direct), 'ไม่แตะเกิน · ไม่แตะพลาด'),
-      kpi('ความง่าย SEQ', `${M.fix(o.seq)}/7`, o.seq >= M.SEQ_AVG ? 'สูงกว่าค่าเฉลี่ย 5.5' : 'ต่ำกว่าค่าเฉลี่ย 5.5', M.level.seq(o.seq)),
+      kpi('ความง่าย SEQ', `${M.fix(o.seq)}/7`, `${M.vs(o.seq, M.SEQ_AVG)}ค่าเฉลี่ย 5.5`, M.level.seq(o.seq)),
       kpi('แตะพลาด', M.pct(o.misclick), 'ของการแตะทั้งหมด', M.level.misclick(o.misclick)),
       kpi(`SUS (${o.susN} คน)`, M.fix(o.sus), o.sus == null ? 'ยังไม่มีคนตอบครบ' : `เกรด ${o.susGrade} · ${o.susWord}`, M.level.sus(o.sus)));
 

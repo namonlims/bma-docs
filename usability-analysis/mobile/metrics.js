@@ -112,5 +112,7 @@
   const fix = (v, d = 1) => (v == null ? '–' : (Math.round(v * 10 ** d) / 10 ** d).toFixed(d).replace(/\.0+$/, ''));
   const secs = (v) => (v == null ? '–' : v >= 60 ? `${Math.floor(v / 60)} น. ${Math.round(v % 60)} วิ` : `${Math.round(v)} วิ`);
 
-  root.UTMetrics = { SEQ_AVG, SUCCESS_AVG, SUS_AVG, avg, median, susScore, susGrade, susWord, waldCI, sessions, taskStats, overview, findings, level, pct, fix, secs };
+  /* เทียบเกณฑ์: สูงกว่า | เท่า | ต่ำกว่า (ค่าเท่ากันไม่เขียนว่าสูงกว่า) */
+  const vs = (v, ref) => (v == null ? '' : Math.abs(v - ref) < 0.05 ? 'เท่า' : v > ref ? 'สูงกว่า' : 'ต่ำกว่า');
+  root.UTMetrics = { SEQ_AVG, vs, SUCCESS_AVG, SUS_AVG, avg, median, susScore, susGrade, susWord, waldCI, sessions, taskStats, overview, findings, level, pct, fix, secs };
 })(typeof window !== 'undefined' ? window : globalThis);
