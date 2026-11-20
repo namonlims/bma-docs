@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<script src="docs-frame.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile App · ปรับตามผลทดสอบ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.6; }
+  .page { max-width: none; margin: 0; padding: var(--dim-space-800, 32px) clamp(var(--dim-space-400, 16px), 4vw, var(--dim-space-1200, 48px)) var(--dim-space-1200, 48px); display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  h1, h2 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); }
+  h1 { font-size: var(--type-size-2xl, 24px); line-height: 1.4; }
+  h2 { font-size: var(--type-size-base, 16px); line-height: 1.4; }
+  p { margin: 0; }
+  .lede { color: var(--text-content-secondary, #636B72); max-width: none; margin-top: var(--dim-space-200, 8px); }
+  .chip { display: inline-flex; align-items: center; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; }
+  .c-green { background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); }
+  .c-blue { background: var(--surface-colorfulbadge-blue, #DBEAFE); color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .c-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .c-grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .card { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-tertiary); box-shadow: var(--shadow-brand-drop-bottom-200); border-radius: var(--dim-radius-500, 16px); padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); scroll-margin-top: var(--dim-space-400, 16px); }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--dim-space-300, 12px); flex-wrap: wrap; }
+  .sum { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .gh { font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-tertiary, #858C92); }
+  hr { border: 0; border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); margin: var(--dim-space-100, 4px) 0; width: 100%; }
+  blockquote { margin: 0; padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); border-left: var(--dim-stroke-200, 2px) solid var(--border-brandPrimary-tertiary, #99D6BA); border-radius: var(--dim-radius-200, 6px); white-space: pre-line; }
+  ol.steps { margin: 0; padding-left: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: var(--dim-space-400, 16px); }
+  figure { margin: 0; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  figure img { width: 100%; height: auto; display: block; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 8px); }
+  figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .tbl { overflow-x: auto; border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); border-radius: var(--dim-radius-300, 8px); background: var(--surface-card-100, #FFFFFF); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: var(--type-weight-medium, 500); color: var(--text-content-secondary, #636B72); background: var(--surface-brandPrimary-quaternary, #F4FBF8); padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); white-space: nowrap; }
+  td { padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-top: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); vertical-align: top; }
+  td.code { white-space: nowrap; font-weight: var(--type-weight-medium, 500); }
+  td a { color: var(--text-brandPrimary-default, #007549); }
+  .chip.nw { white-space: nowrap; }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+
+  .c-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .c-red { background: var(--surface-colorfulbadge-red, #FEE2E2); color: var(--text-colorfulbadge-red, #B91C1C); }
+  .round { display: flex; flex-direction: column; gap: var(--dim-space-600, 24px); }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: var(--dim-space-400, 16px); row-gap: var(--dim-space-200, 8px); }
+  .kv dt { color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+  .kv dd { margin: 0; }
+  @media (max-width: 639px) { .kv { grid-template-columns: minmax(0, 1fr); row-gap: 0; } .kv dd { margin-bottom: var(--dim-space-200, 8px); } }
+  /* ภาพย่อในหน้า · กดเพื่อดูขยายเต็ม (ผู้ใช้ 12 พ.ย. 69) */
+  figure img { cursor: zoom-in; max-height: 360px; object-fit: cover; object-position: top; background: var(--surface-card-100, #FFFFFF); }
+  .shots { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 400px)) !important; }
+  .zoom-dlg { border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; background: transparent; }
+  .zoom-dlg::backdrop { background: var(--surface-overlay-default, rgb(100 116 139 / 0.40)); }
+  .zoom-dlg[open] { display: flex; flex-direction: column; }
+  .zoom-bar { display: flex; align-items: center; gap: var(--dim-space-300, 12px); padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); background: var(--surface-card-100, #FFFFFF); border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); }
+  .zoom-cap { flex: 1; min-width: 0; font-size: var(--type-size-sm, 14px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .zoom-bar button { min-height: 44px; min-width: 44px; padding: 0 var(--dim-space-400, 16px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-300, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-default, #363B3F); font: inherit; cursor: pointer; }
+  .zoom-body { flex: 1; min-height: 0; overflow: auto; display: flex; padding: var(--dim-space-400, 16px); background: var(--surface-neutral-tertiary, #F4F5F5); }
+  .zoom-body img { margin: auto; max-width: 100%; max-height: 100%; object-fit: contain; background: var(--surface-card-100, #FFFFFF); border-radius: var(--dim-radius-300, 8px); cursor: zoom-in; }
+  .zoom-dlg.full .zoom-body img { max-width: none; max-height: none; cursor: zoom-out; }
+  /* ภาพจอมือถือ: แสดงทั้งจอ ไม่ตัดครึ่ง */
+  .shots.phone { grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 220px)) !important; }
+  .shots.phone figure img { max-height: none; object-fit: contain; }
+  code { font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-tertiary, #F4F5F5); padding: 0 var(--dim-space-100, 4px); border-radius: var(--dim-radius-100, 4px); }
+  .tbl table { table-layout: fixed; }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>ทะเบียนรายการปรับปรุง UI/UX — Mobile App (จากผลทดสอบ Usability)</h1>
+    <p class="lede">รอบ 21 พ.ย. 2569 · ข้อ 1 ชำระค่าบริการที่ค้าง · ต้นฉบับ: Usability Studio ชุด Mobile รอบ 15 พ.ย. 69 (AI สวมบทผู้ใช้ 4 คน × 2 รอบ) โจทย์ T5 "ได้ข้อความว่ามีค่าบริการค้างจ่าย อยากจ่ายผ่านแอปเลยไม่ต้องไปศูนย์" ทำสำเร็จ 7/8 · SEQ 3.5 จาก 7 (ต่ำสุดในทุกโจทย์) · ข้อความต้นฉบับคัดคำต่อคำ · ภาพจากแอปจริงที่จอ 390 px วงกรอบแดงตรงจุดที่แก้ เลขกรอบตรงกับข้อย่อย</p>
+  </header>
+  <section class="round" id="round-2569-11-21-mobile-pay">
+  <div class="card"><div class="head"><div><h2>สรุปรอบนี้</h2><p class="sum">แก้ 4 ข้อย่อย ปิดปัญหาจากผลทดสอบ 15 ข้อ · ทั้งหมดอยู่หน้า "รายละเอียดการชำระเงิน" (หน้าเต็ม /m/payment และแผ่นล่างที่เปิดจากหน้าแรก/ประวัติ ใช้ชิ้นเดียวกัน)</p></div><span class="chip nw c-orange">รอ merge ขึ้นเว็บจริง</span></div>
+  <div class="legend"><span class="chip nw c-green">แก้แล้ว</span> <span class="chip nw c-orange">รอ</span> <span class="chip nw c-grey">ยังไม่ได้ตรวจ</span></div>
+  <div class="tbl"><table><colgroup><col style="width:30%"><col style="width:40%"><col style="width:30%"></colgroup><thead><tr><th>ข้อ</th><th>ปัญหาจากผลทดสอบ</th><th>สถานะ</th></tr></thead><tbody>
+  <tr><td class="code"><a href="#pay-1">1.1 ไม่มีปุ่มจ่าย · ช่องทางเทา</a></td><td>U62 · U81 · U100 · U119</td><td><span class="chip nw c-green">แก้แล้ว · ตรวจจริง</span></td></tr>
+  <tr><td class="code"><a href="#pay-2">1.2 จอไม่เลื่อนไป QR</a></td><td>U63 · U83 · U101</td><td><span class="chip nw c-green">แก้แล้ว · ตรวจจริง</span></td></tr>
+  <tr><td class="code"><a href="#pay-3">1.3 QR อยู่เครื่องเดียวกัน</a></td><td>U01 · U19 · U34 · U64 · U84 · U102 · U121</td><td><span class="chip nw c-green">แก้แล้ว · ตรวจจริง</span></td></tr>
+  <tr><td class="code"><a href="#pay-4">1.4 ปุ่มยืนยันก่อนจ่าย</a></td><td>U02 · U63 · U121</td><td><span class="chip nw c-green">แก้แล้ว · ตรวจจริง</span></td></tr>
+  </tbody></table></div>
+  <blockquote>ตรวจในแอปจริง (build ของ branch ที่แก้) เดินครบ: เปิดหน้าชำระ → แตะ QR → เลือกวิธีรับยา → จอเลื่อนไป QR → บันทึกรูป (ได้ไฟล์ PNG จริง) → ตรวจสอบการชำระเงิน → ชำระเงินสำเร็จ · จอ 390 · 768 · 1024 · 1440 ไม่มี scroll แนวนอน (768 ขึ้นไปแอปแสดงแบบแบ่ง 2 ฝั่ง / กรอบมือถือ)
+ยังไม่ได้ตรวจ: ปุ่ม "แชร์ไปแอปธนาคาร" บนมือถือจริง (iPhone/Android) · การบันทึกรูปลงอัลบั้มบน iPhone Safari · แผ่นล่างที่เปิดจากหน้าแรก (ใช้ชิ้นเดียวกับหน้าเต็ม) · หน้า /m/pharmacy/payment ใช้ส่วน "รายละเอียดการรับยา" ชิ้นเดียวกัน — เพิ่มแค่ตัวเลือกใหม่ หน้าเดิมทำงานเหมือนเดิม</blockquote>
+  </div>
+  <div class="card" id="pay-1"><div class="head"><div><h2>1.1 · จอแรกไม่มีปุ่มจ่าย และช่องทางชำระเงินเป็นสีเทากดไม่ได้</h2><p class="sum">ผลทดสอบ U62 · U81 · U100 · U119 (ความรุนแรง 3/4 · H1 สถานะระบบ)</p></div><span class="chip nw c-green">แก้แล้ว · ตรวจในแอปจริง</span></div>
+<dl class="kv"><dt>ระบบที่แก้</dt><dd>Mobile App · หน้า "รายละเอียดการชำระเงิน"</dd><dt>Kiosk (น้องดูแล)</dt><dd>—</dd></dl>
+<hr><p class="gh">แก้ไขอะไร</p><div>ปุ่มติดล่างจอแรก "เลือกวิธีรับยา" (เลือกวิธีรับยาแล้วเปลี่ยนเป็น "เลือกช่องทางชำระ ฿500") · ช่องทางชำระเงินไม่เป็นสีเทาอีก แตะ "สแกน QR Code" ได้เลย ระบบเปิดแผ่น "ช่องทางรับยา" ให้ เลือกเสร็จไปหน้า QR ต่อเอง · ข้อความเทาบรรทัดเดียวเปลี่ยนเป็นกล่องแจ้งสีฟ้า "เลือกวิธีรับยาก่อน · แตะช่องทางชำระเงินได้เลย ระบบจะถามวิธีรับยาให้" · ย้ายลำดับเป็น วิธีรับยา → ช่องทางชำระเงิน → รายการยา (เดิมรายการยาคั่นกลาง ช่องทางชำระตกไปล่างสุด) · บัตรเครดิต/เดบิตต่ำกว่า 1,000 บาทยังปิดไว้เหมือนเดิม</div>
+<hr><p class="gh">ข้อความต้นฉบับ (ผลทดสอบ คัดคำต่อคำ)</p><blockquote>U62 (ป้าสมศรี · รอบ 2): หน้ารายละเอียดการชำระเงินไม่มีปุ่มจ่ายในจอแรก ช่องทางชำระเงินอยู่ล่างสุดและเป็นสีเทา ต้องกด &quot;เพิ่มรายละเอียด&quot; (การรับยา) ก่อน เหตุผลบอกด้วยตัวหนังสือเล็ก 1 บรรทัดใต้หัวข้อ &quot;ช่องทางชำระเงิน&quot; และปุ่ม &quot;เพิ่มรายละเอียด&quot; ไม่บอกว่าเป็นขั้นบังคับ
+คำพูด: &quot;ปุ่มจ่ายเงินอยู่ไหน เห็นแต่เพิ่มรายละเอียด ป้าไม่ได้จะแก้อะไรนี่&quot;</blockquote><blockquote>U119 (Mr. Aung · รอบ 2): ช่องทางชำระเงิน (สแกน QR Code / บัตร) เป็นสีเทากดไม่ได้จนกว่าจะกด &quot;+ เพิ่มรายละเอียด&quot; ของการรับยา เงื่อนไขนี้บอกด้วยข้อความเล็กสีเทา 1 บรรทัดเท่านั้น กดที่ช่อง QR แล้วไม่มีอะไรตอบกลับ (ภาพ 010) และปุ่ม &quot;+ เพิ่มรายละเอียด&quot; ไม่บอกว่าเป็นขั้นบังคับ
+คำพูด: &quot;รูป QR อยู่ตรงนั้นแต่กดไม่ติด ไม่รู้ว่าต้องกดปุ่ม + ก่อน&quot;</blockquote>
+<hr><p class="gh">วิธีเข้าไปดู</p><ol class="steps"><li>เปิดแอป Mobile ที่ <code>/m/payment/INV-2569-001</code> · ระบบให้เข้าสู่ระบบก่อน: เลขบัตรประชาชน 1369900526072 · รหัสผ่าน demo1234 แล้วกลับมาหน้านี้เอง</li><li>จอแรก: ดูปุ่มเขียวติดล่าง "เลือกวิธีรับยา" (กรอบ 1)</li><li>เลื่อนลงถึง "ช่องทางชำระเงิน": มีกล่องแจ้งสีฟ้า · "สแกน QR Code" ไม่เป็นสีเทา มีลูกศร ›</li><li>แตะ "สแกน QR Code" → แผ่น "ช่องทางรับยา" เปิดขึ้นเอง → เลือก "รับยาด้วยตนเองที่ศูนย์บริการ" → "ตกลง" → ไปหน้า QR ต่อทันที</li></ol>
+<hr><p class="gh">ก่อนแก้</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/before-1-first.jpg?v=20261121a" alt="ก่อน · จอแรกไม่มีปุ่มจ่าย" loading="lazy"><figcaption>ก่อน · จอแรกไม่มีปุ่มจ่าย</figcaption></figure><figure><img src="mobile-usability/fix-2026-11-21/shots/before-2-locked.jpg?v=20261121a" alt="ก่อน · ช่องทางชำระเงินเป็นสีเทา (กรอบ 1) อยู่ใต้รายการยา" loading="lazy"><figcaption>ก่อน · ช่องทางชำระเงินเป็นสีเทา (กรอบ 1) อยู่ใต้รายการยา</figcaption></figure></div>
+<p class="gh">หลังแก้ (กรอบแดง = จุดที่แก้ · เลขตรงกับข้อย่อย)</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/after-1-first.jpg?v=20261121a" alt="หลัง 1 · ปุ่มติดล่าง &quot;เลือกวิธีรับยา&quot;" loading="lazy"><figcaption>หลัง 1 · ปุ่มติดล่าง &quot;เลือกวิธีรับยา&quot;</figcaption></figure><figure><img src="mobile-usability/fix-2026-11-21/shots/after-2-channels.jpg?v=20261121a" alt="หลัง 1 · กล่องแจ้ง + ช่องทางแตะได้ · อยู่ก่อนรายการยา" loading="lazy"><figcaption>หลัง 1 · กล่องแจ้ง + ช่องทางแตะได้ · อยู่ก่อนรายการยา</figcaption></figure><figure><img src="mobile-usability/fix-2026-11-21/shots/after-3-pickup-sheet.jpg?v=20261121a" alt="หลัง 1 · แตะ &quot;สแกน QR Code&quot; แล้วแผ่นช่องทางรับยาเปิดเอง" loading="lazy"><figcaption>หลัง 1 · แตะ &quot;สแกน QR Code&quot; แล้วแผ่นช่องทางรับยาเปิดเอง</figcaption></figure></div></div>
+  <div class="card" id="pay-2"><div class="head"><div><h2>1.2 · กด "สแกน QR Code" แล้วจอไม่เลื่อนไปที่ QR</h2><p class="sum">ผลทดสอบ U63 · U83 · U101 (ความรุนแรง 3/4 · H1 สถานะระบบ)</p></div><span class="chip nw c-green">แก้แล้ว · ตรวจในแอปจริง</span></div>
+<dl class="kv"><dt>ระบบที่แก้</dt><dd>Mobile App · หน้า "รายละเอียดการชำระเงิน"</dd><dt>Kiosk (น้องดูแล)</dt><dd>—</dd></dl>
+<hr><p class="gh">แก้ไขอะไร</p><div>เลือกช่องทางแล้วจอเลื่อนไปที่หัวข้อ "สแกนชำระด้วย QR Code · พร้อมเพย์" ทันที เห็น QR ทั้งรูปในจอเดียว (เลือกบัตรเครดิตก็เลื่อนไปฟอร์มบัตรเหมือนกัน)</div>
+<hr><p class="gh">ข้อความต้นฉบับ (ผลทดสอบ คัดคำต่อคำ)</p><blockquote>U83 (คุณฝน · รอบ 2): กด &quot;สแกน QR Code&quot; แล้วจอไม่เลื่อนไปที่ QR สิ่งที่เห็นคือรายการยาเดิมกับปุ่ม &quot;ยืนยันชำระเงินเรียบร้อย&quot; ติดล่างจอ ต้องเลื่อนลงเองจึงเห็น QR
+คำพูด: &quot;กด QR แล้ว QR อยู่ไหน มีแต่ปุ่มยืนยันว่าจ่ายแล้ว ยังไม่ได้จ่ายเลย&quot;</blockquote>
+<hr><p class="gh">วิธีเข้าไปดู</p><ol class="steps"><li>เปิดแอป Mobile ที่ <code>/m/payment/INV-2569-001</code> · ระบบให้เข้าสู่ระบบก่อน: เลขบัตรประชาชน 1369900526072 · รหัสผ่าน demo1234 แล้วกลับมาหน้านี้เอง</li><li>เลือกวิธีรับยาตามข้อ 1.1 แล้วแตะ "สแกน QR Code"</li><li>จอเลื่อนเอง หัวข้อ "สแกนชำระด้วย QR Code" อยู่ใต้หัวหน้าจอ (กรอบ 2) และเห็น QR เต็มรูป</li></ol>
+<hr><p class="gh">ก่อนแก้</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/before-3-after-tap-qr.jpg?v=20261121a" alt="ก่อน · แตะ QR แล้วจอยังเป็นรายการยา QR อยู่ใต้ขอบจอ" loading="lazy"><figcaption>ก่อน · แตะ QR แล้วจอยังเป็นรายการยา QR อยู่ใต้ขอบจอ</figcaption></figure></div>
+<p class="gh">หลังแก้ (กรอบแดง = จุดที่แก้ · เลขตรงกับข้อย่อย)</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/after-4-qr-scrolled.jpg?v=20261121a" alt="หลัง 2 · จอเลื่อนไปที่ QR เอง" loading="lazy"><figcaption>หลัง 2 · จอเลื่อนไปที่ QR เอง</figcaption></figure></div></div>
+  <div class="card" id="pay-3"><div class="head"><div><h2>1.3 · QR อยู่บนมือถือเครื่องเดียวกับที่ต้องใช้สแกน</h2><p class="sum">ผลทดสอบ U01 · U19 · U34 · U64 · U84 · U102 · U121 (ความรุนแรงสูงสุด 4/4 · H7 ยืดหยุ่น · H10 ช่วยเหลือ)</p></div><span class="chip nw c-green">แก้แล้ว · ตรวจในแอปจริง</span></div>
+<dl class="kv"><dt>ระบบที่แก้</dt><dd>Mobile App · หน้า "รายละเอียดการชำระเงิน"</dd><dt>Kiosk (น้องดูแล)</dt><dd>—</dd></dl>
+<hr><p class="gh">แก้ไขอะไร</p><div>ใต้ QR มี "ยอดชำระ ฿500" · ปุ่ม "บันทึกรูป QR" (ได้ไฟล์ PNG ชื่อ QR-INV-2569-001.png · ขึ้นแจ้ง "บันทึกรูป QR แล้ว · เปิดแอปธนาคารแล้วเลือกรูปนี้") · ปุ่ม "แชร์ไปแอปธนาคาร" (เปิดแผ่นแชร์ของมือถือ ส่งรูปเข้าแอปธนาคารตรง · แสดงเฉพาะเครื่องที่แชร์ไฟล์ได้) · กลุ่ม "วิธีชำระด้วย QR บนมือถือเครื่องนี้" 3 ขั้นมีเลขกำกับ แทนข้อความเทาบรรทัดเดียว · ไม่ได้ทำปุ่ม "เปิดแอปธนาคาร" ตรง เพราะแต่ละธนาคารใช้ลิงก์คนละแบบ ต้องรอ Payment Gateway จริง</div>
+<hr><p class="gh">ข้อความต้นฉบับ (ผลทดสอบ คัดคำต่อคำ)</p><blockquote>U01 (ป้าสมศรี · รอบ 1): ช่องทางที่กดได้มีทางเดียวคือ &quot;สแกน QR Code&quot; (บัตรเครดิตกดไม่ได้เพราะยอดต่ำกว่า 1,000 บาท) หน้าจอแสดง QR บนเครื่องเดียวกับที่ต้องใช้สแกน ไม่มีปุ่มบันทึกรูป QR หรือเปิดแอปธนาคาร คำอธิบายมีบรรทัดเดียว ตัวเล็กสีเทา &quot;เปิดแอปธนาคารและสแกน QR เพื่อชำระ&quot;
+คำพูด: &quot;ป้ามีมือถือเครื่องเดียว จะเอาอะไรมาสแกนจอตัวเอง&quot;</blockquote><blockquote>U121 (Mr. Aung · รอบ 2): QR พร้อมเพย์แสดงบนมือถือเครื่องเดียวกับที่ต้องใช้สแกน ไม่มีปุ่มบันทึกรูป QR หรือเปิดแอปธนาคาร และปุ่ม &quot;ยืนยันชำระเงินเรียบร้อย&quot; กดได้ทันทีโดยยังไม่ได้จ่าย
+คำพูด: &quot;QR อยู่ในเครื่องผมเอง จะเอาอะไรสแกน&quot;</blockquote>
+<hr><p class="gh">วิธีเข้าไปดู</p><ol class="steps"><li>เปิดแอป Mobile ที่ <code>/m/payment/INV-2569-001</code> · ระบบให้เข้าสู่ระบบก่อน: เลขบัตรประชาชน 1369900526072 · รหัสผ่าน demo1234 แล้วกลับมาหน้านี้เอง</li><li>ไปหน้า QR ตามข้อ 1.2 แล้วเลื่อนลงเล็กน้อย</li><li>กด "บันทึกรูป QR" → มือถือได้ไฟล์รูป + แถบแจ้งด้านล่าง</li><li>บนมือถือจริงกด "แชร์ไปแอปธนาคาร" → เลือกแอปธนาคารจากแผ่นแชร์</li></ol>
+<hr><p class="gh">ก่อนแก้</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/before-4-qr.jpg?v=20261121a" alt="ก่อน · มีแค่ข้อความเทาบรรทัดเดียว (กรอบ 3)" loading="lazy"><figcaption>ก่อน · มีแค่ข้อความเทาบรรทัดเดียว (กรอบ 3)</figcaption></figure></div>
+<p class="gh">หลังแก้ (กรอบแดง = จุดที่แก้ · เลขตรงกับข้อย่อย)</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/after-5-qr-steps.jpg?v=20261121a" alt="หลัง 3 · ปุ่มบันทึก/แชร์ + วิธีทำ 3 ขั้น" loading="lazy"><figcaption>หลัง 3 · ปุ่มบันทึก/แชร์ + วิธีทำ 3 ขั้น</figcaption></figure><figure><img src="mobile-usability/fix-2026-11-21/shots/after-saved-qr.png?v=20261121a" alt="หลัง 3 · ไฟล์ที่ได้จากปุ่ม &quot;บันทึกรูป QR&quot;" loading="lazy"><figcaption>หลัง 3 · ไฟล์ที่ได้จากปุ่ม &quot;บันทึกรูป QR&quot;</figcaption></figure></div></div>
+  <div class="card" id="pay-4"><div class="head"><div><h2>1.4 · ปุ่ม "ยืนยันชำระเงินเรียบร้อย" กดได้ทั้งที่ยังไม่ได้จ่าย</h2><p class="sum">ผลทดสอบ U02 · U63 · U121 (ความรุนแรง 3/4 · H5 ป้องกันความผิดพลาด)</p></div><span class="chip nw c-green">แก้แล้ว · ตรวจในแอปจริง</span></div>
+<dl class="kv"><dt>ระบบที่แก้</dt><dd>Mobile App · หน้า "รายละเอียดการชำระเงิน"</dd><dt>Kiosk (น้องดูแล)</dt><dd>—</dd></dl>
+<hr><p class="gh">แก้ไขอะไร</p><div>ปุ่มเปลี่ยนเป็น "ตรวจสอบการชำระเงิน" มีบรรทัดบอกเหนือปุ่ม "โอนในแอปธนาคารเสร็จแล้ว กดเพื่อให้ระบบตรวจสอบยอด" · กดแล้วปุ่มเป็น "กำลังตรวจสอบ…" กดซ้ำไม่ได้ แล้วจึงขึ้น "ชำระเงินสำเร็จ" · ผู้ใช้ไม่ต้องเป็นคนยืนยันเองว่าจ่ายแล้ว · ตอนนี้เป็น mock (ตรวจ 1.5 วินาทีแล้วผ่าน) ของจริงรอ Payment Gateway แจ้งผลกลับ · บัตรเครดิตใช้ปุ่ม "ชำระ ฿… ผ่านบัตร" เหมือนเดิม</div>
+<hr><p class="gh">ข้อความต้นฉบับ (ผลทดสอบ คัดคำต่อคำ)</p><blockquote>U02 (ป้าสมศรี · รอบ 1): ปุ่มหลักใต้ QR เขียนว่า &quot;ยืนยันชำระเงินเรียบร้อย&quot; กดได้ตั้งแต่ยังไม่ได้จ่าย ผู้ใช้ต้องเป็นคนบอกระบบเองว่าจ่ายแล้ว ไม่มีข้อความว่ากดเมื่อไรหรือกดแล้วเกิดอะไร
+คำพูด: &quot;ป้ายังไม่ได้จ่ายเลย จะให้กดยืนยันว่าเรียบร้อยได้ยังไง กลัวมีปัญหาทีหลัง&quot;</blockquote><blockquote>U63 (ป้าสมศรี · รอบ 2): กดเลือก &quot;สแกน QR Code&quot; แล้วจอที่เห็นแทบไม่เปลี่ยน รูป QR อยู่ใต้ขอบจอ แต่มีปุ่มเขียวใหญ่ &quot;ยืนยันชำระเงินเรียบร้อย&quot; ลอยขึ้นมาทันที ทั้งที่ยังไม่เห็น QR และยังไม่ได้จ่าย
+คำพูด: &quot;ป้ายังไม่ได้จ่ายเลยนะ ทำไมให้กดยืนยันชำระเงินเรียบร้อย ไม่กล้ากด&quot;</blockquote>
+<hr><p class="gh">วิธีเข้าไปดู</p><ol class="steps"><li>เปิดแอป Mobile ที่ <code>/m/payment/INV-2569-001</code> · ระบบให้เข้าสู่ระบบก่อน: เลขบัตรประชาชน 1369900526072 · รหัสผ่าน demo1234 แล้วกลับมาหน้านี้เอง</li><li>ไปหน้า QR ตามข้อ 1.2 · ปุ่มเขียวล่างเขียน "ตรวจสอบการชำระเงิน" (กรอบ 4)</li><li>กดปุ่ม → "กำลังตรวจสอบ…" ประมาณ 1.5 วินาที → หน้า "ชำระเงินสำเร็จ" (ช่องทาง สแกน QR Code · ช่องทางรับยา · เลขที่อ้างอิง)</li></ol>
+<hr><p class="gh">ก่อนแก้</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/before-3-after-tap-qr.jpg?v=20261121a" alt="ก่อน · ปุ่ม &quot;ยืนยันชำระเงินเรียบร้อย&quot; (กรอบ 2) ขึ้นทั้งที่ยังไม่เห็น QR" loading="lazy"><figcaption>ก่อน · ปุ่ม &quot;ยืนยันชำระเงินเรียบร้อย&quot; (กรอบ 2) ขึ้นทั้งที่ยังไม่เห็น QR</figcaption></figure></div>
+<p class="gh">หลังแก้ (กรอบแดง = จุดที่แก้ · เลขตรงกับข้อย่อย)</p><div class="shots phone"><figure><img src="mobile-usability/fix-2026-11-21/shots/after-6-checking.jpg?v=20261121a" alt="หลัง 4 · กดแล้ว &quot;กำลังตรวจสอบ…&quot;" loading="lazy"><figcaption>หลัง 4 · กดแล้ว &quot;กำลังตรวจสอบ…&quot;</figcaption></figure><figure><img src="mobile-usability/fix-2026-11-21/shots/after-7-paid.jpg?v=20261121a" alt="หลัง 4 · ชำระเงินสำเร็จ" loading="lazy"><figcaption>หลัง 4 · ชำระเงินสำเร็จ</figcaption></figure></div></div>
+  </section>
+</main>
+<dialog class="zoom-dlg" id="zoom-dlg" aria-label="ภาพขยาย">
+  <div class="zoom-bar"><span class="zoom-cap" id="zoom-cap"></span><button type="button" id="zoom-size">ขนาดจริง</button><button type="button" id="zoom-close" aria-label="ปิด">✕</button></div>
+  <div class="zoom-body" id="zoom-body"><img id="zoom-img" alt=""></div>
+</dialog>
+<script>
+(function () {
+  var dlg = document.getElementById('zoom-dlg'), img = document.getElementById('zoom-img');
+  var cap = document.getElementById('zoom-cap'), size = document.getElementById('zoom-size');
+  function setFull(on) { dlg.classList.toggle('full', on); size.textContent = on ? 'พอดีจอ' : 'ขนาดจริง'; }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('figure img');
+    if (!t || dlg.contains(t)) return;
+    img.src = t.currentSrc || t.src; img.alt = t.alt || '';
+    var fc = t.closest('figure').querySelector('figcaption');
+    cap.textContent = fc ? fc.textContent : (t.alt || '');
+    setFull(false); dlg.showModal();
+  });
+  img.addEventListener('click', function () { setFull(!dlg.classList.contains('full')); });
+  size.addEventListener('click', function () { setFull(!dlg.classList.contains('full')); });
+  document.getElementById('zoom-close').addEventListener('click', function () { dlg.close(); });
+  document.getElementById('zoom-body').addEventListener('click', function (e) { if (e.target === this) dlg.close(); });
+})();
+</script>
+</body>
+</html>
