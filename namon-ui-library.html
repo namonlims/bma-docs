@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Namon Desk · UI Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-components.css">
+<style>
+  body { margin: 0; }
+  .ui { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: var(--nd-space-600, 24px); max-width: 1280px; margin: 0 auto; padding: var(--nd-space-400, 16px); align-items: start; }
+  .ui-side { position: sticky; top: var(--nd-space-400, 16px); display: grid; gap: var(--nd-space-300, 12px); max-height: calc(100dvh - 32px); overflow: auto; }
+  .ui-list { display: grid; gap: var(--nd-space-100, 4px); margin: 0; padding: 0; list-style: none; }
+  .ui-list button { width: 100%; min-height: var(--nd-control-h, 44px); padding: 0 var(--nd-space-300, 12px); border: 0; border-radius: var(--nd-radius-200, 8px); background: none; color: var(--nd-text-secondary, #636B72); font: inherit; font-size: var(--nd-type-size-sm, 14px); text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .ui-list button:hover { background: var(--nd-surface-brand-quiet, #F0F7FF); color: var(--nd-text-default, #363B3F); }
+  .ui-list button[aria-current="true"] { background: var(--nd-surface-brand-quiet, #F0F7FF); color: var(--nd-text-brand, #1B5FC1); font-weight: var(--nd-type-weight-medium, 500); }
+  .ui-list button:focus-visible { outline: var(--nd-stroke-200, 2px) solid var(--nd-border-brand, #1B5FC1); outline-offset: -2px; }
+  .ui-list small { color: var(--nd-text-tertiary, #6A727A); }
+  .ui-main { display: grid; gap: var(--nd-space-600, 24px); min-width: 0; }
+  .ui-head { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: center; justify-content: space-between; }
+  .ui-head h1 { margin: 0; font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 36px); }
+  .ui-stage { padding: var(--nd-space-400, 16px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); }
+  .ui-ex { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--nd-space-300, 12px); }
+  .ui-ex + .ui-ex { margin-top: var(--nd-space-600, 24px); padding-top: var(--nd-space-600, 24px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .ui-ex h3 { margin: 0; }
+  pre.ui-code { margin: 0; padding: var(--nd-space-300, 12px); border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-neutral, #F4F5F5); color: var(--nd-text-default, #363B3F); font: 12px/1.6 ui-monospace, Menlo, monospace; overflow-x: auto; white-space: pre; }
+  .ui-codewrap { position: relative; min-width: 0; }
+  .ui-main > section { min-width: 0; }
+  .ui-stage { min-width: 0; overflow-x: auto; }
+  .ui-codewrap .nd-btn { position: absolute; top: 6px; right: 6px; min-height: 32px; padding: 0 10px; font-size: 12px; background: var(--nd-surface-card, #FFFFFF); }
+  table.ui-tbl { width: 100%; border-collapse: collapse; font-size: var(--nd-type-size-sm, 14px); }
+  table.ui-tbl td, table.ui-tbl th { padding: 8px 10px; border-bottom: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  table.ui-tbl th { color: var(--nd-text-tertiary, #6A727A); font-weight: var(--nd-type-weight-medium, 500); font-size: var(--nd-type-size-xs, 12px); }
+  .ui code { font-size: 12px; background: var(--nd-surface-neutral, #F4F5F5); padding: 2px 6px; border-radius: 4px; }
+  .ui-scroll { overflow-x: auto; }
+  .ui-states { display: flex; flex-wrap: wrap; gap: var(--nd-space-400, 16px); align-items: flex-start; }
+  .ui-states > div { display: grid; gap: 6px; justify-items: start; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
+  @media (max-width: 899px) {
+    .ui { grid-template-columns: minmax(0, 1fr); }
+    .ui-side { position: static; max-height: none; }
+    .ui-list { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .ui-list button { width: auto; white-space: nowrap; border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+    .ui-list small { display: none; }
+  }
+</style>
+</head>
+<body class="nd-root">
+<div class="ui">
+  <aside class="ui-side" aria-label="รายการคอมโพเนนต์">
+    <label class="nd-field"><span class="nd-field__label">ค้นหาคอมโพเนนต์</span><input class="nd-input" id="q" type="search" placeholder="เช่น button, tab"></label>
+    <ul class="ui-list" id="list"></ul>
+  </aside>
+  <main class="ui-main" id="main"></main>
+</div>
+<script>
+var C = [
+ { id: 'button', name: 'Button', th: 'ปุ่ม', sum: 'Fill = ปุ่มหลัก 1 ปุ่มต่อกลุ่ม · Outline = รอง · สูง 40px (44px ที่ ≤1023px)',
+   ex: [{ t: 'ชนิดและสถานะ', states: [
+     ['<button class="nd-btn nd-btn--fill" type="button">ส่งเข้า Timeline</button>', 'Fill'],
+     ['<button class="nd-btn" type="button">ถามลูกค้า</button>', 'Outline'],
+     ['<button class="nd-btn nd-btn--fill" type="button" disabled>ส่งเข้า Timeline</button>', 'Fill · disabled'],
+     ['<button class="nd-btn" type="button" disabled>ข้าม</button>', 'Outline · disabled'],
+     ['<button class="nd-btn nd-btn--fill nd-btn--busy" type="button" disabled>กำลังอ่าน…</button>', 'Busy']] }],
+   cls: [['nd-btn', 'ปุ่ม Outline (ค่าเริ่มต้น)'], ['nd-btn--fill', 'ปุ่มหลัก พื้นฟ้า'], ['nd-btn--busy', 'กำลังทำงาน (ใช้คู่ disabled)']],
+   tok: ['--nd-surface-brand', '--nd-surface-brand-hover', '--nd-border-brand', '--nd-control-h', '--nd-radius-200'] },
+ { id: 'field', name: 'Field + Input', th: 'ช่องกรอก', sum: 'ป้ายอยู่บนช่อง · * สีแดงเมื่อจำเป็น · ข้อความผิดพลาดใต้ช่อง · ชี้/โฟกัส = ขอบ brand + วงเรือง 4px',
+   ex: [{ t: 'สถานะ', html: '<div class="nd-fields">\n  <label class="nd-field"><span class="nd-field__label">ปกติ</span><input class="nd-input" placeholder="https://docs.google.com/…"></label>\n  <label class="nd-field"><span class="nd-field__label">จำเป็น <span class="nd-req" aria-hidden="true">*</span></span><input class="nd-input" placeholder="เลือกคณะ"></label>\n  <label class="nd-field"><span class="nd-field__label">ผิดพลาด</span><input class="nd-input nd-input--error" value="2026-13-40"><span class="nd-field__error">วันที่ไม่ถูกรูปแบบ</span></label>\n  <label class="nd-field"><span class="nd-field__label">ปิดใช้งาน</span><input class="nd-input" value="Kae" disabled></label>\n  <label class="nd-field"><span class="nd-field__label">เลือก (select)</span><select class="nd-input"><option>คณะ 9</option></select></label>\n  <label class="nd-field"><span class="nd-field__label">วันที่</span><input class="nd-input" type="date"></label>\n</div>' }],
+   cls: [['nd-fields', 'กริดช่องกรอก (ย่อคอลัมน์เอง)'], ['nd-field', 'ห่อป้าย + ช่อง'], ['nd-field__label', 'ป้าย'], ['nd-input', 'input / select / textarea'], ['nd-input--error', 'สถานะผิดพลาด'], ['nd-field__error', 'ข้อความผิดพลาด'], ['nd-field__help', 'ข้อความช่วย'], ['nd-req', 'เครื่องหมาย *']],
+   tok: ['--nd-surface-input', '--nd-border-input', '--nd-border-input-hover', '--nd-text-placeholder', '--nd-border-danger'] },
+ { id: 'card', name: 'Card', th: 'การ์ด', sum: 'ไม่มีเงาตอนปกติ · ชี้ = ขอบ brand + brand drop shadow',
+   ex: [{ t: 'แบบการ์ด', html: '<div class="nd-grid" style="--nd-grid-min:240px">\n  <article class="nd-card"><h3 class="nd-title">ปกติ</h3><p class="nd-summary">ไม่มีเงา · ชี้เพื่อดู hover</p></article>\n  <article class="nd-card nd-card--raised"><h3 class="nd-title">Raised</h3><p class="nd-summary">มีเงาตลอด</p></article>\n  <article class="nd-card nd-card--accent nd-card--raised"><h3 class="nd-title">Accent</h3><p class="nd-summary">แถบธีม ฟ้า→เขียว→ชมพู ด้านบน</p></article>\n</div>' }],
+   cls: [['nd-card', 'การ์ดพื้นฐาน'], ['nd-card--raised', 'มีเงาตลอด'], ['nd-card--accent', 'แถบสามสีด้านบน'], ['nd-grid', 'กริดการ์ด (--nd-grid-min)']],
+   tok: ['--nd-surface-card', '--nd-border-quiet', '--nd-shadow-card', '--nd-radius-300'] },
+ { id: 'chip', name: 'Chip / Badge', th: 'ป้าย', sum: 'ป้ายสถานะสั้น ๆ · สีตามความหมาย: ฟ้า = brand · เขียว = สำเร็จ · ชมพู = เน้น',
+   ex: [{ t: 'ชนิด', html: '<div class="nd-row">\n  <span class="nd-chip">ปกติ</span>\n  <span class="nd-chip nd-chip--brand">Brand (ฟ้า)</span>\n  <span class="nd-chip nd-chip--success">จะทำ (เขียว)</span>\n  <span class="nd-chip nd-chip--accent">เน้น (ชมพู)</span>\n</div>' }],
+   cls: [['nd-chip', 'ป้ายพื้นฐาน'], ['nd-chip--brand', 'ฟ้า'], ['nd-chip--success', 'เขียว'], ['nd-chip--accent', 'ชมพู']], tok: ['--nd-surface-brand-quiet', '--nd-surface-success', '--nd-surface-accent', '--nd-text-brand'] },
+ { id: 'check-chip', name: 'Check chip', th: 'เลือกหลายอัน', sum: 'ปุ่มเลือกแบบ checkbox ที่ติ๊กแล้วพื้นเขียวอ่อน (ใช้กรอง/เลือกหลายตัวเลือก)',
+   ex: [{ t: 'ตัวอย่าง', html: '<div class="nd-row">\n  <label class="nd-check-chip"><input type="checkbox" checked>วัณโรค</label>\n  <label class="nd-check-chip"><input type="checkbox">HIV / STI</label>\n  <label class="nd-check-chip"><input type="checkbox" disabled>ปิดใช้งาน</label>\n</div>' }],
+   cls: [['nd-check-chip', 'ห่อ checkbox ให้เป็นปุ่มเลือก'], ['nd-row', 'แถวที่ห่อได้']], tok: ['--nd-surface-success', '--nd-border-success'] },
+ { id: 'notice', name: 'Notice', th: 'กล่องแจ้งเตือน', sum: 'หัวข้อตัวหนา + ข้อความ · เลือกโทนตามความหมาย',
+   ex: [{ t: 'โทน', html: '<div class="nd-notice"><b class="nd-notice__title">Warning</b>ขัดกับมติ ต้องตรวจก่อน</div>\n<div class="nd-notice nd-notice--info"><b class="nd-notice__title">Info (ฟ้า)</b>ส่งซ้ำ = อัปเดตงานเดิม</div>\n<div class="nd-notice nd-notice--success"><b class="nd-notice__title">Success (เขียว)</b>อยู่ใน Timeline</div>\n<div class="nd-notice nd-notice--accent"><b class="nd-notice__title">Accent (ชมพู)</b>ไฮไลต์</div>\n<div class="nd-notice nd-notice--danger"><b class="nd-notice__title">Danger</b>ส่งไม่สำเร็จ</div>' }],
+   cls: [['nd-notice', 'พื้นฐาน (warning)'], ['nd-notice--info/success/accent/danger', 'โทนอื่น'], ['nd-notice__title', 'หัวข้อ']], tok: ['--nd-surface-warning', '--nd-border-warning', '--nd-surface-info', '--nd-surface-danger'] },
+ { id: 'disclosure', name: 'Disclosure', th: 'ซ่อน/แสดง', sum: 'ซ่อนรายละเอียด เช่น ต้นฉบับจาก BA',
+   ex: [{ t: 'ตัวอย่าง', html: '<details class="nd-details"><summary>ต้นฉบับ (Disclosure)</summary><blockquote class="nd-quote">ข้อความต้นฉบับจาก BA ที่ย่อไว้</blockquote></details>' }],
+   cls: [['nd-details', 'ห่อ <details>'], ['nd-quote', 'ข้อความอ้างอิง']], tok: ['--nd-border-quiet', '--nd-text-secondary'] },
+ { id: 'tabs', name: 'Tabs', th: 'แท็บ', sum: 'สลับมุมมองในหน้าเดียว · เลื่อนแนวนอนเองเมื่อแคบ · ใช้ aria-selected',
+   ex: [{ t: 'ตัวอย่าง', html: '<div class="nd-tabs" role="tablist">\n  <button class="nd-tab" role="tab" aria-selected="true">Ticket</button>\n  <button class="nd-tab" role="tab" aria-selected="false">Design system</button>\n  <button class="nd-tab" role="tab" aria-selected="false">อื่น ๆ</button>\n</div>', tabs: true }],
+   cls: [['nd-tabs', 'แถบแท็บ'], ['nd-tab[aria-selected=true]', 'แท็บที่เลือก (ขีดล่างฟ้า)']], tok: ['--nd-text-brand', '--nd-surface-brand', '--nd-border-quiet'] },
+ { id: 'type', name: 'Typography', th: 'ตัวอักษร · ลำดับชั้น', sum: 'หัวเรื่อง (lg · bold · brand) → สรุป 1 บรรทัด (xs · secondary) → หัวกลุ่ม → เนื้อหา',
+   ex: [{ t: 'ลำดับชั้น', html: '<h3 class="nd-title nd-title--page" style="margin:0 0 4px">หัวเรื่อง</h3>\n<p class="nd-summary">สรุป 1 บรรทัด</p>\n<hr class="nd-divider">\n<p class="nd-group-title">หัวกลุ่ม</p>\n<p style="margin:0">เนื้อหา Sarabun 14</p>' }],
+   cls: [['nd-title', 'หัวเรื่อง'], ['nd-title--page', 'หัวเรื่องหน้า'], ['nd-summary', 'สรุป'], ['nd-group-title', 'หัวกลุ่ม'], ['nd-divider', 'เส้นคั่น 1px']], tok: ['--nd-type-size-*', '--nd-type-weight-*', '--nd-type-family-heading/body'] },
+ { id: 'layout', name: 'Layout', th: 'เลย์เอาต์', sum: 'แถวที่ห่อได้ · กริดย่อเอง · แถบธีมสามสี',
+   ex: [{ t: 'แถบธีม', html: '<div class="nd-accent-bar"></div>' }],
+   cls: [['nd-row', 'แถว flex ห่อบรรทัด'], ['nd-grid', 'กริด auto-fit'], ['nd-fields', 'กริดฟอร์ม'], ['nd-accent-bar', 'แถบธีม ฟ้า→เขียว→ชมพู'], ['nd-root', 'ใส่ที่ body (พื้นหลัง · ฟอนต์ · โหมดมืด)']], tok: ['--nd-space-*', '--nd-gradient-accent'] }
+];
+var cur = 'button', q = '';
+function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+function list() {
+  var f = C.filter(function (c) { return (c.name + ' ' + c.th + ' ' + c.id).toLowerCase().indexOf(q.toLowerCase()) >= 0; });
+  document.getElementById('list').innerHTML = f.map(function (c) { return '<li><button type="button" data-id="' + c.id + '" aria-current="' + (c.id === cur) + '">' + c.name + '<small>' + c.th + '</small></button></li>'; }).join('') || '<li class="nd-summary">ไม่พบ</li>';
+}
+function view() {
+  var c = C.filter(function (x) { return x.id === cur; })[0]; if (!c) return;
+  var ex = c.ex.map(function (e) {
+    var html = e.html || e.states.map(function (s) { return s[0]; }).join('\n');
+    var live = e.states ? '<div class="ui-states">' + e.states.map(function (s) { return '<div>' + s[0] + s[1] + '</div>'; }).join('') + '</div>' : e.html;
+    return '<div class="ui-ex"><h3 class="nd-title">' + e.t + '</h3><div class="ui-stage">' + live + '</div><div class="ui-codewrap"><button class="nd-btn" type="button" data-copy>คัดลอก</button><pre class="ui-code">' + esc(html) + '</pre></div></div>';
+  }).join('');
+  var cls = '<div class="ui-scroll"><table class="ui-tbl"><thead><tr><th>คลาส</th><th>ใช้เมื่อ</th></tr></thead><tbody>' + c.cls.map(function (r) { return '<tr><td><code>' + esc(r[0]) + '</code></td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  var tok = '<div class="nd-row">' + c.tok.map(function (t) { return '<code>' + esc(t) + '</code>'; }).join('') + '</div>';
+  document.getElementById('main').innerHTML =
+    '<div class="ui-head"><div><h1>' + c.name + '</h1><p class="nd-summary">' + c.th + ' · ' + esc(c.sum) + '</p></div><button class="nd-btn" id="theme" type="button" aria-pressed="false">โหมดมืด</button></div>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">ตัวอย่างและโค้ด</h2>' + ex + '</section>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">คลาส</h2>' + cls + '</section>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">Token ที่ใช้</h2>' + tok + '</section>';
+  var dark = document.documentElement.getAttribute('data-theme') === 'dark', b = document.getElementById('theme'); b.textContent = dark ? 'โหมดสว่าง' : 'โหมดมืด'; b.setAttribute('aria-pressed', String(dark));
+  [].forEach.call(document.querySelectorAll('.nd-tabs'), function (t) { t.addEventListener('click', function (e) { var b = e.target.closest('.nd-tab'); if (!b) return; [].forEach.call(t.children, function (x) { x.setAttribute('aria-selected', String(x === b)); }); }); });
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-id]'); if (b) { cur = b.dataset.id; list(); view(); history.replaceState(null, '', '#' + cur); return; }
+  if (e.target.closest('#theme')) { var r = document.documentElement; r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); view(); return; }
+  var cp = e.target.closest('[data-copy]'); if (cp) { var t = cp.parentNode.querySelector('pre').textContent; try { navigator.clipboard.writeText(t); cp.textContent = 'คัดลอกแล้ว'; setTimeout(function () { cp.textContent = 'คัดลอก'; }, 1200); } catch (x) {} }
+});
+document.getElementById('q').addEventListener('input', function (e) { q = e.target.value; list(); });
+var h = location.hash.slice(1); if (C.some(function (c) { return c.id === h; })) cur = h;
+if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+list(); view();
+</script>
+</body>
+</html>
