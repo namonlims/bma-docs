@@ -23,15 +23,15 @@
   --nd-gray-100: #F4F5F5;
   --nd-gray-200: #E2E4E6;
   --nd-gray-300: #C8CDD1;
-  --nd-gray-400: #ADB2B7;
-  --nd-gray-600: #70787E;
+  --nd-gray-400: #8A9197;
+  --nd-gray-600: #6A727A;
   --nd-gray-700: #4D5358;
   --nd-gray-900: #363B3F;
   /* ── Primitive: status ── */
   --nd-warning-50:  #FFF9F0;
   --nd-warning-200: #F6DFA8;
   --nd-warning-700: #C2410C;
-  --nd-danger-600:  #DC2626;
+  --nd-danger-600:  #C81E1E;
 
   /* ── Semantic: surface ── */
   --nd-surface-page:        var(--nd-gray-50);
@@ -54,14 +54,14 @@
   --nd-text-danger:      var(--nd-danger-600);
   /* ── Semantic: border ── */
   --nd-border-quiet:       var(--nd-gray-100);
-  --nd-border-input:       var(--nd-gray-200);
+  --nd-border-input:       #8A9197;   /* ≥3:1 บนพื้นขาว (WCAG 1.4.11 ขอบช่องกรอก) */
   --nd-border-input-hover: var(--nd-brand-600);
   --nd-border-brand:       var(--nd-brand-700);
   --nd-border-warning:     var(--nd-warning-200);
   --nd-border-danger:      var(--nd-danger-600);
 
   /* ── Space · radius · stroke · size ── */
-  --nd-space-100: 4px;   --nd-space-200: 8px;   --nd-space-300: 12px;  --nd-space-400: 16px;
+  --nd-space-100: 4px;   --nd-space-150: 6px;  --nd-space-200: 8px;   --nd-space-300: 12px;  --nd-space-400: 16px;
   --nd-space-500: 20px;  --nd-space-600: 24px;  --nd-space-800: 32px;  --nd-space-1200: 48px;
   --nd-radius-100: 4px;  --nd-radius-200: 8px;  --nd-radius-300: 10px; --nd-radius-full: 9999px;
   --nd-stroke-100: 1px;  --nd-stroke-200: 2px;
@@ -75,5 +75,87 @@
   /* ── Effect ── */
   --nd-shadow-card: 0 1px 4px rgb(8 167 104 / 0.08), 0 1px 8px rgb(8 167 104 / 0.10);   /* brand drop shadow */
   --nd-ring-focus:  0 0 0 4px rgb(8 167 104 / 0.14);                                       /* input hover/focus */
-  --nd-ring-danger: 0 0 0 3px rgb(220 38 38 / 0.12);
+  --nd-ring-danger: 0 0 0 3px rgb(200 30 30 / 0.12);
+}
+
+/* ── Control height (responsive · touch ≥44px ที่ ≤1023px) ── */
+:root { --nd-control-h: var(--nd-size-800); }
+@media (max-width: 1023px) { :root { --nd-control-h: var(--nd-size-900); } }
+:root {
+  --nd-motion-fast: 150ms;
+  --nd-surface-danger: #FEF2F2;
+  --nd-surface-info:   var(--nd-brand-50);
+  --nd-text-info:      var(--nd-brand-700);
+  --nd-border-info:    var(--nd-brand-100);
+}
+
+/* ── Dark theme (ผู้ใช้ 20 พ.ย. 69 · ทุกคู่ข้อความ/พื้นต้องผ่าน 4.5:1 → npm run check) ──
+   เปิดด้วย <html data-theme="dark"> หรือตามระบบ (prefers-color-scheme) เมื่อไม่ได้บังคับ data-theme="light" */
+:root[data-theme="dark"] {
+  --nd-surface-page:        #0E1317;
+  --nd-surface-card:        #161C21;
+  --nd-surface-neutral:     #1F272D;
+  --nd-surface-brand:       #2FB583;
+  --nd-surface-brand-hover: #46C99A;
+  --nd-surface-brand-quiet: #10302A;
+  --nd-surface-input:       #11171B;
+  --nd-surface-warning:     #2B2112;
+  --nd-surface-danger:      #2D1517;
+  --nd-surface-info:        #10302A;
+  --nd-text-default:        #E8ECEE;
+  --nd-text-secondary:      #A9B3B9;
+  --nd-text-tertiary:       #8E999F;
+  --nd-text-brand:          #5FD6A8;
+  --nd-text-on-brand:       #06251A;
+  --nd-text-input:          #D5DBDF;
+  --nd-text-placeholder:    #7C878E;
+  --nd-text-warning:        #FFB27A;
+  --nd-text-danger:         #F87171;
+  --nd-text-info:           #5FD6A8;
+  --nd-border-quiet:        #263038;
+  --nd-border-input:        #6F7D86;
+  --nd-border-input-hover:  #46C99A;
+  --nd-border-brand:        #46C99A;
+  --nd-border-warning:      #5A4520;
+  --nd-border-danger:       #F87171;
+  --nd-border-info:         #1D4A3F;
+  --nd-shadow-card: 0 1px 4px rgb(47 181 131 / 0.16), 0 1px 8px rgb(47 181 131 / 0.18);
+  --nd-ring-focus:  0 0 0 4px rgb(70 201 154 / 0.22);
+  --nd-ring-danger: 0 0 0 3px rgb(248 113 113 / 0.22);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --nd-surface-page:        #0E1317;
+    --nd-surface-card:        #161C21;
+    --nd-surface-neutral:     #1F272D;
+    --nd-surface-brand:       #2FB583;
+    --nd-surface-brand-hover: #46C99A;
+    --nd-surface-brand-quiet: #10302A;
+    --nd-surface-input:       #11171B;
+    --nd-surface-warning:     #2B2112;
+    --nd-surface-danger:      #2D1517;
+    --nd-surface-info:        #10302A;
+    --nd-text-default:        #E8ECEE;
+    --nd-text-secondary:      #A9B3B9;
+    --nd-text-tertiary:       #8E999F;
+    --nd-text-brand:          #5FD6A8;
+    --nd-text-on-brand:       #06251A;
+    --nd-text-input:          #D5DBDF;
+    --nd-text-placeholder:    #7C878E;
+    --nd-text-warning:        #FFB27A;
+    --nd-text-danger:         #F87171;
+    --nd-text-info:           #5FD6A8;
+    --nd-border-quiet:        #263038;
+    --nd-border-input:        #6F7D86;
+    --nd-border-input-hover:  #46C99A;
+    --nd-border-brand:        #46C99A;
+    --nd-border-warning:      #5A4520;
+    --nd-border-danger:       #F87171;
+    --nd-border-info:         #1D4A3F;
+    --nd-shadow-card: 0 1px 4px rgb(47 181 131 / 0.16), 0 1px 8px rgb(47 181 131 / 0.18);
+    --nd-ring-focus:  0 0 0 4px rgb(70 201 154 / 0.22);
+    --nd-ring-danger: 0 0 0 3px rgb(248 113 113 / 0.22);
+    color-scheme: dark;
+  }
 }

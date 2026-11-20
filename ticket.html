@@ -8,21 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-components.css">
 <style>
   body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: var(--nd-space-400,16px); background: radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%), var(--nd-surface-card,#FFFFFF); background-attachment: fixed; color: var(--nd-text-default,#363B3F); font-family: var(--nd-type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--nd-type-size-sm,14px); }
-  .box { box-sizing: border-box;  width: min(440px, 100%); background: var(--nd-surface-card,#FFFFFF); border: var(--nd-stroke-100,1px) solid var(--nd-border-quiet,#F4F5F5); border-radius: var(--nd-radius-300,10px); padding: var(--nd-space-600,24px); }
-  /* การ์ดมี brand drop shadow ตลอด (ผู้ใช้ 19 พ.ย. 69) · hover เพิ่มขอบ brand */
-  .box { box-shadow: var(--nd-shadow-card,0 1px 4px rgb(8 167 104 / 0.08), 0 1px 8px rgb(8 167 104 / 0.10)); transition: border-color .15s; }
-  .box:hover { border-color: var(--nd-border-brand,#007549); }
-  h1 { margin: 0; font-size: var(--nd-type-size-base,16px); font-weight: var(--nd-type-weight-bold,700); color: var(--nd-text-brand,#007549); }
-  p { margin: var(--nd-space-200,8px) 0 0; color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.5; }
-  input { width: 100%; min-height: var(--nd-size-900,44px); margin-top: var(--nd-space-400,16px); padding: 0 var(--nd-space-300,12px); border: var(--nd-stroke-100,1px) solid var(--nd-border-input,#E2E4E6); border-radius: var(--nd-radius-200,8px); font: inherit; background: var(--nd-surface-card,#FFFFFF); color: inherit; box-sizing: border-box; }
-  input.err { border-color: var(--nd-border-danger,#DC2626); }
-  .err-t { min-height: 1.4em; color: var(--nd-text-danger,#DC2626); font-size: var(--nd-type-size-xs,12px); }
   .act { display: flex; flex-wrap: wrap; gap: var(--nd-space-200,8px); justify-content: flex-end; margin-top: var(--nd-space-400,16px); }
-  .btn { min-height: var(--nd-size-900,44px); padding: 0 var(--nd-space-500,20px); display: inline-flex; align-items: center; border-radius: var(--nd-radius-200,8px); border: var(--nd-stroke-100,1px) solid var(--nd-surface-brand,#007549); background: var(--nd-surface-brand,#007549); color: var(--nd-text-on-brand,#FFFFFF); font: inherit; cursor: pointer; text-decoration: none; }
-  .btn:hover { background: var(--nd-surface-brand-hover,#004C31); }
-  .btn.out { background: var(--nd-surface-card,#FFFFFF); color: var(--nd-text-brand,#007549); }
   code { overflow-wrap: anywhere; }
   ul { margin: var(--nd-space-300,12px) 0 0; padding-left: var(--nd-space-500,20px); color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.6; }
   body.on { display: block; padding: 0; background: transparent; }
@@ -44,11 +33,16 @@
   @keyframes deco-bob { 0%, 100% { translate: 0 0; } 50% { translate: 4px -6px; } }
   @media (max-width: 639px) { .stage .d-dots, .stage .d-heart2, .stage .d-ring { display: none; } }
   @media (prefers-reduced-motion: reduce) { .stage .deco { animation: none; } }
-  .box, #studio { position: relative; z-index: 1; }
+  .nd-card--page, #studio { position: relative; z-index: 1; }
+  .nd-card--page { width: min(440px, 100%); padding: var(--nd-space-600, 24px); }
+  .nd-card--page .nd-summary { margin-top: var(--nd-space-200, 8px); line-height: 1.5; }
+  /* พื้นหลังไล่สี (ข้อยกเว้น gradient) · โหมดมืด = พื้นมืด + แสงเขียวจาง */
+  @media (prefers-color-scheme: dark) { body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); } }
+  :root[data-theme="dark"] body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); }
   [hidden] { display: none !important; }
 </style>
 </head>
-<body>
+<body class="nd-root">
 <div class="stage" aria-hidden="true">
   <svg class="deco d-star" viewBox="0 0 40 40" aria-hidden="true"><path fill="#FFFFFF" stroke="#E8E2F4" stroke-width="1" d="M20 2l3.6 8.2 8.7-3.1-3.1 8.7L38 20l-8.8 4.2 3.1 8.7-8.7-3.1L20 38l-3.6-8.2-8.7 3.1 3.1-8.7L2 20l8.8-4.2-3.1-8.7 8.7 3.1z"/></svg>
   <svg class="deco d-wave" viewBox="0 0 60 40" aria-hidden="true"><g fill="none" stroke="#D7E77A" stroke-width="7" stroke-linecap="round"><path d="M5 12c8-8 14 6 25 0s16-8 25-2"/><path d="M5 30c8-8 14 6 25 0s16-8 25-2"/></g></svg>
@@ -59,10 +53,10 @@
   <svg class="deco d-heart2" viewBox="0 0 24 22" aria-hidden="true"><path fill="#9FB4E6" d="M12 21S1 14 1 7.2A5.6 5.6 0 0 1 12 4.6 5.6 5.6 0 0 1 23 7.2C23 14 12 21 12 21z"/></svg>
   <span class="deco d-ring"></span>
 </div>
-<main class="box">
+<main class="nd-card nd-card--raised nd-card--page">
   <section id="signin">
-    <h1>สร้าง ticket</h1>
-    <p id="msg">เข้าสู่ระบบด้วยบัญชี Google ของเจ้าของ แล้วหน้าสร้าง ticket จะแสดงที่นี่</p>
+    <h1 class="nd-title">สร้าง ticket</h1>
+    <p class="nd-summary" id="msg">เข้าสู่ระบบด้วยบัญชี Google ของเจ้าของ แล้วหน้าสร้าง ticket จะแสดงที่นี่</p>
     <div id="gbtn" style="margin-top:var(--nd-space-400,16px);min-height:44px"></div>
     <ul>
       <li>การตรวจสิทธิ์ทำที่ Studio ในเครื่องเจ้าของ ไม่ได้ทำที่หน้านี้</li>
@@ -70,7 +64,7 @@
       <li>ถ้า Chrome ถามสิทธิ์เข้าถึงอุปกรณ์ในเครือข่ายภายใน ให้กด <b>อนุญาต</b> (ใช้เปิด Studio ในเครื่องคุณ)</li>
       <li>ถ้าเปิดไม่ติด ให้รัน <code>npm start</code> ใน <code>ticket-studio</code></li>
     </ul>
-    <div class="act"><a class="btn out" href="index.html">กลับ</a></div>
+    <div class="act"><a class="nd-btn" href="index.html">กลับ</a></div>
   </section>
 </main>
 <div id="bar" hidden><span>ถ้าหน้าด้านล่างไม่ขึ้น</span><a id="newtab" href="#" target="_blank" rel="noopener">เปิดในแท็บใหม่ ↗</a></div>
@@ -86,7 +80,7 @@ function init() {
   var go = function (cred) {
     document.getElementById('msg').textContent = 'กำลังเปิดหน้าสร้าง ticket…';
     var f = document.getElementById('studio'); f.src = STUDIO + '#token=' + encodeURIComponent(cred);
-    f.hidden = false; document.querySelector('.box').hidden = true; document.body.classList.add('on'); document.getElementById('newtab').href = STUDIO + '#token=' + encodeURIComponent(cred); document.getElementById('bar').hidden = false;
+    f.hidden = false; document.querySelector('.nd-card--page').hidden = true; document.body.classList.add('on'); document.getElementById('newtab').href = STUDIO + '#token=' + encodeURIComponent(cred); document.getElementById('bar').hidden = false;
     try { sessionStorage.setItem('ticket-cred', cred); } catch (e) {}
   };
   try { var c = sessionStorage.getItem('ticket-cred'); if (c && JSON.parse(atob(c.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000 > Date.now() + 60000) { go(c); return; } } catch (e) {}
