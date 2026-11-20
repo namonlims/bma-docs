@@ -380,18 +380,28 @@
   <section class="group" aria-labelledby="g-design">
     <div class="group-head">
       <h2 id="g-design">Design system</h2>
-      <p>token สี ขนาด ตัวอักษร และ component ที่ใช้ในระบบ อัปเดตอัตโนมัติจากโค้ดจริง</p>
+      <p>token สี ขนาด ตัวอักษร และ component แยกตามโปรเจกต์ · สร้าง design system ใหม่ (คนละสี/คนละแบบ) ได้</p>
     </div>
     <div class="cards">
-      <a class="card" href="https://namonlims.github.io/bma-design-system/reference.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">widgets</span><span class="card-title">Tokens และ Component</span></span>
-        <p class="card-sum">token สี ระยะ ตัวอักษร เงา มุมโค้ง และ component พร้อมตัวอย่างและวิธีใช้ · Desktop/Mobile</p>
+      <a class="card" href="https://namonlims.github.io/bma-design-system/reference.html" data-clinic="bma project" data-icon="widgets" data-label="Tokens และ Component" data-sub-icon="widgets">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">widgets</span><span class="card-title">bma project · Tokens และ Component</span></span>
+        <p class="card-sum">design system ของ bma (PHCIS) · token สี ระยะ ตัวอักษร เงา มุมโค้ง และ component พร้อมตัวอย่างและวิธีใช้ · Desktop/Mobile/Kiosk</p>
         <span class="card-url">bma-design-system/reference<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="https://namonlims.github.io/bma-design-system/history.html">
-        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">history</span><span class="card-title">History</span></span>
-        <p class="card-sum">ประวัติการแก้ component และ token</p>
+      <a class="card" href="https://namonlims.github.io/bma-design-system/history.html" data-clinic="bma project" data-icon="widgets" data-label="History" data-sub-icon="history">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">history</span><span class="card-title">bma project · History</span></span>
+        <p class="card-sum">ประวัติการแก้ component และ token ของ bma</p>
         <span class="card-url">bma-design-system/history<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
+      </a>
+      <a class="card" href="namon-design-library.html" data-clinic="Namon Desk" data-icon="palette" data-label="Tokens และ Component" data-sub-icon="widgets">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Namon Desk · Tokens และ Component</span></span>
+        <p class="card-sum">design system ของ Namon Desk (ธีมฟ้า · เขียว · ชมพู · โหมดมืด) แยกจาก bma · token --nd-* · คอมโพเนนต์ nd-*</p>
+        <span class="card-url">namon-design-library</span>
+      </a>
+      <a class="card" href="ds-studio.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">add_circle</span><span class="card-title">สร้าง design system</span></span>
+        <p class="card-sum">สร้างระบบใหม่ที่คนละสี/คนละแบบกับ bma · เลือกอุปกรณ์และ component · เพิ่มภายหลังได้ · ต้องเข้าด้วยบัญชีเจ้าของ</p>
+        <span class="card-url">ds-studio</span>
       </a>
     </div>
   </section>
@@ -869,7 +879,7 @@
       if (!cl) { order.push({ html: '<li>' + navA(c, t, icon) + '</li>' }); return; }
       if (!seen[cl]) { seen[cl] = { name: cl, icon: c.dataset.icon || icon, subs: [] }; order.push(seen[cl]); }
       var kind = /^ภาพหน้าจอ/.test(c.dataset.label) ? 'photo_library' : 'checklist';
-      seen[cl].subs.push('<li>' + navA(c, c.dataset.label || t, kind) + '</li>');
+      seen[cl].subs.push('<li>' + navA(c, c.dataset.label || t, c.dataset.subIcon || kind) + '</li>');
     });
     var items = order.map(function (o) { return o.html || '<li class="sub"><span class="sub-h">' + ms(o.icon) + '<span>' + o.name + '</span></span><ul>' + o.subs.join('') + '</ul></li>'; }).join('');
     li.innerHTML = '<button type="button" class="grp-h" aria-expanded="false" aria-controls="gi-' + h.id + '">' + ms(ICON[h.id] || 'folder') + '<span>' + h.textContent + '</span>' + ms('expand_more', 'chev') + '</button><ul class="grp-items" id="gi-' + h.id + '" hidden>' + items + '</ul>';

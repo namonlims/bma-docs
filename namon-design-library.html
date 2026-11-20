@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Namon Desk · Design system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-components.css">
+<style>
+  body { margin: 0; }
+  .lib { max-width: 1120px; margin: 0 auto; padding: var(--nd-space-400, 16px); }
+  .lib header { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: center; justify-content: space-between; margin-bottom: var(--nd-space-600, 24px); }
+  .lib h1 { margin: 0; font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 36px); color: var(--nd-text-default, #363B3F); }
+  .lib section { margin-bottom: var(--nd-space-800, 32px); }
+  .lib section > h2 { margin: 0 0 var(--nd-space-300, 12px); }
+  .lib .demo { display: grid; gap: var(--nd-space-300, 12px); }
+  .lib .swatches { display: grid; gap: var(--nd-space-300, 12px); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .lib .sw { border: 1px solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-200, 8px); overflow: hidden; background: var(--nd-surface-card, #FFFFFF); }
+  .lib .sw i { display: block; height: 44px; border-bottom: 1px solid var(--nd-border-quiet, #F4F5F5); }
+  .lib .sw span { display: block; padding: var(--nd-space-200, 8px) var(--nd-space-300, 12px); font-size: var(--nd-type-size-xs, 12px); overflow-wrap: anywhere; }
+  .lib code { font-size: 12px; background: var(--nd-surface-neutral, #F4F5F5); padding: 2px 6px; border-radius: 4px; }
+  .lib table { width: 100%; border-collapse: collapse; font-size: var(--nd-type-size-xs, 12px); }
+  .lib th, .lib td { text-align: left; padding: 8px; border-bottom: 1px solid var(--nd-border-quiet, #F4F5F5); vertical-align: top; }
+  .lib .scroll { overflow-x: auto; }
+  .lib .states { display: flex; flex-wrap: wrap; gap: var(--nd-space-400, 16px); align-items: flex-end; }
+  .lib .states > div { display: grid; gap: var(--nd-space-100, 4px); justify-items: start; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
+</style>
+</head>
+<body class="nd-root">
+<div class="lib">
+  <header>
+    <div><h1>Namon Desk</h1><p class="nd-summary">Design system ของโปรเจกต์ Namon Desk · แยกจาก bma/PHCIS · token <code>--nd-*</code></p></div>
+    <div class="nd-row">
+      <button class="nd-btn" id="themeBtn" type="button" aria-pressed="false">โหมดมืด</button>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="nd-title">ธีม: ฟ้า · เขียว · ชมพู</h2>
+    <p class="nd-summary" style="margin-bottom:12px">ฟ้า = แบรนด์/ปุ่มหลัก/ลิงก์ · เขียว = สำเร็จ/เลือกแล้ว · ชมพู = เน้น/ป้ายพิเศษ · แถบธีมไล่สี ฟ้า→เขียว→ชมพู</p>
+    <div class="nd-accent-bar" style="margin-bottom:16px"></div>
+    <div class="swatches" id="palette"></div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">1. สี (Semantic)</h2>
+    <p class="nd-summary" style="margin-bottom:12px">สลับโหมดสว่าง/มืดด้วยปุ่มด้านบน · ทุกคู่ข้อความ/พื้นผ่าน 4.5:1 (<code>npm run check</code>)</p>
+    <div class="swatches" id="swatches"></div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">2. ตัวอักษร · ลำดับชั้น</h2>
+    <div class="nd-card nd-card--raised">
+      <h3 class="nd-title nd-title--page">หัวเรื่องหน้า (lg · bold · brand)</h3>
+      <p class="nd-summary">สรุป 1 บรรทัด (xs · secondary)</p>
+      <hr class="nd-divider">
+      <p class="nd-group-title">หัวกลุ่ม (xs · medium · tertiary)</p>
+      <p style="margin:0">เนื้อหา Sarabun 14 — ตัวอย่างข้อความภาษาไทยและ English 0123456789</p>
+      <p style="margin:8px 0 0;font-family:var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif);font-weight:800;font-size:28px">Have a good day namon.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">3. ปุ่ม (Button)</h2>
+    <p class="nd-summary" style="margin-bottom:12px">Fill = ปุ่มหลัก 1 ปุ่มต่อกลุ่ม · Outline = รอง · สูง 40px (44px ที่ ≤1023px)</p>
+    <div class="states">
+      <div><button class="nd-btn nd-btn--fill" type="button">ส่งเข้า Timeline</button>Fill</div>
+      <div><button class="nd-btn" type="button">ถามลูกค้า</button>Outline</div>
+      <div><button class="nd-btn nd-btn--fill" type="button" disabled>ส่งเข้า Timeline</button>Fill · disabled</div>
+      <div><button class="nd-btn" type="button" disabled>ข้าม</button>Outline · disabled</div>
+      <div><button class="nd-btn nd-btn--fill nd-btn--busy" type="button" disabled>กำลังอ่าน…</button>Busy</div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">4. ช่องกรอก (Field + Input)</h2>
+    <div class="nd-fields">
+      <label class="nd-field"><span class="nd-field__label">ปกติ</span><input class="nd-input" placeholder="https://docs.google.com/…"></label>
+      <label class="nd-field"><span class="nd-field__label">กรอกแล้ว</span><input class="nd-input" value="วัณโรค"></label>
+      <label class="nd-field"><span class="nd-field__label">จำเป็น <span class="nd-req" aria-hidden="true">*</span></span><input class="nd-input" placeholder="เลือกคณะ"></label>
+      <label class="nd-field"><span class="nd-field__label">ผิดพลาด</span><input class="nd-input nd-input--error" value="2026-13-40"><span class="nd-field__error">วันที่ไม่ถูกรูปแบบ</span></label>
+      <label class="nd-field"><span class="nd-field__label">ปิดใช้งาน</span><input class="nd-input" value="Kae" disabled></label>
+      <label class="nd-field"><span class="nd-field__label">เลือก (select)</span><select class="nd-input"><option>คณะ 9 · ส่งเสริม ป้องกัน ฟื้นฟู</option></select></label>
+      <label class="nd-field"><span class="nd-field__label">วันที่</span><input class="nd-input" type="date"></label>
+    </div>
+    <p class="nd-summary" style="margin-top:8px">เอาเมาส์ชี้/โฟกัส = ขอบ brand + วงเรือง 4px</p>
+  </section>
+
+  <section>
+    <h2 class="nd-title">5. การ์ด (Card)</h2>
+    <div class="nd-grid" style="--nd-grid-min:260px">
+      <article class="nd-card"><h3 class="nd-title">ปกติ</h3><p class="nd-summary">ไม่มีเงา · เอาเมาส์ชี้เพื่อดู hover (ขอบ brand + brand drop shadow)</p></article>
+      <article class="nd-card nd-card--raised"><h3 class="nd-title">Raised</h3><p class="nd-summary">มีเงาตลอด ใช้กับการ์ดลอยบนพื้นไล่สี</p></article>
+      <article class="nd-card nd-card--accent nd-card--raised"><h3 class="nd-title">Accent</h3><p class="nd-summary">แถบธีม ฟ้า→เขียว→ชมพู ด้านบน ใช้กับการ์ดเน้น/หน้าเข้าสู่ระบบ</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">6. ป้าย · เลือกหลายอัน · กล่องแจ้งเตือน</h2>
+    <div class="demo">
+      <div class="nd-row"><span class="nd-chip">/clinic/tb/registry</span><span class="nd-chip nd-chip--brand">Brand (ฟ้า)</span><span class="nd-chip nd-chip--success">จะทำ (เขียว)</span><span class="nd-chip nd-chip--accent">ส่วนตัว (ชมพู)</span><span class="nd-chip">รอยืนยัน</span></div>
+      <div class="nd-row">
+        <label class="nd-check-chip"><input type="checkbox" checked>วัณโรค</label>
+        <label class="nd-check-chip"><input type="checkbox">HIV / STI</label>
+        <label class="nd-check-chip"><input type="checkbox">สุขภาพจิต</label>
+      </div>
+      <div class="nd-notice"><b class="nd-notice__title">ขัดกับ มติ · คทง.9</b>ทะเบียน TB ล็อกให้เฉพาะ doctor_tb ปุ่มที่เพิ่มต้องใช้การล็อกสิทธิ์เดียวกัน</div>
+      <div class="nd-notice nd-notice--info"><b class="nd-notice__title">ข้อมูล (info · ฟ้า)</b>ส่งซ้ำ = อัปเดตงานเดิม</div>
+      <div class="nd-notice nd-notice--success"><b class="nd-notice__title">สำเร็จ (success · เขียว)</b>อยู่ใน Timeline · To do</div>
+      <div class="nd-notice nd-notice--accent"><b class="nd-notice__title">เน้น (accent · ชมพู)</b>ป้ายพิเศษ / ไฮไลต์</div>
+      <div class="nd-notice nd-notice--danger"><b class="nd-notice__title">ส่งไม่สำเร็จ</b>Apps Script ปฏิเสธกุญแจ</div>
+      <details class="nd-details"><summary>ต้นฉบับ (Disclosure)</summary><blockquote class="nd-quote">ข้อความต้นฉบับจาก BA ที่ย่อไว้ในรายละเอียด</blockquote></details>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">7. Tabs</h2>
+    <div class="nd-tabs" role="tablist"><button class="nd-tab" role="tab" aria-selected="true">Ticket</button><button class="nd-tab" role="tab" aria-selected="false">Design system</button><button class="nd-tab" role="tab" aria-selected="false">อื่น ๆ</button></div>
+  </section>
+
+  <section>
+    <h2 class="nd-title">8. Token ทั้งหมด</h2>
+    <div class="scroll"><table id="tokTable"><thead><tr><th>Token</th><th>ค่า (โหมดปัจจุบัน)</th></tr></thead><tbody></tbody></table></div>
+  </section>
+</div>
+<script>
+var root = document.documentElement, btn = document.getElementById('themeBtn');
+function theme(t) { root.setAttribute('data-theme', t); btn.textContent = t === 'dark' ? 'โหมดสว่าง' : 'โหมดมืด'; btn.setAttribute('aria-pressed', String(t === 'dark')); draw(); }
+btn.addEventListener('click', function () { theme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); });
+var COLORS = ['surface-page','surface-card','surface-neutral','surface-brand','surface-brand-quiet','surface-input','surface-success','surface-accent','surface-info','surface-warning','surface-danger','text-default','text-secondary','text-tertiary','text-brand','text-on-brand','text-placeholder','text-success','text-accent','text-warning','text-danger','border-quiet','border-input','border-input-hover','border-brand','border-success','border-accent','border-warning'];
+var PALETTE = ['blue-50','blue-100','blue-400','blue-600','blue-700','blue-800','green-50','green-100','green-500','green-700','pink-50','pink-100','pink-500','pink-700'];
+function draw() {
+  var cs = getComputedStyle(root);
+  document.getElementById('palette').innerHTML = PALETTE.map(function (k) { var v = cs.getPropertyValue('--nd-' + k).trim(); return '<div class="sw"><i style="background:' + v + '"></i><span><b>' + k + '</b><br>' + v + '</span></div>'; }).join('');
+  document.getElementById('swatches').innerHTML = COLORS.map(function (k) { var v = cs.getPropertyValue('--nd-' + k).trim(); return '<div class="sw"><i style="background:' + v + '"></i><span><b>' + k + '</b><br>' + v + '</span></div>'; }).join('');
+  var rows = [], sheet = [].slice.call(document.styleSheets).filter(function (s) { return (s.href || '').indexOf('namon-tokens') >= 0; })[0];
+  var names = {};
+  try { [].slice.call(sheet.cssRules).forEach(function (r) { if (r.style) for (var i = 0; i < r.style.length; i++) { if (r.style[i].indexOf('--nd-') === 0) names[r.style[i]] = 1; } }); } catch (e) {}
+  rows = Object.keys(names).sort().map(function (n) { return '<tr><td><code>' + n + '</code></td><td>' + cs.getPropertyValue(n).trim() + '</td></tr>'; });
+  document.querySelector('#tokTable tbody').innerHTML = rows.join('');
+}
+theme(matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+</script>
+</body>
+</html>

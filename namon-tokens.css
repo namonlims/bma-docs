@@ -1,19 +1,30 @@
 /* Namon Desk design tokens — ของโปรเจกต์ Namon Desk เอง (ไม่ผูกกับ bma/PHCIS · ผู้ใช้ 19 พ.ย. 69)
-   Source of truth = ไฟล์นี้ · สำเนาอยู่ใน bma-docs/namon-tokens.css และ ticket-studio/public/namon-tokens.css (npm run tokens:sync ที่ ticket-studio)
-   ทุกค่าที่หน้า Namon Desk ใช้ต้องอ้างตัวแปร --nd-* พร้อม fallback เท่าค่าจริง · ข้อยกเว้น: gradient พื้นหลัง · สีลายตกแต่ง (SVG) */
+   ธีม: ฟ้า · เขียว · ชมพู (ผู้ใช้ 20 พ.ย. 69) — ฟ้า = แบรนด์/ปุ่มหลัก · เขียว = สำเร็จ/เลือกแล้ว · ชมพู = เน้น/ป้ายพิเศษ
+   Source of truth = ไฟล์นี้ · สำเนาใน bma-docs/namon-tokens.css และ ticket-studio/public/namon-tokens.css (npm run sync)
+   ทุกค่าที่หน้า Namon Desk ใช้ต้องอ้างตัวแปร --nd-* พร้อม fallback เท่าค่าจริง (npm run fallbacks) · ข้อยกเว้น: gradient · สีลายตกแต่ง (SVG) */
 :root {
-  /* ── Primitive: brand (เขียวเดียวกับเว็บปัจจุบัน) ── */
-  --nd-brand-50:  #F4FBF8;
-  --nd-brand-100: #E2F3EB;
-  --nd-brand-600: #08A768;
-  --nd-brand-700: #007549;
-  --nd-brand-800: #004C31;
-  /* ── Primitive: accent (สีพาสเทลจากโลโก้ + ลายตกแต่ง) ── */
+  /* ── Primitive: ฟ้า (แบรนด์) ── */
+  --nd-blue-50:  #F0F7FF;
+  --nd-blue-100: #DCEBFD;
+  --nd-blue-400: #5B9DF0;
+  --nd-blue-600: #2F7BE0;
+  --nd-blue-700: #1B5FC1;
+  --nd-blue-800: #134A99;
+  /* ── Primitive: เขียว ── */
+  --nd-green-50:  #EEFAF4;
+  --nd-green-100: #D5F2E3;
+  --nd-green-500: #34C38F;
+  --nd-green-700: #0F7A52;
+  /* ── Primitive: ชมพู ── */
+  --nd-pink-50:  #FFF1F6;
+  --nd-pink-100: #FFDCE9;
+  --nd-pink-500: #F06FA3;
+  --nd-pink-700: #BE2F6B;
+  /* ── Primitive: accent จากโลโก้/ลายตกแต่ง ── */
   --nd-mint-500:     #90D0C0;
   --nd-lavender-500: #B090E0;
   --nd-peach-500:    #F4B9A0;
   --nd-sun-500:      #F2D06B;
-  --nd-rose-500:     #EDA6C6;
   --nd-sky-500:      #9FB4E6;
   --nd-lime-500:     #D7E77A;
   --nd-navy-700:     #203050;   /* ตัวอักษรโลโก้ */
@@ -24,6 +35,7 @@
   --nd-gray-200: #E2E4E6;
   --nd-gray-300: #C8CDD1;
   --nd-gray-400: #8A9197;
+  --nd-gray-500: #8A9197;
   --nd-gray-600: #6A727A;
   --nd-gray-700: #4D5358;
   --nd-gray-900: #363B3F;
@@ -37,31 +49,41 @@
   --nd-surface-page:        var(--nd-gray-50);
   --nd-surface-card:        var(--nd-gray-0);
   --nd-surface-neutral:     var(--nd-gray-100);
-  --nd-surface-brand:       var(--nd-brand-700);
-  --nd-surface-brand-hover: var(--nd-brand-800);
-  --nd-surface-brand-quiet: var(--nd-brand-50);
+  --nd-surface-brand:       var(--nd-blue-700);
+  --nd-surface-brand-hover: var(--nd-blue-800);
+  --nd-surface-brand-quiet: var(--nd-blue-50);
   --nd-surface-input:       var(--nd-gray-0);
+  --nd-surface-success:     var(--nd-green-50);
+  --nd-surface-accent:      var(--nd-pink-50);
+  --nd-surface-info:        var(--nd-blue-50);
   --nd-surface-warning:     var(--nd-warning-50);
+  --nd-surface-danger:      #FEF2F2;
   /* ── Semantic: text ── */
   --nd-text-default:     var(--nd-gray-900);
   --nd-text-secondary:   #636B72;
   --nd-text-tertiary:    var(--nd-gray-600);
-  --nd-text-brand:       var(--nd-brand-700);
+  --nd-text-brand:       var(--nd-blue-700);
   --nd-text-on-brand:    var(--nd-gray-0);
   --nd-text-input:       var(--nd-gray-700);
   --nd-text-placeholder: var(--nd-gray-400);
+  --nd-text-success:     var(--nd-green-700);
+  --nd-text-accent:      var(--nd-pink-700);
+  --nd-text-info:        var(--nd-blue-700);
   --nd-text-warning:     var(--nd-warning-700);
   --nd-text-danger:      var(--nd-danger-600);
   /* ── Semantic: border ── */
   --nd-border-quiet:       var(--nd-gray-100);
   --nd-border-input:       #8A9197;   /* ≥3:1 บนพื้นขาว (WCAG 1.4.11 ขอบช่องกรอก) */
-  --nd-border-input-hover: var(--nd-brand-600);
-  --nd-border-brand:       var(--nd-brand-700);
+  --nd-border-input-hover: var(--nd-blue-600);
+  --nd-border-brand:       var(--nd-blue-700);
+  --nd-border-success:     var(--nd-green-100);
+  --nd-border-accent:      var(--nd-pink-100);
+  --nd-border-info:        var(--nd-blue-100);
   --nd-border-warning:     var(--nd-warning-200);
   --nd-border-danger:      var(--nd-danger-600);
 
   /* ── Space · radius · stroke · size ── */
-  --nd-space-100: 4px;   --nd-space-150: 6px;  --nd-space-200: 8px;   --nd-space-300: 12px;  --nd-space-400: 16px;
+  --nd-space-100: 4px;   --nd-space-150: 6px;   --nd-space-200: 8px;   --nd-space-300: 12px;  --nd-space-400: 16px;
   --nd-space-500: 20px;  --nd-space-600: 24px;  --nd-space-800: 32px;  --nd-space-1200: 48px;
   --nd-radius-100: 4px;  --nd-radius-200: 8px;  --nd-radius-300: 10px; --nd-radius-full: 9999px;
   --nd-stroke-100: 1px;  --nd-stroke-200: 2px;
@@ -73,88 +95,95 @@
   --nd-type-size-xs: 12px; --nd-type-size-sm: 14px; --nd-type-size-base: 16px; --nd-type-size-lg: 18px; --nd-type-size-xl: 24px;
   --nd-type-weight-regular: 400; --nd-type-weight-medium: 500; --nd-type-weight-bold: 700;
   /* ── Effect ── */
-  --nd-shadow-card: 0 1px 4px rgb(8 167 104 / 0.08), 0 1px 8px rgb(8 167 104 / 0.10);   /* brand drop shadow */
-  --nd-ring-focus:  0 0 0 4px rgb(8 167 104 / 0.14);                                       /* input hover/focus */
+  --nd-shadow-card: 0 1px 4px rgb(27 95 193 / 0.10), 0 1px 8px rgb(27 95 193 / 0.12);   /* brand drop shadow (ฟ้า) */
+  --nd-ring-focus:  0 0 0 4px rgb(47 123 224 / 0.18);                                     /* input hover/focus */
   --nd-ring-danger: 0 0 0 3px rgb(200 30 30 / 0.12);
+  --nd-gradient-accent: linear-gradient(90deg, #5B9DF0 0%, #34C38F 50%, #F06FA3 100%);   /* แถบธีม ฟ้า→เขียว→ชมพู */
 }
 
 /* ── Control height (responsive · touch ≥44px ที่ ≤1023px) ── */
 :root { --nd-control-h: var(--nd-size-800); }
 @media (max-width: 1023px) { :root { --nd-control-h: var(--nd-size-900); } }
-:root {
-  --nd-motion-fast: 150ms;
-  --nd-surface-danger: #FEF2F2;
-  --nd-surface-info:   var(--nd-brand-50);
-  --nd-text-info:      var(--nd-brand-700);
-  --nd-border-info:    var(--nd-brand-100);
-}
+:root { --nd-motion-fast: 150ms; }
 
-/* ── Dark theme (ผู้ใช้ 20 พ.ย. 69 · ทุกคู่ข้อความ/พื้นต้องผ่าน 4.5:1 → npm run check) ──
+/* ── Dark theme (ทุกคู่ข้อความ/พื้นต้องผ่านเกณฑ์ → npm run check) ──
    เปิดด้วย <html data-theme="dark"> หรือตามระบบ (prefers-color-scheme) เมื่อไม่ได้บังคับ data-theme="light" */
 :root[data-theme="dark"] {
-  --nd-surface-page:        #0E1317;
-  --nd-surface-card:        #161C21;
-  --nd-surface-neutral:     #1F272D;
-  --nd-surface-brand:       #2FB583;
-  --nd-surface-brand-hover: #46C99A;
-  --nd-surface-brand-quiet: #10302A;
-  --nd-surface-input:       #11171B;
+  --nd-surface-page:        #0D121A;
+  --nd-surface-card:        #151C26;
+  --nd-surface-neutral:     #1E2733;
+  --nd-surface-brand:       #5B9DF0;
+  --nd-surface-brand-hover: #7DB3F5;
+  --nd-surface-brand-quiet: #152A47;
+  --nd-surface-input:       #0F151D;
+  --nd-surface-success:     #0F2D24;
+  --nd-surface-accent:      #34182A;
+  --nd-surface-info:        #152A47;
   --nd-surface-warning:     #2B2112;
   --nd-surface-danger:      #2D1517;
-  --nd-surface-info:        #10302A;
-  --nd-text-default:        #E8ECEE;
-  --nd-text-secondary:      #A9B3B9;
-  --nd-text-tertiary:       #8E999F;
-  --nd-text-brand:          #5FD6A8;
-  --nd-text-on-brand:       #06251A;
-  --nd-text-input:          #D5DBDF;
-  --nd-text-placeholder:    #7C878E;
+  --nd-text-default:        #E8ECEF;
+  --nd-text-secondary:      #A9B4BF;
+  --nd-text-tertiary:       #8E9AA6;
+  --nd-text-brand:          #8DBBFA;
+  --nd-text-on-brand:       #07182F;
+  --nd-text-input:          #D5DCE3;
+  --nd-text-placeholder:    #7C8896;
+  --nd-text-success:        #5FD6A8;
+  --nd-text-accent:         #FF9CC4;
+  --nd-text-info:           #8DBBFA;
   --nd-text-warning:        #FFB27A;
   --nd-text-danger:         #F87171;
-  --nd-text-info:           #5FD6A8;
-  --nd-border-quiet:        #263038;
-  --nd-border-input:        #6F7D86;
-  --nd-border-input-hover:  #46C99A;
-  --nd-border-brand:        #46C99A;
+  --nd-border-quiet:        #243040;
+  --nd-border-input:        #6B7B8F;
+  --nd-border-input-hover:  #7DB3F5;
+  --nd-border-brand:        #7DB3F5;
+  --nd-border-success:      #1D4A3F;
+  --nd-border-accent:       #5A2A45;
+  --nd-border-info:         #23415F;
   --nd-border-warning:      #5A4520;
   --nd-border-danger:       #F87171;
-  --nd-border-info:         #1D4A3F;
-  --nd-shadow-card: 0 1px 4px rgb(47 181 131 / 0.16), 0 1px 8px rgb(47 181 131 / 0.18);
-  --nd-ring-focus:  0 0 0 4px rgb(70 201 154 / 0.22);
+  --nd-shadow-card: 0 1px 4px rgb(91 157 240 / 0.20), 0 1px 8px rgb(91 157 240 / 0.20);
+  --nd-ring-focus:  0 0 0 4px rgb(125 179 245 / 0.24);
   --nd-ring-danger: 0 0 0 3px rgb(248 113 113 / 0.22);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --nd-surface-page:        #0E1317;
-    --nd-surface-card:        #161C21;
-    --nd-surface-neutral:     #1F272D;
-    --nd-surface-brand:       #2FB583;
-    --nd-surface-brand-hover: #46C99A;
-    --nd-surface-brand-quiet: #10302A;
-    --nd-surface-input:       #11171B;
+    --nd-surface-page:        #0D121A;
+    --nd-surface-card:        #151C26;
+    --nd-surface-neutral:     #1E2733;
+    --nd-surface-brand:       #5B9DF0;
+    --nd-surface-brand-hover: #7DB3F5;
+    --nd-surface-brand-quiet: #152A47;
+    --nd-surface-input:       #0F151D;
+    --nd-surface-success:     #0F2D24;
+    --nd-surface-accent:      #34182A;
+    --nd-surface-info:        #152A47;
     --nd-surface-warning:     #2B2112;
     --nd-surface-danger:      #2D1517;
-    --nd-surface-info:        #10302A;
-    --nd-text-default:        #E8ECEE;
-    --nd-text-secondary:      #A9B3B9;
-    --nd-text-tertiary:       #8E999F;
-    --nd-text-brand:          #5FD6A8;
-    --nd-text-on-brand:       #06251A;
-    --nd-text-input:          #D5DBDF;
-    --nd-text-placeholder:    #7C878E;
+    --nd-text-default:        #E8ECEF;
+    --nd-text-secondary:      #A9B4BF;
+    --nd-text-tertiary:       #8E9AA6;
+    --nd-text-brand:          #8DBBFA;
+    --nd-text-on-brand:       #07182F;
+    --nd-text-input:          #D5DCE3;
+    --nd-text-placeholder:    #7C8896;
+    --nd-text-success:        #5FD6A8;
+    --nd-text-accent:         #FF9CC4;
+    --nd-text-info:           #8DBBFA;
     --nd-text-warning:        #FFB27A;
     --nd-text-danger:         #F87171;
-    --nd-text-info:           #5FD6A8;
-    --nd-border-quiet:        #263038;
-    --nd-border-input:        #6F7D86;
-    --nd-border-input-hover:  #46C99A;
-    --nd-border-brand:        #46C99A;
+    --nd-border-quiet:        #243040;
+    --nd-border-input:        #6B7B8F;
+    --nd-border-input-hover:  #7DB3F5;
+    --nd-border-brand:        #7DB3F5;
+    --nd-border-success:      #1D4A3F;
+    --nd-border-accent:       #5A2A45;
+    --nd-border-info:         #23415F;
     --nd-border-warning:      #5A4520;
     --nd-border-danger:       #F87171;
-    --nd-border-info:         #1D4A3F;
-    --nd-shadow-card: 0 1px 4px rgb(47 181 131 / 0.16), 0 1px 8px rgb(47 181 131 / 0.18);
-    --nd-ring-focus:  0 0 0 4px rgb(70 201 154 / 0.22);
+    --nd-shadow-card: 0 1px 4px rgb(91 157 240 / 0.20), 0 1px 8px rgb(91 157 240 / 0.20);
+    --nd-ring-focus:  0 0 0 4px rgb(125 179 245 / 0.24);
     --nd-ring-danger: 0 0 0 3px rgb(248 113 113 / 0.22);
     color-scheme: dark;
   }
