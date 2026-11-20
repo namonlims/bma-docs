@@ -85,3 +85,23 @@ textarea.nd-input { height: auto; min-height: calc(var(--nd-control-h, 44px) * 2
 .nd-row  { display: flex; flex-wrap: wrap; align-items: center; gap: var(--nd-space-200, 8px); }
 .nd-grid { display: grid; gap: var(--nd-space-400, 16px); grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--nd-grid-min, 340px)), 1fr)); }
 .nd-fields { display: grid; gap: var(--nd-space-300, 12px); grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); }
+
+/* ── Select (ผู้ใช้ 20 พ.ย. 69 "ใช้ component ตาม design system" — แทนเมนู select ของระบบปฏิบัติการ) ──
+   ใช้คู่ namon-select.js: <select class="nd-input"> ถูกแทนด้วยปุ่ม + รายการเลือก (ค่า/ฟอร์มยังอยู่ที่ <select> เดิม) */
+.nd-select { position: relative; display: block; min-width: 0; }
+.nd-select > select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0 !important; pointer-events: none; }
+.nd-select__btn { display: flex; align-items: center; justify-content: space-between; gap: var(--nd-space-200, 8px); width: 100%; min-height: var(--nd-control-h, 44px); padding: 0 var(--nd-space-300, 12px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-input, #8A9197); border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-input, #FFFFFF); color: var(--nd-text-input, #4D5358); font: inherit; font-size: var(--nd-type-size-base, 16px); text-align: left; cursor: pointer; }
+.nd-select__btn:hover { border-color: var(--nd-border-input-hover, #2F7BE0); }
+.nd-select__btn:focus-visible, .nd-select[data-open="true"] .nd-select__btn { outline: 0; border-color: var(--nd-border-brand, #1B5FC1); box-shadow: 0 0 0 4px var(--nd-surface-brand-quiet, #F0F7FF); }
+.nd-select__btn[disabled] { background: var(--nd-surface-neutral, #F4F5F5); color: var(--nd-text-placeholder, #8A9197); cursor: not-allowed; }
+.nd-select__val { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nd-select__val[data-ph="true"] { color: var(--nd-text-placeholder, #8A9197); }
+.nd-select__chev { flex: none; width: 10px; height: 10px; border-right: 2px solid var(--nd-text-secondary, #636B72); border-bottom: 2px solid var(--nd-text-secondary, #636B72); transform: translateY(-2px) rotate(45deg); transition: transform var(--nd-motion-fast, 150ms) ease-out; }
+.nd-select[data-open="true"] .nd-select__chev { transform: translateY(2px) rotate(225deg); }
+.nd-select__menu { position: fixed; z-index: 2000; display: grid; gap: var(--nd-space-100, 4px); margin: 0; padding: var(--nd-space-100, 4px); list-style: none; overflow-y: auto; border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-card, #FFFFFF); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(27 95 193 / 0.10), 0 1px 8px rgb(27 95 193 / 0.12)); }
+.nd-select__opt { display: flex; align-items: center; gap: var(--nd-space-200, 8px); min-height: var(--nd-control-h, 44px); padding: 0 var(--nd-space-300, 12px); border-radius: var(--nd-radius-100, 4px); color: var(--nd-text-default, #363B3F); font-size: var(--nd-type-size-sm, 14px); cursor: pointer; }
+.nd-select__opt[data-active="true"] { background: var(--nd-surface-brand-quiet, #F0F7FF); }
+.nd-select__opt[aria-selected="true"] { color: var(--nd-text-brand, #1B5FC1); font-weight: var(--nd-type-weight-medium, 500); }
+.nd-select__opt[aria-selected="true"]::before { content: ""; width: 5px; height: 10px; border-right: 2px solid var(--nd-text-brand, #1B5FC1); border-bottom: 2px solid var(--nd-text-brand, #1B5FC1); transform: rotate(45deg) translate(-1px, -1px); }
+.nd-select__opt[aria-selected="false"]::before { content: ""; width: 5px; }
+.nd-select__opt[aria-disabled="true"] { color: var(--nd-text-placeholder, #8A9197); cursor: not-allowed; }

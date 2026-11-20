@@ -54,8 +54,10 @@
   </aside>
   <main class="ui-main" id="main"></main>
 </div>
+<script src="namon-select.js"></script>
 <script>
 var C = [
+ { id: 'color', name: 'Color', th: 'สี · สร้างสเกล', custom: true, sum: 'ใส่สีหลัก → สร้างสเกล 50–900 ตามระดับ token พร้อมค่า contrast และ CSS คัดลอกได้ (ฟ้า · เขียว · ชมพูของ Namon เป็นค่าเริ่มต้น)', cls: [['--nd-<role>-50 … 900', 'สเกลดิบ (Primitive) — 500 = สีหลักที่ใส่'], ['--nd-surface-* / --nd-text-* / --nd-border-*', 'ชั้น Semantic ชี้ไปที่สเกลนี้ (สลับสว่าง/มืดที่ชั้นนี้)']], tok: ['--nd-blue-*', '--nd-green-*', '--nd-pink-*'] },
  { id: 'button', name: 'Button', th: 'ปุ่ม', sum: 'Fill = ปุ่มหลัก 1 ปุ่มต่อกลุ่ม · Outline = รอง · สูง 40px (44px ที่ ≤1023px)',
    ex: [{ t: 'ชนิดและสถานะ', states: [
      ['<button class="nd-btn nd-btn--fill" type="button">ส่งเข้า Timeline</button>', 'Fill'],
@@ -65,6 +67,10 @@ var C = [
      ['<button class="nd-btn nd-btn--fill nd-btn--busy" type="button" disabled>กำลังอ่าน…</button>', 'Busy']] }],
    cls: [['nd-btn', 'ปุ่ม Outline (ค่าเริ่มต้น)'], ['nd-btn--fill', 'ปุ่มหลัก พื้นฟ้า'], ['nd-btn--busy', 'กำลังทำงาน (ใช้คู่ disabled)']],
    tok: ['--nd-surface-brand', '--nd-surface-brand-hover', '--nd-border-brand', '--nd-control-h', '--nd-radius-200'] },
+ { id: 'select', name: 'Select', th: 'ดรอปดาวน์', sum: 'แทนเมนู select ของระบบปฏิบัติการ · ปุ่ม + รายการของ design system · เลือกแล้วมีเครื่องหมายถูก · ใช้คีย์บอร์ดได้ (↑ ↓ Enter Esc พิมพ์ตัวอักษร) · ค่ายังอยู่ที่ <select> เดิม',
+   ex: [{ t: 'ตัวอย่าง', html: '<div class="nd-fields">\n  <label class="nd-field"><span class="nd-field__label">มุม</span><select class="nd-input"><option>sharp</option><option selected>rounded</option><option>pill</option></select></label>\n  <label class="nd-field"><span class="nd-field__label">ปิดใช้งาน</span><select class="nd-input" disabled><option>comfortable</option></select></label>\n</div>\n<script src="namon-select.js"><\/script>' }],
+   cls: [['select.nd-input', 'ใส่ class นี้ที่ <select> แล้วโหลด namon-select.js — จับ select ที่เพิ่มทีหลังเอง'], ['nd-select__btn', 'ปุ่มแสดงค่า (สร้างให้)'], ['nd-select__menu / __opt', 'รายการเลือก (สร้างให้ · เปิดเป็นชั้นลอย พลิกขึ้นเมื่อที่ล่างไม่พอ)']],
+   tok: ['--nd-surface-input', '--nd-border-input', '--nd-border-brand', '--nd-surface-brand-quiet', '--nd-shadow-card'] },
  { id: 'field', name: 'Field + Input', th: 'ช่องกรอก', sum: 'ป้ายอยู่บนช่อง · * สีแดงเมื่อจำเป็น · ข้อความผิดพลาดใต้ช่อง · ชี้/โฟกัส = ขอบ brand + วงเรือง 4px',
    ex: [{ t: 'สถานะ', html: '<div class="nd-fields">\n  <label class="nd-field"><span class="nd-field__label">ปกติ</span><input class="nd-input" placeholder="https://docs.google.com/…"></label>\n  <label class="nd-field"><span class="nd-field__label">จำเป็น <span class="nd-req" aria-hidden="true">*</span></span><input class="nd-input" placeholder="เลือกคณะ"></label>\n  <label class="nd-field"><span class="nd-field__label">ผิดพลาด</span><input class="nd-input nd-input--error" value="2026-13-40"><span class="nd-field__error">วันที่ไม่ถูกรูปแบบ</span></label>\n  <label class="nd-field"><span class="nd-field__label">ปิดใช้งาน</span><input class="nd-input" value="Kae" disabled></label>\n  <label class="nd-field"><span class="nd-field__label">เลือก (select)</span><select class="nd-input"><option>คณะ 9</option></select></label>\n  <label class="nd-field"><span class="nd-field__label">วันที่</span><input class="nd-input" type="date"></label>\n</div>' }],
    cls: [['nd-fields', 'กริดช่องกรอก (ย่อคอลัมน์เอง)'], ['nd-field', 'ห่อป้าย + ช่อง'], ['nd-field__label', 'ป้าย'], ['nd-input', 'input / select / textarea'], ['nd-input--error', 'สถานะผิดพลาด'], ['nd-field__error', 'ข้อความผิดพลาด'], ['nd-field__help', 'ข้อความช่วย'], ['nd-req', 'เครื่องหมาย *']],
@@ -95,7 +101,39 @@ var C = [
    ex: [{ t: 'แถบธีม', html: '<div class="nd-accent-bar"></div>' }],
    cls: [['nd-row', 'แถว flex ห่อบรรทัด'], ['nd-grid', 'กริด auto-fit'], ['nd-fields', 'กริดฟอร์ม'], ['nd-accent-bar', 'แถบธีม ฟ้า→เขียว→ชมพู'], ['nd-root', 'ใส่ที่ body (พื้นหลัง · ฟอนต์ · โหมดมืด)']], tok: ['--nd-space-*', '--nd-gradient-accent'] }
 ];
-var cur = 'button', q = '';
+var cur = 'color', q = '';
+var COLORS = { primary: '#2F7BE0', secondary: '#34C38F', accent: '#F06FA3' }, ROLES = { primary: 'blue', secondary: 'green', accent: 'pink' };
+function h2l(hex) { var n = hex.replace('#', ''), r = [0, 2, 4].map(function (i) { return parseInt(n.substr(i, 2), 16) / 255; }), mx = Math.max.apply(0, r), mn = Math.min.apply(0, r), l = (mx + mn) / 2, h = 0, s = 0;
+  if (mx !== mn) { var d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r[0] ? (r[1] - r[2]) / d + (r[1] < r[2] ? 6 : 0) : mx === r[1] ? (r[2] - r[0]) / d + 2 : (r[0] - r[1]) / d + 4; h *= 60; } return [h, s * 100, l * 100]; }
+function l2h(h, s, l) { h = ((h % 360) + 360) % 360; s = Math.min(100, Math.max(0, s)) / 100; l = Math.min(100, Math.max(0, l)) / 100; var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l), f = function (n) { return l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
+  return '#' + [f(0), f(8), f(4)].map(function (x) { return Math.round(x * 255).toString(16).padStart(2, '0'); }).join('').toUpperCase(); }
+function lumn(hex) { var r = [1, 3, 5].map(function (i) { var c = parseInt(hex.substr(i, 2), 16) / 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }); return .2126 * r[0] + .7152 * r[1] + .0722 * r[2]; }
+function cr(a, b) { var x = lumn(a), y = lumn(b), hi = Math.max(x, y), lo = Math.min(x, y); return (hi + .05) / (lo + .05); }
+function ramp(base) { var p = h2l(base), h = p[0], s = p[1], l5 = p[2], out = {};
+  var l50 = Math.max(l5 + 4, 97), l100 = Math.max(l5 + 2, 92); if (l5 > 88) { l100 = Math.min(l100, 98); l50 = 99; }
+  out[50] = l2h(h, Math.min(s, 90), l50); out[100] = l2h(h, Math.min(s, 90), l100);
+  [200, 300, 400].forEach(function (k, i) { var t = (i + 1) / 4; out[k] = l2h(h, s, l100 + (l5 - l100) * t * 1.0 * (1 + 0) ); });
+  out[400] = l2h(h, s, l100 + (l5 - l100) * .75); out[300] = l2h(h, s, l100 + (l5 - l100) * .5); out[200] = l2h(h, s, l100 + (l5 - l100) * .25);
+  out[500] = base.toUpperCase();
+  [600, 700, 800, 900].forEach(function (k, i) { out[k] = l2h(h, s, l5 - (l5 - 12) * (i + 1) / 4); });
+  return out; }
+function colorView() {
+  var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var inputs = Object.keys(COLORS).map(function (k) { return '<label class="nd-field"><span class="nd-field__label">' + k + ' · สีหลัก (ระดับ 500) · ชื่อ token <code>--nd-' + ROLES[k] + '-N</code></span><span style="display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,140px);gap:8px;align-items:center"><input type="color" data-ck="' + k + '" value="' + COLORS[k].toLowerCase() + '" style="width:44px;height:40px;padding:2px;border:1px solid var(--nd-border-input,#8A9197);border-radius:8px;background:var(--nd-surface-input,#fff);cursor:pointer"><input class="nd-input" data-ch="' + k + '" value="' + COLORS[k] + '" maxlength="7"><input class="nd-input" data-cn="' + k + '" value="' + ROLES[k] + '" maxlength="12" aria-label="ชื่อสเกล"></span></label>'; }).join('');
+  var css = ':root {\n', bars = Object.keys(COLORS).map(function (k) { var sc = ramp(COLORS[k]); 
+    css += Object.keys(sc).map(function (n) { return '  --nd-' + ROLES[k] + '-' + n + ': ' + sc[n] + ';'; }).join('\n') + '\n';
+    return '<div style="margin-bottom:20px"><h3 class="nd-title" style="margin:0 0 8px">' + k + ' · <code>--nd-' + ROLES[k] + '-*</code></h3><div class="ui-scroll"><div style="display:grid;grid-template-columns:repeat(10,minmax(84px,1fr));gap:6px;min-width:860px">' + Object.keys(sc).map(function (n) { var hex = sc[n], w = cr(hex, '#FFFFFF'), b = cr(hex, '#0D121A'), onC = w >= b ? '#FFFFFF' : '#0D121A', best = Math.max(w, b);
+      return '<div style="border:1px solid var(--nd-border-quiet,#F4F5F5);border-radius:8px;overflow:hidden;background:var(--nd-surface-card,#fff);font-size:11px"><div style="height:56px;background:' + hex + ';color:' + onC + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px">Aa</div><div style="padding:6px 8px;display:grid;gap:2px"><b>' + n + '</b><span>' + hex + '</span><span style="color:var(--nd-text-tertiary,#6A727A)">ขาว ' + w.toFixed(1) + (w >= 4.5 ? ' ✓' : '') + '</span><span style="color:var(--nd-text-tertiary,#6A727A)">มืด ' + b.toFixed(1) + (b >= 4.5 ? ' ✓' : '') + '</span></div></div>'; }).join('') + '</div></div></div>'; }).join('');
+  css += '}';
+  var c = C[0];
+  document.getElementById('main').innerHTML =
+    '<div class="ui-head"><div><h1>Color</h1><p class="nd-summary">' + c.th + ' · ' + esc(c.sum) + '</p></div><button class="nd-btn" id="theme" type="button" aria-pressed="' + dark + '">' + (dark ? 'โหมดสว่าง' : 'โหมดมืด') + '</button></div>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">ใส่สีหลัก</h2><div class="nd-fields" style="--nd-grid-min:320px">' + inputs + '</div></section>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">สเกลสีตามระดับ token</h2><p class="nd-summary" style="margin-bottom:12px">เลขยิ่งน้อยยิ่งอ่อน (พื้นหลัง) · 500 = สีหลัก · 600–900 เข้มขึ้น (ข้อความ/ขอบ) · “ขาว/มืด” = contrast ของข้อความสีขาว/สีมืดบนช่องสีนั้น (✓ = ผ่าน 4.5:1)</p><div class="ui-stage">' + bars + '</div></section>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">CSS token (Primitive)</h2><div class="ui-codewrap"><button class="nd-btn" type="button" data-copy>คัดลอก</button><pre class="ui-code">' + esc(css) + '</pre></div></section>' +
+    '<section><h2 class="nd-title" style="margin-bottom:8px">คลาสและชั้น token</h2><div class="ui-scroll"><table class="ui-tbl"><thead><tr><th>token</th><th>ใช้เมื่อ</th></tr></thead><tbody>' + c.cls.map(function (r) { return '<tr><td><code>' + esc(r[0]) + '</code></td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div></section>';
+}
+
 function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
 function list() {
   var f = C.filter(function (c) { return (c.name + ' ' + c.th + ' ' + c.id).toLowerCase().indexOf(q.toLowerCase()) >= 0; });
@@ -103,9 +141,11 @@ function list() {
 }
 function view() {
   var c = C.filter(function (x) { return x.id === cur; })[0]; if (!c) return;
+  if (c.custom) { colorView(); return; }
   var ex = c.ex.map(function (e) {
     var html = e.html || e.states.map(function (s) { return s[0]; }).join('\n');
-    var live = e.states ? '<div class="ui-states">' + e.states.map(function (s) { return '<div>' + s[0] + s[1] + '</div>'; }).join('') + '</div>' : e.html;
+    var liveHtml = (e.html || '').replace(/<script[\s\S]*?<\/script>/g, '').trim();
+    var live = e.states ? '<div class="ui-states">' + e.states.map(function (s) { return '<div>' + s[0] + s[1] + '</div>'; }).join('') + '</div>' : liveHtml;
     return '<div class="ui-ex"><h3 class="nd-title">' + e.t + '</h3><div class="ui-stage">' + live + '</div><div class="ui-codewrap"><button class="nd-btn" type="button" data-copy>คัดลอก</button><pre class="ui-code">' + esc(html) + '</pre></div></div>';
   }).join('');
   var cls = '<div class="ui-scroll"><table class="ui-tbl"><thead><tr><th>คลาส</th><th>ใช้เมื่อ</th></tr></thead><tbody>' + c.cls.map(function (r) { return '<tr><td><code>' + esc(r[0]) + '</code></td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div>';
@@ -123,6 +163,10 @@ document.addEventListener('click', function (e) {
   if (e.target.closest('#theme')) { var r = document.documentElement; r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); view(); return; }
   var cp = e.target.closest('[data-copy]'); if (cp) { var t = cp.parentNode.querySelector('pre').textContent; try { navigator.clipboard.writeText(t); cp.textContent = 'คัดลอกแล้ว'; setTimeout(function () { cp.textContent = 'คัดลอก'; }, 1200); } catch (x) {} }
 });
+document.addEventListener('input', function (e) { var t = e.target, k = t.dataset && (t.dataset.ck || t.dataset.ch || t.dataset.cn); if (!k) return;
+  if (t.dataset.cn) { var v = t.value.replace(/[^a-z0-9-]/gi, '').toLowerCase(); if (v) { ROLES[k] = v; } } else { if (!/^#[0-9a-fA-F]{6}$/.test(t.value)) return; COLORS[k] = t.value.toUpperCase(); }
+  var f = document.activeElement, key = f && (f.dataset.ck || f.dataset.ch || f.dataset.cn) ? Object.keys(f.dataset)[0] + '=' + (f.dataset.ck || f.dataset.ch || f.dataset.cn) : null, pos = f && f.selectionStart; colorView();
+  if (key) { var sel = document.querySelector('[data-' + key.split('=')[0].replace(/[A-Z]/g, function (m) { return '-' + m.toLowerCase(); }) + '="' + key.split('=')[1] + '"]'); if (sel && sel.type !== 'color') { sel.focus(); try { sel.setSelectionRange(pos, pos); } catch (x) {} } } });
 document.getElementById('q').addEventListener('input', function (e) { q = e.target.value; list(); });
 var h = location.hash.slice(1); if (C.some(function (c) { return c.id === h; })) cur = h;
 if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
