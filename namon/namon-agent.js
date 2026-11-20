@@ -3,9 +3,9 @@
 // เคารพ prefers-reduced-motion (ภาพนิ่ง) · หยุดวาดเมื่อมองไม่เห็น · ?still=1 = ภาพนิ่งสำหรับถ่ายภาพ
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js'
 
-const C = { body: 0x5CC4C0, shade: 0x4BB3AF, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x3FA39F, leafDark: 0x2B3A55, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
+const C = { body: 0x5470FB, shade: 0x3F5BFA, clover: 0xC6F432, cloverDark: 0x9CCB1C, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x9CCB1C, leafDark: 0xC6F432, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
 export const POSES = ['idle', 'thinking', 'working', 'done', 'waiting', 'sleep']
-const LABEL = { idle: 'Namon พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่' }
+const LABEL = { idle: 'Namon เดินเล่น พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่' }
 
 const clay = (c, extra = {}) => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.66, metalness: 0, ...extra })
 const mesh = (g, m, cast = true) => { const o = new THREE.Mesh(g, m); o.castShadow = cast; o.receiveShadow = false; return o }
@@ -30,12 +30,17 @@ function build(pose) {
   const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.026, 16, 48, Math.PI), eyeM); t.position.set(x, up ? 1.5 : 1.56, 0.95); if (!up) t.rotation.z = Math.PI; return t }
   const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.018, 12, 40, Math.PI), eyeM); t.rotation.z = Math.PI; t.position.set(0.02, 1.3, 0.97); return t }
   for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); ch.position.set(sx * 0.5, 1.33, 0.86); bodyG.add(ch) }
+  // ใบโคลเวอร์ 4 แฉก (หัวใจ) สีเขียวมะนาว
   const sprout = new THREE.Group(); sprout.position.set(0.05, 2.17, 0)
-  const stem = mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.22, 20), clay(C.leaf)); stem.position.y = 0.08; sprout.add(stem)
-  const leaf = (col, rz, x) => { const l = mesh(new THREE.SphereGeometry(0.2, 40, 28), clay(col, { roughness: 0.55 })); l.scale.set(1.35, 0.45, 0.7); l.position.set(x, 0.24, 0); l.rotation.z = rz; return l }
-  sprout.add(leaf(C.leaf, 0.55, -0.16), leaf(C.leafDark, -0.6, 0.17)); sprout.rotation.z = -0.15; bodyG.add(sprout); R.sprout = sprout
+  const stem = mesh(new THREE.CylinderGeometry(0.03, 0.045, 0.36, 20), clay(C.cloverDark)); stem.position.y = 0.16; stem.rotation.z = 0.1; sprout.add(stem)
+  const heart = new THREE.Shape(); heart.moveTo(0, 0); heart.bezierCurveTo(-0.02, 0.1, -0.2, 0.16, -0.2, 0.3); heart.bezierCurveTo(-0.2, 0.42, -0.06, 0.45, 0, 0.36); heart.bezierCurveTo(0.06, 0.45, 0.2, 0.42, 0.2, 0.3); heart.bezierCurveTo(0.2, 0.16, 0.02, 0.1, 0, 0)
+  const heartGeo = new THREE.ExtrudeGeometry(heart, { depth: 0.04, bevelEnabled: true, bevelThickness: 0.035, bevelSize: 0.03, bevelSegments: 6, curveSegments: 24 }); heartGeo.translate(0, 0, -0.02)
+  const head = new THREE.Group(); head.position.set(0.04, 0.36, 0.02); head.rotation.x = -0.1; head.scale.setScalar(0.72)
+  ;[0, 1, 2, 3].forEach((i) => { const lf = mesh(heartGeo, clay(i % 2 ? C.clover : 0xA9D61F, { roughness: 0.5 })); const pv = new THREE.Group(); pv.rotation.z = (i * Math.PI) / 2 + Math.PI / 4; lf.position.y = 0.03; lf.rotation.x = 0.12; pv.add(lf); head.add(pv) })
+  const dot = mesh(new THREE.SphereGeometry(0.045, 16, 12), clay(C.cloverDark)); head.add(dot)
+  sprout.add(head); bodyG.add(sprout); R.sprout = sprout
   const arm = (side, rz = 0, rx = 0, y = 1.0) => { const a = mesh(new THREE.CapsuleGeometry(0.17, 0.32, 12, 24), clay(C.shade)); const piv = new THREE.Group(); piv.position.set(side * 0.9, y + 0.15, 0.25); a.position.set(0, -0.22, 0); piv.add(a); piv.rotation.z = side * rz; piv.rotation.x = rx; piv.userData = { side, rz, rx }; return piv }
-  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.SphereGeometry(0.26, 40, 28), clay(C.shade)); f.scale.set(1.15, 0.55, 1.2); f.position.set(sx * 0.42, 0.1, 0.18); root.add(f); feet.push(f) }
+  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.SphereGeometry(0.26, 40, 28), clay(C.shade)); f.scale.set(1.15, 0.55, 1.2); f.position.set(sx * 0.42, 0.1, 0.18); f.userData.base = f.position.clone(); root.add(f); feet.push(f) }
   R.feet = feet
   let L = arm(-1, 0.35), Rr = arm(1, 0.35)
   if (pose === 'idle') { bodyG.add(eye(-0.24), eye(0.24), mouth()) }
@@ -73,7 +78,16 @@ function animate(R, pose, t) {
   // กะพริบตาทุก ~3.2 วินาที
   const bl = (t % 3.2) < 0.12 ? 0.12 : 1; R.eyes.forEach((e) => { e.scale.y = bl })
   const swing = (a, amt, sp, ph = 0) => { a.rotation.z = a.userData.side * a.userData.rz + s(t * sp + ph) * amt }
-  if (pose === 'idle') { R.hop.position.y = Math.abs(s(t * 2.2)) * 0.05; R.root.rotation.y = -0.32 + s(t * 0.7) * 0.12; swing(R.L, 0.12, 2.2); swing(R.R, 0.12, 2.2, Math.PI) }
+  if (pose === 'idle') {
+    // เดินเตาะแตะอยู่กับที่: เท้ายกสลับ · ตัวเด้ง 2 ครั้งต่อรอบ · โยกซ้ายขวา · แกว่งแขนสวนเท้า
+    const w = t * 4.2, st = s(w)
+    R.feet.forEach((f, i) => { const ph = i ? st : -st, lift = Math.max(0, ph); f.position.y = f.userData.base.y + lift * 0.2; f.position.z = f.userData.base.z + ph * 0.16; f.rotation.x = -lift * 0.35 })
+    R.hop.position.y = Math.abs(st) * 0.09
+    R.bodyG.rotation.z = st * 0.09; R.bodyG.rotation.x = 0.04
+    R.L.rotation.x = st * 0.55; R.R.rotation.x = -st * 0.55; R.L.rotation.z = R.L.userData.side * R.L.userData.rz; R.R.rotation.z = R.R.userData.side * R.R.userData.rz
+    R.sprout.rotation.z = -0.15 + s(w + 0.6) * 0.22
+    R.root.rotation.y = -0.32 + s(t * 0.5) * 0.08
+  }
   if (pose === 'thinking') { R.root.rotation.y = -0.32 + s(t * 0.6) * 0.08; R.bodyG.rotation.z = 0.06 + s(t * 1.1) * 0.03; R.extras.forEach((d) => { d.position.y = d.userData.base + s(t * 2 + d.userData.i) * 0.06; d.scale.setScalar(0.85 + 0.15 * (0.5 + 0.5 * s(t * 2.5 + d.userData.i))) }) }
   if (pose === 'working') { R.hop.position.y = Math.abs(s(t * 6)) * 0.02; R.L.rotation.x = -1.0 + s(t * 12) * 0.12; R.R.rotation.x = -1.0 + s(t * 12 + 1.6) * 0.12; R.extras.forEach((ln) => { ln.scale.x = 0.55 + 0.45 * (0.5 + 0.5 * s(t * 3 + ln.userData.i * 1.3)); ln.position.x = -0.4 + (ln.userData.w * ln.scale.x) / 2 }) }
   if (pose === 'done') { const h = Math.max(0, s(t * 3.2)); R.hop.position.y = h * 0.28; R.bodyG.scale.y *= 1 - h * 0.04; R.R.rotation.z = 2.6 + s(t * 8) * 0.35; R.feet.forEach((f) => { f.position.y = 0.1 + h * 0.18 }) }
@@ -141,13 +155,15 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false, 
 class NamonAgent extends HTMLElement {
   static get observedAttributes() { return ['pose'] }
   connectedCallback() {
+    if (this._n) return
+    this.querySelectorAll(':scope > canvas').forEach((x) => x.remove())
     const size = +this.getAttribute('size') || 160, pose = this.getAttribute('pose') || 'idle'
     this.style.display = this.style.display || 'inline-block'; this.style.width = this.style.width || size + 'px'; this.style.height = this.style.height || size + 'px'
     this.setAttribute('role', 'img'); this.setAttribute('aria-label', this.getAttribute('label') || LABEL[pose] || 'Namon')
-    const c = document.createElement('canvas'); c.style.width = '100%'; c.style.height = '100%'; c.style.display = 'block'; this.appendChild(c)
-    try { this._n = createNamon(c, { pose, size, still: this.hasAttribute('still') }) } catch (e) { this.textContent = '🌱' }
+    const c = document.createElement('canvas'); c.style.width = '100%'; c.style.height = '100%'; c.style.display = 'block'; this.appendChild(c); this.querySelectorAll('img').forEach((im) => { im.style.display = 'none' })
+    try { this._n = createNamon(c, { pose, size, still: this.hasAttribute('still') }) } catch (e) { c.remove(); this.dataset.fallback = '1'; this.querySelectorAll('img').forEach((im) => { im.style.display = '' }); if (!this.querySelector('img')) this.textContent = '🌱' }
   }
   attributeChangedCallback(n, o, v) { if (this._n && n === 'pose') { this._n.setPose(v); this.setAttribute('aria-label', this.getAttribute('label') || LABEL[v] || 'Namon') } }
-  disconnectedCallback() { this._n?.dispose(); this._n = null }
+  disconnectedCallback() { this._n?.dispose(); this._n = null; this.querySelectorAll(':scope > canvas').forEach((x) => x.remove()) }
 }
 if (!customElements.get('namon-agent')) customElements.define('namon-agent', NamonAgent)

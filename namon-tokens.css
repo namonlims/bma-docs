@@ -4,12 +4,12 @@
    ทุกค่าที่หน้า Namon Playground ใช้ต้องอ้างตัวแปร --nd-* พร้อม fallback เท่าค่าจริง (npm run fallbacks) · ข้อยกเว้น: gradient · สีลายตกแต่ง (SVG) */
 :root {
   /* ── Primitive: ฟ้า (แบรนด์) ── */
-  --nd-blue-50:  #F0F7FF;
-  --nd-blue-100: #DCEBFD;
-  --nd-blue-400: #5B9DF0;
-  --nd-blue-600: #2F7BE0;
-  --nd-blue-700: #1B5FC1;
-  --nd-blue-800: #134A99;
+  --nd-blue-50:  #EEF1FF;
+  --nd-blue-100: #DCE2FF;
+  --nd-blue-400: #7B8FFC;
+  --nd-blue-600: #5470FB;
+  --nd-blue-700: #3F5BFA;
+  --nd-blue-800: #2438C9;
   /* ── Primitive: เขียว ── */
   --nd-green-50:  #EEFAF4;
   --nd-green-100: #D5F2E3;
@@ -95,7 +95,7 @@
   --nd-type-size-xs: 12px; --nd-type-size-sm: 14px; --nd-type-size-base: 16px; --nd-type-size-lg: 18px; --nd-type-size-xl: 24px;
   --nd-type-weight-regular: 400; --nd-type-weight-medium: 500; --nd-type-weight-bold: 700;
   /* ── Effect ── */
-  --nd-shadow-card: 0 1px 4px rgb(27 95 193 / 0.10), 0 1px 8px rgb(27 95 193 / 0.12);   /* brand drop shadow (ฟ้า) */
+  --nd-shadow-card: 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14);   /* brand drop shadow (น้ำเงิน #3F5BFA · ผู้ใช้ 21 พ.ย. 69) */
   --nd-ring-focus:  0 0 0 4px rgb(47 123 224 / 0.18);                                     /* input hover/focus */
   --nd-ring-danger: 0 0 0 3px rgb(200 30 30 / 0.12);
   --nd-gradient-accent: linear-gradient(90deg, #5B9DF0 0%, #34C38F 50%, #F06FA3 100%);   /* แถบธีม ฟ้า→เขียว→ชมพู */
@@ -112,9 +112,9 @@
   --nd-surface-page:        #0D121A;
   --nd-surface-card:        #151C26;
   --nd-surface-neutral:     #1E2733;
-  --nd-surface-brand:       #5B9DF0;
-  --nd-surface-brand-hover: #7DB3F5;
-  --nd-surface-brand-quiet: #152A47;
+  --nd-surface-brand:       #7B8FFC;
+  --nd-surface-brand-hover: #9AA9FD;
+  --nd-surface-brand-quiet: #171E4A;
   --nd-surface-input:       #0F151D;
   --nd-surface-success:     #0F2D24;
   --nd-surface-accent:      #34182A;
@@ -124,8 +124,8 @@
   --nd-text-default:        #E8ECEF;
   --nd-text-secondary:      #A9B4BF;
   --nd-text-tertiary:       #8E9AA6;
-  --nd-text-brand:          #8DBBFA;
-  --nd-text-on-brand:       #07182F;
+  --nd-text-brand:          #A9B6FF;
+  --nd-text-on-brand:       #0A0F2E;
   --nd-text-input:          #D5DCE3;
   --nd-text-placeholder:    #7C8896;
   --nd-text-success:        #5FD6A8;
@@ -136,7 +136,7 @@
   --nd-border-quiet:        #243040;
   --nd-border-input:        #6B7B8F;
   --nd-border-input-hover:  #7DB3F5;
-  --nd-border-brand:        #7DB3F5;
+  --nd-border-brand:        #8E9FFD;
   --nd-border-success:      #1D4A3F;
   --nd-border-accent:       #5A2A45;
   --nd-border-info:         #23415F;
@@ -152,9 +152,9 @@
     --nd-surface-page:        #0D121A;
     --nd-surface-card:        #151C26;
     --nd-surface-neutral:     #1E2733;
-    --nd-surface-brand:       #5B9DF0;
-    --nd-surface-brand-hover: #7DB3F5;
-    --nd-surface-brand-quiet: #152A47;
+    --nd-surface-brand:       #7B8FFC;
+    --nd-surface-brand-hover: #9AA9FD;
+    --nd-surface-brand-quiet: #171E4A;
     --nd-surface-input:       #0F151D;
     --nd-surface-success:     #0F2D24;
     --nd-surface-accent:      #34182A;
@@ -164,8 +164,8 @@
     --nd-text-default:        #E8ECEF;
     --nd-text-secondary:      #A9B4BF;
     --nd-text-tertiary:       #8E9AA6;
-    --nd-text-brand:          #8DBBFA;
-    --nd-text-on-brand:       #07182F;
+    --nd-text-brand:          #A9B6FF;
+    --nd-text-on-brand:       #0A0F2E;
     --nd-text-input:          #D5DCE3;
     --nd-text-placeholder:    #7C8896;
     --nd-text-success:        #5FD6A8;
@@ -176,7 +176,7 @@
     --nd-border-quiet:        #243040;
     --nd-border-input:        #6B7B8F;
     --nd-border-input-hover:  #7DB3F5;
-    --nd-border-brand:        #7DB3F5;
+    --nd-border-brand:        #8E9FFD;
     --nd-border-success:      #1D4A3F;
     --nd-border-accent:       #5A2A45;
     --nd-border-info:         #23415F;

@@ -13,13 +13,19 @@
 <link rel="stylesheet" href="namon-tokens.css">
 <style>
   :root { /* Namon Playground: brand primary = ฟ้า (ผู้ใช้ 20 พ.ย. 69) — หน้า portal นี้ใช้ token ฟ้าแทนเขียว bma */
-    --border-brandPrimary-default: var(--nd-border-brand, #1B5FC1);
-    --icon-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
-    --text-brandPrimary-default: var(--nd-text-brand, #1B5FC1);
-    --surface-brandPrimary-default: var(--nd-surface-brand, #1B5FC1);
-    --surface-brandPrimary-default-hover: var(--nd-surface-brand-hover, #164C9D);
-    --surface-brandPrimary-quaternary: var(--nd-surface-brand-quiet, #F0F7FF);
-    --surface-brandPrimary-quaternary-hover: var(--nd-surface-brand-quiet, #F0F7FF);
+    --border-brandPrimary-default: var(--nd-border-brand, #3F5BFA);
+    --icon-brandPrimary-default: var(--nd-text-brand, #3F5BFA);
+    --text-brandPrimary-default: var(--nd-text-brand, #3F5BFA);
+    --surface-brandPrimary-default: var(--nd-surface-brand, #3F5BFA);
+    --surface-brandPrimary-default-hover: var(--nd-surface-brand-hover, #2438C9);
+    --surface-brandPrimary-quaternary: var(--nd-surface-brand-quiet, #EEF1FF);
+    --surface-brandPrimary-quaternary-hover: var(--nd-surface-brand-quiet, #EEF1FF);
+    --border-primarysearch-default: var(--nd-blue-400, #7B8FFC);
+    --border-primarysearch-hover: var(--nd-border-brand, #3F5BFA);
+    --border-primarysearch-typing: var(--nd-border-brand, #3F5BFA);
+    --icon-primarysearch-default: var(--nd-blue-600, #5470FB);
+    --icon-primarysearch-hover: var(--nd-text-brand, #3F5BFA);
+    --shadow-primarysearch: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14));
   }
   * { box-sizing: border-box; }
   body {
@@ -263,15 +269,15 @@
   .grp-items[hidden], .cards[hidden] { display: none; }
   .side a.nav { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-200, 8px); color: var(--text-content-secondary, #636B72); text-decoration: none; font-size: var(--type-size-sm, 14px); line-height: 1.4; }
   .grp-items a.nav { padding-left: calc(var(--dim-space-300, 12px) + 28px); }
-  .side a.nav:hover { background: var(--nd-surface-brand-quiet, #EAF2FD); color: var(--text-content-default, #363B3F); }
-  .side a.nav.is-active { background: var(--nd-surface-brand-quiet, #EAF2FD); color: var(--nd-text-brand, #1B5FC1); font-weight: var(--type-weight-medium, 500); }
+  .side a.nav:hover { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--text-content-default, #363B3F); }
+  .side a.nav.is-active { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); font-weight: var(--type-weight-medium, 500); }
   .side .material-symbols-outlined { font-size: 20px; color: var(--icon-content-secondary, #ADB2B7); }
-  .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--nd-text-brand, #1B5FC1); }
+  .side a.nav.is-active .material-symbols-outlined, .grp-h.has-active > .material-symbols-outlined:first-child { color: var(--nd-text-brand, #3F5BFA); }
   .side a.nav .ext { margin-left: auto; font-size: 16px; }
   .side .sub-h { display: flex; align-items: center; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-800, 40px); padding: var(--dim-space-100, 4px) var(--dim-space-300, 12px); font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); color: var(--text-content-default, #363B3F); }
   .side .sub > ul { padding-left: var(--dim-space-600, 24px); }
   .side .sub > ul a.nav { min-height: var(--dim-size-800, 40px); font-size: var(--type-size-xs, 12px); }
-  .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--nd-border-brand, #1B5FC1); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
+  .side a.nav:focus-visible, .grp-h:focus-visible, .icon-btn:focus-visible { outline: var(--dim-stroke-200, 2px) solid var(--nd-border-brand, #3F5BFA); outline-offset: calc(-1 * var(--dim-stroke-200, 2px)); }
   .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
   .main .page { margin: 0; max-width: 1120px; }
   .doc { display: block; flex: 1 1 auto; width: 100%; height: 100dvh; border: 0; background: var(--surface-card-100, #FFFFFF); }
@@ -285,6 +291,7 @@
   .side-top { display: flex; align-items: center; gap: var(--dim-space-200, 8px); margin-bottom: var(--dim-space-200, 8px); }
   .side-top .side-brand { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
   .side-logo { display: block; height: var(--dim-size-700, 36px); width: auto; max-width: 100%; }
+  .side-logo-char { flex: none; width: 48px; height: 48px; margin: -6px 0; }
   .side-brand-name { display: flex; flex-direction: column; margin-left: var(--dim-space-200, 8px); font-family: 'Fredoka', 'Prompt', sans-serif; font-weight: 600; font-size: 20px; line-height: 1.05; color: #2B2F5E; white-space: nowrap; min-width: 0; }
   .side-brand-name small { font-size: 14px; font-weight: 600; letter-spacing: 0.3px; color: #5B6B9A; }
   .side-toggle { border-color: transparent; color: var(--icon-content-secondary, #ADB2B7); }
@@ -330,13 +337,15 @@
   .lock-act .b-fill:hover { background: var(--surface-brandPrimary-default-hover, #004C31); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet">
+<script type="module" src="namon/namon-agent.js"></script>
+<link rel="icon" type="image/png" href="assets/favicon-namon.png">
 </head>
 <body>
 <div class="shell">
 <nav class="side" id="side" aria-label="เมนูเอกสาร">
   <button type="button" class="icon-btn side-close" aria-label="ปิดเมนู"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
   <div class="side-top">
-    <a class="side-brand" href="#" aria-label="Namon Playground · หน้าแรก"><img class="side-logo" src="assets/namon-playground-icon.png?v=1" alt="" /><span class="side-brand-name">Namon<small>Playground</small></span></a>
+    <a class="side-brand" href="#" aria-label="Namon Playground · หน้าแรก"><namon-agent class="side-logo-char" pose="idle" size="48" label="Namon"><img class="side-logo" src="assets/namon-character-icon.png?v=1" alt="" /></namon-agent><span class="side-brand-name">Namon<small>Playground</small></span></a>
     <button type="button" class="icon-btn side-toggle" aria-label="ซ่อนเมนู" aria-controls="side" aria-expanded="true" title="ซ่อนเมนู"><span class="material-symbols-outlined" aria-hidden="true">left_panel_close</span></button>
   </div>
   <ul id="side-list"></ul>
