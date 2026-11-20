@@ -310,6 +310,7 @@
   .lock-box input:focus { outline: none; border-color: var(--border-brandPrimary-default, #007549); box-shadow: var(--shadow-brand-drop-bottom-200); }
   .lock-box input.err { border-color: var(--border-dangerButton-default, #DC2626); }
   .lock-err { min-height: 1.4em; margin-top: calc(-1 * var(--dim-space-200, 8px)) !important; color: var(--text-danger-default, #B91C1C) !important; font-size: var(--type-size-xs, 12px) !important; }
+  .lock-g { display: flex; justify-content: center; min-height: var(--dim-size-900, 44px); }
   .lock-act { display: flex; justify-content: flex-end; gap: var(--dim-space-300, 12px); }
   .lock-act button { min-width: 96px; height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-500, 20px); border-radius: var(--dim-radius-200, 8px); font: inherit; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); cursor: pointer; }
   .lock-act .b-out { background: var(--surface-card-100, #FFFFFF); border: var(--dim-stroke-100, 1px) solid var(--border-brandPrimary-default, #007549); color: var(--text-brandPrimaryButton-default, #007549); }
@@ -647,7 +648,7 @@
       <p>ผลทดสอบการใช้งาน · AI สวมบทผู้ใช้ทำโจทย์ในแอปจริง · ปัญหาเรียงตามความรุนแรง</p>
     </div>
     <div class="cards">
-      <a class="card" href="https://bma-mobile.mih.co.th/__ut/run.html">
+      <a class="card" href="https://bma-mobile.mih.co.th/__ut/run.html" data-ut-open>
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">touch_app</span><span class="card-title">Mobile App · หน้าผู้ทดสอบ</span></span>
         <span class="ctypes"><span class="ctype t-ut">Usability test</span></span>
         <p class="card-sum">ลิงก์ส่งให้ผู้ใช้จริงทำโจทย์บนมือถือ · ข้อมูลในแอปเป็นข้อมูลสมมติ · เปิด 15 พ.ย. 69</p>
@@ -755,14 +756,15 @@
 })();
 </script>
 <div class="lock-pop" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lock-t">
-  <form class="lock-box" id="lock-f" autocomplete="off">
-    <div class="lock-head"><span class="material-symbols-outlined card-icon" aria-hidden="true">lock</span><h3 id="lock-t">ใส่รหัสเพื่อเปิด Usability testing</h3></div>
-    <p>เอกสารหมวดนี้เปิดเฉพาะทีมที่ได้รับรหัส</p>
-    <input id="lock-in" type="password" inputmode="numeric" maxlength="12" placeholder="รหัส" aria-label="รหัส" />
+  <div class="lock-box" id="lock-f">
+    <div class="lock-head"><span class="material-symbols-outlined card-icon" aria-hidden="true">lock</span><h3 id="lock-t">เข้าสู่ระบบเพื่อเปิด Usability testing</h3></div>
+    <p>ผลทดสอบเปิดเฉพาะบัญชี Google ของเจ้าของ</p>
+    <div class="lock-g" id="lock-g"></div>
     <p class="lock-err" id="lock-err" aria-live="polite"></p>
-    <div class="lock-act"><button type="button" class="b-out" id="lock-x">ยกเลิก</button><button type="submit" class="b-fill">เปิด</button></div>
-  </form>
+    <div class="lock-act"><button type="button" class="b-out" id="lock-x">ยกเลิก</button></div>
+  </div>
 </div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* เมนูสร้างจากการ์ดในหน้าแรก (หมวด = section · รายการ = การ์ด) → เพิ่มการ์ด = เพิ่มเมนูเอง
    กดเมนู → เปิดเอกสารในช่องขวาทันที (#d=<ไฟล์>) · เอกสารนอกเว็บนี้เปิดแท็บใหม่ · หมวดพับได้ เปิดทีละหมวด */
@@ -790,37 +792,45 @@
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
   var isLocal = function (href) { var u = new URL(href, location.href); return u.origin === location.origin; };
   var rel = function (href) { var u = new URL(href, location.href); var base = location.pathname.replace(/[^/]*$/, ''); return u.pathname.indexOf(base) === 0 && u.origin === location.origin ? u.pathname.slice(base.length) + u.hash : u.href; };
-  /* รหัสเข้า Usability testing 262626 (ผู้ใช้ 17 พ.ย. 69) · ใส่ครั้งเดียวต่อแท็บ (sessionStorage) */
-  var LOCK_CODE = '262626', utSec = document.getElementById('g-ut') && document.getElementById('g-ut').closest('section');
-  var lockKeys = utSec ? [].slice.call(utSec.querySelectorAll('a.card')).map(function (c) { var h = c.getAttribute('href'); return isLocal(h) ? rel(h) : new URL(h, location.href).href; }) : [];
-  var unlocked = function () { try { return sessionStorage.getItem('ut-ok') === '1'; } catch (e) { return false; } };
+  /* Usability testing เปิดเฉพาะบัญชี Google ของเจ้าของ (ผู้ใช้ 20 พ.ย. 69 · แทนรหัส 262626) · การ์ด data-ut-open (หน้าผู้ทดสอบ) เปิดได้ทุกคน
+     เก็บเป็น SHA-256 ของอีเมล ไม่ใส่อีเมลตรง ๆ ในหน้าสาธารณะ · Client ID เดียวกับ ticket.html · ผ่านครั้งเดียวต่อแท็บ (sessionStorage) */
+  var GOOGLE_CLIENT_ID = '815797516574-00m2cmpb25fkl2ip9cecqmpfogt5952l.apps.googleusercontent.com';
+  var OWNER_SHA256 = '01ba6a558c825f15678b5c375724a5eeca6a6aca0d29b8a5f80cbd6511be7c2e';
+  var utSec = document.getElementById('g-ut') && document.getElementById('g-ut').closest('section');
+  var lockKeys = utSec ? [].slice.call(utSec.querySelectorAll('a.card:not([data-ut-open])')).map(function (c) { var h = c.getAttribute('href'); return isLocal(h) ? rel(h) : new URL(h, location.href).href; }) : [];
+  var unlocked = function () { try { return sessionStorage.getItem('ut-owner') === '1'; } catch (e) { return false; } };
   var isLocked = function (key) { return !unlocked() && lockKeys.indexOf(key) >= 0; };
-  var lp = document.getElementById('lock'), lin = document.getElementById('lock-in'), lerr = document.getElementById('lock-err'), lThen = null, lCancel = null;
+  var lp = document.getElementById('lock'), lerr = document.getElementById('lock-err'), lg = document.getElementById('lock-g'), lThen = null, lCancel = null, gReady = false;
+  var sha256 = function (t) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function (b) { return [].map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }); };
+  var onCred = function (r) {
+    var p = {}; try { p = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (er) {}
+    if (!p.email || !p.email_verified) { lerr.textContent = 'อ่านบัญชีไม่ได้ ลองใหม่อีกครั้ง'; return; }
+    sha256(String(p.email).toLowerCase()).then(function (h) {
+      if (h !== OWNER_SHA256) { lerr.textContent = 'บัญชีนี้ไม่มีสิทธิ์เปิดผลทดสอบ'; return; }
+      try { sessionStorage.setItem('ut-owner', '1'); } catch (er) {}
+      closeLock(true);
+    });
+  };
+  var gInit = function () {
+    if (!window.google || !google.accounts) { lerr.textContent = 'กำลังโหลดปุ่มเข้าสู่ระบบ…'; return setTimeout(gInit, 300); }
+    if (!gReady) { google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onCred }); gReady = true; }
+    lerr.textContent = ''; lg.innerHTML = '';
+    google.accounts.id.renderButton(lg, { theme: 'outline', size: 'large', text: 'signin_with', locale: 'th' });
+  };
   var askCode = function (then, cancel) {
-    lThen = then; lCancel = cancel || null; lin.value = ''; lin.classList.remove('err'); lerr.textContent = ''; lp.hidden = false; setTimeout(function () { lin.focus(); }, 0);
+    lThen = then; lCancel = cancel || null; lerr.textContent = ''; lp.hidden = false; gInit();
   };
   var closeLock = function (ok) { lp.hidden = true; var f = ok ? lThen : lCancel; lThen = lCancel = null; if (f) f(); };
-  document.getElementById('lock-f').addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (lin.value.trim() !== LOCK_CODE) { lin.classList.add('err'); lerr.textContent = 'รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง'; lin.select(); return; }
-    try { sessionStorage.setItem('ut-ok', '1'); } catch (er) {}
-    closeLock(true);
-  });
   document.getElementById('lock-x').addEventListener('click', function () { closeLock(false); });
   lp.addEventListener('click', function (e) { if (e.target === lp) closeLock(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lp.hidden) closeLock(false); });
-  /* กดเมนู/การ์ด/ทางลัดที่ชี้เอกสารหมวดนี้ หรือหัวหมวดในเมนู → ถามรหัสก่อน */
+  /* กดเมนู/การ์ด/ทางลัดที่ชี้ผลทดสอบ → เข้าสู่ระบบก่อน · หัวหมวดและหน้าผู้ทดสอบเปิดได้ทุกคน */
   document.addEventListener('click', function (e) {
     if (unlocked()) return;
-    var el = e.target.closest && e.target.closest('a[href], button.grp-h'); if (!el || lp.contains(el)) return;
-    var hit = false;
-    if (el.matches('button.grp-h')) hit = el.getAttribute('aria-controls') === 'gi-g-ut' && el.getAttribute('aria-expanded') !== 'true';
-    else {
-      var h = el.getAttribute('href');
-      if (h === '#g-ut') hit = true;
-      else if (h.indexOf('#d=') === 0) hit = isLocked(decodeURIComponent(h.slice(3)));
-      else hit = isLocked(isLocal(h) ? rel(h) : new URL(h, location.href).href);
-    }
+    var el = e.target.closest && e.target.closest('a[href]'); if (!el || lp.contains(el)) return;
+    var h = el.getAttribute('href'), hit = false;
+    if (h.indexOf('#d=') === 0) hit = isLocked(decodeURIComponent(h.slice(3)));
+    else if (h.charAt(0) !== '#') hit = isLocked(isLocal(h) ? rel(h) : new URL(h, location.href).href);
     if (!hit) return;
     e.preventDefault(); e.stopImmediatePropagation();
     askCode(function () { el.click(); });
