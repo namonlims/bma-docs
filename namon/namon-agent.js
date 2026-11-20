@@ -12,8 +12,14 @@ const mesh = (g, m, cast = true) => { const o = new THREE.Mesh(g, m); o.castShad
 function blob(a = 0.98, b = 1.2, n = 2.25, seg = 96) {
   const pts = []
   for (let i = 0; i <= seg; i++) { const t = -Math.PI / 2 + (i / seg) * Math.PI, c = Math.cos(t), s = Math.sin(t); const x = a * Math.pow(Math.abs(c), 2 / n), y = b * Math.sign(s) * Math.pow(Math.abs(s), 2 / n); pts.push(new THREE.Vector2(Math.max(x, 0.0001) * (1 + 0.13 * (1 - (y + b) / (2 * b))), y + b + 0.16)) }
+  BLOB_PTS = pts
   return new THREE.LatheGeometry(pts, 128)
 }
+let BLOB_PTS = null
+const ZS = 0.86
+// จุดบนผิวตัว ณ (x, y) ด้านหน้า → ให้ตา แก้ม ปาก แปะบนผิวจริง (ผู้ใช้ 21 พ.ย. 69 "ตาต้องแปะอยู่บนก้อนสีน้ำเงิน")
+function radiusAt(y) { const P = BLOB_PTS; for (let i = 1; i < P.length; i++) { if ((P[i - 1].y - y) * (P[i].y - y) <= 0) { const t = (y - P[i - 1].y) / ((P[i].y - P[i - 1].y) || 1); return P[i - 1].x + (P[i].x - P[i - 1].x) * t } } return 0.5 }
+function onSurface(obj, x, y, lift = 0) { const r = radiusAt(y), zz = Math.sqrt(Math.max(0.0001, r * r - x * x)); obj.position.set(x, y, zz * ZS + lift); const ny = (radiusAt(y + 0.02) - radiusAt(y - 0.02)) / 0.04; obj.rotation.y = Math.atan2(x, zz * ZS); obj.rotation.x = -Math.atan(ny) * 0.9; return obj }
 
 
 // ของในมือ — จับคู่กับงานของ agent (ผู้ใช้ 21 พ.ย. 69 · แรงบันดาลใจ "ALL 16 TYPES")
@@ -31,22 +37,36 @@ export const PROPS = {
   mouse: { th: 'เมาส์', role: 'ทดสอบ usability' },
   flower: { th: 'ดอกไม้', role: 'ขอบคุณ / เสร็จงาน' },
 }
+
+// กล่องขอบมน (soft clay) — extrude สี่เหลี่ยมมุมมน + bevel
+function rbox(w, h, d, r = 0.06) {
+  r = Math.min(r, w / 2 - 0.001, h / 2 - 0.001, d / 2 - 0.001)
+  const x = w / 2 - r, y = h / 2 - r, sh = new THREE.Shape(), k = r * 0.6
+  sh.moveTo(-x, -y - 0.0001); sh.lineTo(x, -y - 0.0001); sh.lineTo(x, y); sh.lineTo(-x, y); sh.lineTo(-x, -y - 0.0001)
+  const g = new THREE.ExtrudeGeometry(sh, { depth: Math.max(0.001, d - 2 * r), bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 8, curveSegments: 8 })
+  g.translate(0, 0, -(d - 2 * r) / 2); g.computeVertexNormals(); return g
+}
+function rtri(w, h, d, r = 0.06) {
+  const sh = new THREE.Shape(); sh.moveTo(-w / 2 + r, 0); sh.lineTo(w / 2 - r, 0); sh.lineTo(0, h - r); sh.lineTo(-w / 2 + r, 0)
+  const g = new THREE.ExtrudeGeometry(sh, { depth: Math.max(0.001, d - 2 * r), bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 8 }); g.translate(0, 0, -(d - 2 * r) / 2); g.computeVertexNormals(); return g
+}
 function makeProp(id) {
   const g = new THREE.Group(), M = (c, o = {}) => clay(c, { roughness: 0.5, ...o })
   const add = (geo, mat, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) => { const m = mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); g.add(m); return m }
-  if (id === 'magnifier') { add(new THREE.TorusGeometry(0.26, 0.05, 20, 48), M(0x2B2F5E), 0, 0.2, 0); add(new THREE.CircleGeometry(0.24, 40), new THREE.MeshPhysicalMaterial({ color: 0xDDEBFF, transparent: true, opacity: 0.45, roughness: 0.05 }), 0, 0.2, 0.01); add(new THREE.CylinderGeometry(0.045, 0.055, 0.5, 20), M(0x2B2F5E), 0.27, -0.2, 0, 0, 0, 0.6) }
-  if (id === 'paintbrush') { add(new THREE.CylinderGeometry(0.05, 0.07, 1.1, 20), M(0xC9814A), 0, 0, 0, 0, 0, -0.6); add(new THREE.CylinderGeometry(0.07, 0.07, 0.16, 20), M(0xC9CED6, { metalness: 0.5, roughness: 0.3 }), 0.32, 0.46, 0, 0, 0, -0.6); add(new THREE.ConeGeometry(0.08, 0.26, 20), M(0xE0607E), 0.43, 0.63, 0, 0, 0, -0.6) }
-  if (id === 'wrench') { const mt = M(0xB8BEC8, { metalness: 0.6, roughness: 0.3 }); add(new THREE.BoxGeometry(0.13, 0.9, 0.07), mt, 0, 0, 0, 0, 0, -0.5); const hd = add(new THREE.TorusGeometry(0.15, 0.07, 16, 32, Math.PI * 1.4), mt, 0.27, 0.43, 0, 0, 0, -0.5 + Math.PI * 0.8) }
-  if (id === 'book') { add(new THREE.BoxGeometry(0.75, 0.55, 0.14), M(0xE0607E), 0, 0, 0); add(new THREE.BoxGeometry(0.7, 0.5, 0.13), M(0xFFF8EE), 0.02, 0, 0.01); add(new THREE.BoxGeometry(0.75, 0.55, 0.02), M(0xC94A6A), 0, 0, 0.08) }
-  if (id === 'camera') { add(new THREE.BoxGeometry(0.72, 0.46, 0.3), M(0x2B2F5E), 0, 0, 0); add(new THREE.CylinderGeometry(0.15, 0.17, 0.18, 32), M(0x15171C, { roughness: 0.2 }), 0, -0.01, 0.22, Math.PI / 2); add(new THREE.CircleGeometry(0.11, 32), new THREE.MeshPhysicalMaterial({ color: 0x5C7BFF, roughness: 0.05, clearcoat: 1 }), 0, -0.01, 0.315); add(new THREE.BoxGeometry(0.16, 0.08, 0.12), M(0xC9CED6), -0.2, 0.27, 0) }
-  if (id === 'coffee') { add(new THREE.CylinderGeometry(0.4, 0.4, 0.04, 40), M(0xFFFFFF), 0, -0.2, 0); add(new THREE.CylinderGeometry(0.22, 0.17, 0.3, 32), M(0xFFFFFF), 0, -0.03, 0); add(new THREE.CircleGeometry(0.2, 32), M(0x6B4226), 0, 0.125, 0, -Math.PI / 2); add(new THREE.TorusGeometry(0.08, 0.025, 12, 24), M(0xFFFFFF), 0.24, -0.02, 0) }
-  if (id === 'map') { const cols = [0xF1E6C8, 0xE8DAB2, 0xF1E6C8]; [-0.27, 0, 0.27].forEach((x, i) => { add(new THREE.BoxGeometry(0.27, 0.62, 0.02), M(cols[i]), x, 0, i === 1 ? -0.04 : 0, 0, i === 1 ? 0 : (i ? -0.25 : 0.25)) }); [[-0.2, 0.1], [0.05, -0.08], [0.25, 0.14]].forEach(([x, y]) => add(new THREE.SphereGeometry(0.07, 16, 12), M(0x7BD8A4), x, y, 0.03).scale.set(1.4, 1, 0.3)) }
-  if (id === 'compass') { add(new THREE.CylinderGeometry(0.32, 0.32, 0.08, 40), M(0xC9A26A, { metalness: 0.4 }), 0, 0, 0, Math.PI / 2); add(new THREE.CircleGeometry(0.27, 40), M(0xFFF8EE), 0, 0, 0.045); add(new THREE.ConeGeometry(0.05, 0.22, 4), M(0xE0607E), 0, 0.1, 0.06); add(new THREE.ConeGeometry(0.05, 0.22, 4), M(0x5C7BFF), 0, -0.1, 0.06, 0, 0, Math.PI); add(new THREE.TorusGeometry(0.06, 0.02, 10, 20), M(0xC9A26A), 0, 0.37, 0) }
-  if (id === 'mic') { add(new THREE.SphereGeometry(0.17, 24, 18), M(0x9AA1AD, { metalness: 0.5, roughness: 0.35 }), 0.15, 0.32, 0); add(new THREE.CylinderGeometry(0.06, 0.05, 0.6, 20), M(0x15171C), 0, 0, 0, 0, 0, 0.45) }
-  if (id === 'chess') { const k = M(0x3B2A2A); add(new THREE.CylinderGeometry(0.24, 0.28, 0.12, 32), k, 0, -0.42, 0); add(new THREE.CylinderGeometry(0.12, 0.22, 0.5, 32), k, 0, -0.12, 0); add(new THREE.SphereGeometry(0.16, 24, 18), k, 0, 0.2, 0); add(new THREE.BoxGeometry(0.06, 0.2, 0.06), k, 0, 0.42, 0); add(new THREE.BoxGeometry(0.16, 0.06, 0.06), k, 0, 0.44, 0) }
-  if (id === 'mouse') { const mo = add(new THREE.SphereGeometry(0.25, 32, 24), M(0xF4F4F6), 0, 0, 0); mo.scale.set(0.8, 1.2, 0.55); add(new THREE.BoxGeometry(0.02, 0.14, 0.05), M(0xC9CED6), 0, 0.17, 0.13); add(new THREE.TorusGeometry(0.2, 0.015, 8, 24, Math.PI), M(0xC9CED6), 0.18, 0.28, 0) }
-  if (id === 'flower') { add(new THREE.CylinderGeometry(0.025, 0.03, 0.8, 12), M(0x6BAE3C), 0, -0.1, 0); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(new THREE.SphereGeometry(0.1, 20, 14), M(0xF58FB5), Math.cos(a) * 0.13, 0.36 + Math.sin(a) * 0.13, 0).scale.set(1, 1, 0.45) } add(new THREE.SphereGeometry(0.08, 20, 14), M(0xFFD66B), 0, 0.36, 0.03); add(new THREE.SphereGeometry(0.09, 16, 12), M(0x7BC24A), 0.1, -0.05, 0).scale.set(1.6, 0.6, 0.4) }
-  if (id === 'house') { add(new THREE.BoxGeometry(0.62, 0.46, 0.5), M(0xFFF3E2), 0, -0.12, 0); const roof = add(new THREE.ConeGeometry(0.55, 0.36, 4), M(0xE0607E), 0, 0.29, 0, 0, Math.PI / 4, 0); roof.scale.set(1, 1, 0.8); add(new THREE.BoxGeometry(0.16, 0.26, 0.04), M(0x5C7BFF), 0, -0.22, 0.26); add(new THREE.BoxGeometry(0.13, 0.13, 0.03), M(0xC6F432), 0.18, -0.06, 0.26) }
+  const cap = (r, len, c, x, y, z, rz = 0) => add(new THREE.CapsuleGeometry(r, len, 10, 24), M(c), x, y, z, 0, 0, rz)
+  if (id === 'magnifier') { add(new THREE.TorusGeometry(0.24, 0.085, 24, 48), M(0x6C7BF2), 0, 0.2, 0); add(new THREE.SphereGeometry(0.2, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0xE6EEFF, transparent: true, opacity: 0.6, roughness: 0.1 }), 0, 0.2, 0).scale.set(1, 1, 0.25); cap(0.08, 0.32, 0x6C7BF2, 0.28, -0.2, 0, 0.62) }
+  if (id === 'paintbrush') { cap(0.085, 0.8, 0xE7A877, -0.05, -0.08, 0, -0.6); add(new THREE.CylinderGeometry(0.1, 0.1, 0.16, 24), M(0xD6DAE2, { roughness: 0.35 }), 0.27, 0.38, 0, 0, 0, -0.6); const tip = add(new THREE.SphereGeometry(0.12, 24, 18), M(0xF28FB2), 0.4, 0.57, 0); tip.scale.set(0.9, 1.5, 0.9); tip.rotation.z = -0.6 }
+  if (id === 'wrench') { cap(0.09, 0.62, 0xA9B4C9, -0.04, -0.1, 0, -0.5); const hd = add(new THREE.TorusGeometry(0.17, 0.1, 20, 36, Math.PI * 1.45), M(0xA9B4C9), 0.24, 0.4, 0, 0, 0, Math.PI * 0.3) }
+  if (id === 'book') { add(rbox(0.78, 0.6, 0.24, 0.08), M(0xF28FB2), 0, 0, 0); add(rbox(0.68, 0.52, 0.2, 0.05), M(0xFFF6EA), 0.05, 0, 0.0); add(rbox(0.3, 0.08, 0.04, 0.02), M(0xFFFFFF), -0.05, 0.12, 0.125) }
+  if (id === 'camera') { add(rbox(0.8, 0.52, 0.36, 0.13), M(0x7C8CF8), 0, 0, 0); add(new THREE.TorusGeometry(0.15, 0.06, 20, 36), M(0x4A57C9), 0, -0.01, 0.19); add(new THREE.SphereGeometry(0.13, 32, 24), new THREE.MeshPhysicalMaterial({ color: 0x2B3170, roughness: 0.1, clearcoat: 1 }), 0, -0.01, 0.17).scale.set(1, 1, 0.5); add(rbox(0.18, 0.1, 0.16, 0.04), M(0xC6F432), -0.22, 0.29, 0) }
+  if (id === 'coffee') { add(new THREE.CylinderGeometry(0.4, 0.36, 0.06, 40), M(0xFFFFFF), 0, -0.2, 0); add(new THREE.TorusGeometry(0.37, 0.03, 12, 40), M(0xFFFFFF), 0, -0.17, 0, Math.PI / 2); add(new THREE.CylinderGeometry(0.22, 0.17, 0.32, 32), M(0xFFFFFF), 0, -0.02, 0); add(new THREE.CircleGeometry(0.2, 32), M(0xB07A50), 0, 0.14, 0, -Math.PI / 2); add(new THREE.TorusGeometry(0.21, 0.025, 12, 32), M(0xFFFFFF), 0, 0.14, 0, Math.PI / 2); add(new THREE.TorusGeometry(0.09, 0.035, 12, 24), M(0xFFFFFF), 0.25, -0.02, 0) }
+  if (id === 'map') { [-0.27, 0, 0.27].forEach((x, i) => add(rbox(0.28, 0.64, 0.06, 0.025), M(i === 1 ? 0xEADBB3 : 0xF5E9C9), x, 0, i === 1 ? -0.03 : 0, 0, i === 1 ? 0 : (i ? -0.25 : 0.25))); [[-0.2, 0.1], [0.05, -0.08], [0.25, 0.14]].forEach(([x, y]) => add(new THREE.SphereGeometry(0.075, 20, 14), M(0x8FD9AE), x, y, 0.04).scale.set(1.4, 1, 0.35)) }
+  if (id === 'compass') { add(new THREE.CylinderGeometry(0.3, 0.3, 0.14, 48), M(0xE2B979), 0, 0, 0, Math.PI / 2); add(new THREE.TorusGeometry(0.3, 0.06, 20, 48), M(0xE2B979), 0, 0, 0); add(new THREE.CircleGeometry(0.25, 40), M(0xFFF8EE), 0, 0, 0.075); add(new THREE.SphereGeometry(0.06, 16, 12), M(0xF28FB2), 0, 0.1, 0.08).scale.set(0.8, 1.8, 0.5); add(new THREE.SphereGeometry(0.06, 16, 12), M(0x7C8CF8), 0, -0.1, 0.08).scale.set(0.8, 1.8, 0.5); add(new THREE.TorusGeometry(0.07, 0.03, 12, 24), M(0xE2B979), 0, 0.38, 0) }
+  if (id === 'mic') { add(new THREE.SphereGeometry(0.2, 32, 24), M(0xB9C0CC), 0.16, 0.32, 0); cap(0.08, 0.42, 0x4A4F63, 0, 0, 0, 0.45) }
+  if (id === 'chess') { const k = M(0x6B5A5A); add(new THREE.CylinderGeometry(0.24, 0.28, 0.12, 32), k, 0, -0.42, 0); add(new THREE.TorusGeometry(0.25, 0.05, 12, 32), k, 0, -0.38, 0, Math.PI / 2); add(new THREE.CylinderGeometry(0.12, 0.22, 0.5, 32), k, 0, -0.12, 0); add(new THREE.SphereGeometry(0.17, 24, 18), k, 0, 0.2, 0); cap(0.045, 0.12, 0x6B5A5A, 0, 0.44, 0); cap(0.045, 0.1, 0x6B5A5A, 0, 0.46, 0, Math.PI / 2) }
+  if (id === 'mouse') { const mo = add(new THREE.SphereGeometry(0.25, 32, 24), M(0xF7F7FA), 0, 0, 0); mo.scale.set(0.82, 1.2, 0.6); add(rbox(0.035, 0.14, 0.06, 0.015), M(0xC9CED6), 0, 0.17, 0.14); add(new THREE.TorusGeometry(0.2, 0.025, 10, 24, Math.PI), M(0xC9CED6), 0.18, 0.28, 0) }
+  if (id === 'flower') { cap(0.035, 0.7, 0x86C25A, 0, -0.1, 0); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(new THREE.SphereGeometry(0.11, 24, 16), M(0xF7A3C2), Math.cos(a) * 0.14, 0.38 + Math.sin(a) * 0.14, 0).scale.set(1, 1, 0.55) } add(new THREE.SphereGeometry(0.09, 20, 14), M(0xFFDA77), 0, 0.38, 0.04); add(new THREE.SphereGeometry(0.1, 16, 12), M(0x9AD36A), 0.12, -0.05, 0).scale.set(1.6, 0.6, 0.45) }
+  if (id === 'house') { add(rbox(0.66, 0.5, 0.52, 0.09), M(0xFFF1DC), 0, -0.13, 0); add(rtri(0.86, 0.42, 0.6, 0.06), M(0xF28FB2), 0, 0.1, 0); add(rbox(0.17, 0.26, 0.06, 0.04), M(0x7C8CF8), 0, -0.25, 0.27); add(rbox(0.14, 0.14, 0.05, 0.03), M(0xC6F432), 0.19, -0.07, 0.27) }
   return g
 }
 
@@ -55,19 +75,20 @@ function build(pose, prop) {
   const eyeM = new THREE.MeshPhysicalMaterial({ color: C.eye, roughness: 0.18, clearcoat: 1 }), hiM = new THREE.MeshBasicMaterial({ color: 0xffffff })
   const root = new THREE.Group(), hop = new THREE.Group(), bodyG = new THREE.Group(); root.add(hop); hop.add(bodyG)
   const R = { root, hop, bodyG, eyes: [], extras: [] }
-  const body = mesh(blob(), clay(C.body)); body.scale.set(1, 1, 0.86); bodyG.add(body)
+  const body = mesh(blob(), clay(C.body)); body.scale.set(1, 1, ZS); bodyG.add(body)
   // ตาจุดดำ (ไม่มีตาขาว) ตามภาพอ้างอิง 21 พ.ย. 69
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
-    const rim = mesh(new THREE.SphereGeometry(0.118, 40, 32), clay(C.white, { roughness: 0.35 }), false); rim.scale.set(1, 1.05 * squash, 0.4); g.add(rim)
-    const e = mesh(new THREE.SphereGeometry(0.096, 40, 32), eyeM, false); e.scale.set(1, 1.05 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.025); g.add(e)
-    const h = new THREE.Mesh(new THREE.SphereGeometry(0.03, 14, 10), hiM); h.position.set(look[0] * 0.5 + 0.035, look[1] * 0.5 * squash + 0.04 * squash, 0.07); g.add(h)
-    g.position.set(x * 1.05, 1.98, 0.86); R.eyes.push(g); return g
+    // ตาน่ารัก: วงรีดำเงา สูงกว่ากว้าง + ประกายใหญ่/เล็ก 2 จุด (ผู้ใช้ 21 พ.ย. 69)
+    const e = mesh(new THREE.SphereGeometry(0.1, 40, 32), new THREE.MeshPhysicalMaterial({ color: 0x14152A, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }), false); e.scale.set(0.92, 1.28 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.02); g.add(e)
+    const h1 = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 12), hiM); h1.position.set(look[0] * 0.5 + 0.03, look[1] * 0.5 * squash + 0.05 * squash, 0.065); g.add(h1)
+    const h2 = new THREE.Mesh(new THREE.SphereGeometry(0.016, 12, 10), hiM); h2.position.set(look[0] * 0.5 - 0.03, look[1] * 0.5 * squash - 0.045 * squash, 0.06); g.add(h2)
+    onSurface(g, x * 1.05, 1.98, -0.01); R.eyes.push(g); return g
   }
-  const arcEye = (x, up = true) => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.024, 16, 48, Math.PI), eyeM); t.position.set(x * 1.05, up ? 1.95 : 2.0, 0.9); if (!up) t.rotation.z = Math.PI; return t }
+  const arcEye = (x, up = true) => { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.024, 16, 48, Math.PI), eyeM); if (!up) t.rotation.z = Math.PI; g.add(t); onSurface(g, x * 1.05, up ? 1.95 : 2.0, 0.005); return g }
   // ปากขีดสั้น หางงอนสองข้าง
-  const mouth = () => { const g = new THREE.Group(); const bar = new THREE.Mesh(new THREE.CapsuleGeometry(0.016, 0.1, 6, 12), eyeM); bar.rotation.z = Math.PI / 2; g.add(bar); for (const sx of [-1, 1]) { const tk = new THREE.Mesh(new THREE.CapsuleGeometry(0.015, 0.035, 6, 12), eyeM); tk.position.set(sx * 0.066, 0.026, 0); g.add(tk) } g.position.set(0.0, 1.84, 0.93); g.scale.setScalar(0.8); return g }
-  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); ch.position.set(sx * 0.42, 1.8, 0.84); bodyG.add(ch) }
+  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.016, 12, 32, Math.PI), eyeM); t.rotation.z = Math.PI; const g = new THREE.Group(); g.add(t); onSurface(g, 0, 1.86, 0.005); return g }
+  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); onSurface(ch, sx * 0.42, 1.8, -0.01); bodyG.add(ch) }
   // ใบโคลเวอร์ 4 แฉก (หัวใจ) สีเขียวมะนาว
   const sprout = new THREE.Group(); sprout.position.set(0.38, 2.42, 0); sprout.rotation.z = -0.28
   const stem = mesh(new THREE.CylinderGeometry(0.028, 0.04, 0.56, 20), clay(C.cloverDark)); stem.position.set(0.03, 0.26, 0); stem.rotation.z = -0.1; sprout.add(stem)

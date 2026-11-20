@@ -292,7 +292,9 @@
   /* ซ่อนเมนูซ้าย (จอ ≥1024) เหลือแถบแคบ = ปุ่มเปิด · ผู้ใช้ 15 พ.ย. 69 "กดซ่อน sidemenu ได้ เพื่อพื้นที่ content เยอะๆ" */
   .side-top { display: flex; align-items: center; gap: var(--dim-space-200, 8px); margin-bottom: var(--dim-space-200, 8px); }
   .side-top .side-brand { flex: 1 1 auto; min-width: 0; margin-bottom: 0; }
-  .nav-namon { width: 30px; height: 30px; flex: none; object-fit: contain; margin: -4px 0; transition: transform 150ms ease-out; }
+  .nav-namon { width: 22px; height: 22px; flex: none; object-fit: contain; transition: transform 150ms ease-out; }
+  .side a.nav.nav-top { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); } /* เมนูเดี่ยวระดับบน = หน้าตาเดียวกับหัวหมวด (ผู้ใช้ 21 พ.ย. 69) */
+  .side a.nav.nav-top.is-active { color: var(--text-brandPrimary-default, #3F5BFA); }
   .side a.nav:hover .nav-namon, .grp-h:hover .nav-namon { transform: translateY(-2px) rotate(-8deg) scale(1.08); }
   .gtile .nav-namon.card-icon { width: 44px; height: 44px; margin: 0; }
   .side-logo { display: block; height: var(--dim-size-700, 36px); width: auto; max-width: 100%; }
@@ -796,7 +798,7 @@
   var cards = [].slice.call(page.querySelectorAll('section.group .cards:not([hidden]) a.card'));
   var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-app': 'desktop_windows' };
   var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-mic', 'g-char': 'obj-flower', 'g-app': 'obj-coffee' };
-  var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=1" alt="" aria-hidden="true">' : ms(fallback, cls); };
+  var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=2" alt="" aria-hidden="true">' : ms(fallback, cls); };
   
   var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
@@ -882,7 +884,7 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
   var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-app': 'desktop_windows' };
   var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-mic', 'g-char': 'obj-flower', 'g-app': 'obj-coffee' };
-  var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=1" alt="" aria-hidden="true">' : ms(fallback, cls); };
+  var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=2" alt="" aria-hidden="true">' : ms(fallback, cls); };
   
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
   var isLocal = function (href) { var u = new URL(href, location.href); return u.origin === location.origin; };
@@ -931,13 +933,13 @@
     askCode(function () { el.click(); });
   }, true);
   var groups = [];
-  list.insertAdjacentHTML('beforeend', '<li><a class="nav" href="#" data-home="1">' + ni('home', 'home') + '<span>หน้าแรก</span></a></li>');
+  list.insertAdjacentHTML('beforeend', '<li><a class="nav nav-top" href="#" data-home="1">' + ni('home', 'home') + '<span>หน้าแรก</span></a></li>');
   [].slice.call(page.querySelectorAll('section.group')).forEach(function (sec) {
     var h = sec.querySelector('h2'); if (!h) return;
     /* หมวดที่มีการ์ดเดียว (data-nav-solo) = ลิงก์ระดับบนในเมนูซ้าย ไม่ใช่กลุ่มพับได้ · "สร้าง ticket" (ผู้ใช้ 19 พ.ย. 69) */
     if (sec.hasAttribute('data-nav-solo')) {
       var sc = sec.querySelector('a.card');
-      if (sc) { var sh = sc.getAttribute('href'), sl = document.createElement('li'); sl.innerHTML = '<a class="nav" href="#d=' + encodeURIComponent(sh) + '" data-doc="' + sh + '">' + ni(h.id, (sc.querySelector('.card-icon') || {}).textContent || 'description') + '<span>' + h.textContent + '</span></a>'; list.appendChild(sl); }
+      if (sc) { var sh = sc.getAttribute('href'), sl = document.createElement('li'); sl.innerHTML = '<a class="nav nav-top" href="#d=' + encodeURIComponent(sh) + '" data-doc="' + sh + '">' + ni(h.id, (sc.querySelector('.card-icon') || {}).textContent || 'description') + '<span>' + h.textContent + '</span></a>'; list.appendChild(sl); }
       return;
     }
     var li = document.createElement('li'); li.className = 'grp';
