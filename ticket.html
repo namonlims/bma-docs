@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="namon-components.css">
 <style>
   body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: var(--nd-space-400,16px); background: radial-gradient(45% 63% at 44% 40%, rgba(64, 170, 242, 0.2) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(62, 195, 178, 0.2) 0%, rgba(255, 255, 255, 0) 100%), var(--nd-surface-card,#FFFFFF); background-attachment: fixed; color: var(--nd-text-default,#363B3F); font-family: var(--nd-type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--nd-type-size-sm,14px); }
-  .act { display: flex; flex-wrap: wrap; gap: var(--nd-space-200,8px); justify-content: flex-end; margin-top: var(--nd-space-400,16px); }
   code { overflow-wrap: anywhere; }
   ul { margin: var(--nd-space-300,12px) 0 0; padding-left: var(--nd-space-500,20px); color: var(--nd-text-secondary,#636B72); font-size: var(--nd-type-size-xs,12px); line-height: 1.6; }
   body.on { display: block; padding: 0; background: transparent; }
@@ -65,7 +64,6 @@
       <li>ถ้า Chrome ถามสิทธิ์เข้าถึงอุปกรณ์ในเครือข่ายภายใน ให้กด <b>อนุญาต</b> (ใช้เปิด Studio ในเครื่องคุณ)</li>
       <li>ถ้าเปิดไม่ติด ให้รัน <code>npm start</code> ใน <code>ticket-studio</code></li>
     </ul>
-    <div class="act"><a class="nd-btn" href="index.html">กลับ</a></div>
   </section>
 </main>
 <iframe id="studio" title="สร้าง ticket" allow="local-network-access; local-network; loopback-network" hidden></iframe>
