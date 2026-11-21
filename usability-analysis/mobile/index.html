@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="../../tokens.css" />
-  <link rel="stylesheet" href="ut.css?v=63042483" />
+  <link rel="stylesheet" href="ut.css?v=24959068" />
   <style>
     /* หน้าวิเคราะห์ผลรวมของเจ้าของ (ผู้ใช้ 20 พ.ย. 69) · ใช้ชิ้นของ Usability Studio (ut.css) · ตัวเลขจาก metrics.js ชุดเดียวกับหน้าผู้ทดสอบ */
     body { background: var(--surface-neutral-quaternary, #F9FBFB); }
@@ -23,6 +23,9 @@
     .fix-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--dim-space-300, 12px); }
     .fix-list li { display: grid; grid-template-columns: minmax(8rem, 14rem) minmax(0, 1fr); gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); align-items: start; }
     .fix-list .row { gap: var(--dim-space-100, 4px); }
+    .quota-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+    .quota-list li { display: grid; grid-template-columns: minmax(0, 1fr) max-content minmax(4rem, max-content); gap: var(--dim-space-200, 8px); align-items: center; }
+    .quota-list .badge { justify-self: end; align-self: center; }
     .quotes { margin: 0; padding-left: var(--dim-space-500, 20px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
     td.wrap { white-space: normal; min-width: 10rem; }
     @media (max-width: 639px) { .fix-list li { grid-template-columns: minmax(0, 1fr); } .kpi b { font-size: var(--type-size-xl, 20px); } }
@@ -39,6 +42,6 @@
 <body>
   <main class="page stack-lg" id="root"></main>
   <script src="metrics.js?v=e013c0ed"></script>
-  <script src="analysis.js?v=5188c689"></script>
+  <script src="analysis.js?v=2613dc20"></script>
 </body>
 </html>
