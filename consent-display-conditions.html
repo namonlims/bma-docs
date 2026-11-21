@@ -561,6 +561,7 @@
   }
   @media (max-width: 1279px) {
     .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pager button { min-width: var(--dim-size-900, 44px); height: var(--dim-size-900, 44px); min-height: var(--dim-size-900, 44px); }   /* แท็บเล็ต/มือถือ: ปุ่มเปลี่ยนหน้าแตะได้ 44px */
   }
   @media (max-width: 767px) {
     .page { padding: var(--dim-space-400, 16px); }
@@ -996,11 +997,15 @@ const xml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 
 function downloadExcel() {
   const header = [...document.querySelectorAll(".ds-table thead th")].map((th) => th.textContent.trim());
+  /* ส่งออกทุกแถวที่ตรงตัวกรอง ไม่ใช่เฉพาะหน้าที่เห็น: วาดตารางครบทุกแถวชั่วคราว อ่านค่า แล้ววาดกลับเป็นหน้าเดิม (ผู้ใช้ 22 พ.ย. 69 3ก) */
+  const keepAll = window.__printAll;
+  window.__printAll = true; render();
   const body = [...document.querySelectorAll(".ds-table tbody tr")].flatMap((tr) => {
     const cells = [...tr.querySelectorAll("td")];
     if (cells.length !== header.length) return [];
     return [cells.map(cellText)];
   });
+  window.__printAll = keepAll; render();
   const cell = (value, style, comment) => `<Cell${style ? ` ss:StyleID="${style}"` : ""}>${comment ? `<Comment ss:Author="PHCIS"><Data>${xml(comment)}</Data></Comment>` : ""}<Data ss:Type="String">${xml(value)}</Data></Cell>`;
   const head = header.map((name, i) => cell(name, i === 0 ? "demoHead" : "head", i === 0 ? CODE_NOTE : "")).join("");
   const rowsXml = body.map((line) => `<Row>${line.map((value, i) => cell(value, i === 0 ? "demo" : "")).join("")}</Row>`).join("");
