@@ -32,7 +32,7 @@
   const KEY_STORE = 'ut-export-key-v1';
   let exportKey = ''; try { exportKey = localStorage.getItem(KEY_STORE) || ''; } catch { /* */ }
   let loading = false; let pulledAt = '';
-  const KINDS = ['participant', 'task', 'sus', 'wrapup', 'note', 'end'];
+  const KINDS = ['participant', 'screenout', 'task', 'sus', 'wrapup', 'note', 'end'];
   async function pull() {
     if (!study || !study.collect || !exportKey) return;
     loading = true; msg = ''; render();
@@ -125,7 +125,27 @@
       o.tasks.filter((t) => t.comments.length).map((t) => [h('hr', { class: 'divider' }), h('div', { class: 'stack-sm' }, h('h3', { class: 't-group' }, `โจทย์: ${t.title}`), quoteList(t.comments))]),
       !groups.size && !o.tasks.some((t) => t.comments.length) && h('p', { class: 't-xs t-muted' }, 'ยังไม่มีความเห็น'));
 
-    return [head, bar, kpis, fixes, byTask, byPerson, voice, criteria()];
+    return [head, bar, kpis, coverage(list), fixes, byTask, byPerson, voice, criteria()];
+  }
+
+  /* กลุ่มผู้ทดสอบ: เทียบโควตาใน study.recruit (เกณฑ์กระจาย) + จำนวนที่ไม่ผ่านเกณฑ์บังคับ (ผู้ใช้ 21 พ.ย. 69) */
+  function coverage(list) {
+    const rc = study && study.recruit;
+    if (!rc) return null;
+    const val = (p, f) => { p = p || {}; return p[f] != null && p[f] !== '' ? p[f] : (p.screener || {})[f]; };
+    const out = new Set(rows.filter((r) => r && r.kind === 'screenout').map((r) => r.session)).size;
+    const dims = rc.quota.map((q) => ({ dim: q.dim, lines: q.groups.map((g) => ({ g, n: list.filter((x) => val(x.participant, q.field) === g.v).length })) }));
+    const short = dims.flatMap((d) => d.lines).filter((l) => l.n < l.g.min).length;
+    return h('section', { class: 'card stack' },
+      h('div', { class: 'stack-sm' }, h('h2', { class: 't-title' }, 'กลุ่มผู้ทดสอบ'),
+        h('p', { class: 't-sum' }, `ทำครบ ${list.length} จากเป้า ${rc.target} คน · ไม่ผ่านเกณฑ์บังคับ ${out} คน · ${short ? `ยังขาด ${short} กลุ่ม` : 'ครบทุกกลุ่ม'}`)),
+      h('p', { class: 't-xs t-muted' }, 'ตัวเลข = ได้แล้ว / ขั้นต่ำที่ต้องมี'),
+      /* การ์ดต่อมิติ: จอกว้างเรียงหลายคอลัมน์ จอแคบเหลือคอลัมน์เดียว (ไม่ใช้ตาราง — บนมือถือคอลัมน์สถานะตกขอบ) */
+      h('div', { class: 'grid-form' }, dims.map((d) => h('div', { class: 'stack-sm' }, h('h3', { class: 't-group' }, d.dim),
+        h('ul', { class: 'quota-list' }, d.lines.map((l) => h('li', {}, h('span', { class: 'grow' }, l.g.label), h('span', { class: 't-num' }, `${l.n} / ${l.g.min}`),
+          chip(l.n >= l.g.min ? 'good' : l.n ? 'mid' : 'bad', l.n >= l.g.min ? 'ครบ' : `ขาด ${l.g.min - l.n}`))))))),
+      h('hr', { class: 'divider' }),
+      h('div', { class: 'stack-sm' }, h('h3', { class: 't-group' }, 'เกณฑ์บังคับ (ต้องผ่านทุกข้อ)'), h('ul', { class: 'quotes' }, rc.mandatory.map((m) => h('li', {}, m)))));
   }
 
   function criteria() {
