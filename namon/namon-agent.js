@@ -37,7 +37,21 @@ export const PROPS = {
   mouse: { th: 'เมาส์', role: 'ทดสอบ usability' },
   flower: { th: 'ดอกไม้', role: 'ขอบคุณ / เสร็จงาน' },
   board: { th: 'กระดานนำเสนอ', role: 'Presentation' },
+  checklist: { th: 'คลิปบอร์ดเช็กลิสต์', role: 'ตรวจดีไซน์' },
 }
+
+// ครอบครัว agent — ทุกตัวเป็น Namon ทรงเดียวกัน (ใบโคลเวอร์ = แบรนด์) ต่างกันที่สีตัว + ของในมือ + ชื่อ (ผู้ใช้ 21 พ.ย. 69 "อยากให้ทุกตัวมี character design จะได้สื่อสารง่ายๆ")
+export const AGENTS = {
+  namon: { name: 'Namon', th: 'หัวหน้าทีม · สั่งงานและลงมือแก้โค้ด', agent: 'Claude Code · Ticket Studio', body: 0x5C7BFF, prop: '' },
+  lookup: { name: 'Namon Lookup', th: 'ค้นหา TOR · มติ · เอกสาร · หน้าจอ', agent: 'phcis-lookup', body: 0x2EC4B6, prop: 'magnifier' },
+  plan: { name: 'Namon Plan', th: 'แตก scope · man-day · user flow', agent: 'phcis-ux-plan', body: 0xFF9A4D, prop: 'compass' },
+  screen: { name: 'Namon Screen', th: 'สร้างหน้าจอจาก brief / TOR', agent: 'phcis-screen', body: 0x9D7BFF, prop: 'paintbrush' },
+  check: { name: 'Namon Check', th: 'วิจารณ์ดีไซน์ · a11y · responsive', agent: 'phcis-design-check', body: 0xFF6FA5, prop: 'checklist' },
+  wording: { name: 'Namon Wording', th: 'ตรวจคำบนหน้าจอ · คลังคำ', agent: 'phcis-wording', body: 0xF5B82E, prop: 'book' },
+  meeting: { name: 'Namon Meeting', th: 'สรุปประชุม → มติ · งานที่ต้องทำ', agent: 'phcis-meeting', body: 0x3DBE6E, prop: 'mic' },
+  tester: { name: 'Namon Tester', th: 'สวมบทผู้ใช้ทดสอบ usability', agent: 'usability-tester', body: 0xFF6B5E, prop: 'mouse' },
+}
+const shadeOf = (hex) => new THREE.Color(hex).multiplyScalar(0.88).getHex()
 
 // กล่องขอบมน (soft clay) — extrude สี่เหลี่ยมมุมมน + bevel
 function rbox(w, h, d, r = 0.06) {
@@ -69,16 +83,19 @@ function makeProp(id) {
   if (id === 'flower') { cap(0.035, 0.7, 0x86C25A, 0, -0.1, 0); for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; add(new THREE.SphereGeometry(0.11, 24, 16), M(0xF7A3C2), Math.cos(a) * 0.14, 0.38 + Math.sin(a) * 0.14, 0).scale.set(1, 1, 0.55) } add(new THREE.SphereGeometry(0.09, 20, 14), M(0xFFDA77), 0, 0.38, 0.04); add(new THREE.SphereGeometry(0.1, 16, 12), M(0x9AD36A), 0.12, -0.05, 0).scale.set(1.6, 0.6, 0.45) }
   // กระดานนำเสนอ: จอขอบมน + กราฟแท่ง 3 สี + ขาตั้ง (เมนู Presentation · ผู้ใช้ 21 พ.ย. 69 "ไมค์ดูไม่ออก")
   if (id === 'board') { add(rbox(0.86, 0.6, 0.1, 0.06), M(0x7C8CF8), 0, 0.12, 0); add(rbox(0.74, 0.48, 0.06, 0.04), M(0xFFF8EE), 0, 0.12, 0.04); [[-0.2, 0.16, 0xF28FB2], [0, 0.26, 0x3FB98A], [0.2, 0.34, 0x4A57C9]].forEach(([x, h, c]) => add(rbox(0.13, h, 0.06, 0.03), M(c), x, -0.1 + h / 2, 0.08)); cap(0.04, 0.34, 0x4A57C9, -0.24, -0.36, -0.04, -0.35); cap(0.04, 0.34, 0x4A57C9, 0.24, -0.36, -0.04, 0.35) }
+  // คลิปบอร์ด + เครื่องหมายถูก 2 ข้อ (Namon Check)
+  if (id === 'checklist') { add(rbox(0.62, 0.8, 0.08, 0.06), M(0xE2B979), 0, 0, 0); add(rbox(0.52, 0.66, 0.04, 0.03), M(0xFFFDF7), 0, -0.03, 0.05); add(rbox(0.26, 0.1, 0.08, 0.04), M(0x9AA3B5), 0, 0.38, 0.04); [0.12, -0.16].forEach((y) => { cap(0.03, 0.06, 0x3FB98A, -0.17, y - 0.02, 0.08, 0.8); cap(0.03, 0.14, 0x3FB98A, -0.08, y + 0.02, 0.08, -0.6); add(rbox(0.18, 0.05, 0.03, 0.02), M(0xC9CED6), 0.12, y, 0.08) }) }
   if (id === 'house') { add(rbox(0.66, 0.5, 0.52, 0.09), M(0xFFF1DC), 0, -0.13, 0); add(rtri(0.86, 0.42, 0.6, 0.06), M(0xF28FB2), 0, 0.1, 0); add(rbox(0.17, 0.26, 0.06, 0.04), M(0x7C8CF8), 0, -0.25, 0.27); add(rbox(0.14, 0.14, 0.05, 0.03), M(0xC6F432), 0.19, -0.07, 0.27) }
   return g
 }
 
-function build(pose, prop) {
+function build(pose, prop, agent = 'namon') {
+  const A = AGENTS[agent] || AGENTS.namon, BODY = A.body, SHADE = shadeOf(A.body)
   if (pose === 'object') { const root = new THREE.Group(), hop = new THREE.Group(); root.add(hop); const pr = makeProp(prop || 'house'); pr.position.set(0, 1.45, 0); pr.scale.setScalar(2.5); pr.rotation.y = 0.35; hop.add(pr); return { root, hop, bodyG: hop, eyes: [], extras: [], feet: [], sprout: hop, L: hop, R: hop, prop: pr, object: true } }
   const eyeM = new THREE.MeshPhysicalMaterial({ color: C.eye, roughness: 0.18, clearcoat: 1 }), hiM = new THREE.MeshBasicMaterial({ color: 0xffffff })
   const root = new THREE.Group(), hop = new THREE.Group(), bodyG = new THREE.Group(); root.add(hop); hop.add(bodyG)
   const R = { root, hop, bodyG, eyes: [], extras: [] }
-  const body = mesh(blob(), clay(C.body)); body.scale.set(1, 1, ZS); bodyG.add(body)
+  const body = mesh(blob(), clay(BODY)); body.scale.set(1, 1, ZS); bodyG.add(body)
   // ตาจุดดำ (ไม่มีตาขาว) ตามภาพอ้างอิง 21 พ.ย. 69
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
@@ -101,8 +118,8 @@ function build(pose, prop) {
   ;[0, 1, 2, 3].forEach((i) => { const lf = mesh(heartGeo, clay(i % 2 ? C.clover : 0xA9D61F, { roughness: 0.5 })); const pv = new THREE.Group(); pv.rotation.z = (i * Math.PI) / 2 + Math.PI / 4; lf.position.y = 0.03; lf.rotation.x = 0.12; pv.add(lf); head.add(pv) })
   const dot = mesh(new THREE.SphereGeometry(0.045, 16, 12), clay(C.cloverDark)); head.add(dot)
   sprout.add(head); bodyG.add(sprout); R.sprout = sprout
-  const arm = (side, rz = 0, rx = 0, y = 1.0) => { const a = mesh(new THREE.CapsuleGeometry(0.17, 0.32, 12, 24), clay(C.shade)); const piv = new THREE.Group(); piv.position.set(side * 0.92, y + 0.25, 0.2); a.position.set(0, -0.22, 0); piv.add(a); piv.rotation.z = side * rz; piv.rotation.x = rx; piv.userData = { side, rz, rx }; return piv }
-  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.CapsuleGeometry(0.17, 0.16, 12, 24), clay(C.shade)); f.scale.set(1, 1, 1.05); f.position.set(sx * 0.34, 0.25, 0.05); f.userData.base = f.position.clone(); root.add(f); feet.push(f) }
+  const arm = (side, rz = 0, rx = 0, y = 1.0) => { const a = mesh(new THREE.CapsuleGeometry(0.17, 0.32, 12, 24), clay(SHADE)); const piv = new THREE.Group(); piv.position.set(side * 0.92, y + 0.25, 0.2); a.position.set(0, -0.22, 0); piv.add(a); piv.rotation.z = side * rz; piv.rotation.x = rx; piv.userData = { side, rz, rx }; return piv }
+  const feet = []; for (const sx of [-1, 1]) { const f = mesh(new THREE.CapsuleGeometry(0.17, 0.16, 12, 24), clay(SHADE)); f.scale.set(1, 1, 1.05); f.position.set(sx * 0.34, 0.25, 0.05); f.userData.base = f.position.clone(); root.add(f); feet.push(f) }
   R.feet = feet
   let L = arm(-1, 0.35), Rr = arm(1, 0.35)
   if (pose === 'idle') { bodyG.add(eye(-0.24), eye(0.24), mouth()) }
@@ -181,7 +198,8 @@ function loop(now) {
 }
 const kick = () => { if (!loopOn) { loopOn = true; requestAnimationFrame(loop) } }
 
-export function createNamon(canvas, { pose = 'idle', size = 160, still = false, turn = 0, offscreen = false, prop = '' } = {}) {
+export function createNamon(canvas, { pose = 'idle', size = 160, still = false, turn = 0, offscreen = false, prop = '', agent = 'namon' } = {}) {
+  if (!AGENTS[agent]) agent = 'namon'; if (prop === null || prop === undefined) prop = ''; if (prop === '' && arguments[1] && !('prop' in arguments[1])) prop = AGENTS[agent].prop
   const dpr = offscreen ? 1 : Math.min(2, window.devicePixelRatio || 1), px = Math.round(size * dpr)
   canvas.width = px; canvas.height = px
   const ctx = canvas.getContext('2d')
@@ -193,7 +211,7 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false, 
   const rim = new THREE.DirectionalLight(0xdbe6ff, 0.6); rim.position.set(4, 3, -3); scene.add(rim)
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: 0.16 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground)
   const holder = new THREE.Group(); holder.rotation.y = turn; scene.add(holder)
-  let R = build(pose, prop), cur = pose, curProp = prop; holder.add(R.root)
+  let R = build(pose, prop, agent), cur = pose, curProp = prop, curAgent = agent; holder.add(R.root)
   const reduce = still || matchMedia('(prefers-reduced-motion: reduce)').matches
   let visible = !offscreen, t0 = performance.now(), gone = false
   const paint = (tSec) => {
@@ -208,8 +226,9 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false, 
   INST.add(it)
   if (reduce || offscreen) { if (!offscreen) requestAnimationFrame(() => paint(1.0)) } else kick()
   return {
-    setPose(p) { if (!POSES.includes(p) || p === cur) return; holder.remove(R.root); R = build(p, curProp); cur = p; holder.add(R.root); if (reduce) paint(1.0) },
-    setProp(pp) { if ((pp || '') === curProp) return; curProp = pp || ''; holder.remove(R.root); R = build(cur, curProp); holder.add(R.root); if (reduce) paint(1.0) },
+    setPose(p) { if (!POSES.includes(p) || p === cur) return; holder.remove(R.root); R = build(p, curProp, curAgent); cur = p; holder.add(R.root); if (reduce) paint(1.0) },
+    setProp(pp) { if ((pp || '') === curProp) return; curProp = pp || ''; holder.remove(R.root); R = build(cur, curProp, curAgent); holder.add(R.root); if (reduce) paint(1.0) },
+    setAgent(a) { if (!AGENTS[a] || a === curAgent) return; curAgent = a; holder.remove(R.root); R = build(cur, curProp, curAgent); holder.add(R.root); if (reduce) paint(1.0) },
     setTurn(rad) { holder.rotation.y = rad; if (reduce) paint(1.0) },
     renderAt(tSec = 1) { paint(tSec); return canvas },
     get canvas() { return canvas },
@@ -218,7 +237,7 @@ export function createNamon(canvas, { pose = 'idle', size = 160, still = false, 
 }
 
 class NamonAgent extends HTMLElement {
-  static get observedAttributes() { return ['pose', 'prop'] }
+  static get observedAttributes() { return ['pose', 'prop', 'agent'] }
   connectedCallback() {
     if (this._n) return
     this.querySelectorAll(':scope > canvas').forEach((x) => x.remove())
@@ -226,9 +245,9 @@ class NamonAgent extends HTMLElement {
     this.style.display = this.style.display || 'inline-block'; this.style.width = this.style.width || size + 'px'; this.style.height = this.style.height || size + 'px'
     this.setAttribute('role', 'img'); this.setAttribute('aria-label', this.getAttribute('label') || LABEL[pose] || 'Namon')
     const c = document.createElement('canvas'); c.style.width = '100%'; c.style.height = '100%'; c.style.display = 'block'; this.appendChild(c); this.querySelectorAll('img').forEach((im) => { im.style.display = 'none' })
-    try { this._n = createNamon(c, { pose, size, still: this.hasAttribute('still'), prop: this.getAttribute('prop') || '' }) } catch (e) { c.remove(); this.dataset.fallback = '1'; this.querySelectorAll('img').forEach((im) => { im.style.display = '' }); if (!this.querySelector('img')) this.textContent = '🌱' }
+    try { this._n = createNamon(c, { pose, size, still: this.hasAttribute('still'), ...(this.hasAttribute('prop') ? { prop: this.getAttribute('prop') } : {}), agent: this.getAttribute('agent') || 'namon' }) } catch (e) { c.remove(); this.dataset.fallback = '1'; this.querySelectorAll('img').forEach((im) => { im.style.display = '' }); if (!this.querySelector('img')) this.textContent = '🌱' }
   }
-  attributeChangedCallback(n, o, v) { if (this._n && n === 'prop') this._n.setProp(v); if (this._n && n === 'pose') { this._n.setPose(v); this.setAttribute('aria-label', this.getAttribute('label') || LABEL[v] || 'Namon') } }
+  attributeChangedCallback(n, o, v) { if (this._n && n === 'prop') this._n.setProp(v); if (this._n && n === 'agent') this._n.setAgent(v); if (this._n && n === 'pose') { this._n.setPose(v); this.setAttribute('aria-label', this.getAttribute('label') || LABEL[v] || 'Namon') } }
   disconnectedCallback() { this._n?.dispose(); this._n = null; this.querySelectorAll(':scope > canvas').forEach((x) => x.remove()) }
 }
 if (!customElements.get('namon-agent')) customElements.define('namon-agent', NamonAgent)
