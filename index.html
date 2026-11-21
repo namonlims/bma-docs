@@ -716,6 +716,18 @@
     </div>
   </section>
 
+  <section class="group" aria-labelledby="g-office" data-nav-solo>
+    <div class="group-head">
+      <h2 id="g-office">ห้องทำงาน agent</h2>
+      <p>ห้องทำงานมุมบน · ดูว่า agent ตัวไหนทำอะไร · สั่งงานผ่านแชท · เปิดได้เฉพาะบัญชี Google ของเจ้าของ</p>
+    </div>
+    <div class="cards">
+      <a class="card" href="office.html">
+        <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">groups</span><span class="card-title">ห้องทำงาน agent</span></span>
+      </a>
+    </div>
+  </section>
+
   <section class="group" aria-labelledby="g-ut">
     <div class="group-head">
       <h2 id="g-ut">Usability testing</h2>
@@ -797,8 +809,8 @@
   var page = document.getElementById('top');
   var secs = [].slice.call(page.querySelectorAll('section.group'));
   var cards = [].slice.call(page.querySelectorAll('section.group .cards:not([hidden]) a.card'));
-  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-app': 'desktop_windows' };
-  var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-board', 'g-char': 'obj-flower', 'g-app': 'obj-coffee' };
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-office': 'groups', 'g-app': 'desktop_windows' };
+  var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-board', 'g-char': 'obj-flower', 'g-office': 'obj-team', 'g-app': 'obj-coffee' };
   var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=2" alt="" aria-hidden="true">' : ms(fallback, cls); };
   
   var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -883,8 +895,8 @@
   side.querySelector('.side-close').addEventListener('click', function () { setOpen(false); });
   document.querySelector('.scrim').addEventListener('click', function () { setOpen(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
-  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-app': 'desktop_windows' };
-  var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-board', 'g-char': 'obj-flower', 'g-app': 'obj-coffee' };
+  var ICON = { 'g-design': 'palette', 'g-plan': 'view_timeline', 'g-tor': 'checklist', 'g-shots': 'photo_library', 'g-rules': 'gavel', 'g-flow': 'account_tree', 'g-ut': 'ads_click', 'g-ticket': 'confirmation_number', 'g-pres': 'slideshow', 'g-char': 'face', 'g-office': 'groups', 'g-app': 'desktop_windows' };
+  var NAMON_ICON = { home: 'obj-house', 'g-design': 'obj-paintbrush', 'g-plan': 'obj-compass', 'g-tor': 'obj-wrench', 'g-shots': 'obj-camera', 'g-rules': 'obj-book', 'g-flow': 'obj-map', 'g-ut': 'obj-mouse', 'g-ticket': 'obj-magnifier', 'g-pres': 'obj-board', 'g-char': 'obj-flower', 'g-office': 'obj-team', 'g-app': 'obj-coffee' };
   var ni = function (k, fallback, cls) { var f = NAMON_ICON[k]; return f ? '<img class="nav-namon' + (cls ? ' ' + cls : '') + '" src="assets/namon-icons/' + f + '.png?v=2" alt="" aria-hidden="true">' : ms(fallback, cls); };
   
   var ms = function (n, c) { return '<span class="material-symbols-outlined' + (c ? ' ' + c : '') + '" aria-hidden="true">' + n + '</span>'; };
