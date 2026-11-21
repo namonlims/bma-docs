@@ -1,0 +1,32 @@
+/* ธีมสี Namon Playground สำหรับ "หน้าเอกสาร" ใน bma-docs (ผู้ใช้ 22 พ.ย. 69 "ตัว document ทำให้เป็น Theme สีของ namon playground")
+   หน้าเอกสารเขียนด้วย token ของ PHCIS (tokens.css) ซึ่งสีแบรนด์ทุกตัวอ้างสเกล --brand-p* · ไฟล์นี้ชี้สเกลนั้นไปที่สีฟ้าของ Namon Playground (--nd-blue-*)
+   โหลดต่อจาก tokens.css และ namon-tokens.css: <link rel="stylesheet" href="namon-tokens.css"><link rel="stylesheet" href="namon-doc-theme.css">
+   สีสถานะ (เขียว = สำเร็จ · ส้ม · แดง · ม่วง) ไม่เปลี่ยน · ภาพหน้าจอของระบบ PHCIS ในเอกสารยังเป็นสีเขียวตามระบบจริง */
+:root {
+  --brand-p50:  var(--nd-blue-50, #EEF1FF);
+  --brand-p100: var(--nd-blue-100, #DCE2FF);
+  --brand-p200: var(--nd-blue-400, #7B8FFC);
+  --brand-p300: var(--nd-blue-400, #7B8FFC);
+  --brand-p400: var(--nd-blue-400, #7B8FFC);
+  --brand-p500: var(--nd-blue-600, #5470FB);
+  --brand-p600: var(--nd-blue-600, #5470FB);
+  --brand-p700: var(--nd-blue-700, #3F5BFA);
+  --brand-p800: var(--nd-blue-800, #2438C9);
+  --brand-p900: var(--nd-blue-800, #2438C9);
+  --brand-p950: var(--nd-blue-800, #2438C9);
+  /* สำเนาแบบ R G B ของสเกลข้างบน (tokens.css ใช้กับเงา/สีโปร่ง rgb(var(--brand-p600-rgb) / α)) */
+  --brand-p400-rgb: 123 143 252;   /* --nd-blue-400 */
+  --brand-p500-rgb: 84 112 251;    /* --nd-blue-600 */
+  --brand-p600-rgb: 84 112 251;    /* --nd-blue-600 */
+  --brand-p700-rgb: 63 91 250;     /* --nd-blue-700 */
+  --brand-p800-rgb: 36 56 201;     /* --nd-blue-800 */
+  --shadow-card: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14));
+}
+
+/* ตัวอย่างหน้าจอ/ชิ้นส่วนของระบบ PHCIS ที่วาดไว้ในเอกสาร (เช่น การ์ดเขียวหัวแฟ้ม): ใส่ class="phcis-ui" ที่กรอบของตัวอย่าง → คงสีเขียวของระบบจริง
+   ค่าในบล็อกนี้ = สเกล --brand-p* ของ tokens.css (PHCIS) ตามเดิม ไม่ใช่สีของ Namon Playground */
+.phcis-ui {
+  --brand-p50: #F4FBF8; --brand-p100: #E2F3EB; --brand-p200: #C5EDDA; --brand-p300: #91DFBB; --brand-p400: #6AD6A5; --brand-p500: #54CF97;
+  --brand-p600: #08A768; --brand-p700: #007549; --brand-p800: #004C31; --brand-p900: #003322; --brand-p950: #002318;
+  --brand-p400-rgb: 106 214 165; --brand-p500-rgb: 84 207 151; --brand-p600-rgb: 8 167 104; --brand-p700-rgb: 0 117 73; --brand-p800-rgb: 0 76 49;
+}
