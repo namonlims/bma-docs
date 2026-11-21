@@ -103,6 +103,8 @@ img { max-width: 100%; height: auto; }
 .ds-option .ms { color: var(--icon-positive-success, #24A899); }
 textarea.field { resize: vertical; min-height: var(--dim-size-1600, 72px); }
 textarea.field.note { resize: none; min-height: 0; overflow: hidden; }
+/* จอสัมผัส: ช่องพิมพ์ 16px — iPhone Safari ซูมหน้าเองเมื่อแตะช่องที่ตัวอักษรเล็กกว่า 16px (ตรวจด้วย WebKit 22 พ.ย. 69) */
+@media (pointer: coarse) { input.field, textarea.field { font-size: var(--type-size-base, 16px); } }
 .check { display: flex; align-items: flex-start; gap: var(--dim-space-200, 8px); min-height: var(--dim-size-900, 44px); padding: var(--dim-space-200, 8px) 0; cursor: pointer; }
 .check input { width: var(--dim-size-400, 20px); height: var(--dim-size-400, 20px); margin: var(--dim-space-50, 2px) 0 0; accent-color: var(--surface-brandPrimary-default, #007549); flex: none; }
 
