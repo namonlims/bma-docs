@@ -295,6 +295,7 @@
   .nav-namon { width: 22px; height: 22px; flex: none; object-fit: contain; transition: transform 150ms ease-out; }
   .side a.nav.nav-top { color: var(--text-content-default, #363B3F); font-weight: var(--type-weight-medium, 500); } /* เมนูเดี่ยวระดับบน = หน้าตาเดียวกับหัวหมวด (ผู้ใช้ 21 พ.ย. 69) */
   .side a.nav.nav-top.is-active { color: var(--text-brandPrimary-default, #3F5BFA); }
+  .side a.nav.nav-top:not([data-home]) { margin-top: var(--dim-space-200, 8px); } /* ระยะห่างเท่าหัวหมวด (.grp) */
   .side a.nav:hover .nav-namon, .grp-h:hover .nav-namon { transform: translateY(-2px) rotate(-8deg) scale(1.08); }
   .gtile .nav-namon.card-icon { width: 44px; height: 44px; margin: 0; }
   .side-logo { display: block; height: var(--dim-size-700, 36px); width: auto; max-width: 100%; }
