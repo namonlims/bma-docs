@@ -134,11 +134,14 @@
     if (!rc) return null;
     const val = (p, f) => { p = p || {}; return p[f] != null && p[f] !== '' ? p[f] : (p.screener || {})[f]; };
     const out = new Set(rows.filter((r) => r && r.kind === 'screenout').map((r) => r.session)).size;
-    const dims = rc.quota.map((q) => ({ dim: q.dim, lines: q.groups.map((g) => ({ g, n: list.filter((x) => val(x.participant, q.field) === g.v).length })) }));
+    /* นับเข้าโควตาเฉพาะคนที่ทำถึงหน้าสรุป (มี SUS หรือ end) — คนที่เลิกกลางทางไม่นับว่าทำครบ */
+    const done = list.filter((x) => x.ended || x.sus);
+    const quit = list.length - done.length;
+    const dims = rc.quota.map((q) => ({ dim: q.dim, lines: q.groups.map((g) => ({ g, n: done.filter((x) => val(x.participant, q.field) === g.v).length })) }));
     const short = dims.flatMap((d) => d.lines).filter((l) => l.n < l.g.min).length;
     return h('section', { class: 'card stack' },
       h('div', { class: 'stack-sm' }, h('h2', { class: 't-title' }, 'กลุ่มผู้ทดสอบ'),
-        h('p', { class: 't-sum' }, `ทำครบ ${list.length} จากเป้า ${rc.target} คน · ไม่ผ่านเกณฑ์บังคับ ${out} คน · ${short ? `ยังขาด ${short} กลุ่ม` : 'ครบทุกกลุ่ม'}`)),
+        h('p', { class: 't-sum' }, `ทำครบ ${done.length} จากเป้า ${rc.target} คน · ${quit ? `ทำไม่จบ ${quit} คน · ` : ''}ไม่ผ่านเกณฑ์บังคับ ${out} คน · ${short ? `ยังขาด ${short} กลุ่ม` : 'ครบทุกกลุ่ม'}`)),
       h('p', { class: 't-xs t-muted' }, 'ตัวเลข = ได้แล้ว / ขั้นต่ำที่ต้องมี'),
       /* การ์ดต่อมิติ: จอกว้างเรียงหลายคอลัมน์ จอแคบเหลือคอลัมน์เดียว (ไม่ใช้ตาราง — บนมือถือคอลัมน์สถานะตกขอบ) */
       h('div', { class: 'grid-form' }, dims.map((d) => h('div', { class: 'stack-sm' }, h('h3', { class: 't-group' }, d.dim),
