@@ -100,15 +100,17 @@ function build(pose, prop, agent = 'namon') {
   const eye = (x, look = [0, 0], squash = 1) => {
     const g = new THREE.Group()
     // ตาแบบเดิม: จุดดำมีขอบขาว + ประกาย 1 จุด (ผู้ใช้ 21 พ.ย. 69 "ปรับตากลับมาแบบเดิม") · ยังแปะบนผิวตัว
-    const rim = mesh(new THREE.SphereGeometry(0.118, 40, 32), clay(C.white, { roughness: 0.35 }), false); rim.scale.set(1, 1.05 * squash, 0.4); g.add(rim)
-    const e = mesh(new THREE.SphereGeometry(0.096, 40, 32), eyeM, false); e.scale.set(1, 1.05 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.025); g.add(e)
-    const h = new THREE.Mesh(new THREE.SphereGeometry(0.03, 14, 10), hiM); h.position.set(look[0] * 0.5 + 0.035, look[1] * 0.5 * squash + 0.04 * squash, 0.07); g.add(h)
-    onSurface(g, x * 1.05, 1.98, -0.01); R.eyes.push(g); return g
+    // ตาน่ารักขึ้น (ผู้ใช้ 21 พ.ย. 69): ยังเป็นจุดดำขอบขาว แต่โตขึ้น · รีสูง · ประกายใหญ่ 1 + เล็ก 1 · ตาห่างและต่ำลงเล็กน้อย
+    const rim = mesh(new THREE.SphereGeometry(0.17, 40, 32), clay(C.white, { roughness: 0.35 }), false); rim.scale.set(1, 1.16 * squash, 0.4); g.add(rim)
+    const e = mesh(new THREE.SphereGeometry(0.145, 40, 32), eyeM, false); e.scale.set(1, 1.18 * squash, 0.45); e.position.set(look[0] * 0.5, look[1] * 0.5 * squash, 0.025); g.add(e)
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), hiM); h.scale.set(1, 1.15, 1); h.position.set(look[0] * 0.5 + 0.05, look[1] * 0.5 * squash + 0.06 * squash, 0.085); g.add(h)
+    const h2 = new THREE.Mesh(new THREE.SphereGeometry(0.023, 12, 8), hiM); h2.position.set(look[0] * 0.5 - 0.045, look[1] * 0.5 * squash - 0.065 * squash, 0.08); g.add(h2)
+    onSurface(g, x * 1.18, 1.95, -0.01); R.eyes.push(g); return g
   }
-  const arcEye = (x, up = true) => { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.024, 16, 48, Math.PI), eyeM); if (!up) t.rotation.z = Math.PI; g.add(t); onSurface(g, x * 1.05, up ? 1.95 : 2.0, 0.005); return g }
+  const arcEye = (x, up = true) => { const g = new THREE.Group(); const t = new THREE.Mesh(new THREE.TorusGeometry(0.115, 0.028, 16, 48, Math.PI), eyeM); if (!up) t.rotation.z = Math.PI; g.add(t); onSurface(g, x * 1.18, up ? 1.92 : 1.97, 0.005); return g }
   // ปากขีดสั้น หางงอนสองข้าง
-  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.016, 12, 32, Math.PI), eyeM); t.rotation.z = Math.PI; const g = new THREE.Group(); g.add(t); onSurface(g, 0, 1.86, 0.005); return g }
-  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.2, 0.7, 0.3); onSurface(ch, sx * 0.42, 1.8, -0.01); bodyG.add(ch) }
+  const mouth = () => { const t = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.016, 12, 32, Math.PI), eyeM); t.rotation.z = Math.PI; const g = new THREE.Group(); g.add(t); onSurface(g, 0, 1.8, 0.005); return g }
+  for (const sx of [-1, 1]) { const ch = mesh(new THREE.SphereGeometry(0.09, 32, 24), clay(C.cheek, { roughness: 0.7, transparent: true, opacity: 0.85 }), false); ch.scale.set(1.35, 0.78, 0.3); onSurface(ch, sx * 0.5, 1.77, -0.01); bodyG.add(ch) }
   // ใบโคลเวอร์ 4 แฉก (หัวใจ) สีเขียวมะนาว
   const sprout = new THREE.Group(); sprout.position.set(0.38, 2.42, 0); sprout.rotation.z = -0.28
   const stem = mesh(new THREE.CylinderGeometry(0.028, 0.04, 0.56, 20), clay(C.cloverDark)); stem.position.set(0.03, 0.26, 0); stem.rotation.z = -0.1; sprout.add(stem)
