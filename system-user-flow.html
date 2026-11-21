@@ -291,7 +291,7 @@
     font: inherit; white-space: nowrap; cursor: pointer;
   }
   .seg button .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
-  @media (max-width: 767px) { .seg { display: flex; width: 100%; } .seg button { flex: 1 1 0; min-width: 0; justify-content: center; padding: 0 var(--dim-space-200, 8px); } .seg button .material-symbols-outlined { display: none; } }
+  @media (max-width: 767px) { .seg { display: flex; flex-wrap: wrap; width: 100%; border-radius: var(--dim-radius-600, 24px); } .seg button { flex: 1 1 40%; min-width: 0; justify-content: center; padding: 0 var(--dim-space-200, 8px); } .seg button .material-symbols-outlined { display: none; } }
   .seg button:hover { color: var(--text-brandPrimary-default, #007549); }
   .seg button[aria-pressed="true"] { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
   .view-row .hint { flex: 1 1 280px; }
@@ -415,6 +415,53 @@
   .uf-canvas.bp .band-h { z-index: 2; }
   @media (max-width: 767px) { .lane-l .d, .lane-l .ln { display: none; } .lane-l .badge { white-space: normal; } }
 
+  /* Service Blueprint: ตาราง Phase × 5 ชั้น (ข้อมูลชุดเดียวกับ User flow) */
+  .uf-canvas.sb { display: grid; width: max-content; align-items: stretch; }
+  .sb-corner, .sb-head, .sb-lay, .sb-cell {
+    display: flex; flex-direction: column; gap: var(--dim-space-100, 4px);
+    padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px);
+    border-right: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
+    font-size: var(--type-size-xs, 12px); line-height: 1.35; text-align: left;
+    background: var(--surface-card-100, #FFFFFF);
+  }
+  .sb-corner, .sb-lay { position: sticky; left: 0; z-index: 3; color: var(--text-content-tertiary, #858C92); }
+  .sb-corner { justify-content: center; }
+  .sb-corner, .sb-head { position: sticky; top: 0; z-index: 2; }   /* เต็มจอ: เลื่อนลงแล้วหัว Phase ยังอยู่ */
+  .sb-corner { z-index: 4; }
+  .sb-head {
+    align-items: flex-start; justify-content: flex-start;
+    border-top: 0; border-left: 0; border-bottom: 0; border-radius: 0;
+    font: inherit; font-size: var(--type-size-xs, 12px); color: var(--text-content-default, #363B3F); cursor: pointer;
+  }
+  .sb-head:hover .sb-t { color: var(--text-brandPrimary-default, #007549); }
+  .sb-head .sb-t { font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); }
+  .sb-head .sb-r { color: var(--text-content-secondary, #636B72); }
+  .sb-lay, .sb-cell { border-top: var(--dim-stroke-150, 1.5px) dashed var(--border-neutral-tertiary, #E2E4E6); }
+  .sb-lay { justify-content: center; }
+  .sb-lay .badge { align-self: flex-start; max-width: 100%; white-space: normal; }
+  .sb-lay .ln { font-size: var(--type-size-xxs, 10px); }
+  .sb-row-ev, .sb-row-front, .sb-row-sys { background: var(--surface-neutral-quaternary, #F9FBFB); }
+  .sb-chip {
+    display: block; width: 100%; text-align: left;
+    padding: var(--dim-space-100, 4px) var(--dim-space-200, 8px);
+    border: var(--dim-stroke-100, 1px) solid transparent; border-radius: var(--dim-radius-200, 8px);
+    font: inherit; font-size: var(--type-size-xs, 12px); line-height: 1.35;
+    color: var(--text-content-default, #363B3F); background: var(--surface-card-100, #FFFFFF);
+    cursor: pointer; overflow-wrap: anywhere;
+  }
+  .sb-chip:hover, .sb-chip.is-active { box-shadow: var(--shadow-card); }
+  .sb-row-ev .sb-chip    { background: var(--surface-colorfulbadge-teal, #D1F6EE);   color: var(--text-colorfulbadge-teal, #196C65); }
+  .sb-row-cust .sb-chip  { background: var(--surface-colorfulbadge-blue, #DBEAFE);   color: var(--text-colorfulbadge-blue, #1D4ED8); }
+  .sb-row-front .sb-chip { background: var(--surface-colorfulbadge-green, #E2F3EB);  color: var(--text-colorfulbadge-green, #007549); }
+  .sb-row-back .sb-chip  { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .sb-row-sys .sb-chip   { background: var(--surface-colorfulbadge-grey, #F5F7F9);   color: var(--text-colorfulbadge-grey, #4D5358); border-color: var(--border-neutral-tertiary, #E2E4E6); }
+  .sb-cell .sb-chip.dec, .sb-cell .sb-chip.opt { background: var(--surface-card-100, #FFFFFF); border-style: dashed; border-color: currentColor; }
+  .sb-cell .sb-chip.target { border-style: dashed; border-color: var(--text-colorfulbadge-purple, #7E22CE); }
+  .sb-chip .sb-k { display: block; font-size: var(--type-size-xxs, 10px); }
+  .sb-none { color: var(--text-content-tertiary, #858C92); }
+  @media (max-width: 1279px) { .sb-chip { display: flex; flex-direction: column; justify-content: center; min-height: var(--dim-size-900, 44px); } .sb-head { min-height: var(--dim-size-900, 44px); } }
+  @media (max-width: 767px) { .sb-lay .d, .sb-lay .ln, .sb-corner .d { display: none; } .sb-corner, .sb-lay { padding: var(--dim-space-200, 8px) var(--dim-space-100, 4px); } }
+
   /* tables */
   .tbl-box { overflow-x: auto; border-radius: var(--dim-radius-400, 12px); border: var(--dim-stroke-100, 1px) solid var(--border-neutral-quaternary, #F4F5F5); background: var(--surface-card-100, #FFFFFF); }
   table { width: 100%; border-collapse: collapse; font-size: var(--type-size-xs, 12px); }
@@ -509,8 +556,9 @@
       <div class="view-row">
         <div class="seg" id="view-seg" role="group" aria-label="มุมมองแผนภาพ">
           <button type="button" data-view="uf" aria-pressed="true"><span class="material-symbols-outlined" aria-hidden="true">account_tree</span>User flow</button>
-          <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_agenda</span>Service Design</button>
           <button type="button" data-view="pf" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_week</span>Process flow</button>
+          <button type="button" data-view="bp" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">view_agenda</span>Blueprint แบบเส้นทาง</button>
+          <button type="button" data-view="sb" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">table_chart</span>Service Blueprint</button>
         </div>
         <span class="hint"><span class="material-symbols-outlined" aria-hidden="true">swipe</span><span id="view-hint"></span></span>
         <div class="zoom" role="group" aria-label="ซูมแผนภาพ">
@@ -530,7 +578,7 @@
   <section class="sec" id="cowork-flow" aria-labelledby="h-cw">
     <div class="sec-head">
       <h2 id="h-cw">1.1 · Flow ที่ออกแบบร่วมกับคณะทำงาน</h2>
-      <p>บอร์ด FigJam 23 ต.ค. 69 · อัปเดต 16 พ.ย. 69 · ใช้เป็นต้นทางของ User flow · Service Design · Process flow ด้านบน</p>
+      <p>บอร์ด FigJam 23 ต.ค. 69 · อัปเดต 16 พ.ย. 69 · ใช้เป็นต้นทางของ User flow · Process flow · Blueprint แบบเส้นทาง · Service Blueprint ด้านบน</p>
     </div>
     <div class="panel">
       <a class="cw-img" href="reference/figjam-flow/board-81-1067.png?v=20261116" target="_blank" rel="noopener"><img src="reference/figjam-flow/board-81-1067.png?v=20261116" alt="ภาพบอร์ด Flow: Queue → Check → Flow การชำระเงิน" loading="lazy" /></a>
@@ -1189,7 +1237,7 @@ function custText(id) {
   if (/พยาบาลหลังตรวจ/.test(r)) return 'รับคำแนะนำ · เอกสาร';
   if (/การเงิน/.test(r)) return 'ชำระเงิน';
   if (/^เภสัชกร/.test(r)) return 'รับยา';
-  if (/คัดกรอง/.test(r + t)) return 'รับการคัดกรอง';
+  if (/คัดกรอง/.test(r) || (!/แพทย์/.test(r) && /คัดกรอง/.test(t))) return 'รับการคัดกรอง';   // ขั้นของแพทย์ที่ชื่อมีคำว่า "คัดกรอง" (สรุปการคัดกรอง) = พบแพทย์
   if (/บ้านพิชิตใจ/.test(r)) return 'พักฟื้นฟูที่บ้านพิชิตใจ';
   if (/ทีมงานบำบัด/.test(r)) return 'เข้ารับการบำบัด';
   if (/แพทย์/.test(r)) return 'พบแพทย์';
@@ -1282,7 +1330,99 @@ function rpath(pts, r = 10) {
 
 const laneW = () => (matchMedia('(max-width: 767px)').matches ? 84 : 136);
 
+/* ---------- Service Blueprint: ตาราง Phase × 5 ชั้น (ข้อมูลชุดเดียวกับ User flow · ขั้นย่อยของทุกขั้นกางออกในช่อง) ----------
+   Phase = ขั้นงานบนเส้นทางหลัก · ทางแยก/ทางเลือก/ขั้นที่อยู่คอลัมน์เดียวกัน (same) อยู่ใน Phase ของขั้นก่อนหน้า
+   ชั้น "สิ่งที่สัมผัส": ev ในข้อมูลมาก่อน · ไม่ใส่ = อนุมานจากจุดบริการ (บทบาท · หน้า · ชื่อขั้น) */
+const SB_COLW = 232;
+const SB_LAYERS = [
+  { k: 'ev', t: 'สิ่งที่สัมผัส', d: 'Physical Evidence', b: 'b-teal' },
+  { k: 'cust', t: 'ผู้รับบริการ', d: 'Customer Actions', b: 'b-blue' },
+  { k: 'front', t: 'หน้าบ้าน', d: 'Frontstage', b: 'b-green', ln: 'เส้นปฏิสัมพันธ์' },
+  { k: 'back', t: 'หลังบ้าน', d: 'Backstage', b: 'b-orange', ln: 'เส้นที่ผู้รับบริการมองเห็น' },
+  { k: 'sys', t: 'ระบบสนับสนุน', d: 'Support · หน้าใน PHCIS', b: 'b-grey', ln: 'เส้นงานภายใน' },
+];
+const SB_EVIDENCE = [
+  [/Kiosk|queue-center/, 'ตู้ Kiosk · บัตรคิว · จอเรียกคิว'],
+  [/คัดแยก/, 'จุดคัดแยก · บัตรคิว'],
+  [/เวชระเบียน|\/registration/, 'เคาน์เตอร์เวชระเบียน · บัตรประชาชน'],
+  [/Telemedicine|telemed/i, 'ห้อง Telemedicine ในแอป'],
+  [/Mobile App|แอป/, 'แอปมือถือ'],
+  [/ยินยอม|consent/i, 'แบบฟอร์มความยินยอม'],
+  [/\/lab|ชันสูตร/, 'ห้องชันสูตร · หลอดเก็บตัวอย่าง'],
+  [/\/xray|รังสี/, 'ห้องเอกซเรย์'],
+  [/หัตถการ|\/procedure/, 'ห้องหัตถการ'],
+  [/การเงิน|\/finance/, 'เคาน์เตอร์การเงิน · ใบเสร็จ'],
+  [/เภสัช|\/pharmacy/, 'ห้องยา · ซองยา + ฉลาก'],
+  [/พยาบาลหลังตรวจ|\/exit/, 'ใบนัด · เอกสารคำแนะนำ'],
+  [/คัดกรอง|screening/, 'จุดคัดกรอง · เครื่องวัดสัญญาณชีพ'],
+  [/เยี่ยมบ้าน/, 'ที่บ้านผู้รับบริการ'],
+  [/นัดหมาย|appointment/, 'ใบนัด · แจ้งเตือนนัดในแอป'],
+  [/แพทย์|\/treat/, 'ห้องตรวจ · จอเรียกคิว'],
+];
+const routeOf = (id) => index[id].route || index[parentOf[id]]?.route || '';
+function evidenceOf(id) {
+  const n = index[id]; if (n.ev) return [].concat(n.ev).join(' · ');
+  const hit = (s) => (SB_EVIDENCE.find(([re]) => re.test(s)) || [])[1];
+  return hit(roleOf(id) + ' ' + routeOf(id)) || hit(n.t || '') || '';   // บทบาท + หน้า มาก่อนชื่อขั้น
+}
+function sbPhases() {
+  const phases = []; const pending = []; let cur = null;
+  const open = (id) => { cur = { id, items: [...pending.splice(0)] }; phases.push(cur); };
+  const put = (id) => (cur ? cur.items : pending).push(id);
+  const opens = (id) => !cur || laneOf(id) === 'front' || laneOf(id) === 'cust';   // งานหลังบ้าน/ระบบ ไม่เปิด Phase ใหม่ อยู่ใน Phase ของจุดบริการก่อนหน้า
+  clinic.flow.forEach((it) => {
+    const ty = typeOf(it.id);
+    /* ขั้นที่ขยายได้และมีผู้ทำงานตั้งแต่ 2 บทบาท (เช่น ก่อนเข้าคลินิก) = แตกเป็น Phase ตามขั้นย่อยที่มีบทบาท · บทบาทเดียว (เช่น แพทย์ตรวจ) = Phase เดียว */
+    const kids = ty === 'group' ? it.children : null;
+    if (kids && new Set(kids.filter((k) => typeOf(k.id) === 'action' && k.role).map((k) => k.role)).size >= 2) {
+      kids.forEach((k) => { if (typeOf(k.id) === 'action' && k.role && opens(k.id) && !(k.same && cur && roleOf(cur.id) === k.role)) open(k.id); put(k.id); });
+      return;
+    }
+    if ((ty === 'action' || ty === 'group') && !(it.same && cur) && opens(it.id)) open(it.id);
+    put(it.id);
+  });
+  if (!phases.length && pending.length) phases.push({ id: pending[0], items: pending });
+  return phases.map((p) => {
+    const cells = { ev: [], cust: [], front: [], back: [], sys: [] };
+    const add = (L, t, key, cls = '', k = '') => { if (t && !cells[L].some((x) => x.t === t)) cells[L].push({ t, key, cls, k }); };
+    p.items.flatMap((id) => (index[id].children ? index[id].children.map((c) => c.id) : [id])).forEach((id) => {
+      const n = index[id], ty = typeOf(id), L = laneOf(id);
+      if (ty === 'start') return add('cust', n.t, id);
+      if (ty === 'dec') return add(L, n.t, id, 'dec', 'ทางแยก');
+      if (ty === 'option') return add(L, n.t, id, 'opt', 'ทางเลือก');
+      add(L, (n.n ? n.n + ' · ' : '') + n.t, id, n.target ? 'target' : '', L === 'cust' ? '' : roleOf(id).split(' · ')[0]);
+      if (L === 'front') add('cust', custText(id), id);
+      if (L === 'front' || L === 'cust') add('ev', evidenceOf(id), id);
+      routeOf(id).split(' · ').filter((r) => r.startsWith('/')).forEach((r) => add('sys', r, id));
+    });
+    return { ...p, cells };
+  });
+}
+function renderSb() {
+  Object.keys(index).forEach((k) => { if (k.startsWith('cu:')) delete index[k]; });
+  const phases = sbPhases(), lw = laneW();
+  const chip = (x) => `<button type="button" class="sb-chip ${x.cls}" data-key="${esc(x.key)}">${x.k ? `<span class="sb-k">${esc(x.k)}</span>` : ''}${esc(x.t)}</button>`;
+  let h = `<div class="sb-corner"><span>Phase →</span><span class="d">ชั้น ↓</span></div>`;
+  phases.forEach((p, i) => {
+    const n = index[p.id];
+    h += `<button type="button" class="sb-head sb-chip-h" data-key="${esc(p.id)}" aria-label="Phase ${i + 1} ${esc(n.t)} — ดูรายละเอียด"><span class="badge b-green">Phase ${i + 1}</span>${parentOf[p.id] ? `<span class="sb-r">${esc(index[parentOf[p.id]].t)}</span>` : ""}<span class="sb-t">${esc((n.n ? n.n + ' · ' : '') + n.t)}</span>${n.role ? `<span class="sb-r">${esc(n.role)}</span>` : ''}</button>`;
+  });
+  SB_LAYERS.forEach((L) => {
+    h += `<div class="sb-lay sb-row-${L.k}">${L.ln ? `<span class="ln">${esc(L.ln)}</span>` : ''}<span class="badge ${L.b}">${esc(L.t)}</span><span class="d">${esc(L.d)}</span></div>`;
+    phases.forEach((p) => { h += `<div class="sb-cell sb-row-${L.k}">${p.cells[L.k].map(chip).join('') || '<span class="sb-none">—</span>'}</div>`; });
+  });
+  box.innerHTML = '';
+  const canvas = document.createElement('div');
+  canvas.className = 'uf-canvas sb';
+  canvas.style.gridTemplateColumns = `${lw}px repeat(${phases.length}, ${SB_COLW}px)`;
+  canvas.innerHTML = h;
+  canvas.style.zoom = zoom;
+  box.appendChild(canvas);
+  edgeEls = [];
+}
+
 function render() {
+  if (view === 'sb') return renderSb();
   const bp = view === 'bp', lm = view !== 'uf';   // lm = แบ่งเลน (Service Design · Process flow)
   Object.keys(index).forEach((k) => { if (k.startsWith('cu:')) delete index[k]; });
   const { pos, bands } = layout(clinic);
@@ -1979,12 +2119,13 @@ function selectClinic(key, push = true) {
 
 const HINT = {
   uf: 'ไหลจากซ้ายไปขวา · กล่องที่มี "ขยาย" กดเพื่อดูขั้นย่อย (เปิดได้ทีละขั้น) · กล่องอื่นกดเพื่อดูรายละเอียด',
-  bp: 'แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
+  bp: 'Service Blueprint แบบเส้นทาง · แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
   pf: 'Swimlane 1 เลนต่อ 1 บทบาท (Kiosk · คัดแยก · เวชระเบียน · พยาบาล · แพทย์ · เภสัช · การเงิน) · ขยายขั้นเพื่อดูว่าใครทำอะไรต่อจากใคร',
+  sb: 'ตาราง Phase × 5 ชั้น: สิ่งที่สัมผัส → ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · ข้อมูลชุดเดียวกับ User flow · ชั้น "สิ่งที่สัมผัส" อนุมานจากจุดบริการ · กดกล่องเพื่อดูรายละเอียด',
 };
 const seg = document.getElementById('view-seg');
 function setView(v, push = true) {
-  view = v === 'bp' || v === 'pf' ? v : 'uf';
+  view = v === 'bp' || v === 'pf' || v === 'sb' ? v : 'uf';
   document.body.dataset.view = view;
   seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
   document.getElementById('view-hint').textContent = HINT[view];
@@ -1998,7 +2139,7 @@ pick.addEventListener('click', (e) => { const b = e.target.closest('[data-clinic
 document.addEventListener('click', (e) => {
   const c = e.target.closest('[data-collapse]');
   if (c) { toggle(c.dataset.collapse); return; }
-  const b = e.target.closest('.uf-node, .band-info');
+  const b = e.target.closest('.uf-node, .band-info, .sb-chip, .sb-head');
   if (b) { const k = b.dataset.key; if (b.classList.contains('group')) toggle(k); else show(k); return; }
   if (e.target.closest('[data-close]') || e.target === scrim) closeSheet();
 });
