@@ -460,7 +460,17 @@
   .sb-cell .sb-chip.target { border-style: dashed; border-color: var(--text-colorfulbadge-purple, #7E22CE); }
   .sb-chip .sb-k { display: block; font-size: var(--type-size-xxs, 10px); }
   .sb-none { color: var(--text-content-tertiary, #858C92); }
-  @media (max-width: 1279px) { .sb-chip { display: flex; flex-direction: column; justify-content: center; min-height: var(--dim-size-900, 44px); } .sb-head { min-height: var(--dim-size-900, 44px); } }
+  /* ทางแยก/ทางเลือกในช่อง: ซ่อนไว้หลังปุ่ม เปิดได้ทีละช่อง */
+  .sb-more {
+    display: flex; align-items: center; gap: var(--dim-space-100, 4px); width: 100%; text-align: left;
+    padding: var(--dim-space-100, 4px) var(--dim-space-200, 8px);
+    border: var(--dim-stroke-100, 1px) dashed var(--border-neutral-tertiary, #E2E4E6); border-radius: var(--dim-radius-200, 8px);
+    background: transparent; color: var(--text-content-secondary, #636B72);
+    font: inherit; font-size: var(--type-size-xs, 12px); line-height: 1.35; cursor: pointer;
+  }
+  .sb-more .material-symbols-outlined { font-size: var(--type-size-base, 16px); }
+  .sb-more:hover, .sb-more[aria-expanded="true"] { color: var(--text-brandPrimary-default, #007549); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); }
+  @media (max-width: 1279px) { .sb-chip { display: flex; flex-direction: column; justify-content: center; min-height: var(--dim-size-900, 44px); } .sb-head, .sb-more { min-height: var(--dim-size-900, 44px); } }
   @media (max-width: 767px) { .sb-lay .d, .sb-lay .ln, .sb-corner .d { display: none; } .sb-corner, .sb-lay { padding: var(--dim-space-200, 8px) var(--dim-space-100, 4px); } }
 
   /* tables */
@@ -1399,10 +1409,18 @@ function sbPhases() {
     return { ...p, cells };
   });
 }
+let sbOpen = null;   // ช่องที่เปิดทางแยกอยู่ (ทีละช่อง): คลินิก|phase|ชั้น
 function renderSb() {
   Object.keys(index).forEach((k) => { if (k.startsWith('cu:')) delete index[k]; });
   const phases = sbPhases(), lw = laneW();
   const chip = (x) => `<button type="button" class="sb-chip ${x.cls}" data-key="${esc(x.key)}">${x.k ? `<span class="sb-k">${esc(x.k)}</span>` : ''}${esc(x.t)}</button>`;
+  const isBr = (x) => x.cls === 'dec' || x.cls === 'opt';
+  const cell = (p, L) => {
+    const xs = p.cells[L.k], br = xs.filter(isBr); if (!xs.length) return '<span class="sb-none">—</span>';
+    const key = clinic.key + '|' + p.id + '|' + L.k, open = sbOpen === key;
+    const more = br.length ? `<button type="button" class="sb-more" data-sb-more="${esc(key)}" aria-expanded="${open}"><span class="material-symbols-outlined" aria-hidden="true">${open ? 'unfold_less' : 'alt_route'}</span>${open ? 'ซ่อนทางแยก' : `ดูทางแยก ${br.length} รายการ`}</button>` : '';
+    return xs.filter((x) => !isBr(x)).map(chip).join('') + more + (open ? br.map(chip).join('') : '');
+  };
   let h = `<div class="sb-corner"><span>Phase →</span><span class="d">ชั้น ↓</span></div>`;
   phases.forEach((p, i) => {
     const n = index[p.id];
@@ -1410,7 +1428,7 @@ function renderSb() {
   });
   SB_LAYERS.forEach((L) => {
     h += `<div class="sb-lay sb-row-${L.k}">${L.ln ? `<span class="ln">${esc(L.ln)}</span>` : ''}<span class="badge ${L.b}">${esc(L.t)}</span><span class="d">${esc(L.d)}</span></div>`;
-    phases.forEach((p) => { h += `<div class="sb-cell sb-row-${L.k}">${p.cells[L.k].map(chip).join('') || '<span class="sb-none">—</span>'}</div>`; });
+    phases.forEach((p) => { h += `<div class="sb-cell sb-row-${L.k}">${cell(p, L)}</div>`; });
   });
   box.innerHTML = '';
   const canvas = document.createElement('div');
@@ -2122,7 +2140,7 @@ const HINT = {
   uf: 'ไหลจากซ้ายไปขวา · กล่องที่มี "ขยาย" กดเพื่อดูขั้นย่อย (เปิดได้ทีละขั้น) · กล่องอื่นกดเพื่อดูรายละเอียด',
   bp: 'Service Blueprint แบบเส้นทาง · แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
   pf: 'Swimlane 1 เลนต่อ 1 บทบาท (Kiosk · คัดแยก · เวชระเบียน · พยาบาล · แพทย์ · เภสัช · การเงิน) · ขยายขั้นเพื่อดูว่าใครทำอะไรต่อจากใคร',
-  sb: 'ตาราง Phase × 5 ชั้น: สิ่งที่สัมผัส → ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · ข้อมูลชุดเดียวกับ User flow · ชั้น "สิ่งที่สัมผัส" อนุมานจากจุดบริการ · กดกล่องเพื่อดูรายละเอียด',
+  sb: 'ตาราง Phase × 5 ชั้น: สิ่งที่สัมผัส → ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · ข้อมูลชุดเดียวกับ User flow · ชั้น "สิ่งที่สัมผัส" อนุมานจากจุดบริการ · กดกล่องเพื่อดูรายละเอียด · ทางแยกกด "ดูทางแยก" (เปิดได้ทีละช่อง)',
 };
 const seg = document.getElementById('view-seg');
 function setView(v, push = true) {
@@ -2140,6 +2158,13 @@ pick.addEventListener('click', (e) => { const b = e.target.closest('[data-clinic
 document.addEventListener('click', (e) => {
   const c = e.target.closest('[data-collapse]');
   if (c) { toggle(c.dataset.collapse); return; }
+  const m = e.target.closest('[data-sb-more]');
+  if (m) {   // เปิดทางแยกของช่องนี้ = ปิดช่องที่เปิดอยู่ก่อน · คงตำแหน่งเลื่อน
+    const k = m.dataset.sbMore, sl = box.scrollLeft, st = box.scrollTop;
+    sbOpen = sbOpen === k ? null : k; render(); box.scrollLeft = sl; box.scrollTop = st;
+    [...box.querySelectorAll('[data-sb-more]')].find((x) => x.dataset.sbMore === k)?.focus({ preventScroll: true });
+    return;
+  }
   const b = e.target.closest('.uf-node, .band-info, .sb-chip, .sb-head');
   if (b) { const k = b.dataset.key; if (b.classList.contains('group')) toggle(k); else show(k); return; }
   if (e.target.closest('[data-close]') || e.target === scrim) closeSheet();
