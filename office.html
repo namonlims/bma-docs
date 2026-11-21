@@ -37,6 +37,20 @@
   /* พื้นหลังไล่สี (ข้อยกเว้น gradient) · โหมดมืด = พื้นมืด + แสงเขียวจาง */
   @media (prefers-color-scheme: dark) { body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); } }
   :root[data-theme="dark"] body:not(.on) { background: radial-gradient(45% 63% at 44% 40%, rgba(47, 181, 131, 0.14) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(37% 53% at 13% 68%, rgba(144, 208, 192, 0.10) 0%, rgba(0, 0, 0, 0) 100%), var(--nd-surface-page, #0E1317); }
+  /* ดูสถานะจากเครื่องอื่น (ดูอย่างเดียว · ผู้ใช้ 21 พ.ย. 69): ลำดับ = หัวเรื่อง → สรุป 1 บรรทัด → กลุ่ม → แถว ชื่อ / สถานะ / งาน */
+  .nd-card--page.wide { width: min(560px, 100%); }
+  .st-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--nd-space-200, 8px); color: var(--nd-text-default, #363B3F); font-size: var(--nd-type-size-sm, 14px); line-height: 1.5; }
+  .st-agent { display: grid; grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); column-gap: var(--nd-space-300, 12px); row-gap: var(--nd-space-100, 4px); align-items: center; }
+  .st-agent__name { font-weight: var(--nd-type-weight-medium, 500); overflow-wrap: anywhere; }
+  .st-agent__state { justify-self: start; }
+  .st-agent__task { grid-column: 2; color: var(--nd-text-secondary, #636B72); font-size: var(--nd-type-size-xs, 12px); overflow-wrap: anywhere; }
+  .st-msg { display: grid; gap: var(--nd-space-100, 4px); }
+  .st-msg__head { color: var(--nd-text-tertiary, #6A727A); font-size: var(--nd-type-size-xs, 12px); }
+  .st-msg__text { overflow-wrap: anywhere; }
+  .st-empty { color: var(--nd-text-tertiary, #6A727A); font-size: var(--nd-type-size-xs, 12px); }
+  .st-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--nd-space-200, 8px); margin-top: var(--nd-space-300, 12px); }
+  #st-off { margin-top: var(--nd-space-300, 12px); }
+  @media (max-width: 479px) { .st-agent { grid-template-columns: minmax(0, 1fr) max-content; } .st-agent__task { grid-column: 1 / -1; } .st-actions .nd-btn { flex: 1 1 100%; } }
   [hidden] { display: none !important; }
 </style>
 <script type="module" src="namon/namon-agent.js"></script>
@@ -65,6 +79,20 @@
       <li>ถ้าเปิดไม่ติด ให้รัน <code>npm start</code> ใน <code>ticket-studio</code></li>
     </ul>
   </section>
+  <section id="status" hidden>
+    <h1 class="nd-title">ห้องทำงาน agent</h1>
+    <p class="nd-summary" id="st-sum" aria-live="polite">กำลังโหลดสถานะ…</p>
+    <div class="nd-notice" id="st-off" role="status" hidden></div>
+    <hr class="nd-divider">
+    <h2 class="nd-group-title" id="st-agents-h">ลูกทีม</h2>
+    <ul class="st-list" id="st-agents" aria-labelledby="st-agents-h"></ul>
+    <hr class="nd-divider">
+    <h2 class="nd-group-title" id="st-msgs-h">ข้อความล่าสุด</h2>
+    <ul class="st-list" id="st-msgs" aria-labelledby="st-msgs-h"></ul>
+    <hr class="nd-divider">
+    <p class="nd-summary">ดูอย่างเดียว · สั่งงานได้ที่ Studio บนเครื่องเจ้าของ</p>
+    <div class="st-actions"><button type="button" class="nd-btn" id="st-local">เปิด Studio ในเครื่องนี้</button></div>
+  </section>
 </main>
 <iframe id="studio" title="ห้องทำงาน agent" allow="local-network-access; local-network; loopback-network; fullscreen" hidden></iframe>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -72,14 +100,61 @@
 /* Client ID ไม่ใช่ความลับ (ใส่ในหน้าเว็บได้) · ห้ามใส่ Client secret หรืออีเมลที่นี่ */
 var GOOGLE_CLIENT_ID = '815797516574-00m2cmpb25fkl2ip9cecqmpfogt5952l.apps.googleusercontent.com';
 var STUDIO = 'http://127.0.0.1:4400/';
+/* URL /exec ของ Apps Script "สถานะห้องทำงาน" (ticket-studio/apps-script/office-status) · ว่าง = เปิด Studio ในเครื่องอย่างเดียวเหมือนเดิม
+   เครื่องที่ไม่ได้รัน Studio (มือถือ ฯลฯ) จะเห็นสถานะ agent แบบดูอย่างเดียว · อ่านได้เฉพาะบัญชีเจ้าของ (สคริปต์ตรวจ token กับ Google) */
+var STATUS_URL = '';
+var STATE = { idle: ['ว่าง', ''], thinking: ['กำลังคิด', ' nd-chip--brand'], working: ['กำลังทำงาน', ' nd-chip--brand'], waiting: ['รอลูกทีม', ' nd-chip--accent'], done: ['เสร็จแล้ว', ' nd-chip--success'] };
+var $ = function (id) { return document.getElementById(id); };
+var el = function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+var hm = function (ts) { return ts ? new Date(ts).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '-'; };
+/* Studio ในเครื่องนี้ตอบไหม (no-cors: รู้แค่ต่อถึงหรือไม่) */
+function localUp() { return new Promise(function (ok) { var done = false, fin = function (v) { if (!done) { done = true; ok(v); } }; var t = setTimeout(function () { fin(false); }, 2500); try { fetch(STUDIO + 'namon-tokens.css?probe=' + Date.now(), { mode: 'no-cors', cache: 'no-store' }).then(function () { clearTimeout(t); fin(true); }, function () { clearTimeout(t); fin(false); }); } catch (e) { clearTimeout(t); fin(false); } }); }
+function openStudio(cred) {
+  var f = $('studio'); f.src = STUDIO + '#token=' + encodeURIComponent(cred) + '&tab=office';
+  f.hidden = false; document.querySelector('.nd-card--page').hidden = true; document.body.classList.add('on');
+}
+var pollT = null;
+function renderStatus(j) {
+  var s = j.snapshot, agents = (s && s.agents) || [], msgs = (s && s.messages) || [];
+  var live = Boolean(s) && j.now - j.seen < 150000, busy = agents.filter(function (a) { return a.state !== 'idle' && a.state !== 'done'; });
+  $('st-sum').textContent = !s ? 'ยังไม่มีสถานะจาก Studio' : (live ? (busy.length ? 'กำลังทำงาน ' + busy.length + ' ตัว' : 'ว่างทั้งทีม') : 'Studio ปิดอยู่') + ' · อัปเดต ' + hm(j.seen);
+  var off = $('st-off'); off.hidden = !s || live; if (!off.hidden) off.textContent = 'Studio ไม่ได้ส่งสถานะตั้งแต่ ' + hm(j.seen) + ' · ด้านล่างคือสถานะล่าสุดที่เห็น';
+  var ua = $('st-agents'); ua.replaceChildren();
+  agents.slice().sort(function (a, b) { return (a.state === 'idle') - (b.state === 'idle'); }).forEach(function (a) {
+    var st = STATE[a.state] || [a.state, ''], li = el('li', 'st-agent');
+    li.append(el('span', 'st-agent__name', a.name), el('span', 'nd-chip st-agent__state' + st[1], st[0]));
+    if (a.task && a.state !== 'idle') li.append(el('span', 'st-agent__task', a.task));
+    ua.append(li);
+  });
+  if (!agents.length) ua.append(el('li', 'st-empty', 'ยังไม่มีข้อมูล'));
+  var um = $('st-msgs'); um.replaceChildren();
+  msgs.slice().reverse().forEach(function (m) { var li = el('li', 'st-msg'); li.append(el('span', 'st-msg__head', m.from + ' → ' + m.to + ' · ' + hm(m.ts)), el('span', 'st-msg__text', m.text)); um.append(li); });
+  if (!msgs.length) um.append(el('li', 'st-empty', 'ยังไม่มีข้อความ'));
+}
+function showStatus(cred) {
+  $('signin').hidden = true; $('status').hidden = false; document.querySelector('.nd-card--page').classList.add('wide');
+  var busy = false, stop = function () { clearInterval(pollT); pollT = null; document.removeEventListener('visibilitychange', vis); };
+  var load = function () {
+    if (busy || document.visibilityState !== 'visible') return; busy = true;
+    fetch(STATUS_URL + '?tk=' + encodeURIComponent(cred), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      busy = false;
+      if (j.auth) { stop(); try { sessionStorage.removeItem('ticket-cred'); } catch (e) {} location.reload(); return; } /* token หมดอายุ / ไม่ใช่เจ้าของ → กลับหน้าเข้าสู่ระบบ */
+      if (!j.ok) throw new Error(j.error || 'อ่านไม่ได้');
+      renderStatus(j);
+    }).catch(function () { busy = false; $('st-sum').textContent = 'ต่อข้อมูลสถานะไม่ได้ · จะลองใหม่เอง'; });
+  };
+  var vis = function () { if (document.visibilityState === 'visible') load(); };
+  document.addEventListener('visibilitychange', vis); pollT = setInterval(load, 10000); load();
+  $('st-local').onclick = function () { stop(); openStudio(cred); };
+}
 function init() {
   if (!GOOGLE_CLIENT_ID) { document.getElementById('msg').textContent = 'ยังไม่ได้ตั้ง Google Client ID'; return; }
   if (!window.google || !google.accounts) { return setTimeout(init, 200); }
   var go = function (cred) {
-    document.getElementById('msg').textContent = 'กำลังเปิดหน้าสร้าง ticket…';
-    var f = document.getElementById('studio'); f.src = STUDIO + '#token=' + encodeURIComponent(cred) + '&tab=office';
-    f.hidden = false; document.querySelector('.nd-card--page').hidden = true; document.body.classList.add('on'); 
     try { sessionStorage.setItem('ticket-cred', cred); } catch (e) {}
+    if (!STATUS_URL) { document.getElementById('msg').textContent = 'กำลังเปิดห้องทำงาน…'; openStudio(cred); return; }
+    document.getElementById('msg').textContent = 'กำลังหา Studio ในเครื่องนี้…';
+    localUp().then(function (up) { if (up) openStudio(cred); else showStatus(cred); });
   };
   try { var c = sessionStorage.getItem('ticket-cred'); if (c && JSON.parse(atob(c.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000 > Date.now() + 60000) { go(c); return; } } catch (e) {}
   google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: function (r) { go(r.credential); } });
