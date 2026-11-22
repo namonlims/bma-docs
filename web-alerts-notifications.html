@@ -22,6 +22,11 @@
   .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 12px; text-decoration: none; }
   .back .material-symbols-outlined { font-size: 16px; }
   h1 { margin: 0; font-size: 24px; } h2 { margin: 0 0 8px; font-size: 18px; }
+
+  /* แท็บสลับมุมมอง Alert (ทะเบียนสำหรับ BA ↔ แคตตาล็อกตามชนิด) · เมนูเดียวในหน้าแรก (ผู้ใช้ 22 พ.ย. 69) */
+  .vtabs { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); margin: var(--dim-space-300, 12px) 0 0; }
+  .vtabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E3E7EA); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); text-decoration: none; font-weight: var(--type-weight-medium, 500); }
+  .vtabs a[aria-current="page"] { background: var(--brand-p50, #F4FBF8); border-color: var(--text-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
   .lede { margin: 4px 0 0; color: var(--text-content-secondary, #636B72); max-width: 820px; }
   .meta { margin-top: 12px; font-size: 12px; color: var(--text-content-tertiary, #858C92); display: flex; gap: 8px 24px; flex-wrap: wrap; }
   .cards { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -51,6 +56,7 @@
   <header>
     <a class="back" href="index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
     <h1>ทะเบียน Alert และ Notification <span id="prod"></span></h1>
+    <nav class="vtabs" aria-label="มุมมอง Alert"><a href="web-alerts-notifications.html" aria-current="page">ทะเบียนสำหรับ BA (ตรวจ · ส่งออก CSV)</a><a href="alerts-system-catalog.html">แคตตาล็อกตามชนิด (AlertDialog · Toast · กระดิ่ง)</a></nav>
     <p class="lede">รายการนี้ใช้ให้ BA ตรวจและยืนยัน (confirm) รายละเอียดของ Alert และ Notification ทุกข้อ ก่อนส่งมอบให้ dev รวบรวมจากโค้ดอัตโนมัติ <b>ยังไม่ได้ทดสอบใช้งานจริง</b> <span id="statusLede">สถานะตามข้อมูล: ทำงานจริง (real) / ระบบจำลอง (mock) / ยังไม่มี (missing)</span> ข้อที่สถานะ "ยังไม่มี" มาจากมติหรือ TOR ที่ตัดสินแล้วแต่ยังไม่มีในโค้ด ข้อความใน {…} คือค่าที่ระบบเติมตอนรัน</p>
     <div class="meta" id="meta"></div>
   </header>

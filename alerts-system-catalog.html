@@ -54,6 +54,11 @@
     color: var(--text-brandPrimary-default, #007549);
     font-size: var(--type-size-xl, 20px);
   }
+
+  /* แท็บสลับมุมมอง Alert (ทะเบียนสำหรับ BA ↔ แคตตาล็อกตามชนิด) · เมนูเดียวในหน้าแรก (ผู้ใช้ 22 พ.ย. 69) */
+  .vtabs { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); margin: var(--dim-space-300, 12px) 0 0; }
+  .vtabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E3E7EA); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); text-decoration: none; font-weight: var(--type-weight-medium, 500); }
+  .vtabs a[aria-current="page"] { background: var(--brand-p50, #F4FBF8); border-color: var(--text-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
   .lede { margin: 0; color: var(--text-content-secondary, #636B72); max-width: 760px; }
   .row { display: flex; align-items: center; gap: var(--dim-space-300, 12px); flex-wrap: wrap; }
   .pill {
@@ -246,7 +251,7 @@
       <a href="index.html"><span class="material-symbols-outlined" style="font-size:16px">arrow_back</span>เอกสาร PHCIS</a>
     </nav>
     <h1>แคตตาล็อก Alert ทั้งระบบ</h1>
-    <p class="lede" style="font-weight:500">มีฉบับใหม่ให้ BA ตรวจแล้ว: <a href="web-alerts-notifications.html">ทะเบียน Alert และ Notification (อัปเดต 22 พ.ย. 69)</a> หน้านี้สร้างจากทะเบียนเดียวกัน เก็บไว้อ้างอิง</p>
+    <nav class="vtabs" aria-label="มุมมอง Alert"><a href="web-alerts-notifications.html">ทะเบียนสำหรับ BA (ตรวจ · ส่งออก CSV)</a><a href="alerts-system-catalog.html" aria-current="page">แคตตาล็อกตามชนิด (AlertDialog · Toast · กระดิ่ง)</a></nav>
     <p class="lede">รวม AlertDialog · Alert · Toast · การแจ้งเตือนกระดิ่ง (Notification) ทุกจุดในระบบ PHCIS — ถอดจากโค้ดจริง สำหรับทีม BA ตรวจทานข้อความและเงื่อนไข</p>
     <div class="row">
       <span class="pill"><span class="material-symbols-outlined" style="font-size:14px">update</span>อัปเดต 22 พ.ย. 69</span>
