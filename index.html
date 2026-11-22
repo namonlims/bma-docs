@@ -423,17 +423,17 @@
         <p class="card-sum">ประวัติการแก้ component และ token ของ bma</p>
         <span class="card-url">bma-design-system/history<span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></span>
       </a>
-      <a class="card" href="namon-design-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="Tokens และ Component" data-sub-icon="widgets">
+      <a class="card" data-owner href="namon-design-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="Tokens และ Component" data-sub-icon="widgets">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">palette</span><span class="card-title">Namon Playground · Tokens และ Component</span></span>
         <p class="card-sum">design system ของ Namon Playground (ธีมฟ้า · เขียว · ชมพู · โหมดมืด) แยกจาก bma · token --nd-* · คอมโพเนนต์ nd-*</p>
         <span class="card-url">namon-design-library</span>
       </a>
-      <a class="card" href="namon-ui-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="UI Library" data-sub-icon="grid_view">
+      <a class="card" data-owner href="namon-ui-library.html" data-clinic="Namon Playground" data-icon="palette" data-label="UI Library" data-sub-icon="grid_view">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">grid_view</span><span class="card-title">Namon Playground · UI Library</span></span>
         <p class="card-sum">ดูคอมโพเนนต์ทีละชิ้น · ตัวอย่างสด · โค้ด HTML คัดลอกได้ · คลาสและ token · โหมดมืด</p>
         <span class="card-url">namon-ui-library</span>
       </a>
-      <a class="card" href="ds-studio.html">
+      <a class="card" data-owner href="ds-studio.html">
         <span class="card-top"><span class="material-symbols-outlined card-icon" aria-hidden="true">add_circle</span><span class="card-title">สร้าง design system</span></span>
         <p class="card-sum">สร้างระบบใหม่ที่คนละสี/คนละแบบกับ bma · เลือกอุปกรณ์และ component · เพิ่มภายหลังได้ · ต้องเข้าด้วยบัญชีเจ้าของ</p>
         <span class="card-url">ds-studio</span>
@@ -864,8 +864,8 @@
 </script>
 <div class="lock-pop" id="lock" hidden role="dialog" aria-modal="true" aria-labelledby="lock-t">
   <div class="lock-box" id="lock-f">
-    <div class="lock-head"><span class="material-symbols-outlined card-icon" aria-hidden="true">lock</span><h3 id="lock-t">เข้าสู่ระบบเพื่อเปิด Usability testing</h3></div>
-    <p>ผลทดสอบเปิดเฉพาะบัญชี Google ของเจ้าของ</p>
+    <div class="lock-head"><span class="material-symbols-outlined card-icon" aria-hidden="true">lock</span><h3 id="lock-t">เข้าสู่ระบบเพื่อเปิดหน้านี้</h3></div>
+    <p>เปิดเฉพาะบัญชี Google ของเจ้าของ</p>
     <div class="lock-g" id="lock-g"></div>
     <p class="lock-err" id="lock-err" aria-live="polite"></p>
     <div class="lock-act"><button type="button" class="b-out" id="lock-x">ยกเลิก</button></div>
@@ -907,7 +907,9 @@
   var GOOGLE_CLIENT_ID = '815797516574-00m2cmpb25fkl2ip9cecqmpfogt5952l.apps.googleusercontent.com';
   var OWNER_SHA256 = '01ba6a558c825f15678b5c375724a5eeca6a6aca0d29b8a5f80cbd6511be7c2e';
   var utSec = document.getElementById('g-ut') && document.getElementById('g-ut').closest('section');
-  var lockKeys = utSec ? [].slice.call(utSec.querySelectorAll('a.card:not([data-ut-open])')).map(function (c) { var h = c.getAttribute('href'); return isLocal(h) ? rel(h) : new URL(h, location.href).href; }) : [];
+  /* การ์ด data-owner (Namon Playground · สร้าง design system) ล็อกด้วยบัญชีเดียวกัน (ผู้ใช้ 22 พ.ย. 69) */
+  var lockSel = (utSec ? 'section[aria-labelledby="g-ut"] a.card:not([data-ut-open]), ' : '') + 'a.card[data-owner]';
+  var lockKeys = [].slice.call(document.querySelectorAll(lockSel)).map(function (c) { var h = c.getAttribute('href'); return isLocal(h) ? rel(h) : new URL(h, location.href).href; });
   var unlocked = function () { try { return sessionStorage.getItem('ut-owner') === '1'; } catch (e) { return false; } };
   var isLocked = function (key) { return !unlocked() && lockKeys.indexOf(key) >= 0; };
   var lp = document.getElementById('lock'), lerr = document.getElementById('lock-err'), lg = document.getElementById('lock-g'), lThen = null, lCancel = null, gReady = false;
@@ -916,7 +918,7 @@
     var p = {}; try { p = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (er) {}
     if (!p.email || !p.email_verified) { lerr.textContent = 'อ่านบัญชีไม่ได้ ลองใหม่อีกครั้ง'; return; }
     sha256(String(p.email).toLowerCase()).then(function (h) {
-      if (h !== OWNER_SHA256) { lerr.textContent = 'บัญชีนี้ไม่มีสิทธิ์เปิดผลทดสอบ'; return; }
+      if (h !== OWNER_SHA256) { lerr.textContent = 'บัญชีนี้ไม่มีสิทธิ์เปิดหน้านี้'; return; }
       try { sessionStorage.setItem('ut-owner', '1'); } catch (er) {}
       closeLock(true);
     });
