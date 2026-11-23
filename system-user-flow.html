@@ -799,6 +799,7 @@
             <dt>เบาหวาน/ความดัน ไม่มีขั้นความยินยอม · เอกสาร</dt><dd>แถบขั้นทุกบทบาทเหลือ แบบประเมิน → ตรวจและวินิจฉัย → สั่งการรักษา → แผนการดูแล · ความยินยอมทั่วไปขอตั้งแต่เวชระเบียน เปิดดู/ลงนามจาก ⋮ · ปุ่มท้ายแพทย์ "บันทึกและส่งไปยังแผนกถัดไป" · ป๊อปอัปตรวจตามเกณฑ์การดูแลเด้งทุกครั้งที่เปิดจาก worklist (มาฟังผลไม่เด้ง) · รายการ "สั่งแล้ว" ไม่นับว่าค้าง (19–20 พ.ย. 69)</dd>
             <dt>วัณโรค TB-17 ธง High Alert แพ้ยารุนแรง</dt><dd>คง 16 อาการ · แพทย์ติ๊กเข้าเกณฑ์ SJS/DRESS → Alert แดงหน้าแพทย์ + แถบแดงที่ห้องยา <code>/pharmacy/dispense</code> · <code>/pharmacy/screening-review</code> ค้างทุกขั้น ปิดไม่ได้ ไม่กันการจ่าย · ป้ายแดงในคิวห้องยา · ฉลากยาทุกใบมีบรรทัดแดง · ธงอยู่จนแพทย์ถอดติ๊กเอง (ข้อ B ก · ผู้ใช้ "นอก TOR แต่ไม่ขัดแย้ง สร้างได้" · 19–21 พ.ย. 69)</dd>
             <dt>วัณโรค TB-19 · DOT</dt><dd>ประวัติ DOT ที่บันทึกแล้วล็อก วันที่ว่างลงย้อนหลังได้ · TB-04 คง NTIP 3 ค่า (เทียบ Checklist คทง.9 ข้อ 42–53, 80–93 · 19 พ.ย. 69)</dd>
+            <dt>วัณโรค worklist · ทะเบียน</dt><dd>คัดกรอง <code>/clinic/tb/screening</code> หัวหน้าไม่มี "ย้อนกลับ" / "ไปคิวการรักษาของคลินิก" · จำนวน "ขึ้นทะเบียน" = "ทะเบียนวัณโรค" นับคนละคนจากทะเบียน · รายชื่อผู้ป่วยทั้งหมด = คิว ∪ คนในทะเบียน ไม่มีคอลัมน์ "รอนาน" · ตารางตรึงถึงชื่อ · ทะเบียนคัดกรองกลุ่มเสี่ยงนับเฉพาะที่ยังไม่ยกเลิก + ทูลทิป + รูปโปรไฟล์ · แท็บย่อยติดตามการดูแลมีรูปโปรไฟล์ (ผู้ใช้ 23 พ.ย. 69)</dd>
             <dt>งาน HIV (คณะ 9 ประชุม HIV/STI)</dt><dd>ผู้ป่วยรายใหม่ทำ "แบบฟอร์มความยินยอม" (HIV-C1 แพทยสภา 2557 · HIV-C2) ก่อนซักประวัติ · HIV-C3 แจ้งผลแก่บุคคลอื่น ไม่บังคับ · พยาบาลคัดกรองไม่มี "ส่งตรวจ" · "ประวัติคู่นอน" + Pre-test Counseling บังคับทุกครั้งที่มา · ไม่มีขั้น "ให้คำปรึกษาก่อนตรวจ" แยกแล้ว (การ์ดบนขั้นแรกแพทย์) · ป๊อปอัปขึ้นทะเบียนตัด UIC/ประเภทผู้รับบริการ/NTIP/บริการ · "กลุ่มเป้าหมาย (NAP)" → "กลุ่มประชากร" · แถบเตือนเคยขึ้นทะเบียนศูนย์อื่น (20–21 พ.ย. 69)</dd>
             <dt>พิมพ์ใบยินยอมของคลินิก</dt><dd>ปุ่มพิมพ์บนการ์ดใบเปิดหน้า preview ตามใบคณะทำงาน พิมพ์เฉพาะแผ่นนั้น ทุกคลินิก · ข้อแบบติ๊กเลือกแสดงตามที่บันทึกจริง ไม่เดา · เก็บเฉพาะลายเซ็นผู้รับบริการ ช่องผู้ให้คำปรึกษา/พยานเว้นให้เซ็นมือ (21 พ.ย. 69)</dd>
           </dl>
@@ -1181,7 +1182,7 @@
     </div>
   </section>
 
-  <p class="foot">ที่มา: <code>docs/flow-spec-draft.md</code> · <code>docs/decision-log.md</code> · <code>.claude/rules/staff-condition-flow.md</code> ใน bma.health (sync main dd13cd65 · 22 พ.ย. 69) · ต้นฉบับหน้านี้: <code>docs/system-user-flow.html</code> + <code>docs/system-user-flow-clinics.js</code> ใน bma.health (แก้ flow แล้วอัปเดตทั้งสองที่) · ดูต่อ: <a href="13_Service_Blueprint.html">Service Blueprint</a> · <a href="user-flow.html">Userflow Map ฉบับเดิม (พ.ค. 69)</a></p>
+  <p class="foot">ที่มา: <code>docs/flow-spec-draft.md</code> · <code>docs/decision-log.md</code> · <code>.claude/rules/staff-condition-flow.md</code> ใน bma.health (sync main d3ee8bc8 · 23 พ.ย. 69) · ต้นฉบับหน้านี้: <code>docs/system-user-flow.html</code> + <code>docs/system-user-flow-clinics.js</code> ใน bma.health (แก้ flow แล้วอัปเดตทั้งสองที่) · ดูต่อ: <a href="13_Service_Blueprint.html">Service Blueprint</a> · <a href="user-flow.html">Userflow Map ฉบับเดิม (พ.ค. 69)</a></p>
 </main>
 <div class="scrim" id="scrim"></div>
 <aside class="panel detail" id="detail" aria-live="polite" aria-hidden="true" aria-label="รายละเอียดขั้นตอน"></aside>
