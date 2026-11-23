@@ -1492,6 +1492,8 @@ function render() {
   all.forEach(([a, b, label, mode, at]) => {
     const s = visible(a, pos, true), t = visible(b, pos, false);
     if (!s || !t || s === t) return;
+    /* เส้นข้ามขั้นที่ปลายทางซ่อนอยู่ในกลุ่มที่ยุบ → ไม่วาดลงกล่องกลุ่ม (จะดูเหมือนไปขั้นนั้น) · ขยายกลุ่มแล้วเห็นเส้นเอง */
+    if (!pos[b] && mode === 'over' && t === parentOf[b]) return;
     const k = s + '>' + t; if (seen.has(k)) return; seen.add(k);
     const mapped = !(s === a && t === b);
     const skip = pos[t].row === pos[s].row && ids.some((o) => pos[o].row === pos[s].row && pos[o].col > pos[s].col && pos[o].col < pos[t].col);
