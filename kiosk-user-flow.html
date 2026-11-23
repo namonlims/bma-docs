@@ -451,7 +451,7 @@
   <p class="lede">เส้นทางผู้รับบริการที่ตู้บริการตนเอง 1080×1920 แนวตั้ง ตั้งแต่เสียบบัตรจนรับบัตรคิว/ใบเสร็จ แยกตามบริการที่เลือก กดกล่องเพื่อดูหน้าจอ (slug) และกลุ่มหน้าจอในโค้ด</p>
   <div class="meta">
     <span><b>อ้างอิง</b> src/pagesRegistry.tsx · src/flow.ts · design.md · .claude/rules · commit log</span>
-    <span><b>อัปเดต</b> <span id="upd">18 พ.ย. 69</span> (commit ล่าสุด 16 พ.ย. 69 · 68902ff)</span>
+    <span><b>อัปเดต</b> <span id="upd">23 พ.ย. 69</span> (commit ล่าสุด 20 พ.ย. 69 · 5b11cde)</span>
   </div>
 </header>
 <nav class="toc" aria-label="หัวข้อในหน้า">
@@ -513,7 +513,8 @@
       <div class="grp"><dl class="kv">
         <dt>100px</dt><dd>เลขคิว</dd><dt>58 · 56</dt><dd>หัวข้อหน้าจอ</dd><dt>48</dt><dd>หัวข้อส่วน · ป้ายปุ่ม</dd><dt>40–24</dt><dd>เนื้อความ · caption</dd><dt>20–14</dt><dd>ใบคิว/ใบเสร็จที่พิมพ์</dd>
       </dl></div>
-      <div class="grp"><span class="grp-h">Components</span><p style="margin:0">PrimaryButton · OutlineButton · OutlineSubduedButton · Card · Keypad/NumberKey · KioskShell · Header · IdNumberDisplay · PrintingScreen · LottieAsset</p></div></div>
+      <div class="grp"><span class="grp-h">Components</span><p style="margin:0">PrimaryButton · OutlineButton · OutlineSubduedButton · Card · Keypad/NumberKey · KioskShell · Header · IdNumberDisplay · PrintingScreen · LottieAsset</p></div>
+      <div class="grp"><span class="grp-h">หน้า Design system (DesignSystemPage)</span><p style="margin:0"><code>?mode=dark</code> สลับเฉพาะเปลือกหน้า (พื้นหลัง · หัวข้อ · คำอธิบาย) เป็นมืด ตัวอย่างคอมโพเนนต์วางบนแผ่น "จอ Kiosk" สีสว่าง เพราะจอ Kiosk จริงเป็นโหมดสว่างอย่างเดียว · ค่าเริ่มต้น/<code>?mode=light</code> = สว่าง (20 พ.ย. 69 · PR #11)</p></div></div>
     <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">hub</span><div><h3>เชื่อม 3 ระบบ</h3><p>.claude/rules/cross-product-journey.md</p></div></div>
       <div class="grp"><dl class="kv">
         <dt>ผู้ป่วยเดโม</dt><dd>นายสมชาย มีสุข · HN 67-00001 (ใช้ร่วม bma.health · bma.mobile)</dd>
@@ -764,6 +765,7 @@ const PAGES = [
 let g0=''; document.getElementById('scr-body').innerHTML = PAGES.map(([s,t,g])=>{ const used = Object.entries(FLOWS).filter(([k,f])=>f.flow.some(n=>n.s===s)).map(([k,f])=>`<span class="badge b-green">${esc(f.n)}</span>`).join(' ') || '<span class="badge b-grey">ยังไม่วางใน flow</span>';
   const h = g!==g0 ? `<tr class="gh"><td colspan="3">${g}</td></tr>` : ''; g0=g; return h+`<tr><td><code>/${s}</code></td><td>${esc(t)}</td><td>${used}</td></tr>`; }).join('');
 const LOG = [
+['20 พ.ย. 69','หน้า Design system: ?mode=dark สลับเปลือกหน้าเป็นมืด ตัวอย่างคอมโพเนนต์อยู่บนแผ่นจอ Kiosk สว่าง (PR #11)'],
 ['15 พ.ย. 69','เคสผู้มีสิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว: เลขเดโม 5555555555555 → หน้าสิทธิ์ 08 แสดงสิทธิ์เดียวพร้อมสถานะและหน่วยบริการประจำ · ใบคิวพิมพ์สิทธิ สปสช. · คู่มือเลขบัตรเดโม (PDF) (PR #9)'],
 ['9 พ.ย. 69','ออกคิวตามนัดหมาย (มีนัด = คิวคลินิก · ไม่มีนัด = คิวกลาง) · ผู้ป่วยใหม่รับคิว K ไปจุดคัดแยก · ซ่อนชื่อคลินิกพิเศษ TB/HIV · ยอดต่ำกว่า 1,000 จ่ายบัตรไม่ได้ (PR #8)'],
 ['1 พ.ย. 69','AGENTS.md จาก CLAUDE.md + .claude/rules ให้ทุกเครื่องมือใช้กติกาเดียวกัน (PR #7)'],
