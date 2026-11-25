@@ -136,6 +136,7 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) body { background: #111614; color: #E8EEEB; }
   }
+.pipe .box h3.sub{margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#E2E4E6)}
 </style>
 </head>
 <body>
@@ -198,7 +199,7 @@
       <div class="bubble do">ยังไม่มีรายการ</div><div class="bubble dont">ไม่พบข้อมูลนะคะ</div>
       <div class="bubble do">กรอกเลขบัตรประชาชน 13 หลัก</div><div class="bubble dont">คุณกรอกเลขบัตรผิดครับ</div>
     </div>
-    <p class="note">กติกาเบื้องหลัง: ไม่ใช้ "คุณ" · ไม่ลงท้าย ค่ะ/ครับ/คะ/นะ · ไม่ใช้ "!" · ปุ่มยืนยันไม่ใช้ "ตกลง" ลอยๆ · คำถามเกริ่น "ต้องการ…หรือไม่" ตัดทิ้ง · ตัวตรวจ <code>wording:check</code> จับ 9 รูปแบบนี้ในโค้ดเว็บ</p>
+    <p class="note">กติกาเบื้องหลัง: ไม่เรียกผู้ใช้ว่า "คุณ" (ข้อยกเว้นเดียว: หัวข้อป๊อปอัปออกโดยไม่บันทึก) · ไม่ลงท้าย ค่ะ/ครับ/คะ/นะ · ไม่ใช้ "!" · ปุ่มยืนยันไม่ใช้ "ตกลง" ลอยๆ · คำถามเกริ่น "ต้องการ…หรือไม่" ตัดทิ้ง · ตัวตรวจ <code>wording:check</code> จับ 9 รูปแบบนี้ในโค้ดเว็บ</p>
 
     <h3>เขียนให้ใครอ่าน (persona ผู้อ่าน)</h3>
     <div class="grid4">
@@ -220,8 +221,11 @@
       <div class="box">
         <h3><span class="ms">menu_book</span>ต้นทางกติกา</h3>
         <ul>
-          <li><code>.claude/rules/ux-writing.md</code> (ฉบับย่อ ~9.4K ตัวอักษร)</li>
+          <li><code>.claude/rules/ux-writing.md</code> (ฉบับย่อ ~9.4K ตัวอักษร · มีตัวละคร Namon Wording ที่ §0)</li>
           <li><code>docs/agents/ui-glossary.json</code> (คำที่ต้องเลี่ยง → คำที่ใช้)</li>
+        </ul>
+        <h3 class="sub"><span class="ms">extension</span>โค้ดปลั๊กอิน</h3>
+        <ul>
           <li><code>src/rules.js</code> · <code>code.template.js</code> · <code>ui.template.html</code></li>
           <li>รูป Namon Wording</li>
         </ul>
