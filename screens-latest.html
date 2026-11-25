@@ -48,7 +48,7 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
 .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-200, 8px) var(--nd-space-400, 16px); margin: 0; border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); padding-top: var(--nd-space-400, 16px); } .kv dt { color: var(--nd-text-tertiary, #6A727A); } .kv dd { margin: 0; overflow-wrap: anywhere; } .kv ul { margin: 0; padding: 0; list-style: none; }
 #up progress { width: 100%; height: var(--nd-space-200, 8px); accent-color: var(--nd-surface-brand, #3F5BFA); }
 .dmsg:empty { display: none; } .dmsg.err { color: var(--nd-text-danger, #C81E1E); } .acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--nd-space-200, 8px); } .acts .all { margin-right: auto; }
-.deny { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--nd-space-200, 8px); } .deny namon-agent { display: block; margin-top: calc(var(--nd-size-900, 44px) * -1); }
+.deny { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--nd-space-200, 8px); } .deny namon-agent { display: block; } #up.no-access .dh { position: relative; z-index: 1; } #up.no-access .dbody { margin-top: calc(var(--nd-size-900, 44px) * -1); }
 .steps { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); } .steps pre { margin: var(--nd-space-100, 4px) 0 0; padding: var(--nd-space-300, 12px); background: var(--nd-surface-neutral, #F4F5F5); border-radius: var(--nd-radius-200, 8px); white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--nd-type-size-xs, 12px); }
 .chg { border: var(--nd-stroke-100, 1px) solid var(--nd-border-info, #DCE2FF); border-radius: var(--nd-radius-300, 10px); flex: none; }
 .ch { display: flex; align-items: center; gap: var(--nd-space-200, 8px); padding: var(--nd-space-100, 4px) var(--nd-space-200, 8px); }
@@ -82,7 +82,7 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
   var el = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
   var btn = function (b, label, on) { b.hidden = !label; b.textContent = label || ''; b.onclick = on || null; b.disabled = false; };
   var view = function (o) {
-    d.classList.toggle('wide', !!o.list); document.querySelector('#up .dh > div').style.visibility = o.deny ? 'hidden' : ''; $('up-s').textContent = o.login ? 'เฉพาะเจ้าของ' : 'ตรวจว่าหน้าไหนเปลี่ยน แล้วเลือกหน้าที่จะอัปเดต'; if (!o.node) $('up-l').textContent = ''; $('up-m').textContent = o.msg || ''; $('up-m').className = 'dmsg' + (o.err ? ' err' : '');
+    d.classList.toggle('wide', !!o.list); d.classList.toggle('no-access', !!o.deny); document.querySelector('#up .dh > div').style.visibility = o.deny ? 'hidden' : ''; $('up-s').textContent = o.login ? 'เฉพาะเจ้าของ' : 'ตรวจว่าหน้าไหนเปลี่ยน แล้วเลือกหน้าที่จะอัปเดต'; if (!o.node) $('up-l').textContent = ''; $('up-m').textContent = o.msg || ''; $('up-m').className = 'dmsg' + (o.err ? ' err' : '');
     $('up-p').hidden = o.p === undefined; if (o.p !== undefined) { if (o.p === null) $('up-p').removeAttribute('value'); else $('up-p').value = o.p; }
     $('up-g').hidden = !o.login; $('up-l').hidden = !o.list && !o.node; $('up-all').hidden = !o.list; if (o.node) $('up-l').replaceChildren(o.node);
     btn($('up-go'), o.go, o.on); btn($('up-2'), o.go2, o.on2);
