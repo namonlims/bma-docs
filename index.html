@@ -337,6 +337,10 @@
   .lock-box input:focus { outline: none; border-color: var(--border-brandPrimary-default, #007549); box-shadow: var(--shadow-brand-drop-bottom-200); }
   .lock-box input.err { border-color: var(--border-dangerButton-default, #DC2626); }
   .lock-err { min-height: 1.4em; margin-top: calc(-1 * var(--dim-space-200, 8px)) !important; color: var(--text-danger-default, #B91C1C) !important; font-size: var(--type-size-xs, 12px) !important; }
+  .lock-no { display: flex; flex-direction: column; align-items: center; gap: var(--dim-space-200, 8px); text-align: center; }
+  .lock-no[hidden], .lock-act button[hidden] { display: none; }
+  .lock-no-char { display: grid; place-items: center; min-height: 112px; }
+  .lock-box.denied .lock-head, .lock-box.denied > p:not(.lock-err), .lock-box.denied .lock-g { display: none; }
   .lock-g { display: flex; justify-content: center; min-height: var(--dim-size-900, 44px); }
   .lock-act { display: flex; justify-content: flex-end; gap: var(--dim-space-300, 12px); }
   .lock-act button { min-width: 96px; height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-500, 20px); border-radius: var(--dim-radius-200, 8px); font: inherit; font-size: var(--type-size-sm, 14px); font-weight: var(--type-weight-medium, 500); cursor: pointer; }
@@ -851,7 +855,12 @@
     <p>เปิดเฉพาะบัญชี Google ของเจ้าของ</p>
     <div class="lock-g" id="lock-g"></div>
     <p class="lock-err" id="lock-err" aria-live="polite"></p>
-    <div class="lock-act"><button type="button" class="b-out" id="lock-x">ยกเลิก</button></div>
+    <div class="lock-no" id="lock-no" hidden>
+      <div class="lock-no-char" id="lock-no-char"></div>
+      <h3>บัญชีนี้ยังเปิดหน้านี้ไม่ได้</h3>
+      <p>หน้านี้เปิดได้เฉพาะบัญชี Google ของเจ้าของ เลือกบัญชีอื่นแล้วลองอีกครั้ง</p>
+    </div>
+    <div class="lock-act"><button type="button" class="b-out" id="lock-retry" hidden>เลือกบัญชีอื่น</button><button type="button" class="b-out" id="lock-x">ยกเลิก</button></div>
   </div>
 </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -901,7 +910,7 @@
     var p = {}; try { p = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (er) {}
     if (!p.email || !p.email_verified) { lerr.textContent = 'อ่านบัญชีไม่ได้ ลองใหม่อีกครั้ง'; return; }
     sha256(String(p.email).toLowerCase()).then(function (h) {
-      if (h !== OWNER_SHA256) { lerr.textContent = 'บัญชีนี้ไม่มีสิทธิ์เปิดหน้านี้'; return; }
+      if (h !== OWNER_SHA256) { showDenied(); return; }
       try { sessionStorage.setItem('ut-owner', '1'); } catch (er) {}
       closeLock(true);
     });
@@ -912,8 +921,16 @@
     lerr.textContent = ''; lg.innerHTML = '';
     google.accounts.id.renderButton(lg, { theme: 'outline', size: 'large', text: 'signin_with', locale: 'th' });
   };
+  /* บัญชีที่ไม่ใช่เจ้าของ → Namon ร้องไห้ + ข้อความสั้น + ปุ่มเลือกบัญชีอื่น (ผู้ใช้ 25 พ.ย. 69) */
+  var lbox = document.getElementById('lock-f'), lno = document.getElementById('lock-no'), lnoChar = document.getElementById('lock-no-char'), lretry = document.getElementById('lock-retry');
+  var showDenied = function () {
+    lerr.textContent = ''; lbox.classList.add('denied'); lno.hidden = false; lretry.hidden = false;
+    lnoChar.innerHTML = '<namon-agent pose="cry" size="112" label="Namon ร้องไห้ เพราะบัญชีนี้เข้าไม่ได้"></namon-agent>';
+  };
+  var resetDenied = function () { lbox.classList.remove('denied'); lno.hidden = true; lretry.hidden = true; lnoChar.innerHTML = ''; };
+  lretry.addEventListener('click', function () { resetDenied(); try { google.accounts.id.disableAutoSelect(); } catch (er) {} gInit(); });
   var askCode = function (then, cancel) {
-    lThen = then; lCancel = cancel || null; lerr.textContent = ''; lp.hidden = false; gInit();
+    resetDenied(); lThen = then; lCancel = cancel || null; lerr.textContent = ''; lp.hidden = false; gInit();
   };
   var closeLock = function (ok) { lp.hidden = true; var f = ok ? lThen : lCancel; lThen = lCancel = null; if (f) f(); };
   document.getElementById('lock-x').addEventListener('click', function () { closeLock(false); });
