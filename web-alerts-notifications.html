@@ -1,87 +1,85 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ทะเบียน Alert และ Notification · สำหรับ BA</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="namon-tokens.css">
-<link rel="stylesheet" href="namon-doc-theme.css">
+<link rel="stylesheet" href="namon-components.css">
 <!-- ===== เปลี่ยนไฟล์ข้อมูลตรงนี้ (เช่น kiosk-alerts-notifications.js / mobile-alerts-notifications.js) ===== -->
 <script>window.AN_DATA_FILE = 'web-alerts-notifications.js'; window.AN_FLOW_PAGE = 'system-user-flow.html';</script>
 <script>document.write('<script src="' + window.AN_DATA_FILE + '"><\/script>');</script>
 <style>
+  /* ทุกค่าอ้าง design system Namon Playground (--nd-*) · ชิ้นส่วน nd-* จาก namon-components.css (ผู้ใช้ 25 พ.ย. 69) */
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--brand-p50, #F4FBF8); color: var(--text-content-default, #363B3F);
-    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif); font-size: var(--type-size-sm, 14px); line-height: 1.5; }
-  a { color: var(--text-brandPrimary-default, #007549); }
-  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 20px; line-height: 1; }
-  .page { max-width: 1440px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-  .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 12px; text-decoration: none; }
-  .back .material-symbols-outlined { font-size: 16px; }
-  h1 { margin: 0; font-size: 24px; } h2 { margin: 0 0 8px; font-size: 18px; }
-
-  /* แท็บสลับมุมมอง Alert (ทะเบียนสำหรับ BA ↔ แคตตาล็อกตามชนิด) · เมนูเดียวในหน้าแรก (ผู้ใช้ 22 พ.ย. 69) */
-  .vtabs { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); margin: var(--dim-space-300, 12px) 0 0; }
-  .vtabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E3E7EA); border-radius: var(--dim-radius-200, 8px); background: var(--surface-card-100, #FFFFFF); color: var(--text-content-secondary, #636B72); text-decoration: none; font-weight: var(--type-weight-medium, 500); }
-  .vtabs a[aria-current="page"] { background: var(--brand-p50, #F4FBF8); border-color: var(--text-brandPrimary-default, #007549); color: var(--text-brandPrimary-default, #007549); }
-  .lede { margin: 4px 0 0; color: var(--text-content-secondary, #636B72); max-width: 820px; }
-  .meta { margin-top: 12px; font-size: 12px; color: var(--text-content-tertiary, #858C92); display: flex; gap: 8px 24px; flex-wrap: wrap; }
-  .cards { display: flex; flex-wrap: wrap; gap: 12px; }
-  .card { background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; padding: 12px 16px; min-width: 150px; }
-  .card b { display: block; font-size: 22px; } .card span { font-size: 12px; color: var(--text-content-secondary, #636B72); }
-  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; padding: 12px; position: sticky; top: 0; z-index: 3; }
-  .filters label { display: flex; flex-direction: column; font-size: 12px; gap: 2px; }
-  .filters label { min-width: 0; max-width: 100%; }
-  .filters select { min-width: 0; max-width: 100%; width: 100%; }
-  select, input { font: inherit; padding: 6px 8px; border: 1px solid #C9D0D5; border-radius: 6px; min-height: 36px; }
-  input[type=search] { min-width: 240px; }
-  button { font: inherit; min-height: 36px; padding: 6px 14px; border-radius: 6px; border: 0; background: var(--brand-p600, #007549); color: #fff; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
-  .wrap { overflow-x: auto; background: #fff; border: 1px solid var(--border-default, #E3E7EA); border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 12px; }
-  th, td { border-bottom: 1px solid #EEF1F3; padding: 6px 8px; text-align: left; vertical-align: top; }
-  th { background: #F7F9FA; position: sticky; top: 0; white-space: nowrap; }
-  td.msg { min-width: 260px; } td.miss { min-width: 200px; color: #8A4B00; } td.rcp { min-width: 180px; }
-  .pill { display: inline-block; padding: 0 6px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
-  .s-mock { background: #FFF4D6; } .s-missing { background: #FDE2E1; } .s-real { background: #DDF3E8; }
-  .v-block { background: #FDE2E1; } .v-warn { background: #FFF4D6; } .v-info { background: #E3EEFB; }
-  .count { font-weight: 400; font-size: 13px; color: #636B72; }
+  body { margin: 0; }
+  a { color: var(--nd-text-brand, #3F5BFA); }
+  .material-symbols-outlined { font-size: var(--nd-space-500, 20px); line-height: 1; }
+  .page { max-width: 1440px; margin: 0 auto; padding: var(--nd-space-600, 24px); display: flex; flex-direction: column; gap: var(--nd-space-600, 24px); }
+  .page > * { min-width: 0; }
+  .nd-tabs { margin: var(--nd-space-300, 12px) 0 var(--nd-space-400, 16px); }
+  a.nd-tab { display: inline-flex; align-items: center; flex: none; text-decoration: none; }
+  .lede { margin: 0; max-width: 820px; color: var(--nd-text-secondary, #636B72); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--nd-space-200, 8px) var(--nd-space-600, 24px); margin-top: var(--nd-space-300, 12px); font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
+  .meta b { font-weight: var(--nd-type-weight-medium, 500); }
+  .cards { display: grid; gap: var(--nd-space-300, 12px); grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr)); }
+  .cards b { display: block; font-size: var(--nd-type-size-xl, 24px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); }
+  .cards span { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
+  .filters { display: grid; gap: var(--nd-space-300, 12px); grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
+  .filters .q { grid-column: span 2; }
+  .filters .nd-input { font-size: var(--nd-type-size-base, 16px); }
+  @media (max-width: 1023px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) { .page { padding: var(--nd-space-400, 16px); } .filters { grid-template-columns: minmax(0, 1fr); } .filters .q { grid-column: auto; } }
+  .wrap { overflow-x: auto; padding: 0; }
+  .sec-title { margin-bottom: var(--nd-space-200, 8px); }
+  table { border-collapse: collapse; width: 100%; font-size: var(--nd-type-size-xs, 12px); }
+  th, td { border-bottom: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); padding: var(--nd-space-200, 8px) var(--nd-space-300, 12px); text-align: left; vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); font-weight: var(--nd-type-weight-medium, 500); white-space: nowrap; }
+  td:first-child { white-space: nowrap; }
+  td.mod { min-width: 120px; } td.nam { min-width: 160px; } td.msg { min-width: 260px; } td.trg { min-width: 220px; } td.rcp { min-width: 180px; } td.miss { min-width: 200px; color: var(--nd-text-warning, #C2410C); } td.src { min-width: 220px; overflow-wrap: anywhere; } td.note { min-width: 160px; }
+  td .nd-chip { white-space: nowrap; }
+  td a { white-space: nowrap; }
+  @media (max-width: 1279px) { td a { display: inline-flex; align-items: center; min-height: var(--nd-size-900, 44px); margin-top: calc(-1 * var(--nd-space-300, 12px)); } }
+  .chip-warn { background: var(--nd-surface-warning, #FFF9F0); color: var(--nd-text-warning, #C2410C); }
+  .chip-danger { background: var(--nd-surface-danger, #FEF2F2); color: var(--nd-text-danger, #C81E1E); }
+  .count { font-size: var(--nd-type-size-xs, 12px); font-weight: var(--nd-type-weight-regular, 400); color: var(--nd-text-secondary, #636B72); }
 </style>
 </head>
-<body>
-<p style="margin:0;padding:12px 16px;background:var(--surface-brandPrimary-quaternary,#F4FBF8);font-size:var(--type-size-sm,14px)">ฉบับตรวจทานล่าสุดอยู่ที่ <a href="ba-review.html">ชุดตรวจทาน BA</a> มีเงื่อนไขการแสดงและโน้ต</p>
+<body class="nd-root">
 <div class="page">
   <header>
-    <a class="back" href="index.html"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
-    <h1>ทะเบียน Alert และ Notification <span id="prod"></span></h1>
-    <nav class="vtabs" aria-label="มุมมอง Alert"><a href="web-alerts-notifications.html" aria-current="page">ทะเบียนสำหรับ BA (ตรวจ · ส่งออก CSV)</a><a href="alerts-system-catalog.html">แคตตาล็อกตามชนิด (AlertDialog · Toast · กระดิ่ง)</a></nav>
+    <h1 class="nd-title nd-title--page">ทะเบียน Alert และ Notification <span id="prod"></span></h1>
+    <nav class="nd-tabs" aria-label="มุมมอง Alert"><a class="nd-tab" href="web-alerts-notifications.html" aria-selected="true" aria-current="page">ทะเบียนสำหรับ BA (ตรวจ · ส่งออก CSV)</a><a class="nd-tab" href="alerts-system-catalog.html" aria-selected="false">แคตตาล็อกตามชนิด (AlertDialog · Toast · กระดิ่ง)</a></nav>
     <p class="lede">รายการนี้ใช้ให้ BA ตรวจและยืนยัน (confirm) รายละเอียดของ Alert และ Notification ทุกข้อ ก่อนส่งมอบให้ dev รวบรวมจากโค้ดอัตโนมัติ <b>ยังไม่ได้ทดสอบใช้งานจริง</b> <span id="statusLede">สถานะตามข้อมูล: ทำงานจริง (real) / ระบบจำลอง (mock) / ยังไม่มี (missing)</span> ข้อที่สถานะ "ยังไม่มี" มาจากมติหรือ TOR ที่ตัดสินแล้วแต่ยังไม่มีในโค้ด ข้อความใน {…} คือค่าที่ระบบเติมตอนรัน</p>
     <div class="meta" id="meta"></div>
   </header>
   <section class="cards" id="cards"></section>
-  <section class="filters">
-    <label>ประเภท<select id="f-type"></select></label>
-    <label>สถานะ<select id="f-status"></select></label>
-    <label>ผู้รับ<select id="f-recipient"></select></label>
-    <label>ความรุนแรง<select id="f-severity"></select></label>
-    <label>ผล BA<select id="f-ba"></select></label>
-    <label>ค้นหา<input type="search" id="f-q" placeholder="รหัส ข้อความ ไฟล์ ..." /></label>
-    <button id="csv" type="button"><span class="material-symbols-outlined">download</span>ส่งออก CSV</button>
+  <section class="filters nd-card">
+    <label class="nd-field"><span class="nd-field__label">ประเภท</span><select class="nd-input" id="f-type"></select></label>
+    <label class="nd-field"><span class="nd-field__label">สถานะ</span><select class="nd-input" id="f-status"></select></label>
+    <label class="nd-field"><span class="nd-field__label">ผู้รับ</span><select class="nd-input" id="f-recipient"></select></label>
+    <label class="nd-field"><span class="nd-field__label">ความรุนแรง</span><select class="nd-input" id="f-severity"></select></label>
+    <label class="nd-field"><span class="nd-field__label">ผล BA</span><select class="nd-input" id="f-ba"></select></label>
+    <label class="nd-field q"><span class="nd-field__label">ค้นหา</span><input class="nd-input" type="search" id="f-q" placeholder="รหัส ข้อความ ไฟล์ ..." /></label>
+    <button class="nd-btn nd-btn--fill" id="csv" type="button"><span class="material-symbols-outlined">download</span>ส่งออก CSV</button>
   </section>
-  <section><h2>Alert <span class="count" id="c-alert"></span></h2><div class="wrap"><table id="t-alert"></table></div></section>
-  <section><h2>Notification <span class="count" id="c-notification"></span></h2><div class="wrap"><table id="t-notification"></table></div></section>
+  <section><h2 class="nd-title sec-title">Alert <span class="count" id="c-alert"></span></h2><div class="wrap nd-card"><table id="t-alert"></table></div></section>
+  <section><h2 class="nd-title sec-title">Notification <span class="count" id="c-notification"></span></h2><div class="wrap nd-card"><table id="t-notification"></table></div></section>
 </div>
 <script>
 (function () {
   var D = window.ALERTS_NOTIFICATIONS || { items: [] };
   var L = {
     type: { alert: 'Alert', notification: 'Notification' },
-    status: { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด' },
-    severity: { block: 'บล็อก', warn: 'เตือน', info: 'แจ้งให้ทราบ' },
+    status: { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด', removed: 'ถอดออกจากโค้ดแล้ว' },
+    severity: { block: 'บล็อก', warn: 'เตือน', info: 'แจ้งให้ทราบ', success: 'สำเร็จ', warning: 'เตือน', urgent: 'เร่งด่วน', error: 'ผิดพลาด' },
     ba: { pending: 'รอ BA ตรวจ', confirmed: 'BA ยืนยันแล้ว', rejected: 'ต้องแก้' }
   };
+  var CHIP = { real: 'nd-chip--success', success: 'nd-chip--success', mock: 'chip-warn', warn: 'chip-warn', warning: 'chip-warn', missing: 'chip-danger', block: 'chip-danger', urgent: 'chip-danger', error: 'chip-danger', info: 'nd-chip--brand' };
+  var TD = { module: 'mod', name: 'nam', message: 'msg', trigger: 'trg', recipient: 'rcp', missing: 'miss', source: 'src', note: 'note' };
   var COLS = [['id','รหัส'],['module','โมดูล'],['name','ชื่อ'],['message','ข้อความ'],['trigger','เหตุที่แสดง'],['recipient','ผู้รับ'],['channel','ช่องทาง'],['severity','ความรุนแรง'],['flow','หน้า flow'],['status','สถานะ'],['source','ที่มา'],['missing','รายละเอียดที่ยังขาด'],['ba','ผล BA'],['note','หมายเหตุ']];
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
@@ -89,10 +87,10 @@
   $('prod').textContent = '· ' + (D.product || '');
   $('meta').innerHTML = '<span><b>อัปเดต</b> ' + esc(D.updated) + '</span><span><b>ที่มาโค้ด</b> ' + esc((D.source || '').slice(0, 12)) + '</span><span><b>ไฟล์ข้อมูล</b> ' + esc(window.AN_DATA_FILE) + '</span><span><b>ทั้งหมด</b> ' + D.items.length + ' ข้อ</span>';
   function counts(k) { var m = {}; D.items.forEach(function (i) { m[i[k]] = (m[i[k]] || 0) + 1; }); return m; }
-  var cards = ''; ['type', 'status', 'ba'].forEach(function (k) { var m = counts(k); Object.keys(m).forEach(function (v) { cards += '<div class="card"><b>' + m[v] + '</b><span>' + esc(lab(k, v)) + '</span></div>'; }); });
+  var cards = ''; ['type', 'status', 'ba'].forEach(function (k) { var m = counts(k); Object.keys(m).forEach(function (v) { cards += '<div class="nd-card"><b>' + m[v] + '</b><span>' + esc(lab(k, v)) + '</span></div>'; }); });
   $('cards').innerHTML = cards;
   ['type', 'status', 'recipient', 'severity', 'ba'].forEach(function (k) {
-    var vals = Object.keys(counts(k)).sort();
+    var vals = Object.keys(counts(k)).filter(Boolean).sort();
     $('f-' + k).innerHTML = '<option value="">ทั้งหมด</option>' + vals.map(function (v) { return '<option value="' + esc(v) + '">' + esc(lab(k, v)) + '</option>'; }).join('');
     $('f-' + k).onchange = render;
   });
@@ -107,8 +105,8 @@
   function cell(i, k) {
     var v = i[k];
     if (k === 'flow') return v ? '<a href="' + esc(window.AN_FLOW_PAGE + v) + '">ดู flow</a>' : '';
-    if (k === 'status') return '<span class="pill s-' + esc(v) + '">' + esc(lab(k, v)) + '</span>';
-    if (k === 'severity') return '<span class="pill v-' + esc(v) + '">' + esc(lab(k, v)) + '</span>';
+    if (k === 'status') return '<span class="nd-chip ' + (CHIP[v] || '') + '">' + esc(lab(k, v)) + '</span>';
+    if (k === 'severity') return '<span class="nd-chip ' + (CHIP[v] || '') + '">' + esc(lab(k, v)) + '</span>';
     if (k === 'ba' || k === 'type') return esc(lab(k, v));
     return esc(v);
   }
@@ -118,7 +116,7 @@
       var r = rows.filter(function (i) { return i.type === t; });
       $('c-' + t).textContent = '(' + r.length + ' ข้อ)';
       $('t-' + t).innerHTML = '<thead><tr>' + COLS.map(function (c) { return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>' +
-        r.map(function (i) { return '<tr>' + COLS.map(function (c) { return '<td class="' + (c[0] === 'message' ? 'msg' : c[0] === 'missing' ? 'miss' : c[0] === 'recipient' ? 'rcp' : '') + '">' + cell(i, c[0]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+        r.map(function (i) { return '<tr>' + COLS.map(function (c) { return '<td class="' + (TD[c[0]] || '') + '">' + cell(i, c[0]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
     });
   }
   $('csv').onclick = function () {
@@ -130,6 +128,7 @@
   render();
 })();
 </script>
-<script>(function(){var it=(window.ALERTS_NOTIFICATIONS||{}).items||[],c={real:0,mock:0,missing:0};it.forEach(function(i){if(c[i.status]!=null)c[i.status]++;});var e=document.getElementById("statusLede");if(e)e.textContent="จากทั้งหมด "+it.length+" ข้อ: ทำงานจริง (real) "+c.real+" ข้อ, ระบบจำลอง (mock ไม่มี backend) "+c.mock+" ข้อ, ยังไม่มีในโค้ด (missing) "+c.missing+" ข้อ";})();</script>
+<script>(function(){var it=(window.ALERTS_NOTIFICATIONS||{}).items||[],c={real:0,mock:0,missing:0,removed:0};it.forEach(function(i){if(c[i.status]!=null)c[i.status]++;});var e=document.getElementById("statusLede");if(e)e.textContent="จากทั้งหมด "+it.length+" ข้อ: ทำงานจริง (real) "+c.real+" ข้อ, ระบบจำลอง (mock ไม่มี backend) "+c.mock+" ข้อ, ยังไม่มีในโค้ด (missing) "+c.missing+" ข้อ, ถอดออกจากโค้ดแล้ว "+c.removed+" ข้อ (คงรหัสไว้อ้างอิง)";})();</script>
+<script src="namon-select.js"></script>
 </body>
 </html>

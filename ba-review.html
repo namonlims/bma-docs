@@ -197,7 +197,7 @@ const PLATFORMS = [
 ];
 const CLINICS = { opd: 'ตรวจโรคทั่วไป (OPD)', anc: 'ฝากครรภ์ (ANC)', fp: 'วางแผนครอบครัว', vaccine: 'สุขภาพเด็กดี / ภูมิคุ้มกัน', diabetes: 'เบาหวาน', hypertension: 'ความดันโลหิตสูง', 'asthma-copd': 'หอบหืด / COPD', tb: 'วัณโรค', hiv: 'รักปลอดภัย (HIV/STI)', addiction: 'งานบำบัดยาเสพติด', mental: 'สุขภาพจิต', social: 'สังคมสงเคราะห์', dental: 'ทันตกรรม', eye: 'จักษุ', rehab: 'เวชศาสตร์ฟื้นฟู', physio: 'กายภาพบำบัด', thai: 'แพทย์แผนไทย', school: 'อนามัยโรงเรียน', daycare: 'สถานรับเลี้ยงเด็ก' };
 const SEV = { block: 'บล็อก', warn: 'เตือน', info: 'แจ้งให้ทราบ', success: 'สำเร็จ' };
-const STATUS = { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด' };
+const STATUS = { real: 'ใช้งานจริง', mock: 'ระบบจำลอง', missing: 'ยังไม่มีในโค้ด', removed: 'ถอดออกจากโค้ดแล้ว' };
 const CHANNEL = { screen: 'หน้าจอ', print: 'พิมพ์', voice: 'เสียง', push: 'พุช', bell: 'กระดิ่ง', email: 'อีเมล' };
 const thDate = (s) => { const d = new Date(s); return isNaN(d) ? String(s || '') : d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }); };
 const BA = { pending: 'รอตรวจ', confirmed: 'ยืนยัน', fix: 'ต้องแก้' };
@@ -342,7 +342,7 @@ function rowHtml(i, p) {
   const flow = i.flow ? `<a href="system-user-flow.html${esc(i.flow)}">ดู flow</a>` : '';
   return `<article class="row${UI.focus === i.id ? ' hit' : ''}" id="r-${esc(i.id)}">
     <div class="cell">
-      <div class="meta"><code>${esc(i.id)}</code><span class="pill ${esc(i.severity)}">${esc(SEV[i.severity] || i.severity)}</span>${i.ui ? `<span class="pill">${esc(i.ui)}</span>` : ''}${i.isNew ? '<span class="pill new">ใหม่รอบนี้</span>' : ''}${i.status === 'missing' ? '<span class="pill block">ยังไม่มีในโค้ด</span>' : ''}</div>
+      <div class="meta"><code>${esc(i.id)}</code><span class="pill ${esc(i.severity)}">${esc(SEV[i.severity] || i.severity)}</span>${i.ui ? `<span class="pill">${esc(i.ui)}</span>` : ''}${i.isNew ? '<span class="pill new">ใหม่รอบนี้</span>' : ''}${i.status === 'missing' ? '<span class="pill block">ยังไม่มีในโค้ด</span>' : ''}${i.status === 'removed' ? '<span class="pill">ถอดออกจากโค้ดแล้ว</span>' : ''}</div>
       <h3 class="name">${esc(i.name)}</h3>
       ${i.message ? `<p class="msg">${esc(i.message)}</p>` : ''}
     </div>
