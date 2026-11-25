@@ -48,6 +48,7 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
 .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-200, 8px) var(--nd-space-400, 16px); margin: 0; border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); padding-top: var(--nd-space-400, 16px); } .kv dt { color: var(--nd-text-tertiary, #6A727A); } .kv dd { margin: 0; overflow-wrap: anywhere; } .kv ul { margin: 0; padding: 0; list-style: none; }
 #up progress { width: 100%; height: var(--nd-space-200, 8px); accent-color: var(--nd-surface-brand, #3F5BFA); }
 .dmsg:empty { display: none; } .dmsg.err { color: var(--nd-text-danger, #C81E1E); } .acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--nd-space-200, 8px); } .acts .all { margin-right: auto; }
+.deny { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--nd-space-200, 8px); } .deny namon-agent { display: block; margin-top: calc(var(--nd-size-900, 44px) * -1); }
 .steps { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); } .steps pre { margin: var(--nd-space-100, 4px) 0 0; padding: var(--nd-space-300, 12px); background: var(--nd-surface-neutral, #F4F5F5); border-radius: var(--nd-radius-200, 8px); white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--nd-type-size-xs, 12px); }
 .chg { border: var(--nd-stroke-100, 1px) solid var(--nd-border-info, #DCE2FF); border-radius: var(--nd-radius-300, 10px); flex: none; }
 .ch { display: flex; align-items: center; gap: var(--nd-space-200, 8px); padding: var(--nd-space-100, 4px) var(--nd-space-200, 8px); }
@@ -68,6 +69,7 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
   <div class="dbody"><p class="dmsg" id="up-m" role="status"></p><progress id="up-p" max="1" value="0" aria-label="ความคืบหน้า" hidden></progress><div id="up-g" hidden></div><div id="up-l" hidden></div><dl class="kv" id="up-kv"></dl></div>
   <div class="acts"><label class="nd-check-chip all" id="up-all" hidden><input type="checkbox" id="up-allc" checked>เลือกทั้งหมด</label><button class="nd-btn" type="button" id="up-c">ปิด</button><button class="nd-btn" type="button" id="up-2" hidden></button><button class="nd-btn nd-btn--fill" type="button" id="up-go" hidden></button></div>
 </dialog>
+<script type="module" src="namon/namon-agent.js?v=cry1"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* อัปเดตภาพหน้าจอ (ผู้ใช้ 25 พ.ย. 69): ตรวจก่อน (หน้าไหนเปลี่ยน · วันไหน · เดิมซ้าย/ใหม่ขวา) → เลือก → ขึ้นเว็บ
@@ -80,7 +82,7 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
   var el = function (t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
   var btn = function (b, label, on) { b.hidden = !label; b.textContent = label || ''; b.onclick = on || null; b.disabled = false; };
   var view = function (o) {
-    d.classList.toggle('wide', !!o.list); $('up-m').textContent = o.msg || ''; $('up-m').className = 'dmsg' + (o.err ? ' err' : '');
+    d.classList.toggle('wide', !!o.list); document.querySelector('#up .dh > div').style.visibility = o.deny ? 'hidden' : ''; $('up-s').textContent = o.login ? 'เฉพาะเจ้าของ' : 'ตรวจว่าหน้าไหนเปลี่ยน แล้วเลือกหน้าที่จะอัปเดต'; if (!o.node) $('up-l').textContent = ''; $('up-m').textContent = o.msg || ''; $('up-m').className = 'dmsg' + (o.err ? ' err' : '');
     $('up-p').hidden = o.p === undefined; if (o.p !== undefined) { if (o.p === null) $('up-p').removeAttribute('value'); else $('up-p').value = o.p; }
     $('up-g').hidden = !o.login; $('up-l').hidden = !o.list && !o.node; $('up-all').hidden = !o.list; if (o.node) $('up-l').replaceChildren(o.node);
     btn($('up-go'), o.go, o.on); btn($('up-2'), o.go2, o.on2);
@@ -89,30 +91,37 @@ figcaption { font-size: var(--type-size-xs, 12px); color: var(--text-content-sec
   };
   var call = function (path, opt) { opt = opt || {}; opt.headers = Object.assign({ 'content-type': 'application/json' }, sid ? { authorization: 'Bearer ' + sid } : {}); opt.cache = 'no-store'; return fetch(STUDIO + path, opt); };
   var api = function (path, body) { return call(path, body ? { method: 'POST', body: JSON.stringify(body) } : {}).then(function (r) { return r.json().then(function (j) { if (r.status === 401) { var e = new Error(j.error); e.auth = true; throw e; } if (!r.ok) { var x = new Error(j.error || 'ผิดพลาด'); x.api = true; throw x; } return j; }); }); };
-  var off = function () { view({ msg: 'ติดต่อ Ticket Studio ในเครื่องไม่ได้', err: true, kv: [['เปิด Studio', 'sh ~/Desktop/ticket-studio/restart.sh'], ['เบราว์เซอร์', 'Chrome บนเครื่องที่เปิด Studio'], ['ถ้า Chrome ถาม', 'กด "อนุญาต" เครือข่ายภายใน']], go: 'ลองอีกครั้ง', on: check }); };
+  var off = function () { view({ msg: 'เชื่อมต่อ Ticket Studio ไม่ได้', err: true, kv: [['เปิด Studio', 'sh ~/Desktop/ticket-studio/restart.sh'], ['เบราว์เซอร์', 'Chrome บนเครื่องที่เปิด Studio'], ['ถ้า Chrome ถาม', 'กด "อนุญาต" เครือข่ายภายใน']], go: 'ลองอีกครั้ง', on: check }); };
   var fail = function (e) { if (e.auth) { sid = ''; store('screens-sid', ''); login(); } else if (e.api) view({ msg: e.message, err: true, go: 'ลองอีกครั้ง', on: check }); else off(); };
-  /* คนที่ไม่ใช่เจ้าของ → Claude Code ของตัวเอง */
+  /* ไม่ใช่เจ้าของ → ป๊อปอัปขอโทษ + Namon ร้องไห้ (ผู้ใช้ 25 พ.ย. 69) */
+  var denied = function (email) {
+    var o = el('div', 'deny'), n = el('namon-agent'); n.setAttribute('pose', 'cry'); n.setAttribute('size', '200'); n.setAttribute('label', 'Namon ร้องไห้');
+    o.append(n, el('h3', 'nd-title nd-title--page', 'ขอโทษ คุณไม่มีสิทธิเข้าถึง'), el('p', 'nd-summary', 'เฉพาะเจ้าของเท่านั้นที่อัปเดตภาพหน้าจอได้'));
+    if (email) o.appendChild(el('span', 'nd-chip', email));
+    view({ node: o, deny: true, go: 'อัปเดตผ่าน Claude Code', on: function () { others(); }, go2: 'เปลี่ยนบัญชี', on2: function () { store('ticket-cred', ''); login(); } });
+  };
+  /* ทางของคนที่ไม่ใช่เจ้าของ → Claude Code ของตัวเอง */
   var PROMPT = 'อัปเดตภาพหน้าจอใน bma-docs ให้หน่อย\n1. ถ้ายังไม่ได้ยืนยันตัวตน GitHub ให้ฉันรัน gh auth login\n2. git clone https://github.com/namonlims/bma-docs (มีแล้ว = git pull origin main)\n3. node bma-docs/tools/screens-update.mjs check --app <โฟลเดอร์ bma.health ของฉัน>\n4. เปิด ~/.phcis-screens/review.html ให้ฉันดูภาพเดิม/ใหม่ แล้วรอฉันเลือกหน้า\n5. เมื่อฉันยืนยันแล้วเท่านั้น: node bma-docs/tools/screens-update.mjs apply --routes <หน้าที่ฉันเลือก คั่นด้วย ,>';
   var others = function (msg) {
     var o = el('ol', 'steps'), li; li = el('li', '', 'เปิด Claude Code ในเครื่องของคุณ (โฟลเดอร์ที่มี bma.health)'); o.appendChild(li);
     li = el('li', '', 'ยืนยันตัวตน GitHub ของคุณ'); li.appendChild(el('pre', '', 'gh auth login')); o.appendChild(li);
     li = el('li', '', 'วางคำสั่งนี้ใน Claude Code'); li.appendChild(el('pre', '', PROMPT)); o.appendChild(li);
-    o.appendChild(el('li', '', 'ระบบเปิด PR ในชื่อของคุณ · ขึ้นเว็บเมื่อเจ้าของกด merge'));
-    view({ msg: msg || 'ไม่ใช่เจ้าของ: อัปเดตผ่าน Claude Code ของคุณ', node: o, go: 'คัดลอกคำสั่ง', on: function () { navigator.clipboard.writeText(PROMPT).then(function () { $('up-go').textContent = 'คัดลอกแล้ว'; }, function () { $('up-m').textContent = 'คัดลอกไม่ได้ เลือกข้อความแล้วคัดลอกเอง'; }); }, go2: 'เข้าสู่ระบบเจ้าของ', on2: function () { store('ticket-cred', ''); login(); } });
+    o.appendChild(el('li', '', 'ระบบส่งคำขอในชื่อของคุณ (PR) · ขึ้นเว็บเมื่อเจ้าของอนุมัติ'));
+    view({ msg: msg || 'อัปเดตผ่าน Claude Code ของคุณ', node: o, go: 'คัดลอกคำสั่ง', on: function () { navigator.clipboard.writeText(PROMPT).then(function () { $('up-go').textContent = 'คัดลอกแล้ว'; }, function () { $('up-m').textContent = 'คัดลอกไม่ได้ เลือกข้อความแล้วคัดลอกเอง'; }); }, go2: 'เปลี่ยนบัญชี', on2: function () { store('ticket-cred', ''); login(); } });
   };
   var claims = function (c) { try { return JSON.parse(decodeURIComponent(escape(atob(c.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { return {}; } };
   var auth = function (cred) {
     var p = claims(cred); if (!p.email || !p.email_verified) return login('อ่านบัญชีไม่ได้ ลองใหม่อีกครั้ง');
     crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(p.email).toLowerCase())).then(function (b) {
       var h = [].map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
-      if (h !== OWNER) { store('ticket-cred', ''); return others('บัญชีนี้ไม่มีสิทธิ์กดอัปเดต · ใช้ Claude Code ของคุณแทน'); }
+      if (h !== OWNER) { store('ticket-cred', ''); return denied(p.email); }
       view({ msg: 'กำลังตรวจบัญชี…', p: null });
-      api('/api/auth', { credential: cred }).then(function (j) { sid = j.sid; store('screens-sid', sid); check(); }).catch(function (e) { if (e.auth) { store('ticket-cred', ''); login(e.message); } else fail(e); });
+      api('/api/auth', { credential: cred }).then(function (j) { sid = j.sid; store('screens-sid', sid); check(); }).catch(function (e) { if (e.auth) { store('ticket-cred', ''); if (/ไม่มีสิทธิ์/.test(e.message)) denied(p.email); else login('เข้าสู่ระบบไม่สำเร็จ ลองอีกครั้ง'); } else fail(e); });
     });
   };
   var login = function (err) {
     var c = store('ticket-cred'); if (c && claims(c).exp * 1000 > Date.now() + 60000) return auth(c);
-    view({ msg: err || 'เข้าสู่ระบบด้วยบัญชีเจ้าของ', err: !!err, login: true, go2: 'ไม่ใช่เจ้าของ', on2: function () { others(); } });
+    view({ msg: err || 'เข้าสู่ระบบเพื่ออัปเดตภาพหน้าจอ', err: !!err, login: true });
     (function g() { if (!window.google || !google.accounts) return setTimeout(g, 300); if (!gReady) { google.accounts.id.initialize({ client_id: CLIENT, callback: function (r) { store('ticket-cred', r.credential); auth(r.credential); } }); gReady = true; } $('up-g').textContent = ''; google.accounts.id.renderButton($('up-g'), { theme: 'outline', size: 'large', text: 'signin_with', locale: 'th' }); })();
   };
   var failed = function (s) { return s.failed && s.failed.length ? [['ถ่ายไม่ได้', s.failed.map(function (f) { return f.route + ' · ' + f.why; })]] : []; };

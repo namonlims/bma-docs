@@ -4,8 +4,8 @@
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js'
 
 const C = { body: 0x5C7BFF, shade: 0x4A68FF, clover: 0xC6F432, cloverDark: 0x9CCB1C, white: 0xFDFDFB, eye: 0x15171C, cheek: 0xF27FA6, leaf: 0x9CCB1C, leafDark: 0xC6F432, pink: 0xE0607E, blue: 0x3F5BFA, lime: 0xC6F432 }
-export const POSES = ['idle', 'thinking', 'working', 'done', 'waiting', 'sleep']
-const LABEL = { idle: 'Namon เดินเล่น พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่' }
+export const POSES = ['idle', 'thinking', 'working', 'done', 'waiting', 'sleep', 'cry']
+const LABEL = { idle: 'Namon เดินเล่น พร้อมทำงาน', thinking: 'Namon กำลังคิด', working: 'Namon กำลังลงมือแก้', done: 'Namon ทำเสร็จแล้ว', waiting: 'Namon รอคุณอนุมัติ', sleep: 'Namon พักอยู่', cry: 'Namon ร้องไห้' }
 
 const clay = (c, extra = {}) => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.66, metalness: 0, ...extra })
 const mesh = (g, m, cast = true) => { const o = new THREE.Mesh(g, m); o.castShadow = cast; o.receiveShadow = false; return o }
@@ -145,6 +145,15 @@ function build(pose, prop, agent = 'namon') {
     bodyG.add(arcEye(-0.24, false), arcEye(0.24, false)); bodyG.scale.set(1.08, 0.86, 1.05); L = arm(-1, -0.6, -0.4); Rr = arm(1, -0.6, -0.4)
     ;[0, 1, 2].forEach((i) => { const z = mesh(new THREE.SphereGeometry(0.06 + i * 0.03, 24, 16), clay(C.white)); z.position.set(1.1 + i * 0.25, 2.2 + i * 0.3, 0.2); z.userData = { i }; root.add(z); R.extras.push(z) })
   }
+  // ร้องไห้ = ไม่มีสิทธิเข้าถึง (ผู้ใช้ 25 พ.ย. 69): คิ้วตก · ปากคว่ำ · น้ำตาไหล · แขนห้อย
+  if (pose === 'cry') {
+    bodyG.add(eye(-0.24, [0, -0.03]), eye(0.24, [0, -0.03]))
+    for (const sx of [-1, 1]) { const b = new THREE.Mesh(new THREE.CapsuleGeometry(0.022, 0.15, 8, 16), eyeM), g = new THREE.Group(); b.rotation.z = Math.PI / 2 + sx * -0.45; g.add(b); onSurface(g, sx * 0.3, 2.2, 0.01); bodyG.add(g) }
+    const fr = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.02, 12, 32, Math.PI), eyeM), fg = new THREE.Group(); fr.position.y = -0.05; fg.add(fr); onSurface(fg, 0, 1.75, 0.005); bodyG.add(fg); R.frown = fr
+    const tearM = new THREE.MeshPhysicalMaterial({ color: 0x8FD3FF, roughness: 0.08, clearcoat: 1, transparent: true, opacity: 0.95 })
+    for (const sx of [-1, 1]) for (let i = 0; i < 3; i++) { const g = new THREE.Group(), d = mesh(new THREE.SphereGeometry(0.075, 24, 18), tearM, false), tip = mesh(new THREE.ConeGeometry(0.056, 0.12, 20), tearM, false); tip.position.y = 0.085; g.add(d, tip); g.userData = { sx, i }; bodyG.add(g); R.extras.push(g) }
+    L = arm(-1, 0.12); Rr = arm(1, 0.12); bodyG.rotation.x = 0.1
+  }
   if (prop && PROPS[prop] && pose !== 'working') { L = arm(-1, -0.15, -1.05, 1.0); Rr = arm(1, -0.15, -1.05, 1.0); const pr = makeProp(prop); pr.position.set(0, 1.05, 1.02); pr.scale.setScalar(0.95); hop.add(pr); R.prop = pr }
   bodyG.add(L, Rr); R.L = L; R.R = Rr
   root.rotation.y = -0.32
@@ -176,6 +185,10 @@ function animate(R, pose, t) {
   if (pose === 'done') { const h = Math.max(0, s(t * 3.2)); R.hop.position.y = h * 0.28; R.bodyG.scale.y *= 1 - h * 0.04; R.R.rotation.z = 2.6 + s(t * 8) * 0.35; R.feet.forEach((f) => { f.position.y = 0.1 + h * 0.18 }) }
   if (pose === 'waiting') { R.R.rotation.z = 1.55 + s(t * 3) * 0.15; R.root.rotation.y = -0.32 + s(t * 0.8) * 0.06; R.extras.forEach((b) => { const k = 1 + 0.08 * s(t * 4); b.scale.setScalar(k); b.position.y = 1.95 + s(t * 2) * 0.05 }) }
   if (pose === 'sleep') { R.extras.forEach((z) => { const k = ((t * 0.5 + z.userData.i * 0.33) % 1); z.position.y = 1.9 + k * 0.7 + z.userData.i * 0.08; z.material.opacity = 1 - k; z.material.transparent = true }) }
+  if (pose === 'cry') {
+    R.hop.position.y = Math.abs(s(t * 9)) * 0.018; R.bodyG.rotation.z = s(t * 1.6) * 0.04; R.root.rotation.y = -0.12 + s(t * 0.7) * 0.06; R.sprout.rotation.z = -0.62 + s(t * 1.7) * 0.06; R.frown.scale.x = 1 + s(t * 9) * 0.08
+    R.extras.forEach((d) => { const k = (t * 0.55 + d.userData.i / 3 + (d.userData.sx > 0 ? 0.17 : 0)) % 1, y = 1.8 - k * 0.95; onSurface(d, d.userData.sx * (0.31 + k * 0.1), y, 0.02); d.scale.setScalar(Math.min(1, k * 6) * (1 - Math.max(0, k - 0.85) / 0.15)) })
+  }
 }
 
 // ตัววาด WebGL ตัวเดียวใช้ร่วมกันทุกตัว (เบราว์เซอร์ให้ WebGL ได้ราว 16 อัน) → วาดทีละตัวแล้วคัดลอกลง canvas 2D ของแต่ละตัว
