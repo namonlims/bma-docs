@@ -68,35 +68,6 @@
   .meta b { color: var(--text-content-secondary, #636B72); font-weight: var(--type-weight-medium, 500); }
 
   /* section nav */
-  .toc {
-    position: sticky; top: 0; z-index: 5;
-    margin: 0 calc(-1 * var(--dim-space-600, 24px));
-    padding: 0 var(--dim-space-600, 24px);
-    background: var(--surface-card-100, #FFFFFF);
-    border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
-    display: flex; gap: var(--dim-space-0, 0);
-    overflow-x: auto; scrollbar-width: none;
-  }
-  .toc::-webkit-scrollbar { display: none; }
-  /* Underline tab (ตาม TabUnderline) — เส้นใต้ 4px ยื่นพ้นข้อความ · ตัวที่เลือก = เขียวแบรนด์ */
-  .toc a {
-    position: relative; flex: 0 0 auto;
-    display: inline-flex; align-items: center;
-    min-height: var(--dim-size-900, 44px);
-    padding: 0 var(--dim-space-500, 20px);
-    color: var(--text-tabunderline-default, #4D5358);
-    font-weight: var(--type-weight-medium, 500);
-    text-decoration: none; white-space: nowrap;
-  }
-  .toc a::after {
-    content: ''; position: absolute; left: var(--dim-space-300, 12px); right: var(--dim-space-300, 12px); bottom: calc(-1 * var(--dim-stroke-100, 1px));
-    height: var(--dim-stroke-400, 4px); border-radius: 2px 2px 0 0;
-    background: var(--text-tabunderline-selected, #007549);
-    transform: scaleX(0.001); transition: transform 280ms cubic-bezier(.2, 0, 0, 1);
-  }
-  .toc a:hover { color: var(--text-tabunderline-hover, #08A768); }
-  .toc a[aria-current="true"] { color: var(--text-tabunderline-selected, #007549); }
-  .toc a[aria-current="true"]::after { transform: scaleX(1); }
 
   .sec { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
   .sec-head p { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
@@ -300,9 +271,13 @@
   }
   .seg button .material-symbols-outlined { font-size: var(--type-size-lg, 18px); }
   @media (max-width: 767px) { .seg { display: flex; flex-wrap: wrap; width: 100%; border-radius: var(--dim-radius-600, 24px); } .seg button { flex: 1 1 40%; min-width: 0; justify-content: center; padding: 0 var(--dim-space-200, 8px); } .seg button .material-symbols-outlined { display: none; } }
-  .seg button:hover { color: var(--text-brandPrimary-default, #007549); }
   .seg button[aria-pressed="true"] { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); font-weight: var(--type-weight-medium, 500); }
-  .view-hint .material-symbols-outlined { flex-shrink: 0; font-size: var(--type-size-xl, 20px); }
+  .seg button { transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out; }
+  @media (hover: hover) {
+    .seg button:hover { background: var(--surface-brandPrimary-tertiary, #E2F3EB); border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+    .seg button[aria-pressed="true"]:hover { background: var(--surface-card-100, #FFFFFF); border-color: var(--border-brandPrimary-default, #007549); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); }
+  }
+  .seg button:focus-visible { outline: 2px solid var(--border-brandPrimary-default, #007549); outline-offset: 1px; }
   .view-tools, .ed-acts { display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
   .view-tools { flex-wrap: wrap; justify-content: flex-end; margin-left: auto; }   /* ซูม · เต็มจอ · โน้ต · ส่งออก · นำเข้า แถวเดียวกัน (ผู้ใช้ 25 พ.ย. 69) */
   .ed-acts { flex-wrap: wrap; }
@@ -333,7 +308,7 @@
   }
   .chart-panel.is-full > .grp-h, .chart-panel.is-full > .clinic-sum { display: none; }
   .chart-panel.is-full .chart-box { flex: 1 1 auto; min-height: 0; overflow: auto; }
-  .chart-panel.is-full > .clinic-pick, .chart-panel.is-full > .view-row, .chart-panel.is-full > .view-hint, .chart-panel.is-full > .ed-bar { flex-shrink: 0; }   /* แผนภาพสูง (Blueprint) ไม่บีบแถวปุ่มด้านบน */
+  .chart-panel.is-full > .clinic-pick, .chart-panel.is-full > .view-row { flex-shrink: 0; }   /* แผนภาพสูง (Blueprint) ไม่บีบแถวปุ่มด้านบน */
   body.no-scroll { overflow: hidden; }
   .detail { z-index: 40; }
   .scrim.open { z-index: 35; }
@@ -347,8 +322,6 @@
   /* แก้ flow ในหน้า (prompt · logic) */
   .uf-node.edited::after { content: ''; position: absolute; top: calc(var(--dim-space-100, 4px) * -1); right: calc(var(--dim-space-100, 4px) * -1); width: var(--dim-size-200, 12px); height: var(--dim-size-200, 12px); border-radius: var(--dim-radius-full, 9999px); background: var(--icon-warning-tertiary, #EA580C); border: var(--dim-stroke-200, 2px) solid var(--surface-card-100, #FFFFFF); }
   .uf-node.dec.edited::after { top: var(--dim-space-300, 12px); right: var(--dim-space-300, 12px); }
-  .ed-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
-  .ed-bar .ed-sum { flex: 1 1 220px; min-width: 0; }
   .ed-btn {
     display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
     min-height: var(--dim-size-900, 44px); padding: 0 var(--dim-space-400, 16px);
@@ -511,7 +484,6 @@
   /* responsive */
   @media (max-width: 767px) {
     .page { padding: var(--dim-space-400, 16px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); gap: var(--dim-space-600, 24px); }
-    .toc { margin: 0 calc(-1 * var(--dim-space-400, 16px)); padding: 0 var(--dim-space-400, 16px); }
     .panel { padding: var(--dim-space-400, 16px); }
     .detail {
       top: auto; left: 0; width: auto; max-height: min(80dvh, 640px);
@@ -556,13 +528,6 @@
     <h1>User flow · Service Design ทั้งระบบ PHCIS</h1>
   </header>
 
-  <nav class="toc" aria-label="หัวข้อในหน้า">
-    <a href="#consult-refer">1 · ส่งปรึกษา vs ส่งต่อ</a>
-    <a href="#clinics">2 · คลินิกพิเศษ</a>
-    <a href="#addiction">3 · งานบำบัดยาเสพติด</a>
-    <a href="#status">4 · สถานะคิว</a>
-  </nav>
-
   <!-- 1 -->
   <section class="sec" id="journey" aria-labelledby="h-journey">
     <div class="sec-head">
@@ -598,11 +563,9 @@
           <button type="button" data-zoom="fit" aria-label="พอดีกรอบ" title="พอดีกรอบ"><span class="material-symbols-outlined" aria-hidden="true">fit_screen</span></button>
         </div>
         <button type="button" class="full-btn" id="full-btn" aria-pressed="false" title="ขยายเต็มจอ"><span class="material-symbols-outlined" aria-hidden="true">open_in_full</span><span class="fb-t">เต็มจอ</span></button>
-          <div class="ed-acts" id="ed-acts"></div>
+          <div class="ed-acts" id="ed-acts" aria-live="polite"></div>
         </div>
       </div>
-      <div class="hint view-hint"><span class="material-symbols-outlined" aria-hidden="true">swipe</span><span id="view-hint"></span></div>
-      <div class="ed-bar" id="ed-bar" aria-live="polite"></div>
       <div class="chart-box" id="chart-main"></div>
     </div>
   </section>
@@ -616,220 +579,6 @@
     <div class="panel">
       <a class="cw-img" href="reference/figjam-flow/board-81-1067.png?v=20261116" target="_blank" rel="noopener"><img src="reference/figjam-flow/board-81-1067.png?v=20261116" alt="ภาพบอร์ด Flow: Queue → Check → Flow การชำระเงิน" loading="lazy" /></a>
       <p class="cw-src"><a href="https://www.figma.com/board/JSuAKXPCBvCCY6LexuDjEF/Untitled?node-id=81-1067" target="_blank" rel="noopener">เปิดบอร์ดใน FigJam ↗</a></p>
-    </div>
-  </section>
-
-  <!-- 2 -->
-  <section class="sec" id="consult-refer" aria-labelledby="h-cr">
-    <div class="sec-head">
-      <h2 id="h-cr">1 · ส่งปรึกษา vs ส่งต่อ</h2>
-      <p>สองงานนี้ไม่ใช่อย่างเดียวกัน ดูว่าการดูแลยังอยู่ที่เดิม หรือย้ายไปปลายทาง</p>
-    </div>
-    <div class="two">
-      <div class="panel">
-        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">forum</span><div><h3>ส่งปรึกษา</h3><p>ขอความเห็น ผู้รับบริการยังอยู่ในการตรวจครั้งนี้</p></div></div>
-        <div class="grp">
-          <span class="grp-h">กดจากที่ไหน</span>
-          <dl class="kv">
-            <dt>แพทย์</dt><dd>แท็บ "ส่งปรึกษา" ในสั่งการรักษา (CPOE)</dd>
-            <dt>วิชาชีพอื่น</dt><dd>ปุ่มหัวแฟ้ม "ส่งปรึกษา" · ทันตแพทย์ · เภสัชกร · นักสังคมสงเคราะห์ · นักจิตวิทยา · พยาบาลคัดกรองสุขภาพจิต</dd>
-            <dt>แถว "ส่งปรึกษาไปที่"</dt><dd>ป๊อปอัป "ส่งไปยัง" ไม่มีการ์ดส่งปรึกษาแล้ว (18 พ.ย. 69) แถวนี้จึงขึ้นเฉพาะเมื่อ (1) แพทย์กรอกแท็บ "ส่งปรึกษา" ใน CPOE ครบก่อนกดปุ่มท้ายหน้า หรือ (2) พยาบาลหลังตรวจเปิดเคสที่แพทย์เลือกส่งปรึกษาไว้ · กดการ์ด "ส่งไป…" ใบใดใบหนึ่ง แถวนี้หายไป</dd>
-            <dt>ตัวเลือกในแถว</dt><dd>"ภายในศูนย์บริการ" = ฟอร์มส่งปรึกษา ไม่มีช่องวัตถุประสงค์ ไม่มี ESI | "ภายนอกศูนย์บริการ (ในสำนักอนามัย)" = ศูนย์ → คลินิก → เหตุผล → การเงิน · ทางปกติที่ไปศูนย์อื่น = ปุ่ม "ส่งต่อภายใน/ภายนอก" › ภายนอก</dd>
-          </dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">ในศูนย์ (ทะเบียนปรึกษา)</span>
-          <dl class="kv">
-            <dt>ช่องบนใบ</dt><dd>วันเวลา · คลินิก · แพทย์ · ประเภท · วินิจฉัย · รายละเอียด · พิมพ์</dd>
-            <dt>สถานะ</dt><dd><span class="badge b-grey">ร่าง</span> → <span class="badge b-blue">ส่งแล้ว</span> → <span class="badge b-orange">รับเรื่องแล้ว</span> → <span class="badge b-teal">ตอบกลับแล้ว</span> · <span class="badge b-red">ยกเลิก</span></dd>
-            <dt>นัดเมื่อไร</dt><dd>กด "ส่ง" = นัดปรึกษาแล้ว ไม่ต้องรอปลายทางรับเรื่อง</dd>
-            <dt>รับเรื่อง</dt><dd>แพทย์/บุคลากรปลายทางกด = รับทราบ ไม่ใช่ขั้นอนุมัติ</dd>
-          </dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">ผ่าน Telemedicine</span>
-          <dl class="kv">
-            <dt>ผู้ขอ</dt><dd>เลือกวิชาชีพ · ประเภท · ช่วงเวลาที่ทุกคนว่าง · ผู้ให้คำปรึกษาวิชาชีพละ 1 คน → "ส่งปรึกษา"</dd>
-            <dt>ระบบ</dt><dd>จองเวลา · เปิดห้อง Telemedicine</dd>
-            <dt>ผู้รับ</dt><dd>รายการที่ต้องทำ "คำขอปรึกษาผ่าน Telemedicine" · กระดิ่ง · หน้าสรุป สรุปการปรึกษา → "รับทราบ" หรือ "ปฏิเสธ" (ใส่เหตุผล) · แท็บ "ปรึกษา" ในรายการคิว ถูกแทนด้วย "ส่งต่อ" แล้ว (10 พ.ย. 69)</dd>
-            <dt>แจ้งกลับ</dt><dd>การ์ดแจ้งเตือน · กระดิ่ง ของผู้ขอ</dd>
-          </dl>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="card-h"><span class="ic material-symbols-outlined" aria-hidden="true">move_up</span><div><h3>ส่งต่อ</h3><p>การดูแลย้ายไปที่ปลายทาง ใช้ป๊อปอัป "ส่งไปยัง" (ย้ายคิว) · "ส่งต่อ (Refer Out)" สร้าง Refer Out/Refer-in ไม่ย้ายคิว (18 พ.ย. 69)</p></div></div>
-        <div class="grp">
-          <span class="grp-h">3 ขอบเขต</span>
-          <dl class="kv">
-            <dt>ภายในศูนย์</dt><dd>ป๊อปอัป "ส่งไปยัง" 4 การ์ด (รายละเอียดด้านล่าง) · "ส่งไปคลินิกอื่น" ปลายทางเดียวต่อครั้ง · เวชระเบียน / คัดกรอง / ห้องแพทย์ / พยาบาลหลังตรวจ · ปุ่มยืนยันในป๊อปอัปใช้ป้าย "ส่งไปยัง…" แทน "ส่งต่อ…" ทุกป้าย (ป้าย "ส่งไปยัง" แสดงเป็น "บันทึกและส่ง" · ยืนยันส่งไปยัง · ส่งไปยังและเสร็จสิ้น) · ปุ่มท้ายหน้าพยาบาลหลังตรวจ "บันทึกและส่งต่อ" · วางแผนครอบครัว "บันทึกและส่งไปยัง" · Refer / e-Referral / ภายนอก / ต่างประเทศ คงเดิม (1 พ.ย. 69)</dd>
-            <dt>ศบส. อื่น</dt><dd>ในสำนักอนามัย → แวะห้องการเงินปิดสิทธิก่อน</dd>
-            <dt>โรงพยาบาล</dt><dd>นอกสำนักอนามัย → ใบส่งตัว + ความยินยอม Health Link → การเงิน</dd>
-          </dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">"ส่งต่อ" ≠ "ส่งไปยัง" (คณะ 9 ข้อ 13–20 · มติ Tofu · 18–20 พ.ย. 69)</span>
-          <dl class="kv">
-            <dt>ส่งไปยัง (ย้ายคิว)</dt><dd>ป๊อปอัป "ส่งไปยัง" เต็มจอ 4 การ์ด: "ส่งไปคลินิกอื่น" (ปลายทาง · ESI · หมายเหตุ แถวเดียวกัน) | "ส่งไปห้องการเงิน/รับยา" (คิวรอชำระเงิน · มีโน้ตต้องไปห้องการเงินก่อน) | "ส่งไปห้องหัตถการ" | "ส่งไปห้องชันสูตร" · ปุ่มยืนยัน "บันทึกและส่ง" ไม่มีลูกศร · การ์ดบริการที่ต้องได้รับ/Recommend + ห้องหัตถการ อยู่ในการ์ดขาวใบเดียว · "แผนกการเงิน" อยู่ในหน่วยงานสนับสนุน · ปลายทางที่เป็นคลินิก/ขั้นที่ผู้ส่งอยู่ (เช่น คัดกรอง · ทันตกรรม · ตรวจโรคทั่วไป) เลือกไม่ได้ ข้อความ "คุณส่งจากคลินิกนี้ ไม่สามารถเลือกเป็นคลินิกปลายทางได้" — เปิดจากเวชระเบียนกลาง/คัดกรองกลางไม่ปิดอะไร · ปลายทาง · ESI · หมายเหตุ กว้างเท่ากัน (24 พ.ย. 69)</dd>
-            <dt>ส่งต่อ (ไม่ย้ายคิว)</dt><dd>ปุ่มหัวแฟ้ม "ส่งต่อภายใน/ภายนอก" → "ส่งต่อ (Refer Out)": ภายในศูนย์ = แบบส่งต่อเพื่อติดตามเยี่ยม | ภายนอก = ในสำนักอนามัย (ศูนย์ → คลินิก → เหตุผล* → การเงิน) / นอกสำนักอนามัย (รพ. + ใบส่งตัว A4 + Health Link · ผู้ป่วยวัณโรค = TB09 · ต่างประเทศ) → สร้าง Refer Out (ผู้ส่ง) + Refer-in (ปลายทาง) ในแท็บ "ส่งต่อ" ของรายการคิวทุกคลินิก</dd>
-            <dt>ปลายทางรับ</dt><dd>Refer-in ทุกแถว (ภายในศูนย์ด้วย) ปุ่ม "รับเคส" → รับแล้ว "นัดหมาย" (วันนี้หรือวันถัดไป → ระบบนัดหมาย) · ฝั่งผู้ส่งเห็น "ปลายทางรับแล้ว · นัดแล้ว" (19 พ.ย. 69)</dd>
-            <dt>ฟอร์มส่งต่อภายใน</dt><dd>"HHC No." แสดงเฉพาะ "ถึงงาน" = หน่วยเยี่ยมบ้าน (เปลี่ยนออก = ล้างค่า ไม่ส่ง ไม่พิมพ์) · ซ่อน "วันที่"/"จากงาน" (เก็บอัตโนมัติ ยังพิมพ์) · ป๊อปอัป Refer Out ป้าย "ประเภทการส่งต่อ*" (19 พ.ย. 69)</dd>
-          </dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">กรณีพิเศษ</span>
-          <ul class="bul">
-            <li>งานบำบัด After Care ส่งต่อศูนย์ฟื้นฟูสภาพทางสังคมเขต = "แบบฟอร์ม 08" (ป๊อปอัปเดียว ส่งต่อรายใหม่ + กดแถว) ไม่ใช่ป๊อปอัปส่งต่อของคลินิก · สถานะการส่งต่อ 5 ค่า แยกจากสถานะการเข้ารับบริการ · CBTx &amp; HR ชุมชน การติดตามประเภท "ส่งต่อ" → หน่วยส่งต่อ* + เหตุผล* (18 พ.ย. 69)</li>
-            <li>ติ๊ก "ส่งต่อต่างประเทศ" → ไม่ต้องเลือกโรงพยาบาล · ใบส่งตัวภาษาอังกฤษ ("แปลเป็นภาษาอังกฤษ")</li>
-            <li>ส่งต่อนักสังคมสงเคราะห์ → ต้องเลือก "เหตุผล / ข้อควรระวัง" อย่างน้อย 1 ข้อ</li>
-            <li>CBTx &amp; HR ชุมชน เมนู 09: "คลินิกรับส่งต่อ" (ก้าวใหม่ · เมทาโดน · บุหรี่ · แอลกอฮอล์ · สุขภาพจิต · สังคมสงเคราะห์ · เยี่ยมบ้าน) → "ส่งต่อ" = บันทึกการติดตามแบบส่งต่อ + เข้ารายการคิว ปลายทางทันที · ต้องมี HN (18 พ.ย. 69)</li>
-            <li>คัดกรองกลางกด "ส่งเข้าคลินิกวัณโรค" → ป๊อปอัปส่งต่อล็อกปลายทาง "คัดกรอง · คลินิกวัณโรค" ไม่มีช่องแพทย์/ช่วงเวลา → คิวหน้าคัดกรองวัณโรค ที่มา "ส่งต่อจากจุดคัดกรอง" ไม่เข้าคิวรวมแพทย์ (มติคณะ 9 [36:10] [41:14] · 6–7 พ.ย. 69)</li>
-            <li>เบาหวาน ผลตรวจตาเข้าเงื่อนไข → แพทย์ติ๊ก "ส่งต่อจักษุแพทย์" + เหตุผลในหน้าตรวจตา → "บันทึกและส่งไปยังแผนกถัดไป" เปิดป๊อปอัป "ส่งไปยัง" ที่การ์ด "ส่งไปคลินิกอื่น" ตั้ง "ห้องแพทย์ · คลินิกจักษุ" ไว้ แก้ได้ (พยาบาลคัดกรองยังล็อกปลายทาง) · แถบเตือนส่งต่อทุกคลินิกบอก "ระบบจะส่งต่อเมื่อกด บันทึกและส่งต่อ" ไม่อ้างขั้นตรวจสอบข้อมูล (9 พ.ย. 69)</li>
-            <li>ส่งปรึกษาผ่าน Telemedicine ไม่มีช่องติ๊กในป๊อปอัป "ส่งไปยัง" แล้ว ใช้ "นัดปรึกษาสหวิชาชีพ" (⋮ ในหน้าบันทึก หรือปุ่ม "การนัดหมาย ▾" ที่คิว) หรือปุ่มหัวแฟ้ม "ส่งปรึกษา" ของวิชาชีพอื่น</li>
-            <li>แพทย์กด "บันทึกและส่งต่อ" มียาที่จะส่ง แต่ผู้ป่วยยังไม่มีใบยินยอมที่มีผล → จุดตรวจ "ต้องมีความยินยอมก่อนส่งใบสั่งยา" ขึ้นก่อนป๊อปอัป "ส่งไปยัง" · "ทำแบบฟอร์ม" ลงนามในหน้าเดิม แล้วกดส่งต่ออีกครั้ง (ทุกคลินิก · ไม่ดักพยาบาล · มารับยาแทน · 6 พ.ย. 69)</li>
-            <li>สุขภาพจิต แถบ "การตรวจรักษาและวินิจฉัยโรค" มีปุ่ม "ส่งต่อการเยี่ยมติดตามที่บ้าน" (แพทย์เห็นในแถบ "บันทึกด้านสุขภาพจิต") · อนามัยโรงเรียน (คณะ 5) ส่งต่อนักเรียนเข้าคลินิกสุขภาพจิต → แท็บ "ส่งต่อจากอนามัยโรงเรียน" ของนักจิตวิทยา (สุขภาพจิตโรงเรียน) "รับเรื่อง" = รับทราบ เก็บเฉพาะการรับเรื่อง (12–13 พ.ย. 69)</li>
-            <li>สถานรับเลี้ยงเด็ก ตรวจรายวัน ส่งต่อ ศบส. ได้เมื่อเลือก "พบ" อย่างน้อย 1 กลุ่มอาการ · ป๊อปอัปเดียวกับแฟ้มเด็ก แนบอาการ + อุณหภูมิเป็นเหตุผล → ป้าย "ส่งต่อแล้ว" ในวันที่ตรวจ (13 พ.ย. 69)</li>
-            <li>วางแผนครอบครัว ส่งไปยัง "งานเยี่ยมบ้าน" ได้ · งานเยี่ยมบ้าน "ปรึกษา/ส่งต่องานเยี่ยมบ้าน" มี "วางแผนครอบครัว" = นัดคลินิก ไม่ทำบริการ FP ที่บ้าน (1 พ.ย. 69)</li>
-          </ul>
-        </div>
-        <div class="grp">
-          <span class="grp-h">แท็บ "ส่งต่อ" ในรายการคิว (ทุกหน้า · 10–11 พ.ย. 69)</span>
-          <dl class="kv">
-            <dt>แท็บย่อย</dt><dd>"ส่งกลับ (Refer-in)" · "ส่งไป (Refer Out)" · ตัวเลขบนแท็บ = Refer-in "รอรับ" · แถวรอรับขึ้นก่อน</dd>
-            <dt>คอลัมน์</dt><dd>วันที่ส่ง · ผู้รับบริการ · ส่งมาจาก / ส่งไปที่ (สถานพยาบาล · ในเครือ กทม. / นอกเครือ / ศบส.อื่น · แพทย์ผู้ส่ง) · สาเหตุที่ส่งต่อ (+ ICD-10 หลัก) · สถานะ · การดำเนินการ</dd>
-            <dt>Refer-in รอรับ</dt><dd>ปุ่ม "รับเคส" = รับทันที แล้วเป็นปุ่ม "นัดหมาย" (18–19 พ.ย. 69) · กดที่แถวแทน → "ผลการรับ*" รับดูแลต่อ · รับ · นัดเข้ารับบริการ (+ วันนัด*) · ไม่รับ (แจ้งต้นทาง · เหตุผล*) → "ยืนยันรับ"</dd>
-            <dt>Refer-in รับแล้ว</dt><dd>"นัดหมาย" → วันนัด + เวลา → "ยืนยันนัดหมาย" · นัดแล้ว / ไม่รับ = "บันทึก" → "บันทึกการดูแล*"</dd>
-            <dt>Refer Out</dt><dd>"บันทึก" → "ผลจากปลายทาง*" ปลายทางรับแล้ว · ได้รับใบตอบกลับ · ปลายทางไม่รับ (+ เหตุผล*)</dd>
-            <dt>การบันทึก</dt><dd>ต่อท้ายเสมอ ไม่ทับของเดิม · "ประวัติการบันทึก N ครั้ง" ใหม่สุดอยู่บน</dd>
-          </dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">ส่งกลับแพทย์ (ไม่ใช่ส่งปรึกษา/ส่งต่อ · 1 พ.ย. 69)</span>
-          <ul class="bul">
-            <li>พยาบาลหลังตรวจทุกคลินิก: ปุ่ม "ส่งกลับแพทย์" แรกสุดที่หัวหน้าบันทึก → ป๊อปอัป "ส่งกลับไปหาแพทย์" ส่งถึงแพทย์ที่ตรวจเสร็จ + คลินิก · ข้อความ "สิ่งที่ต้องการให้แพทย์ทบทวน / แก้ไข" บังคับ</li>
-            <li>แพทย์เห็นกระดิ่งหมวด "รายการส่งกลับ" + แท็บ "รายการส่งกลับ" ต่อจาก "ตรวจเสร็จแล้ว" (คิวแพทย์ รวมเคสห้องยาส่งกลับด้วย) → "แก้ไขเสร็จ" / "แก้ไขเสร็จ ส่งกลับห้องยา"</li>
-          </ul>
-        </div>
-        <div class="grp">
-          <span class="grp-h">มักสับสน</span>
-          <ul class="bul">
-            <li>เขียน "ปรึกษาแพทย์เฉพาะทาง" ในช่องความต้องการของใบส่งต่อ = ยังเป็น <b>ส่งต่อ</b></li>
-            <li>ปลายทางกับแพทย์ที่เลือกจากขั้นก่อน แสดงเป็นข้อความ ไม่ให้เลือกซ้ำ</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3 -->
-  <section class="sec" id="clinics" aria-labelledby="h-cl">
-    <div class="sec-head">
-      <h2 id="h-cl">2 · คลินิกพิเศษ: ใครทำ และขั้นของแพทย์</h2>
-      <p>(C) = ขั้นความยินยอม ซ่อนไปไว้ใน ⋮ ถ้าเคยลงนามแล้ว · ขั้นแบบประเมินของแพทย์ทุกคลินิกใช้ชื่อ "สรุปการคัดกรองและซักประวัติ" (ยกเว้นกายภาพ · สังคมสงเคราะห์ · แพทย์แผนไทย) · "ตรวจสอบข้อมูล" มีเฉพาะทันตกรรม</p>
-    </div>
-    <div class="tbl-box">
-      <table class="matrix">
-        <thead><tr><th>คลินิก</th><th>พยาบาลคัดกรอง</th><th>พยาบาลหลังตรวจ</th><th>ขั้นของแพทย์</th><th>ขั้นสุดท้าย</th><th>ทะเบียน</th><th>บทบาทอื่น</th></tr></thead>
-        <tbody id="clinic-body"></tbody>
-      </table>
-    </div>
-    <div class="panel">
-      <h3>ทุกคลินิกเหมือนกัน</h3>
-      <dl class="kv" style="margin-top: var(--dim-space-300, 12px);">
-        <dt>พยาบาลคัดกรอง</dt><dd>(C) → แบบประเมิน → ขั้นเพิ่มของคลินิก (ถ้ามี) → "บันทึกและส่งต่อ" → เลือกคลินิกและแพทย์ในป๊อปอัป (ไม่มีขั้นเลือกคลินิกและแพทย์แล้ว) · งานบำบัด "บันทึกและส่ง" · วางแผนครอบครัว "บันทึกและส่งไปยัง"</dd>
-        <dt>พยาบาลหลังตรวจ</dt><dd>หน้าบันทึกของพยาบาลหลังตรวจ → [สถานะความยินยอม · ยกเว้นแพทย์แผนไทย · เบาหวาน · ความดัน] → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา (ชื่อขั้นตามคลินิก · เอกสาร/ใบรับรองแพทย์อยู่ใน ⋮) → "บันทึกและส่งต่อ" (วางแผนครอบครัว "บันทึกและส่งไปยัง") → แถวไปแท็บ "ส่งต่อแล้ว" ป้าย "ส่งกลับแล้ว"</dd>
-        <dt>ขั้นหลัง CPOE</dt><dd>ทุกคลินิกยกเว้นทันตกรรม มี "แผนการดูแลรักษา" ต่อจาก CPOE (ฝากครรภ์ "สุขศึกษา" · เบาหวาน/ความดัน "แผนการดูแลและสุขศึกษา") · วัณโรคก็วางแผนหลัง CPOE</dd>
-        <dt>ท้ายฟอร์ม</dt><dd>"ตรวจสอบความครบถ้วน (ขาด N)" มีทุกหน้า ไม่ใช่ขั้น</dd>
-      </dl>
-    </div>
-  </section>
-
-  <!-- 4 -->
-  <section class="sec" id="addiction" aria-labelledby="h-ad">
-    <div class="sec-head">
-      <h2 id="h-ad">3 · งานบำบัดยาเสพติด</h2>
-      <p>แผนภาพอยู่ในข้อ 1 (เลือก "งานบำบัด") · 4 คลินิก: ก้าวใหม่ · เมทาโดน/BNX · บุหรี่ · แอลกอฮอล์ · หลังแพทย์วางแผน ไปได้ทางเดียว</p>
-    </div>
-    <div>
-      <div class="panel add-info">
-        <div class="grp">
-        <span class="grp-h">สถานะในคอลัมน์ "การส่งต่อ / สถานะ"</span>
-        <div class="chips">
-          <span class="badge b-grey">ยังไม่ขึ้นทะเบียน</span><span class="badge b-teal">รักษาในคลินิก</span><span class="badge b-orange">รอปลายทางรับ</span><span class="badge b-blue">รักษาตามคลินิก (ไป-กลับ)</span><span class="badge b-purple">บ้านพิชิตใจ</span><span class="badge b-grey">จำหน่ายแล้ว</span>
-        </div>
-        </div>
-        <div class="grp">
-          <span class="grp-h">จำนวนครั้งตามระดับ (ก้าวใหม่ ใช้ทุกคลินิก)</span>
-          <dl class="kv"><dt>ผู้ใช้</dt><dd>1–2 ครั้ง</dd><dt>ผู้เสพ</dt><dd>4–8 ครั้ง</dd><dt>ผู้ติด</dt><dd>8–16 ครั้ง</dd><dt>After Care</dt><dd>4–7 ครั้ง/ปี</dd></dl>
-        </div>
-        <div class="grp">
-          <span class="grp-h">กติกา</span>
-          <ul class="bul">
-            <li>ผู้รับบริการใหม่ ขึ้นทะเบียนได้ทุกบทบาท · แก้ทะเบียนเฉพาะแพทย์</li>
-            <li>ยังไม่ขึ้นทะเบียน = ยังไม่มีความคืบหน้าคอร์ส (0%)</li>
-            <li>ครั้งที่บำบัดนับจากครั้งแรกของคอร์ส ไม่นับวันพบแพทย์</li>
-            <li>แบบประเมินทุกแบบไม่บังคับ รวม OAS จบการคัดกรองได้เลย (15 ต.ค. · 1 พ.ย. 69)</li>
-            <li>CBTx &amp; HR ชุมชน: 1 คน 1 ทะเบียน · แฟ้มผู้รับบริการหน้าเต็ม · บัตร Harm Reduction ต้องอนุมัติก่อนพิมพ์ (18 พ.ย. 69) · เมนู 09 ส่งต่อเข้ารายการคิว ปลายทาง · เลข HR Card อัตโนมัติ</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5 -->
-  <section class="sec" id="status" aria-labelledby="h-st">
-    <div class="sec-head">
-      <h2 id="h-st">4 · สถานะคิว</h2>
-      <p>สถานะเดียว = ความหมายเดียวในทุกคิว · ตัวเลขในแท็บ = ตัวเลขในเมนูข้าง</p>
-    </div>
-    <div class="two">
-      <div class="panel">
-        <h3>ชุดมาตรฐาน (คิวผู้รับบริการ)</h3>
-        <div class="tbl-box" style="margin-top:var(--dim-space-300,12px);">
-          <table>
-            <thead><tr><th>ความหมาย</th><th>ป้าย</th><th>แท็บ</th></tr></thead>
-            <tbody>
-              <tr><td>รอ</td><td><span class="badge b-blue">รอตรวจ</span> <span class="badge b-blue">รอคัดกรอง</span></td><td>คิววันนี้</td></tr>
-              <tr><td>อยู่ห้องยา (คัดกรอง)</td><td><span class="badge b-purple">รอห้องยาประเมิน</span></td><td>คิววันนี้</td></tr>
-              <tr><td>กำลังทำ</td><td><span class="badge b-orange">ตรวจอยู่</span> (เวชศาสตร์ฟื้นฟู <span class="badge b-orange">กำลังทำกายภาพ</span>)</td><td>คิววันนี้</td></tr>
-              <tr><td>ร่าง</td><td><span class="badge b-orange">บันทึกไม่เสร็จ</span> · คัดกรองกลาง: <span class="badge b-blue">คัดกรองยังไม่เสร็จ</span> · เวชระเบียน: <span class="badge b-blue">กำลังลงทะเบียน</span> (1 พ.ย. 69)</td><td>คิววันนี้</td></tr>
-              <tr><td>ปิด Visit (ไม่ยินยอมใบหลัก EHC-1011)</td><td><span class="badge b-grey">ปิด Visit · ผู้ป่วยไม่ให้ความยินยอม</span> แถวกดไม่ได้</td><td>เวชระเบียน (2 พ.ย. 69)</td></tr>
-              <tr><td>เสร็จ</td><td><span class="badge b-teal">ตรวจเสร็จแล้ว</span> <span class="badge b-teal">คัดกรองแล้ว</span></td><td>ตรวจเสร็จแล้ว</td></tr>
-              <tr><td>นัดแต่ยังไม่มา</td><td><span class="badge b-purple">นัดแล้วยังไม่มา</span></td><td>—</td></tr>
-              <tr><td>ยกเลิก (แถวยังอยู่)</td><td><span class="badge b-red">ยกเลิกนัด</span></td><td>ยกเลิกนัด</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="panel">
-        <h3>คิวของแผนก (คำของแผนกเอง)</h3>
-        <dl class="kv" style="margin-top:var(--dim-space-300,12px);">
-          <dt>ลำดับแถว (ทุกคิว)</dt><dd>ฉุกเฉิน → <b>Fast Track</b> (ป้ายแดงหลังชื่อ · ชี้ดูเหตุผล/ผู้บันทึก/เวลา · ไม่แสดงในคิวเวชระเบียน) → เปลนอน → นั่งรถเข็น → เร่งด่วน (9 พ.ย. 69)</dd>
-          <dt>หลังตรวจ</dt><dd><span class="badge b-orange">รอส่งกลับ</span> → <span class="badge b-blue">กำลังส่งกลับ</span> → <span class="badge b-teal">ส่งกลับแล้ว</span> (แท็บ "ส่งต่อแล้ว") · <span class="badge b-grey">ยกเลิกคิว</span></dd>
-          <dt>รายการส่งกลับ (คิวแพทย์)</dt><dd>ส่งกลับจากพยาบาลหลังตรวจ / ห้องยา (ห้องยาส่งพยาบาลก่อน → "ส่งพบแพทย์" · 4 พ.ย. 69) → "แก้ไขเสร็จ" → <span class="badge b-teal">แก้ไขแล้ว HH:MM</span> · ตัวเลขแท็บ = ที่ยังไม่แก้ (1 พ.ย. 69 · เดิม "ห้องยาส่งกลับ") · ใช้คำ "รายการส่งกลับ" ทุกป้าย รวมการ์ดพยาบาลหลังตรวจ + แจ้งเตือนลอย (14 พ.ย. 69)</dd>
-          <dt>จุดคัดแยก</dt><dd>แท็บ "คัดแยกแล้ว" (เดิม คัดกรองแล้ว) · tooltip + การ์ดสรุปใช้คำตามบทบาท (14 พ.ย. 69) · เลขคิวแสดงเฉพาะตัวเลข (A001 → 001) · คนใหม่กลับมา <span class="badge b-blue">รอคัดกรอง</span> + "ออกที่เวชระเบียน · แทน K…" (16 พ.ย. 69)</dd>
-          <dt>คัดกรองวัณโรค</dt><dd>คิววันนี้ (ที่มา "ส่งต่อจากจุดคัดกรอง" จากคัดกรองกลาง) · แท็บ "หลังตรวจ" = แถววัณโรคของคิวหลังตรวจ → หน้าบันทึกของพยาบาลหลังตรวจ · แท็บ "ทะเบียนวัณโรค" เห็นเฉพาะบทบาทคลินิกวัณโรค (6 พ.ย. 69)</dd>
-          <dt>แท็บส่งต่อ · Refer-in</dt><dd><span class="badge b-orange">รอรับ</span> → <span class="badge b-teal">รับแล้ว</span> / <span class="badge b-teal">รับแล้ว · นัดแล้ว</span> · <span class="badge b-red">ไม่รับ</span> (10 พ.ย. 69)</dd>
-          <dt>แท็บส่งต่อ · Refer Out</dt><dd><span class="badge b-blue">รอปลายทางรับ</span> → <span class="badge b-blue">ปลายทางรับแล้ว</span> → <span class="badge b-teal">ตอบกลับแล้ว</span> · <span class="badge b-red">ปลายทางไม่รับ</span></dd>
-          <dt>ไม่มาตามนัด · ติดตามนัด</dt><dd>ตัวกรอง "เลยนัด:" 1 สัปดาห์ (≤ 7 วัน) · 2 สัปดาห์ (≤ 14 วัน) · เกิน 1 เดือน (&gt; 30 วัน) · ทั้งหมด (ตั้งต้น = ตัวเลขแท็บ · ≤ 365 วัน) ทุกรายการคิว (มติ คทง.3 ข้อ 2.1 · 11 พ.ย. 69) · บรรทัดที่ 2 ในช่องสถานะ: "ยังไม่ได้ติดตาม" → "ติดตามแล้ว N ครั้ง · ผลล่าสุด" (ติดต่อได้ · นัดใหม่แล้ว = เขียว · ติดต่อได้ · ยังไม่นัดใหม่ = น้ำเงิน · ติดต่อไม่ได้ = แดง · 10 พ.ย. 69)</dd>
-          <dt>ส่งต่อจากอนามัยโรงเรียน (นักจิตวิทยาโรงเรียน)</dt><dd><span class="badge b-orange">รอรับเรื่อง</span> → "รับเรื่อง" → <span class="badge b-teal">รับเรื่องแล้ว</span> → "เปิดบันทึก" · ตัวเลขแท็บ = รอรับเรื่อง (13 พ.ย. 69)</dd>
-          <dt>อนามัยโรงเรียน · ผู้ปกครอง</dt><dd>คอลัมน์ "ผู้ปกครอง" (นัดตรวจ): อนุญาต · <span class="badge b-red">ไม่อนุญาต</span> (แถวจาง "บันทึกบริการ" กดไม่ได้) · ยังไม่ส่งคืน (บันทึกได้) · ตัวกรองตามผล (13 พ.ย. 69)</dd>
-          <dt>คอร์สฟื้นฟู · กายภาพ (ช่องคอร์ส)</dt><dd>ตรวจครั้งแรก = "ยังไม่มีคอร์ส" (12 พ.ย. 69) · ระหว่างคอร์ส "ภายใน &lt;วันที่&gt;" → <span class="badge b-purple">ครบระยะ N เดือน · ส่งแพทย์ประเมิน</span> / <span class="badge b-purple">ครบจำนวนครั้ง · ส่งแพทย์ประเมิน</span> = "ครบคอร์ส · รอแพทย์ประเมิน" (คิวเวชศาสตร์ฟื้นฟู + คิวกายภาพ · 11 พ.ย. 69)</dd>
-          <dt>คิวรวม</dt><dd><span class="badge b-orange">รอแพทย์รับเคส</span> → <span class="badge b-teal">รับเคสแล้ว</span></dd>
-          <dt>ห้องยา</dt><dd>รอเภสัชยืนยันรายการยา → รอชำระเงิน/ปิดสิทธิ → พร้อมจ่ายยา → จ่ายแล้ว / จ่ายบางส่วน (แท็บ "แบ่งจ่าย (งวดถัดไป)" · 4 พ.ย. 69) · ไม่มารับยา · มีปัญหา · แพทย์ยกเลิก · ยกเลิก</dd>
-          <dt>เยี่ยมบ้าน</dt><dd>นัดวันนี้ → "เปิดเยี่ยมบ้าน" = กำลังเยี่ยม + ประทับเวลาถึงบ้านครั้งแรกอัตโนมัติ ("ถึงบ้าน HH:MM น." · 6 พ.ย. 69) → เยี่ยมสำเร็จ</dd>
-          <dt>การเงิน</dt><dd>แท็บคิว รอชำระเงิน · ชำระแล้ว · ยกเลิกใบเสร็จ · "ปิดสิทธิแล้ว" · "ยังไม่ได้ปิดสิทธิ" · คอลัมน์สิทธิ (บัตรทอง) ใต้ป้าย: "ปิดสิทธิแล้ว" (เขียว) / "ยังไม่ปิดสิทธิ" (แดง) · ตัวกรอง "ปิดสิทธิ:" ปิดสิทธิแล้ว · ยังไม่ปิดสิทธิ · ไม่ต้องปิดสิทธิ (14 พ.ย. 69)</dd>
-          <dt>ห้องหัตถการ (ชำระก่อนทำ)</dt><dd>ไม่ต้องชำระ → รับเข้าเตียง · <span class="badge b-orange">รอชำระเงิน</span> (ปุ่มรับเข้าเตียงกดไม่ได้) → ชำระแล้ว → รับเข้าเตียง · มีค่าใช้จ่ายเพิ่ม · ฉุกเฉิน · ชำระภายหลัง (คทง.8 ครั้งที่ 2 · 7 พ.ย. 69) · แถว Emergency จากจุดคัดกรองอยู่บนสุดเสมอ (16 พ.ย. 69)</dd>
-          <dt>ห้องหัตถการ · Fast Track / ESI 1</dt><dd>Fast Track จากจุดคัดกรอง → <span class="badge b-blue">รอรับเข้าเตียง</span> + ป้าย Fast Track ต่อจาก Emergency · ESI 1 จากเวชระเบียน → คิวห้องแพทย์บนสุด · คัดกรอง <span class="badge b-orange">รอบันทึกคัดกรองย้อนหลัง</span> (17 พ.ย. 69)</dd>
-          <dt>แบบฟอร์ม 08 (ส่งต่อศูนย์ฟื้นฟูฯ เขต)</dt><dd>การส่งต่อ: เตรียมส่งต่อ → ส่งต่อแล้ว รอตอบรับ → รับเรื่องแล้ว / ไม่รับเรื่อง · ยกเลิกการส่งต่อ · การเข้ารับบริการ: ยังไม่เข้ารับบริการ · เข้ารับบริการแล้ว · ปฏิเสธ · ติดต่อไม่ได้ (18 พ.ย. 69)</dd>
-          <dt>บัตร Harm Reduction</dt><dd><span class="badge b-orange">รออนุมัติ</span> → <span class="badge b-teal">อนุมัติ</span> (พิมพ์ได้) / <span class="badge b-red">ไม่อนุมัติ</span> · หมดอายุ · ยกเลิกแล้ว · ออกบัตรทดแทนแล้ว (18 พ.ย. 69)</dd>
-          <dt>ส่งเบิก</dt><dd>รอตรวจสอบ · รอแพทย์ยืนยัน ICD-10 → <span class="badge b-teal">รอส่ง</span> (เดิม "ยืนยันแล้ว" · ดึงกลับแก้ไขได้) → <span class="badge b-grey">ส่งเบิกแล้ว</span> (ดึงกลับไม่ได้) · ต้องแก้ไข · สปสช. ปฏิเสธ → รออุทธรณ์ · คอลัมน์ "สถานะส่งเบิก" (7 พ.ย. 69) · แท็บหน้า: ส่งเบิก · Dashboard · เชื่อมต่อ e-Claim / สปสช. · Telemedicine · ประวัติตรวจสอบสิทธิ</dd>
-          <dt>แล็บ</dt><dd>คำสั่งจาก CPOE ทุกคลินิกเข้าที่ <span class="badge b-blue">รอรับคำขอ</span> 1 แถวต่อรายการ (7 พ.ย. 69) · รอรับคำขอ (รับ + Sticker) → รอเก็บ/รับตัวอย่าง → รอนำส่ง → นำส่งแล้ว (แล็บกลาง City Lab: รอรับ → รับแล้ว) → กำลังตรวจ → (ส่งตรวจภายนอก) → รอรับรองผล → รายงานผลแล้ว · ปฏิเสธตัวอย่าง · รอเจาะซ้ำ · หลอดแตก/สูญหาย = เริ่มใหม่/ส่งซ้ำ (Request No. ใหม่) (28–29 ต.ค. 69) · ชื่อสถานะ "รอส่งตรวจ / ส่งตรวจแล้ว" เปลี่ยนเป็น "รอนำส่ง / นำส่งแล้ว" · รายการที่ทะเบียนตั้ง "ห้องชันสูตรลงผลเอง" ข้ามไป รอลงผล → รายงานผลแล้ว (31 ต.ค. 69) · City Lab ยิงบาร์โค้ดรับ: รอนำส่ง → รอรับตัวอย่าง (ยังกด "ยืนยันรับ") · <span class="badge b-orange">โอนไป City Lab อื่นแล้ว</span> (เครื่องเสีย · แถวไปแท็บ "รายการทั้งหมด") · City Lab ปฏิเสธ/เริ่มใหม่ = LN No. ใหม่ กลับศูนย์ต้นทางที่ รอเก็บ/รับตัวอย่าง (9 พ.ย. 69)</dd>
-          <dt>เอกซเรย์</dt><dd>รอรับรายการ → (นัดตรวจ) → รอดำเนินการ → ผลฟิล์มออก / รอบันทึกผล → บันทึกผลแล้ว → ยืนยันผล · แท็บแพทย์รังสี รอบันทึกผล · ที่ร่างไว้ · ยืนยันผล · ยกเว้น: ปฏิเสธรับ Request · ยกเลิกรายการตรวจ · ยกเลิกการรายงานผล · ไม่มาตามนัด (No-show) · ฝั่งแพทย์ ("ผลตรวจ ▾" · EMR) ใบวันนี้ที่ยังไม่ยืนยันผล = <span class="badge b-orange">รอผล · ส่งตรวจแล้ววันนี้</span> (13 พ.ย. 69)</dd>
-          <dt>ไปตรวจจุดอื่น</dt><dd><span class="badge b-purple">กำลังตรวจที่ …</span> แถวกดไม่ได้ → ทุกจุด "ส่งกลับคลินิก" → แถวกดได้ (28 ต.ค. 69)</dd>
-          <dt>ผู้ป่วยโรคเฝ้าระวัง (GIS)</dt><dd><span class="badge b-orange">รอสอบสวนโรค</span> → <span class="badge b-blue">กำลังรักษา</span> → <span class="badge b-teal">หายแล้ว</span> · ระดับชุมชน ปกติ · เฝ้าระวัง · เสี่ยง · ระบาด (18 พ.ย. 69)</dd>
-          <dt>ศูนย์คิว</dt><dd>รอเรียก → กำลังเรียก → กำลังให้บริการ → เสร็จสิ้น · พักคิว · ข้ามคิว · ยกเลิก · ปุ่มเต็มความกว้าง "เสร็จสิ้นคิว <เลขคิว>" = เสร็จสิ้น ออกจากคิวถัดไป/จอ TV + ลงประวัติการใช้งาน (TOR 1.3.5.1 · 16 พ.ย. 69)</dd>
-        </dl>
-      </div>
     </div>
   </section>
 
@@ -1641,15 +1390,14 @@ detail.addEventListener('click', (e) => {
 detail.addEventListener('keydown', (e) => { if (e.target.id === 'ed-prompt' && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) detail.querySelector('[data-ed="run"]').click(); });
 
 /* แถบการแก้ของฉัน: นับ · ส่งออก · นำเข้า · ล้าง */
-const edBarEl = document.getElementById('ed-bar'), edActsEl = document.getElementById('ed-acts');
+const edActsEl = document.getElementById('ed-acts');
 function edBar() {
   const n = editsOf(clinic.key).length, total = Object.values(EDITS).reduce((s, a) => s + a.length, 0);
   const nAll = ntOfClinic(), nAsk = ntOpenAsk(nAll);
-  edBarEl.innerHTML = `<span class="material-symbols-outlined" aria-hidden="true">edit_note</span><span class="ed-sum">${n ? `แก้ไว้ ${n} รายการในคลินิกนี้` : 'กดจุดไหนก็ได้ แล้วพิมพ์ Prompt เพื่อแก้ flow'} · เก็บในเบราว์เซอร์นี้</span>`;
   edActsEl.innerHTML = `<button type="button" class="ed-btn${nAsk ? ' primary' : ''}" data-bar="notes"><span class="material-symbols-outlined" aria-hidden="true">forum</span>โน้ต · ถามตอบ${nAll.length ? ` (${nAll.length})` : ''}${nAsk ? ` · รอตอบ ${nAsk}` : ''}</button>
     <button type="button" class="ed-btn" data-bar="export" ${total ? '' : 'disabled'}><span class="material-symbols-outlined" aria-hidden="true">upload</span>ส่งออก</button>
     <button type="button" class="ed-btn" data-bar="import"><span class="material-symbols-outlined" aria-hidden="true">download</span>นำเข้า</button>
-    ${n ? '<button type="button" class="ed-btn" data-bar="clear"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>ล้างคลินิกนี้</button>' : ''}
+    ${n ? '<button type="button" class="ed-btn" data-bar="clear"><span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>ล้างคลินิกนี้ (' + n + ')</button>' : ''}
     <input type="file" accept="application/json,.json" id="ed-file" hidden />`;
 }
 edActsEl.addEventListener('click', (e) => {
@@ -1859,18 +1607,11 @@ function pickIntoView() {
   if (b && pick.scrollWidth > pick.clientWidth) pick.scrollLeft += b.getBoundingClientRect().left - pick.getBoundingClientRect().left - (pick.clientWidth - b.offsetWidth) / 2;
 }
 
-const HINT = {
-  uf: 'ไหลจากซ้ายไปขวา · กล่องที่มี "ขยาย" กดเพื่อดูขั้นย่อย (เปิดได้ทีละขั้น) · กล่องอื่นกดเพื่อดูรายละเอียด',
-  bp: 'Service Blueprint แบบเส้นทาง · แบ่งเลนตามผู้ทำงาน: ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · เส้นประแนวตั้ง = จุดที่ผู้รับบริการพบเจ้าหน้าที่ · ขยายขั้นได้เหมือนกัน',
-  pf: 'Swimlane 1 เลนต่อ 1 บทบาท (Kiosk · คัดแยก · เวชระเบียน · พยาบาล · แพทย์ · เภสัช · การเงิน) · ขยายขั้นเพื่อดูว่าใครทำอะไรต่อจากใคร',
-  sb: 'ตาราง Phase × 5 ชั้น: สิ่งที่สัมผัส → ผู้รับบริการ → หน้าบ้าน → หลังบ้าน → ระบบ · ข้อมูลชุดเดียวกับ User flow · ชั้น "สิ่งที่สัมผัส" อนุมานจากจุดบริการ · กดกล่องเพื่อดูรายละเอียด · ทางแยกกด "ดูกรณีอื่น" (เปิดได้ทีละช่อง)',
-};
 const seg = document.getElementById('view-seg');
 function setView(v, push = true) {
   view = v === 'bp' || v === 'pf' || v === 'sb' ? v : 'uf';
   document.body.dataset.view = view;
   seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
-  document.getElementById('view-hint').textContent = HINT[view];
   if (clinic) { closeSheet(); render(); box.scrollLeft = 0; if (push) setHash(); }
 }
 seg.addEventListener('click', (e) => { const b = e.target.closest('[data-view]'); if (b) setView(b.dataset.view); });
@@ -1910,50 +1651,6 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet
   ntLoad(true);
 }
 
-/* ---------- conditions table ---------- */
-const CLIN = [
-  ['ก้าวใหม่ / งานบำบัด', '✓', '✓', 'สรุปการคัดกรองและซักประวัติ → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา (แพทย์ไม่มีขั้นความยินยอม)', 'แผนการดูแลรักษา → "บันทึกและส่งต่อ"', '✓', 'นักสังคมฯ · นักจิตวิทยา · บ้านพิชิตใจ'],
-  ['สุขภาพจิต', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา (นักจิตวิทยาเห็นชื่อ "แผนการดูแลและสุขศึกษา" · ทดสอบ/บำบัดทางจิตวิทยาเป็นขั้นของนักจิตวิทยา)', 'แผนการดูแลรักษา', '✓', 'นักจิตวิทยา · นักสังคมฯ (ไม่มีแท็บการทดสอบทางจิตวิทยา · 7 พ.ย. 69) · นักจิตวิทยา (สุขภาพจิตโรงเรียน) · คลินิก 9 แถบตามบทบาท (12 พ.ย. 69)'],
-  ['ทันตกรรม', '✓', '✓', '(C) → แบบประเมิน → ตรวจฟันและวินิจฉัย → CPOE → เอกสาร/ใบรับรองแพทย์ → ตรวจสอบข้อมูล', 'ตรวจสอบข้อมูล (โรงเรียน/เด็กดี: "บันทึกผลการตรวจ")', '—', 'ผู้ช่วยบันทึก → "รอทันตแพทย์ตรวจสอบ"'],
-  ['ฝากครรภ์', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → สุขศึกษา', 'สุขศึกษา', 'บางส่วน', 'พยาบาลทำหน้าที่แพทย์'],
-  ['เบาหวาน', '✓', '✓', 'ไม่มีขั้นความยินยอม (เปิดจาก ⋮) · แบบประเมิน → ตรวจและวินิจฉัย (แท็บ บันทึกการตรวจรักษา · ตรวจตามเกณฑ์การดูแล) → CPOE → แผนการดูแลและสุขศึกษา', 'แผนการดูแลและสุขศึกษา', '✓', '—'],
-  ['ความดัน', '✓', '✓', 'ไม่มีขั้นความยินยอม (เปิดจาก ⋮) · แบบประเมิน → ตรวจและวินิจฉัย (แท็บ บันทึกการตรวจรักษา · ตรวจตามเกณฑ์การดูแล) → CPOE → แผนการดูแลและสุขศึกษา', 'แผนการดูแลและสุขศึกษา', '✓', '—'],
-  ['หอบหืด / COPD', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓', 'เภสัชกรประเมินยาพ่น'],
-  ['จักษุ', '✓', '✓', '(C) → แบบประเมิน → ตรวจและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '—', '—'],
-  ['วัณโรค', '✓ (คิวของตัวเอง · แท็บ "หลังตรวจ" = รายการคิว เดียวของพยาบาล · รับจากคัดกรองกลาง)', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓', '—'],
-  ['วางแผนครอบครัว', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา ("บันทึกและส่งไปยัง")', '✓', 'พยาบาลทำหน้าที่แพทย์'],
-  ['รักปลอดภัย (STIs · ARV · BKK Pride)', '✓ (แบบประเมิน · บันทึกการให้บริการ · สุขศึกษา แยกตามคลินิก)', '✓', 'พยาบาล: (C · เฉพาะรายใหม่) → ซักประวัติ → แบบประเมิน … · แพทย์ (ไม่มีขั้นความยินยอม เปิดจาก ⋮): สรุปการคัดกรองและซักประวัติ (มีการ์ดให้คำปรึกษาก่อนตรวจ) → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓ (แพทย์ · พยาบาลคัดกรอง)', 'แพทย์/พยาบาลรายคลินิก · นักเทคนิคการแพทย์'],
-  ['สุขภาพเด็กดี', '✓ (+ ขั้นเลือกวัคซีน)', '✓', 'สรุปการคัดกรองและซักประวัติ → ตรวจสุขภาพเด็กดีและวินิจฉัย → CPOE → แผนการดูแลรักษา (แพทย์ไม่มีขั้นความยินยอม · เอกสาร/ใบรับรองแพทย์อยู่ใน ⋮) · พยาบาลทำหน้าที่แพทย์ไม่มีขั้น CPOE (12 พ.ย. 69)', 'แผนการดูแลรักษา', '✓', 'พยาบาลทำหน้าที่แพทย์ (11 พ.ย. 69)'],
-  ['เวชศาสตร์ฟื้นฟู', '✓ (สัญญาณชีพ → ADL → ให้ความรู้ · 12 พ.ย. 69)', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '✓ (+ IMC)', 'คอร์ส → กายภาพ'],
-  ['กายภาพบำบัด', '—', '✓', 'สรุปผลคัดกรอง → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → สั่งการรักษา → แผนการดูแลรักษา', 'แผนการดูแลรักษา → "บันทึกและส่งต่อ" (ป๊อปอัป "ส่งกลับพบแพทย์เวชศาสตร์ฟื้นฟู")', '✓', '—'],
-  ['สังคมสงเคราะห์', '—', '—', 'หน้าเฉพาะ (จบ ส.ส.2) หรือเทมเพลต — ยังไม่สรุป (flow-spec Q3)', '"บันทึกและส่งต่อ" → ป๊อปอัปส่งต่อ → บันทึก ส.ส.2', '✓', '—'],
-  ['แพทย์แผนไทย', '✓', '✓', '(C) → แบบประเมิน → ตรวจร่างกายและวินิจฉัย → CPOE → แผนการดูแลรักษา', 'แผนการดูแลรักษา', '—', '—'],
-];
-
-
-
-document.getElementById('clinic-body').innerHTML = CLIN.map((r) =>
-  `<tr><td><b>${esc(r[0])}</b></td><td class="c">${esc(r[1])}</td><td class="c">${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td class="c">${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join('');
-</script>
-<script>
-/* แถบหัวข้อ underline: ทำเครื่องหมายหัวข้อที่กำลังอ่านอยู่ (scroll-spy) + เลื่อนแท็บให้อยู่ในจอ */
-(function () {
-  var links = [].slice.call(document.querySelectorAll('.toc a'));
-  var secs = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
-  var cur = null;
-  function set(i) {
-    if (i === cur) return; cur = i;
-    links.forEach(function (a, k) { if (k === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
-    var a = links[i], bar = a && a.parentNode;
-    if (bar && bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: a.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
-  }
-  function onScroll() {
-    var line = 120, idx = -1;   /* ส่วนบน (เส้นทางตามคลินิก) ไม่มีแท็บ → ไม่มีแท็บไหนถูกเลือก */
-    secs.forEach(function (s, k) { if (s && s.getBoundingClientRect().top <= line) idx = k; });
-    set(idx);
-  }
-  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll); onScroll();
-})();
 </script>
 </body>
 </html>
