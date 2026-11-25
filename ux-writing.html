@@ -85,6 +85,40 @@
   .ba .tx small { display: block; color: var(--text-content-tertiary, #8A9096); font-size: var(--type-size-xs, 12px); }
   .ba .tx.new { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
 
+
+  /* persona */
+  .profile { display: grid; grid-template-columns: 200px 1fr; gap: var(--dim-space-500, 20px); align-items: center; padding: var(--dim-space-500, 20px); border-radius: var(--dim-radius-400, 12px); background: #FFF8E1; border: 1px solid #F4D77A; }
+  .profile-img { display: grid; place-items: center; }
+  .profile-img img { width: 160px; height: 160px; object-fit: contain; }
+  .profile-info { margin: 0; display: grid; gap: var(--dim-space-200, 8px); }
+  .profile-info div { display: grid; grid-template-columns: 72px 1fr; gap: var(--dim-space-300, 12px); }
+  .profile-info dt { color: #8A6B00; font-weight: var(--type-weight-medium, 500); }
+  .profile-info dd { margin: 0; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--dim-space-300, 12px); }
+  .trait { display: flex; flex-direction: column; gap: 4px; padding: var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E4E7EA); border-radius: var(--dim-radius-300, 10px); background: var(--surface-card-100, #fff); }
+  .trait .ms { font-size: 28px; color: #B58900; }
+  .trait b { font-size: var(--type-size-base, 16px); }
+  .trait p { color: var(--text-content-secondary, #636B72); }
+  .trait i { margin-top: auto; padding-top: 4px; font-style: normal; color: var(--text-brandPrimary-default, #007549); font-weight: 500; }
+  .dials { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--dim-space-300, 12px); }
+  .dial { display: grid; grid-template-columns: auto 1fr auto; gap: var(--dim-space-200, 8px); align-items: center; padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E4E7EA); border-radius: var(--dim-radius-300, 10px); }
+  .dial span { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .dial small { grid-column: 1 / -1; color: var(--text-content-tertiary, #6B7280); font-size: var(--type-size-xs, 12px); }
+  .track { position: relative; height: 8px; border-radius: 9999px; background: linear-gradient(90deg, #F4D77A, #007549); min-width: 80px; }
+  .track i { position: absolute; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: #fff; border: 3px solid #1B2420; }
+  .say { display: grid; grid-template-columns: 1fr 1fr; gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+  .say-h { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+  .say-h.do { color: #007549; } .say-h.dont { color: #B42318; }
+  .bubble { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-radius: 4px 16px 16px 16px; font-weight: 500; }
+  .bubble small { display: block; font-weight: normal; margin-top: 2px; opacity: .8; }
+  .bubble.do { background: #E2F3EB; border: 1px solid #9FD6BC; }
+  .bubble.dont { background: #FDECEC; border: 1px solid #F3B4B4; text-decoration: line-through; text-decoration-color: #B42318; }
+  @media (max-width: 1023px) { .grid4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 767px) {
+    .profile { grid-template-columns: 1fr; } .profile-info div { grid-template-columns: 1fr; gap: 0; }
+    .grid4, .dials { grid-template-columns: 1fr; }
+    .say { grid-template-columns: 1fr; } .say-h.dont { margin-top: var(--dim-space-300, 12px); }
+  }
   @media (max-width: 1023px) {
     .grid3 { grid-template-columns: 1fr; }
     .pipe { grid-template-columns: 1fr; }
@@ -119,6 +153,61 @@
         <span class="chip warn">Generate ส่ง Claude API เมื่อกดยืนยัน</span>
       </div>
     </div>
+  </section>
+
+  <!-- Character + Persona -->
+  <section class="sec" id="persona">
+    <div class="sec-head">
+      <h2>ตัวละคร · Namon Wording</h2>
+      <p>ผู้เขียนข้อความประจำ PHCIS · สรุปจากกติกา <code>ux-writing.md</code> ทุกข้อ ปรับได้ถ้าอยากเปลี่ยนนิสัย</p>
+    </div>
+
+    <div class="profile">
+      <div class="profile-img"><img src="assets/ux-writing/namon-wording.png" alt="Namon Wording" width="160" height="160" /></div>
+      <dl class="profile-info">
+        <div><dt>ชื่อ</dt><dd>Namon Wording</dd></div>
+        <div><dt>บทบาท</dt><dd>UX writer ของ PHCIS · ดูแลทุกข้อความบนหน้าจอ</dd></div>
+        <div><dt>ภารกิจ</dt><dd><b>อ่านปุ๊บ รู้ปั๊บว่าต้องทำอะไร</b></dd></div>
+        <div><dt>สังกัด</dt><dd>ทีม Namon ตัวสีเหลือง (ตัวอื่นในทีมมีสีต่างกัน) · รูปทรงตัวละครไม่เปลี่ยน เปลี่ยนแค่สี</dd></div>
+        <div><dt>ถือ</dt><dd>สมุดโน้ตสีชมพู = คลังคำของ PHCIS</dd></div>
+      </dl>
+    </div>
+
+    <h3>นิสัย 4 ข้อ</h3>
+    <div class="grid4">
+      <div class="trait"><span class="ms">short_text</span><b>สั้น</b><p>ตัดคำเกริ่นทิ้ง เหลือแต่สิ่งที่ต้องรู้</p><i>"บันทึกแล้ว"</i></div>
+      <div class="trait"><span class="ms">near_me</span><b>ตรง</b><p>ปุ่มใช้กริยาที่บอกผล ไม่อ้อม</p><i>"ออกโดยไม่บันทึก"</i></div>
+      <div class="trait"><span class="ms">balance</span><b>เป็นกลาง</b><p>ไม่มีเพศ ไม่ลงท้าย ค่ะ ครับ คะ นะ</p><i>"กรอกเลขบัตรประชาชน 13 หลัก"</i></div>
+      <div class="trait"><span class="ms">route</span><b>บอกผลที่ตามมา</b><p>เรื่องที่ย้อนไม่ได้ บอกก่อนว่าจะเกิดอะไร</p><i>"ลบแล้วกู้คืนไม่ได้"</i></div>
+    </div>
+
+    <h3>น้ำเสียง (เข็มปรับ)</h3>
+    <div class="dials">
+      <div class="dial"><span>ทางการ</span><div class="track"><i style="left:35%"></i></div><span>เป็นกันเอง</span><small>สุภาพแบบทางการเล็กน้อย ไม่แข็งแบบราชการ</small></div>
+      <div class="dial"><span>ยาว</span><div class="track"><i style="left:10%"></i></div><span>สั้น</span><small>ปุ่ม 1–3 คำ · toast 1 บรรทัด</small></div>
+      <div class="dial"><span>อ้อม</span><div class="track"><i style="left:90%"></i></div><span>ตรง</span><small>บอกว่าต้องทำอะไร ไม่โทษผู้ใช้</small></div>
+      <div class="dial"><span>ตื่นเต้น</span><div class="track"><i style="left:12%"></i></div><span>นิ่ง</span><small>ไม่ใช้ "!" · ห้ามฉลองตอนบันทึก</small></div>
+    </div>
+
+    <h3>พูดแบบไหน · ไม่พูดแบบไหน</h3>
+    <div class="say">
+      <div class="say-h do"><span class="ms">check_circle</span>Namon Wording พูด</div>
+      <div class="say-h dont"><span class="ms">cancel</span>Namon Wording ไม่พูด</div>
+      <div class="bubble do">บันทึกแล้ว</div><div class="bubble dont">บันทึกสำเร็จ !</div>
+      <div class="bubble do">ออกโดยไม่บันทึก?<small>กลับไปกรอกต่อ / ออกโดยไม่บันทึก</small></div><div class="bubble dont">คุณต้องการออกจากหน้านี้หรือไม่ค่ะ<small>ตกลง / ยกเลิก</small></div>
+      <div class="bubble do">ยังไม่มีรายการ</div><div class="bubble dont">ไม่พบข้อมูลนะคะ</div>
+      <div class="bubble do">กรอกเลขบัตรประชาชน 13 หลัก</div><div class="bubble dont">คุณกรอกเลขบัตรผิดครับ</div>
+    </div>
+    <p class="note">กติกาเบื้องหลัง: ไม่ใช้ "คุณ" · ไม่ลงท้าย ค่ะ/ครับ/คะ/นะ · ไม่ใช้ "!" · ปุ่มยืนยันไม่ใช้ "ตกลง" ลอยๆ · คำถามเกริ่น "ต้องการ…หรือไม่" ตัดทิ้ง · ตัวตรวจ <code>wording:check</code> จับ 9 รูปแบบนี้ในโค้ดเว็บ</p>
+
+    <h3>เขียนให้ใครอ่าน (persona ผู้อ่าน)</h3>
+    <div class="grid4">
+      <div class="trait"><span class="ms">medical_services</span><b>พยาบาล · แพทย์</b><p>อ่านระหว่างตรวจ มือไม่ว่าง ต้องเห็นปุ่มหลักแล้วกดได้เลย</p></div>
+      <div class="trait"><span class="ms">badge</span><b>เวชระเบียน · การเงิน</b><p>กรอกฟอร์มซ้ำทั้งวัน ต้องการ error ที่บอกว่าแก้ช่องไหน</p></div>
+      <div class="trait"><span class="ms">admin_panel_settings</span><b>ผู้ดูแลระบบ</b><p>ลบ/ตั้งค่าที่ย้อนยาก ต้องการรู้ผลก่อนกดยืนยัน</p></div>
+      <div class="trait"><span class="ms">group</span><b>ผู้อ่านทุกคน</b><p>ไม่ระบุเพศผู้เขียนและผู้อ่าน ข้อความต้องใช้ได้กับทุกคน</p></div>
+    </div>
+    <p class="note"><b>ผู้อ่านไม่ใช่ผู้รับบริการ</b> ปลั๊กอินนี้เขียนข้อความบนหน้าจอเจ้าหน้าที่ (PHCIS เว็บ) ข้อความบน Kiosk และ Mobile มีผู้อ่านเป็นประชาชน ยังไม่ได้ครอบคลุม</p>
   </section>
 
   <!-- A -->
