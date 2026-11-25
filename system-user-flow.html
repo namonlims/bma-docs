@@ -69,25 +69,32 @@
   .toc {
     position: sticky; top: 0; z-index: 5;
     margin: 0 calc(-1 * var(--dim-space-600, 24px));
-    padding: var(--dim-space-200, 8px) var(--dim-space-600, 24px);
+    padding: 0 var(--dim-space-600, 24px);
     background: var(--surface-card-100, #FFFFFF);
     border-bottom: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
-    display: flex; gap: var(--dim-space-200, 8px);
+    display: flex; gap: var(--dim-space-0, 0);
     overflow-x: auto; scrollbar-width: none;
   }
   .toc::-webkit-scrollbar { display: none; }
+  /* Underline tab (ตาม TabUnderline) — เส้นใต้ 4px ยื่นพ้นข้อความ · ตัวที่เลือก = เขียวแบรนด์ */
   .toc a {
-    flex: 0 0 auto;
+    position: relative; flex: 0 0 auto;
     display: inline-flex; align-items: center;
     min-height: var(--dim-size-900, 44px);
-    padding: 0 var(--dim-space-400, 16px);
-    border-radius: var(--dim-radius-full, 9999px);
-    background: var(--surface-card-100, #FFFFFF);
-    border: var(--dim-stroke-100, 1px) solid var(--border-neutral-tertiary, #E2E4E6);
-    color: var(--text-content-default, #363B3F);
+    padding: 0 var(--dim-space-500, 20px);
+    color: var(--text-tabunderline-default, #4D5358);
+    font-weight: var(--type-weight-medium, 500);
     text-decoration: none; white-space: nowrap;
   }
-  .toc a:hover { border-color: var(--border-brandPrimary-tertiary, #C5EDDA); color: var(--text-brandPrimary-default, #007549); }
+  .toc a::after {
+    content: ''; position: absolute; left: var(--dim-space-300, 12px); right: var(--dim-space-300, 12px); bottom: calc(-1 * var(--dim-stroke-100, 1px));
+    height: var(--dim-stroke-400, 4px); border-radius: 2px 2px 0 0;
+    background: var(--text-tabunderline-selected, #007549);
+    transform: scaleX(0.001); transition: transform 280ms cubic-bezier(.2, 0, 0, 1);
+  }
+  .toc a:hover { color: var(--text-tabunderline-hover, #08A768); }
+  .toc a[aria-current="true"] { color: var(--text-tabunderline-selected, #007549); }
+  .toc a[aria-current="true"]::after { transform: scaleX(1); }
 
   .sec { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
   .sec-head p { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
@@ -498,7 +505,7 @@
   /* responsive */
   @media (max-width: 767px) {
     .page { padding: var(--dim-space-400, 16px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); gap: var(--dim-space-600, 24px); }
-    .toc { margin: 0 calc(-1 * var(--dim-space-400, 16px)); padding: var(--dim-space-200, 8px) var(--dim-space-400, 16px); }
+    .toc { margin: 0 calc(-1 * var(--dim-space-400, 16px)); padding: 0 var(--dim-space-400, 16px); }
     .panel { padding: var(--dim-space-400, 16px); }
     .detail {
       top: auto; left: 0; width: auto; max-height: min(80dvh, 640px);
@@ -524,7 +531,6 @@
 <body>
 <main class="page">
   <header>
-    <a class="back" href="https://namonlims.github.io/bma-docs/"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>หน้ารวมเอกสาร</a>
     <h1>User flow · Service Design ทั้งระบบ PHCIS</h1>
     <p class="lede">เส้นทางผู้รับบริการ 1 ครั้ง ตั้งแต่ Kiosk ถึงกลับบ้าน พร้อมเงื่อนไขทุกจุดแยกทาง ให้ทีมเห็นภาพเดียวกัน กดกล่องเพื่อดูหน้า บทบาท และปุ่มสุดท้าย</p>
     <div class="meta">
@@ -2432,6 +2438,26 @@ document.getElementById('cond-body').innerHTML = COND.map(([g, rows]) =>
 ).join('');
 document.getElementById('clinic-body').innerHTML = CLIN.map((r) =>
   `<tr><td><b>${esc(r[0])}</b></td><td class="c">${esc(r[1])}</td><td class="c">${esc(r[2])}</td><td>${esc(r[3])}</td><td>${esc(r[4])}</td><td class="c">${esc(r[5])}</td><td>${esc(r[6])}</td></tr>`).join('');
+</script>
+<script>
+/* แถบหัวข้อ underline: ทำเครื่องหมายหัวข้อที่กำลังอ่านอยู่ (scroll-spy) + เลื่อนแท็บให้อยู่ในจอ */
+(function () {
+  var links = [].slice.call(document.querySelectorAll('.toc a'));
+  var secs = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var cur = -1;
+  function set(i) {
+    if (i === cur) return; cur = i;
+    links.forEach(function (a, k) { if (k === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    var a = links[i], bar = a && a.parentNode;
+    if (bar && bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: a.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
+  }
+  function onScroll() {
+    var line = 120, idx = 0;
+    secs.forEach(function (s, k) { if (s && s.getBoundingClientRect().top <= line) idx = k; });
+    set(idx);
+  }
+  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll); onScroll();
+})();
 </script>
 </body>
 </html>
