@@ -153,7 +153,7 @@ export function rewrite(html, rows, results, hashes, at) {
     s = s.replace(/^<div class="row"[^>]*>/, `<div class="row" data-at="${r.at || at}">`).replace(/(<span class="chip [^"]*">[^<]*<\/span>)(?:<span class="cnt">[^<]*<\/span>)?<\/div>/, `$1<span class="cnt">ถ่าย ${thaiDate(r.at || at)}</span></div>`)
     html = html.replace(row.all, () => s)
   }
-  return html.replace(/ถ่าย \d+ [^ ]+ \d{4}(?: \d\d:\d\d น\.)?/, `ถ่าย ${thaiDate(at, true)} ${bkk(at).toISOString().slice(11, 16)} น.`)
+  return html.replace(/(?:ถ่าย|อัปเดตล่าสุด) \d+ [^ ]+ \d{4}(?: \d\d:\d\d น\.)?/, `อัปเดตล่าสุด ${thaiDate(at, true)} ${bkk(at).toISOString().slice(11, 16)} น.`)
 }
 
 // ───────── งานหลัก (ทีละงาน) ─────────
@@ -237,7 +237,7 @@ export function createScreens({ cfg, dataDir }) {
         if (!rows.length) throw new Error('ไม่พบหน้าที่เลือกใน screens-latest.html')
         for (const r of rows) for (const [w] of WIDTHS) { const k = `${r.slug}-${w}`, b = readFileSync(join(shots, k + '.jpg')); writeFileSync(join(dir, k + '.jpg'), b); hashes[k] = createHash('sha1').update(b).digest('hex').slice(0, 8) }
         const now = rewrite(h, rows, results, hashes, at); writeFileSync(page, now)
-        const idx = join(docs, 'index.html'); writeFileSync(idx, readFileSync(idx, 'utf8').replace(/(แยกตามคลินิก\/ระบบงาน · ถ่าย )\d+ [^ ]+ \d+/g, `$1${thaiDate(at)}`))
+        const idx = join(docs, 'index.html'); writeFileSync(idx, readFileSync(idx, 'utf8').replace(/(แยกตามคลินิก\/ระบบงาน · )(?:ถ่าย|อัปเดตล่าสุด) \d+ [^ ]+ \d+/g, `$1อัปเดตล่าสุด ${thaiDate(at)}`))
         for (const d of readdirSync(join(docs, 'tor-shots')).filter((x) => /^screens-\d{4}-\d\d-\d\d$/.test(x))) for (const f of readdirSync(join(docs, 'tor-shots', d))) if (!now.includes(`${d}/${f}`)) rmSync(join(docs, 'tor-shots', d, f))
       }
       const msg = `ภาพหน้าจอปัจจุบัน: อัปเดต ${n} หน้า × 4 ขนาด จากโค้ด ${commit} (${thaiDate(at)})`
