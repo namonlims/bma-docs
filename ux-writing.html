@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UX writing · ปลั๊กอิน Figma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<script src="docs-frame.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100dvh;
+    background: var(--surface-card-100, #FFFFFF);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    line-height: 1.55;
+  }
+  .ms { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 20px; line-height: 1; user-select: none; font-weight: normal; font-style: normal; display: inline-block; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 0.92em; background: var(--surface-neutral-quaternary, #F5F7F9); padding: 1px 6px; border-radius: var(--dim-radius-100, 4px); overflow-wrap: anywhere; }
+  h1, h2, h3 { margin: 0; font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); text-wrap: balance; }
+  h1 { font-size: var(--type-size-2xl, 24px); }
+  h2 { font-size: var(--type-size-lg, 18px); }
+  h3 { font-size: var(--type-size-base, 16px); color: var(--text-content-default, #363B3F); }
+  p { margin: 0; }
+  .page { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--dim-space-800, 32px); padding: var(--dim-space-600, 24px) var(--dim-space-400, 16px) var(--dim-space-1200, 48px); }
+  .sec { display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .sec-head p { color: var(--text-content-secondary, #636B72); margin-top: var(--dim-space-100, 4px); }
+
+  /* hero */
+  .hero { display: flex; gap: var(--dim-space-500, 20px); align-items: center; flex-wrap: wrap; padding: var(--dim-space-500, 20px); border-radius: var(--dim-radius-400, 12px); background: var(--surface-brandPrimary-quaternary, #F4FBF8); border: 1px solid var(--border-neutral-quaternary, #F4F5F5); }
+  .hero img { width: 96px; height: 96px; object-fit: contain; flex: 0 0 auto; }
+  .hero-body { flex: 1 1 280px; display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .hero-body p { color: var(--text-content-secondary, #636B72); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px); }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 0 var(--dim-space-200, 8px); border-radius: var(--dim-radius-full, 9999px); font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500); line-height: 1.8; background: var(--surface-colorfulbadge-green, #E2F3EB); color: var(--text-colorfulbadge-green, #007549); white-space: nowrap; }
+  .chip.grey { background: var(--surface-colorfulbadge-grey, #F5F7F9); color: var(--text-colorfulbadge-grey, #4D5358); }
+  .chip.warn { background: var(--surface-colorfulbadge-orange, #FFF1E0); color: var(--text-colorfulbadge-orange, #B45309); }
+
+  /* pipeline (A) */
+  .pipe { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: var(--dim-space-300, 12px); align-items: stretch; }
+  .box { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); padding: var(--dim-space-400, 16px); border: 1px solid var(--border-neutral-tertiary, #E4E7EA); border-radius: var(--dim-radius-300, 10px); background: var(--surface-card-100, #fff); min-width: 0; }
+  .box.out { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  .box h3 { display: flex; align-items: center; gap: var(--dim-space-200, 8px); }
+  .box ul { margin: 0; padding-left: var(--dim-space-500, 20px); color: var(--text-content-secondary, #636B72); }
+  .box li + li { margin-top: 2px; }
+  .arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-brandPrimary-default, #007549); text-align: center; font-size: var(--type-size-xs, 12px); }
+  .arrow .ms { font-size: 28px; }
+  .note { padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px); border-radius: var(--dim-radius-300, 10px); background: var(--surface-neutral-quaternary, #F5F7F9); color: var(--text-content-secondary, #636B72); }
+
+  /* data flow (B) */
+  .lanes { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--dim-space-200, 8px); }
+  .lane { text-align: center; padding: var(--dim-space-200, 8px); border-radius: var(--dim-radius-300, 10px); font-weight: var(--type-weight-medium, 500); font-size: var(--type-size-xs, 12px); background: var(--surface-neutral-quaternary, #F5F7F9); }
+  .lane small { display: block; font-weight: normal; color: var(--text-content-secondary, #636B72); }
+  .lane.l-user { background: #E8F1FB; } .lane.l-ui { background: var(--surface-colorfulbadge-green, #E2F3EB); }
+  .lane.l-main { background: #FFF4DB; } .lane.l-api { background: #F1E8FB; }
+  .steps { display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); counter-reset: s; }
+  .step { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--dim-space-200, 8px); align-items: stretch; }
+  .step .cell { min-width: 0; }
+  .step .card { grid-column: var(--c, 1) / span var(--w, 1); display: flex; gap: var(--dim-space-200, 8px); align-items: flex-start; padding: var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 10px); border: 1px solid var(--border-neutral-tertiary, #E4E7EA); background: var(--surface-card-100, #fff); counter-increment: s; min-width: 0; }
+  .step .card::before { content: counter(s); flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--surface-brandPrimary-default, #007549); color: #fff; }
+  .step .card p { color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .step .card b { display: block; color: var(--text-content-default, #363B3F); font-size: var(--type-size-sm, 14px); }
+  .step .card.ext { border-color: var(--border-colorfulbadge-orange, #F59E0B); background: #FFF8EC; }
+  .step .card.ret { border-style: dashed; }
+  .gate { display: flex; gap: var(--dim-space-200, 8px); align-items: center; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 10px); background: #FFF8EC; border: 1px dashed #F59E0B; font-size: var(--type-size-xs, 12px); color: #8A5300; }
+
+  /* tables / grids */
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--dim-space-300, 12px); }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--dim-space-300, 12px); }
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--border-neutral-tertiary, #E4E7EA); border-radius: var(--dim-radius-300, 10px); }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  th, td { text-align: left; padding: var(--dim-space-200, 8px) var(--dim-space-300, 12px); border-bottom: 1px solid var(--border-neutral-quaternary, #F4F5F5); vertical-align: top; }
+  th { background: var(--surface-neutral-quaternary, #F5F7F9); font-weight: var(--type-weight-medium, 500); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  tr:last-child td { border-bottom: 0; }
+  .ok { color: var(--text-colorfulbadge-green, #007549); font-weight: 500; }
+  .no { color: #B45309; font-weight: 500; }
+  ol.how { margin: 0; padding-left: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-200, 8px); }
+  .ba { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--dim-space-300, 12px); align-items: center; }
+  .ba .tx { padding: var(--dim-space-300, 12px); border-radius: var(--dim-radius-300, 10px); border: 1px solid var(--border-neutral-tertiary, #E4E7EA); }
+  .ba .tx small { display: block; color: var(--text-content-tertiary, #8A9096); font-size: var(--type-size-xs, 12px); }
+  .ba .tx.new { border-color: var(--border-brandPrimary-default, #007549); background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+
+  @media (max-width: 1023px) {
+    .grid3 { grid-template-columns: 1fr; }
+    .pipe { grid-template-columns: 1fr; }
+    .arrow { flex-direction: row; } .arrow .ms { transform: rotate(90deg); }
+  }
+  @media (max-width: 767px) {
+    .grid2, .ba { grid-template-columns: 1fr; }
+    .ba .ms { transform: rotate(90deg); justify-self: center; }
+    /* ขั้นตอนไหลเรียงลง: ซ่อนหัวเลน แต่ละการ์ดบอกเลนของตัวเองด้วยป้าย */
+    .lanes { display: none; }
+    .step { grid-template-columns: 1fr; }
+    .step .card { grid-column: 1; }
+    .step .card::after { content: attr(data-lane); order: 3; margin-left: auto; font-size: 11px; padding: 0 8px; border-radius: 9999px; background: var(--surface-neutral-quaternary, #F5F7F9); color: var(--text-content-secondary, #636B72); white-space: nowrap; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) body { background: #111614; color: #E8EEEB; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <section class="hero">
+    <img src="assets/ux-writing/namon-wording.png" alt="Namon Wording ตัวละครสีเหลืองถือปากกา" width="96" height="96" />
+    <div class="hero-body">
+      <h1>UX writing · ปลั๊กอิน Figma</h1>
+      <p>เลือกเฟรม UI ใน Figma แล้วกด Generate ปลั๊กอินจะอ่านข้อความทุกจุด จัดประเภท (ปุ่ม · ป๊อปอัป · แท็บ · ว่าง · toast) แล้วเสนอข้อความใหม่ตามกติกา UX writing ของ PHCIS ให้เทียบก่อนกด "นำไปใช้" ทีละข้อ</p>
+      <div class="chips">
+        <span class="chip">น้ำเสียงไม่มีเพศ</span>
+        <span class="chip">กติกาเดียวกับเว็บ</span>
+        <span class="chip grey">ตรวจในเครื่อง · ไม่ส่งออก</span>
+        <span class="chip warn">Generate ส่ง Claude API เมื่อกดยืนยัน</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- A -->
+  <section class="sec" id="build">
+    <div class="sec-head">
+      <h2>A · ปลั๊กอินถูกสร้างยังไง</h2>
+      <p>กติกามีที่เดียว แก้แล้วสั่ง build ปลั๊กอินกับตัวตรวจคำบนเว็บได้กติกาเดียวกันเสมอ</p>
+    </div>
+    <div class="pipe">
+      <div class="box">
+        <h3><span class="ms">menu_book</span>ต้นทางกติกา</h3>
+        <ul>
+          <li><code>.claude/rules/ux-writing.md</code> (ฉบับย่อ ~9.4K ตัวอักษร)</li>
+          <li><code>docs/agents/ui-glossary.json</code> (คำที่ต้องเลี่ยง → คำที่ใช้)</li>
+          <li><code>src/rules.js</code> · <code>code.template.js</code> · <code>ui.template.html</code></li>
+          <li>รูป Namon Wording</li>
+        </ul>
+      </div>
+      <div class="arrow"><span class="ms">arrow_forward</span><code>npm run figma:uxw:build</code></div>
+      <div class="box">
+        <h3><span class="ms">build</span>ตัวสร้าง</h3>
+        <ul>
+          <li><code>scripts/figma/ux-writing-plugin-build.mjs</code></li>
+          <li>ฝังกติกา + คลังคำลงใน <code>code.js</code></li>
+          <li>ฝังรูปเป็น base64 ใน <code>ui.html</code></li>
+          <li><code>--check</code> = เช็กว่าไฟล์ที่ generate ตรงต้นทาง</li>
+        </ul>
+      </div>
+      <div class="arrow"><span class="ms">arrow_forward</span>Import ใน Figma</div>
+      <div class="box out">
+        <h3><span class="ms">extension</span>ไฟล์ที่ Figma อ่าน</h3>
+        <ul>
+          <li><code>manifest.json</code> (ขอเครือข่ายเฉพาะ api.anthropic.com)</li>
+          <li><code>code.js</code> = ฝั่ง main อ่านเลเยอร์</li>
+          <li><code>ui.html</code> = หน้าต่างปลั๊กอิน</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note"><b>ห้ามแก้ <code>code.js</code> / <code>ui.html</code> ตรง</b> เพราะเป็นไฟล์ generate ให้แก้ที่ <code>src/</code> หรือกติกาต้นทาง แล้ว build ใหม่ ตัวตรวจ <code>npm run wording:check</code> ในเว็บอ่านคลังคำเดียวกัน</p>
+  </section>
+
+  <!-- B -->
+  <section class="sec" id="flow">
+    <div class="sec-head">
+      <h2>B · ข้อมูลไหลตอนกด Generate</h2>
+      <p>ปลั๊กอินมี 2 ฝั่งที่คุยกันด้วยข้อความ: <b>main</b> อ่าน/แก้เลเยอร์ได้แต่ไม่มีหน้าจอ · <b>UI</b> มีหน้าจอแต่แตะเลเยอร์ไม่ได้ · ตัวเลขตรงกับขั้นตอนด้านล่าง</p>
+    </div>
+    <div class="lanes" aria-hidden="true">
+      <div class="lane l-user">คุณ<small>ใน Figma</small></div>
+      <div class="lane l-ui">หน้าต่างปลั๊กอิน<small>ui.html</small></div>
+      <div class="lane l-main">main<small>code.js · อ่านเลเยอร์</small></div>
+      <div class="lane l-api">Claude API<small>นอกเครื่อง</small></div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="card" style="--c:1" data-lane="คุณ"><div><b>เลือกเฟรม แล้วกด Generate</b><p>เลือกได้หลายเฟรม ปลั๊กอินแสดงจำนวนที่เลือก</p></div></div></div>
+      <div class="step"><div class="card" style="--c:2" data-lane="UI"><div><b>ส่งคำสั่ง <code>generate</code> ไปฝั่ง main</b><p>ถ้ายังไม่มี API key จะให้ใส่ key ก่อน (เก็บในเครื่อง)</p></div></div></div>
+      <div class="step"><div class="card" style="--c:3" data-lane="main"><div><b>เก็บข้อความ + จัดประเภท</b><p>ไล่เลเยอร์ อ่านข้อความและชื่อเลเยอร์ จัดเป็น ปุ่ม / ป๊อปอัป / แท็บ / ว่าง / toast</p></div></div></div>
+      <div class="step"><div class="card" style="--c:3" data-lane="main"><div><b>กรองข้อมูลบุคคล</b><p>HN · เลข 13 หลัก · เบอร์โทร · ชื่อ+คำนำหน้า <b class="no">ไม่ถูกส่ง</b> แจ้งจำนวนที่ข้าม</p></div></div></div>
+      <div class="step"><div class="card" style="--c:2" data-lane="UI"><div><b>หน้าต่างยืนยันก่อนส่ง</b><p>บอกจำนวนข้อความ + ปลายทาง (api.anthropic.com) · มีคำเตือนห้ามใช้กับเฟรมที่มีข้อมูลผู้รับบริการจริง</p></div></div></div>
+      <div class="step"><div class="card" style="--c:1" data-lane="คุณ"><div><b>กดยืนยัน</b><p>ถ้าไม่ยืนยัน ไม่มีอะไรออกนอกเครื่อง</p></div></div></div>
+      <div class="step"><div class="card ext" style="--c:3; --w:2" data-lane="main → API"><div><b>ส่งเป็นชุด ชุดละ 30 ข้อความ</b><p>เฉพาะ ข้อความ + ประเภท + ชื่อเลเยอร์ ไม่ส่งภาพ · system prompt = กติกา + คลังคำ (ใช้ prompt caching)</p></div></div></div>
+      <div class="step"><div class="card ret" style="--c:4" data-lane="API"><div><b>ตอบเป็น JSON</b><p>รายการ {ข้อความเดิม, ข้อความใหม่, เหตุผล}</p></div></div></div>
+      <div class="step"><div class="card" style="--c:3" data-lane="main"><div><b>ตรวจซ้ำด้วยกติกาในเครื่อง</b><p>กันคำที่ผิดกติกาหลุดมา เช่น "ค่ะ" "คุณ" ท้ายประโยคคำถามเกริ่น · ถ้า API ล้มเหลวใช้ผลกติกาในเครื่องแทน</p></div></div></div>
+      <div class="step"><div class="card" style="--c:2" data-lane="UI"><div><b>ตารางเทียบ เก่า → ใหม่</b><p>ป้าย AI · เหตุผลแต่ละข้อ · เลือกเฟรมที่เกี่ยวข้องได้</p></div></div></div>
+      <div class="step"><div class="card" style="--c:1" data-lane="คุณ"><div><b>กด "นำไปใช้" ทีละข้อ</b><p>ไม่มีอะไรถูกแก้จนกว่าจะกดเอง</p></div></div></div>
+      <div class="step"><div class="card" style="--c:3" data-lane="main"><div><b>เขียนข้อความใหม่ลงเลเยอร์</b><p>โหลดฟอนต์ของเลเยอร์ก่อนแล้วจึงแก้ข้อความ</p></div></div></div>
+    </div>
+    <div class="gate"><span class="ms">shield_lock</span>ขอบเขตข้อมูล: ออกนอกเครื่องแค่ขั้นที่ 7 และเฉพาะหลังกดยืนยัน · ข้อความที่ดูเหมือนข้อมูลบุคคลถูกกรองทิ้งตั้งแต่ขั้นที่ 4 · API key อยู่ใน Figma clientStorage ของเครื่องคุณ ไม่อยู่ใน repo</div>
+  </section>
+
+  <!-- ตัวอย่าง -->
+  <section class="sec" id="example">
+    <div class="sec-head">
+      <h2>ตัวอย่างผลที่ได้</h2>
+      <p>รูปแบบที่ปลั๊กอินเสนอ (ตัวอย่างจากกติกา ไม่ใช่ผลรันจริงของ Claude)</p>
+    </div>
+    <div class="grid2">
+      <div class="ba"><div class="tx"><small>ป๊อปอัปออกจากหน้า · เดิม</small>คุณต้องการออกจากหน้านี้หรือไม่ ?<br>[ ตกลง ] [ ยกเลิก ]</div><span class="ms">arrow_forward</span><div class="tx new"><small>ใหม่</small>ออกโดยไม่บันทึก?<br>[ กลับไปกรอกต่อ ] [ ออกโดยไม่บันทึก ]</div></div>
+      <div class="ba"><div class="tx"><small>toast · เดิม</small>บันทึกสำเร็จ !</div><span class="ms">arrow_forward</span><div class="tx new"><small>ใหม่</small>บันทึกแล้ว</div></div>
+    </div>
+  </section>
+
+  <!-- ใช้งาน -->
+  <section class="sec" id="use">
+    <div class="sec-head"><h2>C · ใช้งานยังไง</h2></div>
+    <div class="grid2">
+      <div class="box">
+        <h3><span class="ms">install_desktop</span>ติดตั้งครั้งแรก</h3>
+        <ol class="how">
+          <li>เปิด Figma desktop → Plugins → Development → <b>Import plugin from manifest…</b></li>
+          <li>เลือก <code>figma/plugin-ux-writing/manifest.json</code> (หรือสำเนาบน Desktop)</li>
+          <li>manifest เปลี่ยนเมื่อเพิ่ม Claude API → ถ้าเคย import ไว้ ให้ลบแล้ว import ใหม่</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3><span class="ms">play_circle</span>ใช้ทุกครั้ง</h3>
+        <ol class="how">
+          <li>เลือกเฟรม UI → เปิด Plugins → Development → <b>PHCIS · UX writing</b></li>
+          <li>ปุ่ม <b>API key</b> → วาง key (สร้างที่ console.anthropic.com) ครั้งเดียว</li>
+          <li><b>Generate UX writing</b> → ยืนยัน → ดูตาราง → นำไปใช้</li>
+          <li>ไม่อยากส่งออกนอกเครื่อง ใช้ <b>ตรวจกติกาอย่างเดียว</b></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 โหมด -->
+  <section class="sec" id="modes">
+    <div class="sec-head"><h2>2 โหมด เทียบกัน</h2></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>ตรวจกติกาอย่างเดียว</th><th>Generate UX writing (Claude)</th></tr></thead>
+        <tbody>
+          <tr><td>ทำอะไร</td><td>จับข้อความที่ผิดกติกาและแก้ตามคลังคำ</td><td>เขียนข้อความใหม่ทั้งชุดตามกติกาและบริบทของปุ่ม/ป๊อปอัป</td></tr>
+          <tr><td>ข้อความที่ไม่ผิดกติกา</td><td class="no">ผ่านไปเฉยๆ ไม่เขียนใหม่</td><td class="ok">เสนอข้อความที่ดีกว่าได้</td></tr>
+          <tr><td>ออกนอกเครื่อง</td><td class="ok">ไม่</td><td class="no">ใช่ เมื่อกดยืนยัน (api.anthropic.com)</td></tr>
+          <tr><td>ต้องมี API key</td><td>ไม่ต้อง</td><td>ต้อง · ค่าใช้จ่ายคิดตาม key ของคุณ</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- สถานะ -->
+  <section class="sec" id="status">
+    <div class="sec-head"><h2>สถานะ ณ 25 พ.ย. 69</h2></div>
+    <div class="grid3">
+      <div class="box out"><h3><span class="ms">check_circle</span>ใช้ได้แล้ว</h3><ul><li>ปลั๊กอินอยู่ใน main (PR #1067 · #1068 · #1069)</li><li>โหมดตรวจกติกา ลองใน Figma จริงแล้ว</li><li>ทดสอบอัตโนมัติผ่านครบ (กติกา · main · โฟลว์ AI จำลอง)</li></ul></div>
+      <div class="box"><h3><span class="ms">help</span>ยังไม่ได้ตรวจ</h3><ul><li>ยังไม่เรียก Claude API จริง</li><li>ยังไม่รัน Generate ใน Figma จริง (เรียก fetch จาก main ยังไม่ยืนยัน)</li><li>คุณภาพข้อความที่ Claude เขียน ต้องดูตัวอย่างจริง</li></ul></div>
+      <div class="box"><h3><span class="ms">pending</span>ที่เหลือ</h3><ul><li><code>manifest.id</code> ยังเป็นค่าชั่วคราว (ใช้ Import ทดสอบได้)</li><li>ตรวจป๊อปอัปยืนยันลบ ~20 จุด + toast บางหน้าบนเว็บ</li></ul></div>
+    </div>
+  </section>
+
+  <!-- pattern -->
+  <section class="sec" id="rules">
+    <div class="sec-head">
+      <h2>กติกาที่ปลั๊กอินใช้ (ย่อ)</h2>
+      <p>ฉบับเต็ม: <code>.claude/rules/ux-writing.md</code> · เสียงกลาง ไม่ระบุเพศ ไม่ลงท้าย ค่ะ/ครับ/คะ/นะ</p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>พื้นที่</th><th>รูปแบบ</th><th>ตัวอย่าง</th></tr></thead>
+        <tbody>
+          <tr><td>ปุ่ม</td><td>กริยาสั้น บอกผลที่จะเกิด</td><td>บันทึก · ส่งต่อ · ลบรายการ</td></tr>
+          <tr><td>ป๊อปอัปยืนยัน</td><td>หัวข้อเป็นประโยคคำถามสั้น + คำอธิบายบอกผลที่ตามมา</td><td>ออกโดยไม่บันทึก? · กลับไปกรอกต่อ / ออกโดยไม่บันทึก</td></tr>
+          <tr><td>ตาราง</td><td>หัวคอลัมน์ชื่อสั้น · คอลัมน์ปุ่มชื่อ "การดำเนินการ"</td><td>การดำเนินการ</td></tr>
+          <tr><td>ว่าง</td><td>บอกว่าไม่มีอะไร + ทำอะไรต่อได้</td><td>ยังไม่มีรายการ</td></tr>
+          <tr><td>Toast</td><td>ผลลัพธ์ จบด้วย "แล้ว" ไม่มีเครื่องหมายตกใจ</td><td>บันทึกแล้ว · เพิ่มแผนกแล้ว</td></tr>
+          <tr><td>ฟอร์ม / error</td><td>บอกว่าต้องแก้อะไร ไม่โทษผู้ใช้</td><td>กรอกเลขบัตรประชาชน 13 หลัก</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">ที่มา: PR #1050 #1052 #1056 #1057 #1059 #1060 #1062 #1065 (กติกา + ตัวตรวจ + sweep เว็บ · สแกน <code>src</code> เหลือ 0 จุด) และ #1067 #1068 #1069 (ปลั๊กอิน) · โค้ดอยู่ที่ <code>figma/plugin-ux-writing/</code> ใน repo bma.health</p>
+  </section>
+
+</main>
+</body>
+</html>
