@@ -196,7 +196,7 @@
   .scrim { display: none; }
   /* hover: สรุปสั้นของกล่อง (title → 1 บรรทัด → กลุ่ม label/value) · กดกล่อง = ดูทั้งหมด */
   .tip {
-    position: fixed; z-index: 30; pointer-events: none;
+    position: fixed; z-index: 30; pointer-events: none; overflow: hidden;
     width: max-content; max-width: min(360px, calc(100vw - 32px));
     display: flex; flex-direction: column; gap: var(--dim-space-200, 8px);
     padding: var(--dim-space-300, 12px) var(--dim-space-400, 16px);
@@ -1017,7 +1017,7 @@ function render() {
     el.dataset.key = type === 'cust' ? n.ofs[0] : id; el.id = 'node-' + id;
     el.style.left = cx(id) - w / 2 + 'px'; el.style.top = cy(id) - h / 2 + 'px';
     el.style.width = w + 'px'; el.style.height = h + 'px';
-    const more = type === 'group' ? `<span class="more"><span class="material-symbols-outlined" aria-hidden="true">unfold_more</span>ขยาย ${n.children.length} ขั้น</span>` : '';
+    const more = type === 'group' ? `<span class="more"><span class="material-symbols-outlined" aria-hidden="true">unfold_more</span>ขยายเพื่อดูเพิ่ม</span>` : '';
     el.innerHTML = `<span class="lbl">${n.n ? `<span class="tag">${esc(n.n)}</span>` : ''}${esc(n.t)}${more}</span>`;
     el.setAttribute('aria-label', type === 'cust' ? `ผู้รับบริการ: ${n.t} — ดูรายละเอียดจุดบริการ` : `${n.n ? n.n + ' ' : ''}${n.t}${type === 'group' ? ' — กดเพื่อขยาย' : ' — ดูรายละเอียด'}`);
     if (type === 'group') el.setAttribute('aria-expanded', 'false');
@@ -1175,10 +1175,33 @@ function tipShow(el) {
   if (!matchMedia('(hover: hover)').matches && !el.matches(':focus-visible')) return;
   const html = tipHtml(el.id.slice(5)); if (!html) return tipHide();
   tip.innerHTML = html;
-  const r = el.getBoundingClientRect(), t = tip.getBoundingClientRect(), m = 8;
-  let top = r.bottom + m; if (top + t.height > innerHeight - m) top = Math.max(m, r.top - t.height - m);
-  const left = Math.min(Math.max(m, r.left + r.width / 2 - t.width / 2), innerWidth - t.width - m);
-  tip.style.top = top + 'px'; tip.style.left = left + 'px';
+  /* ไม่ทับกล่องที่ชี้ (ผู้ใช้ 25 พ.ย. 69): ลองขวา · ซ้าย · ล่าง · บน แล้วเลือกจุดที่ทับกล่องอื่นน้อยที่สุด · ที่ไม่พอ = จำกัดความสูงในฝั่งที่ว่างที่สุด */
+  tip.style.maxHeight = '';
+  const r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, m = 8, g = 12;
+  const vx = (x) => Math.min(Math.max(m, x), innerWidth - w - m), vy = (y) => Math.min(Math.max(m, y), innerHeight - h - m);
+  const mx = r.left + r.width / 2 - w / 2, my = r.top + r.height / 2 - h / 2;
+  const others = [...box.querySelectorAll('.uf-node')].filter((n) => n !== el).map((n) => n.getBoundingClientRect());
+  const cand = [];
+  if (h <= innerHeight - m * 2) {
+    if (r.right + g + w <= innerWidth - m) [my, r.top, r.bottom - h].forEach((y) => cand.push([r.right + g, vy(y)]));
+    if (r.left - g - w >= m) [my, r.top, r.bottom - h].forEach((y) => cand.push([r.left - g - w, vy(y)]));
+  }
+  if (r.bottom + g + h <= innerHeight - m) [mx, r.left, r.right - w].forEach((x) => cand.push([vx(x), r.bottom + g]));
+  if (r.top - g - h >= m) [mx, r.left, r.right - w].forEach((x) => cand.push([vx(x), r.top - g - h]));
+  let best = null;
+  cand.forEach(([x, y]) => {
+    const c = others.reduce((a, o) => a + Math.max(0, Math.min(x + w, o.right) - Math.max(x, o.left)) * Math.max(0, Math.min(y + h, o.bottom) - Math.max(y, o.top)), 0);
+    if (!best || c < best.c - 1) best = { c, x, y };
+  });
+  if (!best) {
+    const right = innerWidth - r.right - g - m >= w, left = r.left - g - m >= w;
+    if (right || left) { tip.style.maxHeight = innerHeight - m * 2 + 'px'; best = { x: right ? r.right + g : r.left - g - w, y: m }; }
+    else {
+      const under = innerHeight - r.bottom, below = under >= r.top, room = Math.max(0, (below ? under : r.top) - g - m), hh = Math.min(h, room);
+      tip.style.maxHeight = room + 'px'; best = { x: vx(mx), y: below ? r.bottom + g : r.top - g - hh };
+    }
+  }
+  tip.style.top = best.y + 'px'; tip.style.left = best.x + 'px';
   el.setAttribute('aria-describedby', 'uf-tip');
   tip.classList.add('on');
 }
