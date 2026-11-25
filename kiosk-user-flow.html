@@ -451,7 +451,7 @@
   <p class="lede">เส้นทางผู้รับบริการที่ตู้บริการตนเอง 1080×1920 แนวตั้ง ตั้งแต่เสียบบัตรจนรับบัตรคิว/ใบเสร็จ แยกตามบริการที่เลือก กดกล่องเพื่อดูหน้าจอ (slug) และกลุ่มหน้าจอในโค้ด</p>
   <div class="meta">
     <span><b>อ้างอิง</b> src/pagesRegistry.tsx · src/flow.ts · design.md · .claude/rules · commit log</span>
-    <span><b>อัปเดต</b> <span id="upd">23 พ.ย. 69</span> (commit ล่าสุด 20 พ.ย. 69 · 5b11cde)</span>
+    <span><b>อัปเดต</b> <span id="upd">25 พ.ย. 69</span> (commit ล่าสุด 24 พ.ย. 69 · 43b4fe2)</span>
   </div>
 </header>
 <nav class="toc" aria-label="หัวข้อในหน้า">
@@ -514,7 +514,9 @@
         <dt>100px</dt><dd>เลขคิว</dd><dt>58 · 56</dt><dd>หัวข้อหน้าจอ</dd><dt>48</dt><dd>หัวข้อส่วน · ป้ายปุ่ม</dd><dt>40–24</dt><dd>เนื้อความ · caption</dd><dt>20–14</dt><dd>ใบคิว/ใบเสร็จที่พิมพ์</dd>
       </dl></div>
       <div class="grp"><span class="grp-h">Components</span><p style="margin:0">PrimaryButton · OutlineButton · OutlineSubduedButton · Card · Keypad/NumberKey · KioskShell · Header · IdNumberDisplay · PrintingScreen · LottieAsset</p></div>
-      <div class="grp"><span class="grp-h">หน้า Design system (DesignSystemPage)</span><p style="margin:0"><code>?mode=dark</code> สลับเฉพาะเปลือกหน้า (พื้นหลัง · หัวข้อ · คำอธิบาย) เป็นมืด ตัวอย่างคอมโพเนนต์วางบนแผ่น "จอ Kiosk" สีสว่าง เพราะจอ Kiosk จริงเป็นโหมดสว่างอย่างเดียว · ค่าเริ่มต้น/<code>?mode=light</code> = สว่าง (20 พ.ย. 69 · PR #11)</p></div></div>
+      <div class="grp"><span class="grp-h">หน้า Design system (DesignSystemPage)</span><p style="margin:0"><code>?mode=dark</code> สลับเฉพาะเปลือกหน้า (พื้นหลัง · หัวข้อ · คำอธิบาย) เป็นมืด ตัวอย่างคอมโพเนนต์วางบนแผ่น "จอ Kiosk" สีสว่าง เพราะจอ Kiosk จริงเป็นโหมดสว่างอย่างเดียว · ค่าเริ่มต้น/<code>?mode=light</code> = สว่าง (20 พ.ย. 69 · PR #11)</p></div>
+      <div class="grp"><span class="grp-h">จอและหัวจอ (KioskShell · Header)</span><p style="margin:0">KioskShell เป็นพื้นที่จอ 1080×1920 ตรง ๆ ไม่มีกรอบตู้ (bezel · กล้อง · ช่องบัตร · ขาตั้ง) แล้ว ทุกหน้าไม่ล้นจอ (ตรวจ 02c/15e: scrollW = 1080) · ความกว้างคงที่เดิมในหน้าต่าง ๆ เปลี่ยนเป็นเต็มความกว้าง · คีย์บอร์ดหนังสือเดินทางปุ่ม 80px ให้พอดี 920px · Header สูงอย่างน้อย 180px โตตามข้อความ ชื่อหน่วยงานตัดบรรทัดแทนการทับวันที่ (24 พ.ย. 69 · PR #15 #16 #19 #20)</p></div>
+      <div class="grp"><span class="grp-h">โหมด embed ของหน้า Design system</span><p style="margin:0"><code>?embed=1&amp;component=&lt;slug&gt;</code> แสดงเฉพาะส่วนของคอมโพเนนต์ที่เลือก ซ่อน Header และคำอธิบายหน้า (slug: kiosk-primary-button · kiosk-outline-button · kiosk-outline-subdued-button · kiosk-card · kiosk-number-key · kiosk-keypad · kiosk-tokens) · design.md เผยแพร่เป็นแท็บ Kiosk บนเว็บ design system ผ่าน CI (24 พ.ย. 69 · PR #13 #17 #21)</p></div></div>
     <div class="panel"><div class="card-h"><span class="ic material-symbols-outlined">hub</span><div><h3>เชื่อม 3 ระบบ</h3><p>.claude/rules/cross-product-journey.md</p></div></div>
       <div class="grp"><dl class="kv">
         <dt>ผู้ป่วยเดโม</dt><dd>นายสมชาย มีสุข · HN 67-00001 (ใช้ร่วม bma.health · bma.mobile)</dd>
@@ -765,6 +767,9 @@ const PAGES = [
 let g0=''; document.getElementById('scr-body').innerHTML = PAGES.map(([s,t,g])=>{ const used = Object.entries(FLOWS).filter(([k,f])=>f.flow.some(n=>n.s===s)).map(([k,f])=>`<span class="badge b-green">${esc(f.n)}</span>`).join(' ') || '<span class="badge b-grey">ยังไม่วางใน flow</span>';
   const h = g!==g0 ? `<tr class="gh"><td colspan="3">${g}</td></tr>` : ''; g0=g; return h+`<tr><td><code>/${s}</code></td><td>${esc(t)}</td><td>${used}</td></tr>`; }).join('');
 const LOG = [
+['24 พ.ย. 69','KioskShell: เอากรอบตู้ออก จอ 1080×1920 ไม่ล้น · ความกว้างคงที่เป็นเต็มจอ · คีย์บอร์ดหนังสือเดินทางปุ่ม 80px (PR #19 #20)'],
+['24 พ.ย. 69','Header: ชื่อหน่วยงานตัดบรรทัดไม่ทับวันที่ · สูงอย่างน้อย 180px (PR #15 #16)'],
+['24 พ.ย. 69','Design system: โหมด embed แสดงเฉพาะคอมโพเนนต์ที่เลือก · design.md ขยายครบและเผยแพร่เป็นแท็บ Kiosk (PR #13 #14 #17 #18 #21)'],
 ['20 พ.ย. 69','หน้า Design system: ?mode=dark สลับเปลือกหน้าเป็นมืด ตัวอย่างคอมโพเนนต์อยู่บนแผ่นจอ Kiosk สว่าง (PR #11)'],
 ['15 พ.ย. 69','เคสผู้มีสิทธิ สปสช. (บัตรทอง) สิทธิ์เดียว: เลขเดโม 5555555555555 → หน้าสิทธิ์ 08 แสดงสิทธิ์เดียวพร้อมสถานะและหน่วยบริการประจำ · ใบคิวพิมพ์สิทธิ สปสช. · คู่มือเลขบัตรเดโม (PDF) (PR #9)'],
 ['9 พ.ย. 69','ออกคิวตามนัดหมาย (มีนัด = คิวคลินิก · ไม่มีนัด = คิวกลาง) · ผู้ป่วยใหม่รับคิว K ไปจุดคัดแยก · ซ่อนชื่อคลินิกพิเศษ TB/HIV · ยอดต่ำกว่า 1,000 จ่ายบัตรไม่ได้ (PR #8)'],
