@@ -822,6 +822,7 @@ html{scroll-padding-top:72px}
   --border-brandPrimary-tertiary:var(--nd-border-info,#DCE2FF); --shadow-brand-drop-bottom-200:var(--nd-shadow-card);
   --primaryBorder-600:var(--nd-border-info,#DCE2FF); --surface-calendar-current:var(--nd-blue-100,#DCE2FF);
   --ev-present:var(--nd-text-brand,#3F5BFA);
+  --weekend:var(--nd-surface-success,#EEFAF4); --line2:var(--nd-border-quiet,#F4F5F5);   /* ช่องเสาร์-อาทิตย์ = เขียว Namon (ผู้ใช้ 26 พ.ย. 69) */
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -829,10 +830,16 @@ html{scroll-padding-top:72px}
     --brand-p600:var(--nd-border-brand); --brand-p700:var(--nd-surface-brand); --brand-p800:var(--nd-surface-brand-hover);
     --bg:var(--nd-surface-page); --card:var(--nd-surface-card); --brand:var(--nd-text-brand); --brand-soft:var(--nd-surface-brand-quiet);
     --border-brandPrimary-tertiary:var(--nd-border-info); --ev-present:var(--nd-text-brand);
+    --weekend:var(--nd-surface-success); --line:var(--nd-border-quiet); --line2:var(--nd-border-quiet);   /* ช่องเสาร์-อาทิตย์ = เขียว Namon (ผู้ใช้ 26 พ.ย. 69) */
   }
 }
 .btn.primary,.addinput button{color:var(--nd-text-on-brand,#FFFFFF)}
 .field input:focus,.field select:focus,.field textarea:focus,.addinput input{box-shadow:var(--nd-ring-focus)}
+/* ตัวกรอง ผู้รับผิดชอบ + ประเภทงาน อยู่แถวเดียวกัน (ผู้ใช้ 26 พ.ย. 69) · ช่องแรกตรงคอลัมน์ค่าของคำอธิบายสัญลักษณ์ · แคบแล้วตัดลงบรรทัดใหม่ */
+.frows.fone{flex-direction:row;flex-wrap:wrap;align-items:center;gap:var(--nd-space-300,12px) var(--nd-space-800,32px)}
+.frows.fone .frow + .frow{padding-left:0;align-items:center}
+.frows.fone .frow + .frow .lbl{position:static;width:auto;margin-right:var(--nd-space-200,8px)}
+@media (max-width:640px){ .frows.fone{flex-direction:column;align-items:stretch} .frows.fone .frow + .frow .lbl{width:100%;margin-right:0} }
 </style>
 </head>
 <body>
@@ -868,7 +875,7 @@ html{scroll-padding-top:72px}
   <div class="wbox filters">
     <section class="fsec">
       <h3 class="fgh">ตัวกรอง</h3>
-      <div class="frows">
+      <div class="frows fone">
         <div class="frow fddrow" id="fWho"><span class="lbl">ผู้รับผิดชอบ</span></div>
         <div class="frow fddrow" id="fType"><span class="lbl">ประเภทงาน</span></div>
       </div>
@@ -881,17 +888,7 @@ html{scroll-padding-top:72px}
           <span><i class="lg-bar st-prog"></i>In progress</span>
           <span><i class="lg-bar st-done"></i>Done</span>
         </div></div>
-        <div class="lrowx"><span class="lbl">บนแถบงาน</span><div class="legend">
-          <span><i class="lg-who"></i>จุดสี = ผู้รับผิดชอบ</span>
-          <span><i class="rtag">R2</i>รอบที่ 2 ขึ้นไป</span>
-          <span><span class="ms lg-doc">description</span>Document</span>
-          <span><span class="ms lg-doc">draw</span>Figma</span>
-        </div></div>
-        <div class="lrowx"><span class="lbl">วิธีส่ง</span><div class="legend">
-          <span><span class="ms lg-doc">apartment</span>Present ที่สำนัก</span>
-          <span><span class="ms lg-doc">videocam</span>Present Online</span>
-          <span><span class="ms lg-doc">link</span>ส่ง Link</span>
-        </div></div>
+<!-- ลบแถว "บนแถบงาน" + "วิธีส่ง" (ผู้ใช้ 26 พ.ย. 69 "ลบ") -->
         <div class="lrowx"><span class="lbl">นัด · วันสำคัญ</span><div class="legend">
           <span><i class="lg-mk" style="color:var(--ev-present)">◆</i>Present</span>
           <span><i class="lg-mk" style="color:var(--ev-ba)">●</i>ส่งที่แก้ / BA Pre</span>
