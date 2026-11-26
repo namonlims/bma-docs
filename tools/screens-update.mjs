@@ -50,13 +50,16 @@ const roleViews = (repo) => [...readFileSync(join(repo, 'src/data/staffRoleViews
 
 // ───────── เสิร์ฟ dist (SPA) ─────────
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.wasm': 'application/wasm', '.pdf': 'application/pdf' }
+const FONTS_FIRST = `await Promise.race([Promise.all(['400','500','600','700'].flatMap((w)=>[document.fonts.load(w+' 12px Sarabun','กA'),document.fonts.load(w+' 12px Mitr','กA')]).concat(document.fonts.load('24px "Material Symbols Outlined"','home'))).catch(()=>0),new Promise((r)=>setTimeout(r,8000))]);`
 const serve = (dist) => new Promise((ok) => {
   const base = resolve(dist)
   const s = http.createServer((q, r) => {
     let p; try { p = resolve(join(base, decodeURIComponent(q.url.split('?')[0]))) } catch { r.writeHead(400); return r.end() }
     if (p !== base && !p.startsWith(base + sep)) { r.writeHead(403); return r.end() }
     if (!existsSync(p) || !statSync(p).isFile()) { if (/\.\w{2,5}$/.test(p)) { r.writeHead(404); return r.end() } p = join(base, 'index.html') }
-    r.writeHead(200, { 'content-type': MIME[extname(p)] || 'application/octet-stream' }); r.end(readFileSync(p))
+    r.writeHead(200, { 'content-type': MIME[extname(p)] || 'application/octet-stream' })
+    // หน้า html: เริ่มแอปหลังฟอนต์โหลดแล้ว — ตารางวัดความกว้างหัวคอลัมน์ด้วยฟอนต์จริงครั้งเดียวตอนเปิด ถ้าฟอนต์ยังไม่มา ความกว้างจะต่างกันทุกครั้งที่ถ่าย
+    r.end(extname(p) === '.html' ? readFileSync(p, 'utf8').replace(/<script type="module"([^>]*?) src="([^"]+)"><\/script>/, (_, a, src) => `<script type="module"${a}>${FONTS_FIRST}await import(${JSON.stringify(src)})</script>`) : readFileSync(p))
   }); s.listen(0, '127.0.0.1', () => ok({ port: s.address().port, close: () => { s.closeAllConnections?.(); s.close() } }))
 })
 
@@ -88,10 +91,14 @@ async function chrome() {
 // ซ่อนการ์ดแจ้งเตือนลอยมุมขวาบน (display:none เท่านั้น ห้ามลบ node ของแอป)
 const HIDE = `(()=>{const c=document.createElement('style');c.textContent='[data-floating-notice-dock]{display:none !important}';document.head.appendChild(c)})();[...document.querySelectorAll('body *')].forEach(e=>{if(getComputedStyle(e).position!=='fixed')return;const r=e.getBoundingClientRect();if(r.width>200&&r.width<620&&r.height>60&&r.height<500&&r.right>innerWidth-60&&r.top<140)e.style.display='none'})`
 
+// ตรึงเวลาในหน้า: ทุกหน้าเริ่มที่เวลาเดียวกัน (นาฬิกายังเดินต่อ) → ตัวเลขนัดวันนี้ · "x วันก่อน" · ความกว้างคอลัมน์ไม่ต่างตามเวลาที่ถ่าย
+const FROZEN_AT = Date.parse('2026-11-25T10:00:00+07:00')
+const FREEZE = `(()=>{const R=Date,off=${FROZEN_AT}-R.now(),now=()=>R.now()+off;const D=new Proxy(R,{construct:(t,a,n)=>Reflect.construct(t,a.length?a:[now()],n),apply:()=>new R(now()).toString(),get:(t,k)=>k==='now'?now:Reflect.get(t,k)});R.prototype.constructor=D;window.Date=D})();`
+
 async function shootRow(br, origin, row, views, outDir) {
   let why = ''
   for (const role of roleCandidates(row.label, views)) {
-    const t = await br.tab(`try{localStorage.setItem('mih:staff-role-view',${JSON.stringify(role)})}catch(e){};window.print=()=>{}`)
+    const t = await br.tab(`try{localStorage.setItem('mih:staff-role-view',${JSON.stringify(role)})}catch(e){};window.print=()=>{};${FREEZE}`)
     try {
       const open = async (w, h) => {
         await t.s('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: w < 768 })
@@ -175,7 +182,7 @@ export function createScreens({ cfg, dataDir }) {
   const dropDocs = () => git(docsRepo, 'worktree', 'remove', '--force', docs).catch(() => {})
 
   // ① ถ่ายใหม่ + เทียบกับภาพเดิม — ยังไม่แตะเว็บ
-  async function check({ limit, dist }) {
+  async function check({ limit, dist, only }) {
     let br, sv
     try {
       set({ stage: 'ดึงโค้ดล่าสุดจาก main' })
@@ -189,7 +196,7 @@ export function createScreens({ cfg, dataDir }) {
           .catch((e) => { throw new Error('build ไม่ผ่าน: ' + String(e.stderr || e.message).trim().slice(-300)) })
         dist = join(app, 'dist')
       }
-      const all = parseRows(readFileSync(join(docs, PAGE), 'utf8')); const rows = limit ? all.slice(0, limit) : all
+      const all = parseRows(readFileSync(join(docs, PAGE), 'utf8')); const pick = only ? all.filter((r) => only.includes(r.route)) : all, rows = limit ? pick.slice(0, limit) : pick
       if (!rows.length) throw new Error('อ่านรายการหน้าจาก screens-latest.html ไม่ได้ (โครงหน้าเปลี่ยน)')
       rmSync(shots, { recursive: true, force: true }); mkdirSync(shots, { recursive: true })
       const views = roleViews(app), fileOf = routeFiles(app), results = {}
@@ -289,7 +296,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const s = createScreens({ cfg: { targetRepo: resolve(arg('--app') || '.'), docsRepo }, dataDir })
   const t = setInterval(() => { const x = s.state(); console.log(x.stage, (x.done || 0) + '/' + (x.total || 0)) }, 20000)
   try {
-    if (cmd === 'check') { await s.check({ limit: +arg('--limit') || 0, dist: arg('--dist') }); if (s.state().status === 'review') { writeFileSync(join(dataDir, 'review.html'), reviewHtml(s.state(), docsRepo, join(dataDir, 'screens-shots'))); console.log('เปิดดู:', join(dataDir, 'review.html')) } }
+    if (cmd === 'check') { await s.check({ limit: +arg('--limit') || 0, dist: arg('--dist'), only: arg('--routes')?.split(',') }); if (s.state().status === 'review') { writeFileSync(join(dataDir, 'review.html'), reviewHtml(s.state(), docsRepo, join(dataDir, 'screens-shots'))); console.log('เปิดดู:', join(dataDir, 'review.html')) } }
     else await s.apply({ pr: true, routes: arg('--routes')?.split(',') || (s.state().changes || []).map((c) => c.route) })
   } catch (e) { console.error(e.message) } finally { clearInterval(t) }
   const x = s.state(); console.log(x.status, x.error || '', x.url || '', `เปลี่ยน ${x.changes?.length ?? 0} · เหมือนเดิม ${x.same ?? 0} · ถ่ายไม่ได้ ${x.failed?.length ?? 0}`)
