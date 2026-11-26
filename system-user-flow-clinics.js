@@ -473,6 +473,9 @@ const CARE_DUE_GROUP = { h: 'ตรวจตามเกณฑ์การดู
   'รายการที่ "สั่งแล้ว" ไม่นับว่าค้าง (ไม่เด้งเตือนถ้าที่เหลือสั่งครบ · ไม่นับใน "ตรวจสอบความครบถ้วน")',
 ] };
 
+/* งานกลุ่มโรคเฉพาะ = คิวรวม 3 คลินิก + 3 บทบาทกลุ่ม (ผู้ใช้ 25–26 พ.ย. 69 · bma.health PR #1073) */
+const NCD_GROUP_FACT = ['งานกลุ่มโรคเฉพาะ (25–26 พ.ย. 69)', 'คิวรวม /clinic/specific-disease = เบาหวาน · ความดัน · หอบหืด/COPD ในตารางเดียว (คอลัมน์คลินิก) · กดแถว → แฟ้มของคลินิกนั้น · บทบาทกลุ่ม อายุรแพทย์ · พยาบาลคัดกรอง · พยาบาลหลังตรวจ (งานกลุ่มโรคเฉพาะ) เห็นทั้ง 3 คลินิก · นัดล่วงหน้า · ไม่มาตามนัด · ขาดนัดเกิน 1 เดือน แยกตามคลินิกของแถว · โปรไฟล์ผู้รับบริการของพยาบาลกลุ่ม = เฉพาะ 3 คลินิก · บทบาทคลินิกเดี่ยวไม่เห็นเมนูกลุ่ม'];
+
 function chronic(p, c) {
   const flow = [
     START(p + 's', `ต้องการเข้า ${c.short}`, 'ผ่านเวชระเบียนและคัดกรองกลาง'),
@@ -499,7 +502,7 @@ function chronic(p, c) {
     [p + 'fu', p + 'loop', 'ต่อ'], [p + 'loop', p + 'scr', 'ครั้งถัดไป', 'back'], [p + 'fu', p + 'e', 'จำหน่าย'],
     ...(c.afterDocEdges || []),
   ];
-  return { key: c.key, name: c.name, short: c.short, icon: c.icon, sum: c.sum, facts: c.facts, flow, edges };
+  return { key: c.key, name: c.name, short: c.short, icon: c.icon, sum: c.sum, facts: [NCD_GROUP_FACT, ...(c.facts || [])], flow, edges };
 }
 
 CLINICS.push(chronic('dm-', {
