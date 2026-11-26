@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=block" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
 <style>
 :root{
   --bg:#F6F8F7; --card:#FFFFFF; --text:#1B2420; --text2:#55625C; --text3:#86928C;
@@ -813,6 +814,25 @@ html{scroll-padding-top:72px}
 .fdd .fdc{margin-left:auto;color:var(--brand-p700);font-size:18px}
 @media (max-width:640px){ .fdd,.fdd .fddb{width:100%} }
 @media (max-width:480px){ .appbar .abt{font-size:13px} .appbar .vlab{display:none} }
+/* ===== ธีม Namon Playground (ผู้ใช้ 26 พ.ย. 69 "เปลี่ยนเป็น theme namon playground") — แบรนด์เขียว → น้ำเงิน --nd-* · สีประจำคน/เหตุการณ์อื่นคงเดิม ===== */
+:root{
+  --brand-p50:var(--nd-surface-brand-quiet,#EEF1FF); --brand-p100:var(--nd-blue-100,#DCE2FF); --brand-p200:var(--nd-border-info,#DCE2FF);
+  --brand-p600:var(--nd-border-input-hover,#5470FB); --brand-p700:var(--nd-surface-brand,#3F5BFA); --brand-p800:var(--nd-surface-brand-hover,#2438C9);
+  --bg:var(--nd-surface-page,#FDFDFD); --brand:var(--nd-text-brand,#3F5BFA); --brand-soft:var(--nd-surface-brand-quiet,#EEF1FF);
+  --border-brandPrimary-tertiary:var(--nd-border-info,#DCE2FF); --shadow-brand-drop-bottom-200:var(--nd-shadow-card);
+  --primaryBorder-600:var(--nd-border-info,#DCE2FF); --surface-calendar-current:var(--nd-blue-100,#DCE2FF);
+  --ev-present:var(--nd-text-brand,#3F5BFA);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --brand-p50:var(--nd-surface-brand-quiet); --brand-p100:var(--nd-surface-brand-quiet); --brand-p200:var(--nd-border-info);
+    --brand-p600:var(--nd-border-brand); --brand-p700:var(--nd-surface-brand); --brand-p800:var(--nd-surface-brand-hover);
+    --bg:var(--nd-surface-page); --card:var(--nd-surface-card); --brand:var(--nd-text-brand); --brand-soft:var(--nd-surface-brand-quiet);
+    --border-brandPrimary-tertiary:var(--nd-border-info); --ev-present:var(--nd-text-brand);
+  }
+}
+.btn.primary,.addinput button{color:var(--nd-text-on-brand,#FFFFFF)}
+.field input:focus,.field select:focus,.field textarea:focus,.addinput input{box-shadow:var(--nd-ring-focus)}
 </style>
 </head>
 <body>
