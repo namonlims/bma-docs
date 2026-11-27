@@ -114,6 +114,7 @@
   .srccell { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); min-width: 220px; }
   @media (min-width: 1024px) { .stats3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .single table { min-width: 560px; }
+  .changes table { min-width: 880px; }
 </style>
 </head>
 <body>
@@ -214,7 +215,30 @@
     </ul>
   </section>
 
-  <p class="note">ที่มา: โค้ด bma.health ณ 26 พ.ย. 2569 (ยังไม่ commit) + docs/decision-log.md · คอลัมน์ "ที่มา" แยกว่าข้อไหนมาจากมติ/เอกสารลูกค้า และข้อไหนเป็นคำสั่งผู้ใช้</p>
+  <section class="card section changes">
+    <div class="section-head">
+      <h2>4. สิ่งที่แก้รอบนี้ (25–26 พ.ย. 2569)</h2>
+      <p class="section-sub">เลขข้อตามคำตอบของผู้ใช้ · branch <code>feat/mental-addiction-hp-work</code> (ยังไม่ merge เข้า main)</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ข้อ</th><th>แก้อะไร</th><th>ดูที่ไหน</th><th>Kiosk (น้องดูแล)</th></tr></thead>
+        <tbody>
+          <tr><td class="name">1–3</td><td>งานส่งเสริมสุขภาพ = ฝากครรภ์ · วางแผนครอบครัว · สุขภาพเด็กดี (คทง.2 ครั้งที่ 4 ข้อ 1.1) · คลัง "คลังงานสุขภาพจิตสาธารณสุข"</td><td>เมนูงานส่งเสริมสุขภาพ · คลังศูนย์ › เลือกคลัง</td><td>—</td></tr>
+          <tr><td class="name">5</td><td>ตั้งค่าตู้: "งานส่งเสริมสุขภาพ" แยก 3 ตัวเลือก (ฝากครรภ์ · วางแผนครอบครัว · สุขภาพเด็กดี)</td><td><code>/queue-center/kiosk</code> › ผูกตู้กับจุดบริการแรก</td><td>ไม่กระทบ — ใบคิว/เลขคิว/HN เดิม</td></tr>
+          <tr><td class="name">7 · 9</td><td>หน้ารวมงานส่งเสริมสุขภาพ + บทบาทรวมพยาบาลคัดกรอง/หลังตรวจ (แพทย์คงแยกคลินิก)</td><td><code>/clinic/health-promotion</code></td><td>—</td></tr>
+          <tr><td class="name">8</td><td>ชื่อหน้ารวม/บทบาทรวม "งานสุขภาพจิต" คงไว้ = ชื่อรวม 3 งาน (เอกสารลูกค้า 18 ก.ย. 69 หน้า 1)</td><td>เมนูงานสุขภาพจิต</td><td>—</td></tr>
+          <tr><td class="name">11 · 12</td><td>งานบำบัดเพิ่มคลินิกโปรแกรมแอลกอฮอล์ · เมนูคลังทุกงานขึ้นต้น "คลัง" · <code>/clinic/addiction</code> ไม่มีปุ่มย้อนกลับ</td><td><code>/clinic/addiction</code></td><td>—</td></tr>
+          <tr><td class="name">15</td><td>แท็บ "ไม่มาตามนัด" + "นัดล่วงหน้า" แยกคลินิกสุขภาพจิต กับ งานสุขภาพจิตสาธารณสุข เหมือนคิววันนี้ · หน้ารวมเห็นทั้ง 2 งาน</td><td>หน้ารวมงานสุขภาพจิต › แท็บนัด · <code>/exit</code> พยาบาลหลังตรวจสุขภาพจิต</td><td>—</td></tr>
+          <tr><td class="name">16</td><td>รายชื่อคลินิกในระบบนัดหมายเพิ่ม "งานสุขภาพจิตสาธารณสุข" · "งานพัฒนาการ" → นัดที่สร้างขึ้นแท็บนัดของงานนั้น</td><td>ระบบนัดหมาย › สร้างนัด › ช่องคลินิก</td><td>—</td></tr>
+          <tr><td class="name">17</td><td>พยาบาลหลังตรวจทุกคลินิก: แท็บนัด = เฉพาะนัดของคลินิกตัวเอง ชุดเดียวกับหน้าห้องตรวจ (เดิมเห็นทุกแผนก 42/38) · คลินิกตรวจโรคทั่วไป = แผนก "ตรวจรักษา"</td><td><code>/exit</code> ทุกบทบาทพยาบาลหลังตรวจ › แท็บ "ไม่มาตามนัด" · "นัดล่วงหน้า"</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">ตัวเลขนัดที่ไม่ตรงหน้าแพทย์ 2 จุด (ตั้งใจ): เวชศาสตร์ฟื้นฟู — หน้าแพทย์นับนัดที่ยกเลิกรวมด้วย · พยาบาลหลังตรวจทั่วไป — หน้าแพทย์ <code>/treat/queue</code> ยังแสดงทุกแผนก</p>
+  </section>
+
+  <p class="note">ที่มา: โค้ด bma.health ณ 26 พ.ย. 2569 (branch feat/mental-addiction-hp-work) + docs/decision-log.md · คอลัมน์ "ที่มา" แยกว่าข้อไหนมาจากมติ/เอกสารลูกค้า และข้อไหนเป็นคำสั่งผู้ใช้</p>
 </main>
 </body>
 </html>
