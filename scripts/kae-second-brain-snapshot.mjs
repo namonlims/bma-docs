@@ -18,10 +18,10 @@ const dir = path.join(path.dirname(new URL(import.meta.url).pathname), '..');
 const generated = new Date().toISOString();
 fs.writeFileSync(path.join(dir, 'kae-second-brain-tree.json'), JSON.stringify({ generated, commit: { sha, date }, files }) + '\n');
 
-// เนื้อหา: เฉพาะไฟล์ข้อความ ≤ 512 KB
+// เนื้อหา: เฉพาะไฟล์ข้อความ ≤ 8 MB (log.md ~1 MB · requests/*.jsonl ~4 MB)
 const content = {}; let skipped = 0;
 for (const r of rows) {
-  if (r.size > 512 * 1024) { skipped++; continue; }
+  if (r.size > 8 * 1024 * 1024) { skipped++; continue; }
   const buf = sh(`git cat-file blob ${r.obj}`, true);
   if (buf.includes(0)) { skipped++; continue; }
   content[r.p] = buf.toString('utf8');
