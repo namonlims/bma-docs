@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kae second brain</title>
-<!-- แผนที่ second brain (repo private namonlims/bma-health-second-brain) · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เปิดได้เฉพาะบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69) -->
+<!-- แผนที่ second brain (repo private namonlims/bma-health-second-brain) · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เปิดได้เฉพาะบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69)
+     โครงสร้าง + รายละเอียดรวมเป็นตัวสำรวจเดียว: รายการโฟลเดอร์ซ้าย · รายละเอียดขวา ไม่เด้งไปที่อื่น · มือถือเปิดใต้รายการที่กด (ผู้ใช้ 27 พ.ย. 69 "กดและเด้งไปอีกที่ดูค่อนข้างยาก") -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="namon-tokens.css">
@@ -12,12 +13,12 @@
 <script type="module" src="namon/namon-agent.js"></script>
 <style>
   body { margin: 0; background: var(--nd-surface-page, #FDFDFD); }
-  .kb { max-width: 1040px; margin: 0 auto; padding: var(--nd-space-800, 32px) var(--nd-space-400, 16px) var(--nd-space-1200, 48px); display: flex; flex-direction: column; gap: var(--nd-space-800, 32px); }
+  .kb { max-width: 1120px; margin: 0 auto; padding: var(--nd-space-800, 32px) var(--nd-space-400, 16px) var(--nd-space-1200, 48px); display: flex; flex-direction: column; gap: var(--nd-space-800, 32px); }
   .kb h1, .kb h2, .kb h3, .kb p { margin: 0; }
-  .kb code, .kb .mono { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); }
-  .kb p code, .kb li code, .kb dd code { background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
+  .mono { font-family: ui-monospace, Menlo, monospace; }
+  .kb code { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
 
-  /* หัวหน้า: ตัวละคร + ชื่อ + สรุป 1 บรรทัด + ชิปข้อมูล repo */
+  /* หัวหน้า */
   .kb-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--nd-space-400, 16px); align-items: center; }
   .kb-head h1 { font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; color: var(--nd-text-default, #363B3F); }
   .kb-head .nd-summary { font-size: var(--nd-type-size-sm, 14px); }
@@ -27,79 +28,82 @@
 
   .kb-sec { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); min-width: 0; }
   .kb-sec > header { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
+  .kb-filter { display: flex; flex-direction: column; gap: var(--nd-space-150, 6px); max-width: 420px; }
+  .kb-filter .nd-input { font-size: var(--nd-type-size-base, 16px); }
 
-  /* แผนผังโฟลเดอร์ */
-  .kb-map { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nd-space-600, 24px) var(--nd-space-400, 16px); }
-  .kb-col { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); min-width: 0; }
-  .kb-col .nd-group-title { margin: 0; }
-  .kb-node { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--nd-space-100, 4px) var(--nd-space-300, 12px); padding: var(--nd-space-300, 12px) var(--nd-space-400, 16px); min-height: var(--nd-control-h, 44px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); color: inherit; text-decoration: none; transition: box-shadow var(--nd-motion-fast, 150ms), border-color var(--nd-motion-fast, 150ms); }
-  .kb-node:hover { box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); border-color: var(--nd-border-info, #DCE2FF); }
-  .kb-node:focus-visible { outline: var(--nd-stroke-200, 2px) solid var(--nd-border-brand, #3F5BFA); outline-offset: 2px; }
-  .kb-node .n-name { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-sm, 14px); font-weight: var(--nd-type-weight-medium, 500); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
-  .kb-node .n-count { font-size: var(--nd-type-size-xs, 12px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-brand, #3F5BFA); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-  .kb-node .n-desc { grid-column: 1 / -1; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
-  .kb-node.is-start { border-color: var(--nd-border-brand, #3F5BFA); }
-  .kb-node.is-start .n-count { background: var(--nd-surface-brand-quiet, #EEF1FF); padding: 0 var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); }
+  /* ตัวสำรวจ: รายการโฟลเดอร์ (ซ้าย) + รายละเอียด (ขวา) */
+  .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); overflow: hidden; }
+  .kb-tree { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-400, 16px); border-right: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); background: var(--nd-surface-page, #FDFDFD); min-width: 0; }
+  .kb-tgroup { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
+  .kb-tgroup .nd-group-title { margin: 0 0 var(--nd-space-100, 4px); padding-left: var(--nd-space-300, 12px); }
+  .kb-tgroup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
+  .kb-titem { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--nd-space-300, 12px); align-items: center; min-height: var(--nd-control-h, 44px); padding: var(--nd-space-200, 8px) var(--nd-space-300, 12px); border: 0; border-radius: var(--nd-radius-200, 8px); background: none; color: var(--nd-text-default, #363B3F); font: inherit; text-align: left; cursor: pointer; }
+  .kb-titem:hover { background: var(--nd-surface-brand-quiet, #EEF1FF); }
+  .kb-titem:focus-visible { outline: var(--nd-stroke-200, 2px) solid var(--nd-border-brand, #3F5BFA); outline-offset: -2px; }
+  .kb-titem[aria-selected="true"] { background: var(--nd-surface-brand, #3F5BFA); color: var(--nd-text-on-brand, #FFFFFF); }
+  .kb-titem .t-name { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-sm, 14px); font-weight: var(--nd-type-weight-medium, 500); overflow-wrap: anywhere; }
+  .kb-titem .t-desc { grid-column: 1; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
+  .kb-titem .t-n { grid-row: 1 / span 2; grid-column: 2; font-size: var(--nd-type-size-xs, 12px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-brand, #3F5BFA); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kb-titem[aria-selected="true"] .t-desc, .kb-titem[aria-selected="true"] .t-n { color: var(--nd-text-on-brand, #FFFFFF); }
+  .kb-titem .t-hit { display: none; }
+  .is-filtering .kb-titem .t-hit { display: inline; }
+  .is-filtering .kb-titem .t-count { display: none; }
+
+  .kb-panel { display: flex; flex-direction: column; gap: var(--nd-space-600, 24px); padding: var(--nd-space-600, 24px); min-width: 0; }
+  .kb-crumb { display: flex; flex-wrap: wrap; gap: var(--nd-space-100, 4px); align-items: center; font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
+  .kb-crumb b { color: var(--nd-text-brand, #3F5BFA); font-weight: var(--nd-type-weight-medium, 500); }
+  .kb-phead { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
+  .kb-ptitle { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: baseline; }
+  .kb-ptitle h3 { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xl, 24px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
+  .kb-ptitle .nd-chip { font-weight: var(--nd-type-weight-bold, 700); }
+  .kb-phead > p { font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-secondary, #636B72); }
+  .kb-grp { display: flex; flex-direction: column; gap: var(--nd-space-300, 12px); padding-top: var(--nd-space-600, 24px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .kb-grp .nd-group-title { margin: 0; }
+  .kb-tags { display: flex; flex-wrap: wrap; gap: var(--nd-space-150, 6px); }
+  .kb-tags .nd-chip { font-family: ui-monospace, Menlo, monospace; }
+  .kb-tags .nd-chip.is-hit { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); }
+  .kb-rows { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-200, 8px) var(--nd-space-400, 16px); margin: 0; font-size: var(--nd-type-size-sm, 14px); }
+  .kb-rows dt { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); padding-top: 2px; }
+  .kb-rows dd { margin: 0; color: var(--nd-text-default, #363B3F); }
+  .kb-rows dt.is-hit, .kb-rows dt.is-hit + dd { color: var(--nd-text-brand, #3F5BFA); }
+  .kb-bars { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); max-width: 520px; }
+  .kb-bar { display: grid; grid-template-columns: 64px minmax(0, 1fr) 40px; gap: var(--nd-space-300, 12px); align-items: center; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
+  .kb-bar .track { height: var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-neutral, #F4F5F5); overflow: hidden; }
+  .kb-bar .fill { display: block; height: 100%; border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-brand, #3F5BFA); }
+  .kb-bar .v { text-align: right; font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); font-variant-numeric: tabular-nums; }
+  .kb-empty { padding: var(--nd-space-600, 24px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-secondary, #636B72); }
 
   /* วิธีเปิดดู */
   .kb-ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nd-space-400, 16px); }
   .kb-way { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); padding: var(--nd-space-400, 16px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); min-width: 0; }
   .kb-way.is-rec { border-color: var(--nd-border-brand, #3F5BFA); }
   .kb-way h3 { display: flex; align-items: center; gap: var(--nd-space-200, 8px); font-size: var(--nd-type-size-base, 16px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); }
-  .kb-way ol { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-default, #363B3F); }
+  .kb-way ol { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
   .kb-way .nd-summary { margin: 0; }
-
-  /* รายละเอียด (เปิดทีละหมวด) */
-  .kb-filter { display: flex; flex-direction: column; gap: var(--nd-space-150, 6px); max-width: 420px; }
-  .kb-filter .nd-input { font-size: var(--nd-type-size-base, 16px); }
-  .kb-list { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
-  .kb-item { border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); scroll-margin-top: var(--nd-space-400, 16px); }
-  .kb-item > summary { list-style: none; display: grid; grid-template-columns: auto minmax(0, max-content) minmax(0, 1fr) auto; gap: var(--nd-space-300, 12px); align-items: center; min-height: var(--nd-control-h, 44px); padding: var(--nd-space-300, 12px) var(--nd-space-400, 16px); cursor: pointer; }
-  .kb-item > summary::-webkit-details-marker { display: none; }
-  .kb-item > summary:focus-visible { outline: var(--nd-stroke-200, 2px) solid var(--nd-border-brand, #3F5BFA); outline-offset: -2px; border-radius: var(--nd-radius-300, 10px); }
-  .kb-item .chev { width: var(--nd-space-400, 16px); color: var(--nd-text-tertiary, #6A727A); transition: transform var(--nd-motion-fast, 150ms); }
-  .kb-item[open] .chev { transform: rotate(90deg); }
-  .kb-item .s-path { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-sm, 14px); font-weight: var(--nd-type-weight-medium, 500); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
-  .kb-item .s-what { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
-  .kb-item .s-n { font-size: var(--nd-type-size-xs, 12px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-brand, #3F5BFA); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-  .kb-body { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: 0 var(--nd-space-400, 16px) var(--nd-space-400, 16px) calc(var(--nd-space-400, 16px) * 2 + var(--nd-space-300, 12px)); }
-  .kb-sub { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
-  .kb-sub + .kb-sub { padding-top: var(--nd-space-400, 16px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
-  .kb-sub .nd-group-title { margin: 0; }
-  .kb-tags { display: flex; flex-wrap: wrap; gap: var(--nd-space-150, 6px); }
-  .kb-tags .nd-chip { font-family: ui-monospace, Menlo, monospace; }
-  .kb-rows { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-200, 8px) var(--nd-space-400, 16px); margin: 0; font-size: var(--nd-type-size-sm, 14px); }
-  .kb-rows dt { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); padding-top: 2px; }
-  .kb-rows dd { margin: 0; color: var(--nd-text-default, #363B3F); }
-  .kb-hide { display: none !important; }
-
-  /* แท่งจำนวน handoff ต่อเดือน */
-  .kb-bars { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
-  .kb-bar { display: grid; grid-template-columns: 64px minmax(0, 1fr) 40px; gap: var(--nd-space-300, 12px); align-items: center; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
-  .kb-bar .track { height: var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-neutral, #F4F5F5); overflow: hidden; }
-  .kb-bar .fill { display: block; height: 100%; border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-brand, #3F5BFA); }
-  .kb-bar .v { text-align: right; font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); font-variant-numeric: tabular-nums; }
 
   .kb-notes { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
   .kb-notes .nd-notice { font-size: var(--nd-type-size-sm, 14px); }
   .kb-foot { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
+  .kb-hide { display: none !important; }
 
   @media (max-width: 1023px) {
-    .kb-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kb-explorer { grid-template-columns: 260px minmax(0, 1fr); }
     .kb-ways { grid-template-columns: minmax(0, 1fr); }
   }
-  @media (max-width: 639px) {
+  /* มือถือ: รายการเดียว · รายละเอียดเปิดใต้โฟลเดอร์ที่กด */
+  @media (max-width: 767px) {
     .kb { padding-top: var(--nd-space-600, 24px); gap: var(--nd-space-600, 24px); }
-    .kb-map { grid-template-columns: minmax(0, 1fr); }
     .kb-head namon-agent { display: none; }
     .kb-head { grid-template-columns: minmax(0, 1fr); }
-    .kb-item > summary { grid-template-columns: auto minmax(0, 1fr) auto; }
-    .kb-item .s-what { grid-column: 2 / -1; grid-row: 2; }
-    .kb-body { padding-left: var(--nd-space-400, 16px); }
+    .kb-explorer { grid-template-columns: minmax(0, 1fr); }
+    .kb-tree { border-right: 0; padding: var(--nd-space-300, 12px); }
+    .kb-explorer > .kb-panel { display: none; }
+    .kb-tgroup li > .kb-panel { margin: var(--nd-space-100, 4px) 0 var(--nd-space-300, 12px); padding: var(--nd-space-400, 16px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-card, #FFFFFF); gap: var(--nd-space-400, 16px); }
+    .kb-tgroup li > .kb-panel .kb-ptitle { display: none; }
+    .kb-grp { padding-top: var(--nd-space-400, 16px); }
     .kb-rows { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .kb-rows dd { margin-bottom: var(--nd-space-300, 12px); }
   }
-  @media (prefers-reduced-motion: reduce) { .kb-node, .kb-item .chev { transition: none; } }
 </style>
 </head>
 <body class="nd-root">
@@ -122,35 +126,16 @@
 
   <section class="kb-sec" aria-labelledby="h-map">
     <header>
-      <h2 class="nd-title nd-title--page" id="h-map">โครงสร้างโฟลเดอร์</h2>
-      <p class="nd-summary">ตัวเลข = จำนวนไฟล์ .md · กดการ์ดเพื่อเปิดรายละเอียดด้านล่าง</p>
+      <h2 class="nd-title nd-title--page" id="h-map">โฟลเดอร์และสิ่งที่อยู่ข้างใน</h2>
+      <p class="nd-summary">กดชื่อโฟลเดอร์ทางซ้าย รายละเอียดขึ้นทางขวาทันที · ตัวเลข = จำนวนไฟล์ .md</p>
     </header>
-    <div class="kb-map">
-      <div class="kb-col">
-        <h3 class="nd-group-title">ทางเข้า</h3>
-        <a class="kb-node is-start" href="#d-index"><span class="n-name">index.md</span><span class="n-count">อ่านก่อน</span><span class="n-desc">สารบัญทุกหน้าในวิกิ แยกตามหมวด</span></a>
-        <a class="kb-node" href="#d-log"><span class="n-name">log.md</span><span class="n-count">5,084 บรรทัด</span><span class="n-desc">ไทม์ไลน์งาน อันใหม่ต่อท้ายล่างสุด</span></a>
-        <a class="kb-node" href="#d-index"><span class="n-name">CLAUDE.md · AGENTS.md</span><span class="n-count">คู่มือ</span><span class="n-desc">กติกาจัดวอลต์ให้ agent อ่าน</span></a>
-      </div>
-      <div class="kb-col">
-        <h3 class="nd-group-title">ความรู้ (wiki/)</h3>
-        <a class="kb-node" href="#d-core"><span class="n-name">wiki/*.md</span><span class="n-count">5</span><span class="n-desc">overview · มติ · คำถามค้าง · คำศัพท์ · Figma</span></a>
-        <a class="kb-node" href="#d-sources"><span class="n-name">sources/</span><span class="n-count">30</span><span class="n-desc">สรุปเอกสารต้นทาง · TOR · Drive คณะ 1–13</span></a>
-        <a class="kb-node" href="#d-entities"><span class="n-name">entities/</span><span class="n-count">54</span><span class="n-desc">ระบบ · โมดูล · interface · มาตรฐานรหัส</span></a>
-        <a class="kb-node" href="#d-briefs"><span class="n-name">design-briefs/</span><span class="n-count">22</span><span class="n-desc">brief ออกแบบรายโมดูล</span></a>
-        <a class="kb-node" href="#d-concepts"><span class="n-name">concepts/</span><span class="n-count">14</span><span class="n-desc">แนวคิดข้ามโมดูล</span></a>
-        <a class="kb-node" href="#d-analysis"><span class="n-name">analysis/</span><span class="n-count">8</span><span class="n-desc">บทวิเคราะห์ทั้งระบบ</span></a>
-      </div>
-      <div class="kb-col">
-        <h3 class="nd-group-title">บันทึกงาน</h3>
-        <a class="kb-node" href="#d-handoffs"><span class="n-name">handoffs/</span><span class="n-count">493</span><span class="n-desc">สรุปหลังจบงานแต่ละรอบ · Glokbot อ่านจากที่นี่</span></a>
-      </div>
-      <div class="kb-col">
-        <h3 class="nd-group-title">สำรองของ Claude · ไฟล์ระบบ</h3>
-        <a class="kb-node" href="#d-backup"><span class="n-name">claude-memory/</span><span class="n-count">440</span><span class="n-desc">สำรอง memory ของ Claude</span></a>
-        <a class="kb-node" href="#d-backup"><span class="n-name">claude-skills/</span><span class="n-count">16 skill</span><span class="n-desc">submodule → repo claude-skills</span></a>
-        <a class="kb-node" href="#d-system"><span class="n-name">raw/ · templates/ · tools/</span><span class="n-count">7 · 5 · 3</span><span class="n-desc">ต้นฉบับ · แม่แบบหน้า · สคริปต์</span></a>
-      </div>
+    <label class="kb-filter nd-field" for="kb-q">
+      <span class="nd-field__label">ค้นหาชื่อหน้าในทุกโฟลเดอร์</span>
+      <input class="nd-input" id="kb-q" type="search" placeholder="เช่น pharmacy · anc · consent" autocomplete="off">
+    </label>
+    <div class="kb-explorer" id="kb-explorer">
+      <nav class="kb-tree" id="kb-tree" aria-label="โฟลเดอร์" role="tablist" aria-orientation="vertical"></nav>
+      <div class="kb-panel" id="kb-panel" role="tabpanel" aria-live="polite"></div>
     </div>
   </section>
 
@@ -188,190 +173,6 @@
     </div>
   </section>
 
-  <section class="kb-sec" aria-labelledby="h-detail">
-    <header>
-      <h2 class="nd-title nd-title--page" id="h-detail">รายละเอียดแต่ละโฟลเดอร์</h2>
-      <p class="nd-summary">เปิดทีละหมวด · พิมพ์คำเพื่อกรองชื่อหน้า</p>
-    </header>
-    <label class="kb-filter nd-field" for="kb-q">
-      <span class="nd-field__label">กรองชื่อหน้า</span>
-      <input class="nd-input" id="kb-q" type="search" placeholder="เช่น pharmacy · anc · consent" autocomplete="off">
-    </label>
-    <p class="nd-summary kb-hide" id="kb-none">ไม่พบหน้าที่ตรงกับคำนี้</p>
-    <div class="kb-list" id="kb-list">
-
-      <details class="kb-item" id="d-index" open>
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">index.md · CLAUDE.md</span><span class="s-what">ทางเข้าและคู่มือวอลต์</span><span class="s-n"></span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>index.md</dt><dd>สารบัญทุกหน้า · Sources · Entities · Concepts · Analysis · Handoffs · Design briefs · Standards</dd>
-            <dt>CLAUDE.md</dt><dd>กติกาวอลต์ · หน้าวิกิเขียนอังกฤษ · log/handoff เขียนไทยได้</dd>
-            <dt>AGENTS.md</dt><dd>สำเนาให้ agent อื่นอ่าน · workflow <code>agents-md.yml</code></dd>
-          </dl>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">หน้าที่ index แนะนำให้เปิดก่อน</h3>
-            <div class="kb-tags"><span class="nd-chip">overview</span><span class="nd-chip">dohis-system-synthesis</span><span class="nd-chip">phcis-modules</span><span class="nd-chip">figma-designs</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-log">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">log.md</span><span class="s-what">ไทม์ไลน์แบบต่อท้าย</span><span class="s-n">5,084 บรรทัด</span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>รูปแบบ</dt><dd><code>## [วันที่] ประเภท | หัวข้อ</code> ตามด้วย bullet สั้น ๆ</dd>
-            <dt>ล่าสุด</dt><dd>27 พ.ย. 69 · handoff · e-document สร้าง/แก้ไขเฉพาะ admin กลาง</dd>
-          </dl>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-core">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/*.md</span><span class="s-what">หน้ากลางที่ใช้ข้ามทุกโมดูล</span><span class="s-n">5</span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>overview</dt><dd>ภาพรวมและแผนที่โครงการ</dd>
-            <dt>decisions-log</dt><dd>มติแบบ ADR · D-001 → D-101</dd>
-            <dt>open-questions</dt><dd>คำถามที่ยังค้าง</dd>
-            <dt>glossary</dt><dd>คำศัพท์และตัวย่อ</dd>
-            <dt>figma-designs</dt><dd>รายการไฟล์ Figma</dd>
-          </dl>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-sources">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/sources/</span><span class="s-what">สรุปเอกสารต้นทาง · เลข S###</span><span class="s-n">30</span></summary>
-        <div class="kb-body">
-          <div class="kb-sub">
-            <h3 class="nd-group-title">เอกสารหลัก</h3>
-            <div class="kb-tags"><span class="nd-chip">S002 TOR หลัก HCIS</span><span class="nd-chip">S024 รายงานออกแบบ DOHIS</span><span class="nd-chip">S025 Telemedicine UAT</span><span class="nd-chip">S026 telemed หนองคาย</span><span class="nd-chip">S027 2Q/9Q/8Q</span><span class="nd-chip">S028 veterinary UML</span><span class="nd-chip">S029 school design system</span><span class="nd-chip">S030 OPD flow</span><span class="nd-chip">S031 OPD videos</span><span class="nd-chip">S032 ANC guideline</span><span class="nd-chip">S033 TOR ภาคผนวก</span><span class="nd-chip">S036 field visit ส.ค. 69</span><span class="nd-chip">S039 mental-health spec</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">เอกสาร Drive คณะทำงาน · นำเข้า 23 ต.ค. 69</h3>
-            <div class="kb-tags"><span class="nd-chip">S040 คณะ 1 core</span><span class="nd-chip">S041 คณะ 2 family health</span><span class="nd-chip">S042 คณะ 3 special clinics</span><span class="nd-chip">S043 คณะ 4 home visit</span><span class="nd-chip">S044 คณะ 5 school health</span><span class="nd-chip">S045 คณะ 6 dental</span><span class="nd-chip">S046 คณะ 7 pharmacy</span><span class="nd-chip">S047 คณะ 8 finance</span><span class="nd-chip">S048 คณะ 9 prevention rehab</span><span class="nd-chip">S049 คณะ 10 social welfare</span><span class="nd-chip">S050 คณะ 11 reports</span><span class="nd-chip">S051 คณะ 12 mobile app</span><span class="nd-chip">S052 คณะ 13 consent</span><span class="nd-chip">S053 central legal uxui</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">เพิ่มทีหลัง</h3>
-            <div class="kb-tags"><span class="nd-chip">S054 triage proposal</span><span class="nd-chip">S055 medical certificate</span><span class="nd-chip">S056 คณะ 3 ประชุม 10 พ.ย. 69</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-entities">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/entities/</span><span class="s-what">ระบบ · โมดูล · interface · มาตรฐาน</span><span class="s-n">54</span></summary>
-        <div class="kb-body">
-          <div class="kb-sub">
-            <h3 class="nd-group-title">ระบบหลัก</h3>
-            <div class="kb-tags"><span class="nd-chip">dohis</span><span class="nd-chip">hcis</span><span class="nd-chip">phcis</span><span class="nd-chip">his-everapp</span><span class="nd-chip">dohis-exchange-zone</span><span class="nd-chip">dohis-data-lake</span><span class="nd-chip">phcis-modules</span><span class="nd-chip">phcis-design-system</span><span class="nd-chip">bma-kiosk</span><span class="nd-chip">telemedicine</span><span class="nd-chip">schedule-management</span><span class="nd-chip">signin</span><span class="nd-chip">cpoe</span><span class="nd-chip">erp</span><span class="nd-chip">cms</span><span class="nd-chip">crm</span><span class="nd-chip">doh-staff-app</span><span class="nd-chip">hl7-fhir</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">modules/ · 22</h3>
-            <div class="kb-tags"><span class="nd-chip">mod-medical-records</span><span class="nd-chip">mod-exam-clinic</span><span class="nd-chip">mod-pharmacy</span><span class="nd-chip">mod-lab</span><span class="nd-chip">mod-radiology</span><span class="nd-chip">mod-cashier</span><span class="nd-chip">mod-referral</span><span class="nd-chip">mod-appointment</span><span class="nd-chip">mod-dental</span><span class="nd-chip">mod-mental-health</span><span class="nd-chip">mod-tb</span><span class="nd-chip">mod-substance-abuse</span><span class="nd-chip">mod-sti-aids</span><span class="nd-chip">mod-anc</span><span class="nd-chip">mod-family-planning</span><span class="nd-chip">mod-immunization</span><span class="nd-chip">mod-special-groups</span><span class="nd-chip">mod-social-rehab</span><span class="nd-chip">mod-community-health</span><span class="nd-chip">mod-school-health</span><span class="nd-chip">mod-central-mis</span><span class="nd-chip">mod-veterinary</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">interfaces/ · 9</h3>
-            <div class="kb-tags"><span class="nd-chip">health-link</span><span class="nd-chip">tgix</span><span class="nd-chip">e-referral</span><span class="nd-chip">e-claim</span><span class="nd-chip">nhso</span><span class="nd-chip">pacs</span><span class="nd-chip">thaid</span><span class="nd-chip">epi-net</span><span class="nd-chip">bma-portal</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">standards/ · 5</h3>
-            <div class="kb-tags"><span class="nd-chip">icd-10</span><span class="nd-chip">icd-9</span><span class="nd-chip">snomed-ct</span><span class="nd-chip">loinc</span><span class="nd-chip">drug-coding-tmt</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-briefs">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/design-briefs/</span><span class="s-what">อ่านก่อนออกแบบโมดูลนั้น</span><span class="s-n">22</span></summary>
-        <div class="kb-body">
-          <div class="kb-sub">
-            <h3 class="nd-group-title">Core flow</h3>
-            <div class="kb-tags"><span class="nd-chip">registration</span><span class="nd-chip">exam-clinic</span><span class="nd-chip">pharmacy</span><span class="nd-chip">lab</span><span class="nd-chip">radiology</span><span class="nd-chip">cashier</span><span class="nd-chip">referral</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">คลินิกพิเศษ</h3>
-            <div class="kb-tags"><span class="nd-chip">dental</span><span class="nd-chip">mental-health</span><span class="nd-chip">tb</span><span class="nd-chip">substance-abuse</span><span class="nd-chip">sti-aids</span><span class="nd-chip">anc</span><span class="nd-chip">family-planning</span><span class="nd-chip">immunization</span><span class="nd-chip">special-groups</span><span class="nd-chip">social-rehab</span></div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">ชุมชน · โรงเรียน · อื่น ๆ</h3>
-            <div class="kb-tags"><span class="nd-chip">community-health</span><span class="nd-chip">school-health</span><span class="nd-chip">home-visit</span><span class="nd-chip">central-mis</span><span class="nd-chip">veterinary</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-concepts">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/concepts/</span><span class="s-what">แนวคิดข้ามโมดูล</span><span class="s-n">14</span></summary>
-        <div class="kb-body">
-          <div class="kb-tags"><span class="nd-chip">digital-transformation</span><span class="nd-chip">system-architecture</span><span class="nd-chip">data-security</span><span class="nd-chip">health-information-exchange</span><span class="nd-chip">interoperability</span><span class="nd-chip">consent-management-pdpa</span><span class="nd-chip">patient-referral-flow</span><span class="nd-chip">master-patient-index</span><span class="nd-chip">mental-health-screening-2q9q8q</span><span class="nd-chip">abac</span><span class="nd-chip">medication-reconciliation</span><span class="nd-chip">rng-506</span><span class="nd-chip">read-replica-research-db</span><span class="nd-chip">coding-standards</span></div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-analysis">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/analysis/</span><span class="s-what">บทวิเคราะห์ภาพใหญ่</span><span class="s-n">8</span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>dohis-system-synthesis</dt><dd>สรุปทั้งระบบ as-is → to-be</dd>
-            <dt>opd-clinical-flow</dt><dd>flow OPD หลัก ลงทะเบียน → EMR → CPOE → ยา → การเงิน</dd>
-            <dt>dohis-roadmap-phasing</dt><dd>roadmap 11 ระบบ · 2024–2028</dd>
-            <dt>dohis-ui-screens</dt><dd>mockup to-be 55 หน้าจอ</dd>
-            <dt>phcis-detailed-requirements</dt><dd>requirement รายระบบจาก TOR ภาคผนวก ก</dd>
-            <dt>design-build-gap</dt><dd>เทียบ spec · Figma · ของที่สร้างจริง</dd>
-            <dt>deployment-pipeline</dt><dd>งานขึ้น production ยังไง · ตรวจเว็บจริง</dd>
-            <dt>veterinary-system-design</dt><dd>UML/DB ระบบสัตวแพทย์สาธารณสุข</dd>
-          </dl>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-handoffs">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">wiki/handoffs/</span><span class="s-what">สรุปหลังจบงาน · ชื่อไฟล์ขึ้นต้นด้วยวันที่</span><span class="s-n">493</span></summary>
-        <div class="kb-body">
-          <div class="kb-sub">
-            <h3 class="nd-group-title">จำนวนต่อเดือน</h3>
-            <div class="kb-bars">
-              <div class="kb-bar"><span>ก.ย. 69</span><span class="track"><span class="fill" style="width:13.1%"></span></span><span class="v">35</span></div>
-              <div class="kb-bar"><span>ต.ค. 69</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v">267</span></div>
-              <div class="kb-bar"><span>พ.ย. 69</span><span class="track"><span class="fill" style="width:71.5%"></span></span><span class="v">191</span></div>
-            </div>
-          </div>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">ล่าสุด</h3>
-            <div class="kb-tags"><span class="nd-chip">2026-11-27-edocument-central-admin-only</span><span class="nd-chip">2026-11-27-github-actions-minutes-archive-cleanup</span><span class="nd-chip">2026-11-27-sitemap-from-mel-plus-clinics</span><span class="nd-chip">2026-11-26-consent-idcard-mismatch-error</span></div>
-          </div>
-          <div class="kb-sub">
-            <dl class="kb-rows">
-              <dt>ใครเขียน</dt><dd>skill <code>handoff</code> หลังงานที่ push แล้ว</dd>
-              <dt>ใครอ่าน</dt><dd>Glokbot · เซสชันถัดไป</dd>
-              <dt>attachments/</dt><dd>ภาพประกอบ handoff</dd>
-            </dl>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-backup">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">claude-memory/ · claude-skills/</span><span class="s-what">สำรองให้เซสชัน cloud ใช้</span><span class="s-n">440 · 16</span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>claude-memory/</dt><dd>สำเนา memory บนเครื่อง · ซิงก์ด้วย <code>tools/sync-claude-memory.sh push</code></dd>
-            <dt>claude-skills/</dt><dd>submodule → repo <code>namonlims/claude-skills</code></dd>
-          </dl>
-          <div class="kb-sub">
-            <h3 class="nd-group-title">skill ที่สำรอง</h3>
-            <div class="kb-tags"><span class="nd-chip">handoff</span><span class="nd-chip">cc-handoff</span><span class="nd-chip">responsive-web</span><span class="nd-chip">vibe-to-figma</span><span class="nd-chip">figma-layer-rename</span><span class="nd-chip">kiosk-360-face-scan</span><span class="nd-chip">prototype</span><span class="nd-chip">grill-me</span><span class="nd-chip">grill-with-docs</span><span class="nd-chip">improve-codebase-architecture</span><span class="nd-chip">write-a-skill</span><span class="nd-chip">write-beats</span><span class="nd-chip">writing-fragments</span><span class="nd-chip">writing-shape</span><span class="nd-chip">caveman</span><span class="nd-chip">_global</span></div>
-          </div>
-        </div>
-      </details>
-
-      <details class="kb-item" id="d-system">
-        <summary><span class="chev" aria-hidden="true">›</span><span class="s-path">raw/ · templates/ · tools/</span><span class="s-what">ต้นฉบับ แม่แบบ สคริปต์</span><span class="s-n"></span></summary>
-        <div class="kb-body">
-          <dl class="kb-rows">
-            <dt>raw/</dt><dd>ต้นฉบับห้ามแก้ · ส่วนใหญ่อยู่ใน .gitignore · บนเครื่องมี S038 · S054 · S055</dd>
-            <dt>templates/</dt><dd>concept · design-brief · entity · module · source</dd>
-            <dt>tools/</dt><dd><code>lint.py</code> · <code>sync-claude-memory.sh</code> · <code>responsive-sweep</code></dd>
-          </dl>
-        </div>
-      </details>
-
-    </div>
-  </section>
-
   <section class="kb-sec" aria-labelledby="h-notes">
     <header><h2 class="nd-title nd-title--page" id="h-notes">ข้อควรระวัง</h2></header>
     <div class="kb-notes">
@@ -386,46 +187,160 @@
 
 <script>
 (function () {
-  var list = document.getElementById('kb-list');
-  var items = [].slice.call(list.querySelectorAll('details.kb-item'));
-  /* เปิดทีละหมวด (design.md §0 single-open) */
-  items.forEach(function (d) {
-    d.addEventListener('toggle', function () {
-      if (!d.open || q.value.trim()) return;
-      items.forEach(function (o) { if (o !== d) o.open = false; });
+  /* ข้อมูลโฟลเดอร์ (นับจากไฟล์จริง 27 พ.ย. 69) · group = หัวกลุ่มในรายการ · blocks = กลุ่มในแผงรายละเอียด */
+  var FOLDERS = [
+    { id: 'index', group: 'ทางเข้า', name: 'index.md', path: 'index.md', n: 'อ่านก่อน', desc: 'สารบัญทุกหน้า',
+      sum: 'สารบัญของทั้งวอลต์ แยกตามหมวด · เปิดไฟล์นี้ก่อนเสมอ',
+      blocks: [
+        { t: 'หัวข้อในไฟล์', chips: ['Sources', 'Entities', 'Concepts', 'Analysis', 'Handoffs', 'Design briefs', 'Standards', 'Stats'] },
+        { t: 'หน้าที่แนะนำให้เปิดก่อน', chips: ['overview', 'dohis-system-synthesis', 'phcis-modules', 'figma-designs'] }
+      ] },
+    { id: 'log', group: 'ทางเข้า', name: 'log.md', path: 'log.md', n: '5,084 บรรทัด', desc: 'ไทม์ไลน์งาน',
+      sum: 'ไทม์ไลน์แบบต่อท้าย อันใหม่อยู่ล่างสุด',
+      blocks: [ { t: 'รายละเอียด', rows: [['รูปแบบ', '## [วันที่] ประเภท | หัวข้อ + bullet สั้น ๆ'], ['ล่าสุด', '27 พ.ย. 69 · handoff · e-document สร้าง/แก้ไขเฉพาะ admin กลาง']] } ] },
+    { id: 'guide', group: 'ทางเข้า', name: 'CLAUDE.md · AGENTS.md', path: 'CLAUDE.md', n: 'คู่มือ', desc: 'กติกาจัดวอลต์',
+      sum: 'คู่มือให้ agent รู้ว่าวอลต์จัดยังไง',
+      blocks: [ { t: 'รายละเอียด', rows: [['CLAUDE.md', 'กติกาวอลต์ · หน้าวิกิเขียนอังกฤษ · log/handoff เขียนไทยได้'], ['AGENTS.md', 'สำเนาให้ agent อื่นอ่าน · workflow agents-md.yml']] } ] },
+
+    { id: 'core', group: 'ความรู้ (wiki/)', name: 'wiki/*.md', path: 'wiki/', n: '5', desc: 'หน้ากลาง',
+      sum: 'หน้ากลางที่ใช้ข้ามทุกโมดูล',
+      blocks: [ { t: 'ไฟล์', rows: [['overview', 'ภาพรวมและแผนที่โครงการ'], ['decisions-log', 'มติแบบ ADR · D-001 → D-101'], ['open-questions', 'คำถามที่ยังค้าง'], ['glossary', 'คำศัพท์และตัวย่อ'], ['figma-designs', 'รายการไฟล์ Figma']] } ] },
+    { id: 'sources', group: 'ความรู้ (wiki/)', name: 'sources/', path: 'wiki/sources/', n: '30', desc: 'เอกสารต้นทาง',
+      sum: 'สรุปเอกสารต้นทาง ตั้งเลข S###',
+      blocks: [
+        { t: 'เอกสารหลัก', chips: ['S002 TOR หลัก HCIS', 'S024 รายงานออกแบบ DOHIS', 'S025 Telemedicine UAT', 'S026 telemed หนองคาย', 'S027 2Q/9Q/8Q', 'S028 veterinary UML', 'S029 school design system', 'S030 OPD flow', 'S031 OPD videos', 'S032 ANC guideline', 'S033 TOR ภาคผนวก', 'S036 field visit ส.ค. 69', 'S039 mental-health spec'] },
+        { t: 'เอกสาร Drive คณะทำงาน · นำเข้า 23 ต.ค. 69', chips: ['S040 คณะ 1 core', 'S041 คณะ 2 family health', 'S042 คณะ 3 special clinics', 'S043 คณะ 4 home visit', 'S044 คณะ 5 school health', 'S045 คณะ 6 dental', 'S046 คณะ 7 pharmacy', 'S047 คณะ 8 finance', 'S048 คณะ 9 prevention rehab', 'S049 คณะ 10 social welfare', 'S050 คณะ 11 reports', 'S051 คณะ 12 mobile app', 'S052 คณะ 13 consent', 'S053 central legal uxui'] },
+        { t: 'เพิ่มทีหลัง', chips: ['S054 triage proposal', 'S055 medical certificate', 'S056 คณะ 3 ประชุม 10 พ.ย. 69'] }
+      ] },
+    { id: 'entities', group: 'ความรู้ (wiki/)', name: 'entities/', path: 'wiki/entities/', n: '54', desc: 'ระบบ · โมดูล · interface',
+      sum: 'หน้าของระบบ โมดูล การเชื่อมต่อภายนอก และมาตรฐานรหัส',
+      blocks: [
+        { t: 'ระบบหลัก', chips: ['dohis', 'hcis', 'phcis', 'his-everapp', 'dohis-exchange-zone', 'dohis-data-lake', 'phcis-modules', 'phcis-design-system', 'bma-kiosk', 'telemedicine', 'schedule-management', 'signin', 'cpoe', 'erp', 'cms', 'crm', 'doh-staff-app', 'hl7-fhir'] },
+        { t: 'modules/ · 22', chips: ['mod-medical-records', 'mod-exam-clinic', 'mod-pharmacy', 'mod-lab', 'mod-radiology', 'mod-cashier', 'mod-referral', 'mod-appointment', 'mod-dental', 'mod-mental-health', 'mod-tb', 'mod-substance-abuse', 'mod-sti-aids', 'mod-anc', 'mod-family-planning', 'mod-immunization', 'mod-special-groups', 'mod-social-rehab', 'mod-community-health', 'mod-school-health', 'mod-central-mis', 'mod-veterinary'] },
+        { t: 'interfaces/ · 9', chips: ['health-link', 'tgix', 'e-referral', 'e-claim', 'nhso', 'pacs', 'thaid', 'epi-net', 'bma-portal'] },
+        { t: 'standards/ · 5', chips: ['icd-10', 'icd-9', 'snomed-ct', 'loinc', 'drug-coding-tmt'] }
+      ] },
+    { id: 'briefs', group: 'ความรู้ (wiki/)', name: 'design-briefs/', path: 'wiki/design-briefs/', n: '22', desc: 'brief รายโมดูล',
+      sum: 'อ่านก่อนออกแบบโมดูลนั้น · TOR ∪ คู่มือเก่า ∪ ของใหม่',
+      blocks: [
+        { t: 'Core flow', chips: ['registration', 'exam-clinic', 'pharmacy', 'lab', 'radiology', 'cashier', 'referral'] },
+        { t: 'คลินิกพิเศษ', chips: ['dental', 'mental-health', 'tb', 'substance-abuse', 'sti-aids', 'anc', 'family-planning', 'immunization', 'special-groups', 'social-rehab'] },
+        { t: 'ชุมชน · โรงเรียน · อื่น ๆ', chips: ['community-health', 'school-health', 'home-visit', 'central-mis', 'veterinary'] }
+      ] },
+    { id: 'concepts', group: 'ความรู้ (wiki/)', name: 'concepts/', path: 'wiki/concepts/', n: '14', desc: 'แนวคิดข้ามโมดูล',
+      sum: 'แนวคิดที่ใช้ร่วมกันหลายโมดูล',
+      blocks: [ { t: 'ไฟล์', chips: ['digital-transformation', 'system-architecture', 'data-security', 'health-information-exchange', 'interoperability', 'consent-management-pdpa', 'patient-referral-flow', 'master-patient-index', 'mental-health-screening-2q9q8q', 'abac', 'medication-reconciliation', 'rng-506', 'read-replica-research-db', 'coding-standards'] } ] },
+    { id: 'analysis', group: 'ความรู้ (wiki/)', name: 'analysis/', path: 'wiki/analysis/', n: '8', desc: 'บทวิเคราะห์ภาพใหญ่',
+      sum: 'บทวิเคราะห์ทั้งระบบ',
+      blocks: [ { t: 'ไฟล์', rows: [['dohis-system-synthesis', 'สรุปทั้งระบบ as-is → to-be'], ['opd-clinical-flow', 'flow OPD หลัก ลงทะเบียน → EMR → CPOE → ยา → การเงิน'], ['dohis-roadmap-phasing', 'roadmap 11 ระบบ · 2024–2028'], ['dohis-ui-screens', 'mockup to-be 55 หน้าจอ'], ['phcis-detailed-requirements', 'requirement รายระบบจาก TOR ภาคผนวก ก'], ['design-build-gap', 'เทียบ spec · Figma · ของที่สร้างจริง'], ['deployment-pipeline', 'งานขึ้น production ยังไง · ตรวจเว็บจริง'], ['veterinary-system-design', 'UML/DB ระบบสัตวแพทย์สาธารณสุข']] } ] },
+
+    { id: 'handoffs', group: 'บันทึกงาน', name: 'handoffs/', path: 'wiki/handoffs/', n: '493', desc: 'สรุปหลังจบงาน',
+      sum: 'สรุปหลังจบงานแต่ละรอบ · ชื่อไฟล์ขึ้นต้นด้วยวันที่ · Glokbot อ่านจากที่นี่',
+      blocks: [
+        { t: 'จำนวนต่อเดือน', bars: [['ก.ย. 69', 35], ['ต.ค. 69', 267], ['พ.ย. 69', 191]] },
+        { t: 'ล่าสุด', chips: ['2026-11-27-edocument-central-admin-only', '2026-11-27-github-actions-minutes-archive-cleanup', '2026-11-27-sitemap-from-mel-plus-clinics', '2026-11-26-consent-idcard-mismatch-error'] },
+        { t: 'ใครเขียน · ใครอ่าน', rows: [['เขียน', 'skill handoff หลังงานที่ push แล้ว'], ['อ่าน', 'Glokbot · เซสชันถัดไป'], ['attachments/', 'ภาพประกอบ handoff']] }
+      ] },
+
+    { id: 'memory', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-memory/', path: 'claude-memory/', n: '440', desc: 'สำรอง memory',
+      sum: 'สำเนา memory ของ Claude บนเครื่องนี้ ให้เซสชัน cloud ใช้',
+      blocks: [ { t: 'รายละเอียด', rows: [['ซิงก์', 'tools/sync-claude-memory.sh push'], ['ข้างใน', 'README.md · bma.health-main/']] } ] },
+    { id: 'skills', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-skills/', path: 'claude-skills/', n: '16 skill', desc: 'submodule',
+      sum: 'submodule ชี้ไป repo namonlims/claude-skills',
+      blocks: [ { t: 'skill ที่สำรอง', chips: ['handoff', 'cc-handoff', 'responsive-web', 'vibe-to-figma', 'figma-layer-rename', 'kiosk-360-face-scan', 'prototype', 'grill-me', 'grill-with-docs', 'improve-codebase-architecture', 'write-a-skill', 'write-beats', 'writing-fragments', 'writing-shape', 'caveman', '_global'] } ] },
+    { id: 'system', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'raw/ · templates/ · tools/', path: 'raw/', n: '7 · 5 · 3', desc: 'ต้นฉบับ · แม่แบบ · สคริปต์',
+      sum: 'ไฟล์ต้นฉบับ แม่แบบหน้า และสคริปต์ดูแลวอลต์',
+      blocks: [ { t: 'รายละเอียด', rows: [['raw/', 'ต้นฉบับห้ามแก้ · ส่วนใหญ่อยู่ใน .gitignore · บนเครื่องมี S038 · S054 · S055'], ['templates/', 'concept · design-brief · entity · module · source'], ['tools/', 'lint.py · sync-claude-memory.sh · responsive-sweep'], ['.github/', 'workflow agents-md.yml']] } ] }
+  ];
+
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var tree = document.getElementById('kb-tree'), panel = document.getElementById('kb-panel'), explorer = document.getElementById('kb-explorer'), q = document.getElementById('kb-q');
+  var mobile = matchMedia('(max-width: 767px)');
+  var current = 'index', term = '';
+
+  var hit = function (text) { return term && String(text).toLowerCase().indexOf(term) > -1; };
+  var countHits = function (f) {
+    var n = 0;
+    f.blocks.forEach(function (b) {
+      (b.chips || []).forEach(function (c) { if (hit(c)) n++; });
+      (b.rows || []).forEach(function (r) { if (hit(r[0]) || hit(r[1])) n++; });
     });
-  });
-  document.querySelectorAll('a.kb-node').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var el = document.getElementById(a.getAttribute('href').slice(1));
-      if (!el) return;
-      e.preventDefault();
-      el.open = true;
-      el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    if (!n && (hit(f.name) || hit(f.sum))) n = 1;
+    return n;
+  };
+
+  var renderTree = function () {
+    var groups = [], by = {};
+    FOLDERS.forEach(function (f) { if (!by[f.group]) { by[f.group] = []; groups.push(f.group); } by[f.group].push(f); });
+    tree.innerHTML = groups.map(function (g) {
+      return '<div class="kb-tgroup"><h3 class="nd-group-title">' + esc(g) + '</h3><ul>' + by[g].map(function (f) {
+        return '<li data-id="' + f.id + '"><button type="button" class="kb-titem" role="tab" id="t-' + f.id + '" aria-controls="kb-panel" aria-selected="false">' +
+          '<span class="t-name">' + esc(f.name) + '</span><span class="t-desc">' + esc(f.desc) + '</span>' +
+          '<span class="t-n"><span class="t-count">' + esc(f.n) + '</span><span class="t-hit"></span></span></button></li>';
+      }).join('') + '</ul></div>';
+    }).join('');
+  };
+
+  var renderPanel = function (f) {
+    var crumb = ['bma-health-second-brain'].concat(f.path.replace(/\/$/, '').split('/'));
+    var html = '<div class="kb-crumb">' + crumb.map(function (c, i) { return i === crumb.length - 1 ? '<b>' + esc(c) + '</b>' : esc(c) + ' /'; }).join(' ') + '</div>' +
+      '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(f.name) + '</h3><span class="nd-chip nd-chip--brand">' + esc(f.n) + '</span></div><p>' + esc(f.sum) + '</p></div>';
+    f.blocks.forEach(function (b) {
+      html += '<div class="kb-grp"><h4 class="nd-group-title">' + esc(b.t) + '</h4>';
+      if (b.chips) html += '<div class="kb-tags">' + b.chips.map(function (c) { return '<span class="nd-chip' + (hit(c) ? ' is-hit' : '') + '">' + esc(c) + '</span>'; }).join('') + '</div>';
+      if (b.rows) html += '<dl class="kb-rows">' + b.rows.map(function (r) { return '<dt' + (hit(r[0]) || hit(r[1]) ? ' class="is-hit"' : '') + '>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>';
+      if (b.bars) { var max = Math.max.apply(null, b.bars.map(function (x) { return x[1]; })); html += '<div class="kb-bars">' + b.bars.map(function (x) { return '<div class="kb-bar"><span>' + esc(x[0]) + '</span><span class="track"><span class="fill" style="width:' + (x[1] / max * 100).toFixed(1) + '%"></span></span><span class="v">' + x[1] + '</span></div>'; }).join('') + '</div>'; }
+      html += '</div>';
     });
-  });
-  var q = document.getElementById('kb-q'), none = document.getElementById('kb-none');
-  q.addEventListener('input', function () {
-    var t = q.value.trim().toLowerCase(), any = false;
-    items.forEach(function (d) {
-      var hits = 0;
-      d.querySelectorAll('.nd-chip, .kb-rows dt').forEach(function (el) {
-        var dd = el.tagName === 'DT' ? el.nextElementSibling : null;
-        var ok = !t || el.textContent.toLowerCase().indexOf(t) > -1 || (dd && dd.textContent.toLowerCase().indexOf(t) > -1);
-        el.classList.toggle('kb-hide', !ok); if (dd) dd.classList.toggle('kb-hide', !ok);
-        if (ok) hits++;
-      });
-      d.querySelectorAll('.kb-sub').forEach(function (s) {
-        var has = s.querySelector('.nd-chip, dt');
-        s.classList.toggle('kb-hide', !!t && !!has && !s.querySelector('.nd-chip:not(.kb-hide), dt:not(.kb-hide)'));
-      });
-      var match = !t || hits > 0 || d.querySelector('summary').textContent.toLowerCase().indexOf(t) > -1;
-      d.classList.toggle('kb-hide', !match);
-      d.open = t ? match : d.id === 'd-index';
-      if (match) any = true;
+    panel.innerHTML = html;
+    panel.setAttribute('aria-labelledby', 't-' + f.id);
+  };
+
+  /* มือถือ: แผงไปอยู่ใต้รายการที่เลือก · จอใหญ่: แผงอยู่ขวา */
+  var placePanel = function () {
+    if (mobile.matches) { var li = tree.querySelector('li[data-id="' + current + '"]'); if (li) li.appendChild(panel); }
+    else if (panel.parentNode !== explorer) explorer.appendChild(panel);
+  };
+
+  var select = function (id, opts) {
+    var f = FOLDERS.filter(function (x) { return x.id === id; })[0]; if (!f) return;
+    /* มือถือ: กดโฟลเดอร์ที่เปิดอยู่ซ้ำ = พับ (เปิดทีละอัน) */
+    if (mobile.matches && opts && opts.user && id === current && !panel.hidden) { panel.hidden = true; tree.querySelector('#t-' + id).setAttribute('aria-expanded', 'false'); return; }
+    current = id; panel.hidden = false;
+    tree.querySelectorAll('.kb-titem').forEach(function (b) { var on = b.id === 't-' + id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; b.setAttribute('aria-expanded', String(on)); });
+    renderPanel(f); placePanel();
+    try { sessionStorage.setItem('kb-folder', id); } catch (e) {}
+  };
+
+  var applyFilter = function () {
+    term = q.value.trim().toLowerCase();
+    explorer.classList.toggle('is-filtering', !!term);
+    var first = null, any = false;
+    FOLDERS.forEach(function (f) {
+      var n = term ? countHits(f) : 1, li = tree.querySelector('li[data-id="' + f.id + '"]');
+      li.classList.toggle('kb-hide', !n);
+      li.querySelector('.t-hit').textContent = n ? 'พบ ' + n : '';
+      if (n) { any = true; if (!first) first = f.id; }
     });
-    none.classList.toggle('kb-hide', any);
+    tree.querySelectorAll('.kb-tgroup').forEach(function (g) { g.classList.toggle('kb-hide', !g.querySelector('li:not(.kb-hide)')); });
+    if (!any) { panel.hidden = false; explorer.appendChild(panel); panel.innerHTML = '<p class="kb-empty">ไม่พบหน้าที่ตรงกับ "' + esc(q.value.trim()) + '" ลองคำอื่น เช่น pharmacy หรือ anc</p>'; return; }
+    var curLi = tree.querySelector('li[data-id="' + current + '"]');
+    select(term && curLi.classList.contains('kb-hide') ? first : current);
+  };
+
+  renderTree();
+  tree.addEventListener('click', function (e) { var b = e.target.closest('.kb-titem'); if (b) select(b.id.slice(2), { user: true }); });
+  tree.addEventListener('keydown', function (e) {
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(e.key) < 0) return;
+    var items = [].slice.call(tree.querySelectorAll('li:not(.kb-hide) .kb-titem')), i = items.indexOf(document.activeElement); if (i < 0) return;
+    e.preventDefault();
+    var n = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items[n].focus(); select(items[n].id.slice(2));
   });
+  q.addEventListener('input', applyFilter);
+  (mobile.addEventListener ? mobile.addEventListener.bind(mobile, 'change') : mobile.addListener.bind(mobile))(placePanel);
+  var saved = null; try { saved = sessionStorage.getItem('kb-folder'); } catch (e) {}
+  select(saved && FOLDERS.some(function (f) { return f.id === saved; }) ? saved : 'index');
 })();
 </script>
 <script src="docs-frame.js"></script>
