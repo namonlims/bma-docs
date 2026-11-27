@@ -29,7 +29,9 @@
   .cards span { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
   .filters { display: grid; gap: var(--nd-space-300, 12px); grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
   .filters .q { grid-column: span 2; }
-  .filters .nd-input { font-size: var(--nd-type-size-base, 16px); }
+  /* ช่องตัวกรองเล็กลง (ผู้ใช้ 28 พ.ย. 69) — จอใหญ่ตัวอักษร sm · มือถือคง base กัน iOS ซูมเมื่อแตะช่อง */
+  .filters .nd-input, .filters .nd-select__btn { font-size: var(--nd-type-size-sm, 14px); }
+  @media (max-width: 767px) { .filters .nd-input, .filters .nd-select__btn { font-size: var(--nd-type-size-base, 16px); } }
   @media (max-width: 1023px) { .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 767px) { .page { padding: var(--nd-space-400, 16px); } }
   @media (max-width: 559px) { .filters { grid-template-columns: minmax(0, 1fr); } .filters .q { grid-column: auto; } }
