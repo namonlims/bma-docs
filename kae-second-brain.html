@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="namon-components.css">
 <script type="module" src="namon/namon-agent.js"></script>
 <style>
-  body { margin: 0; background: var(--nd-surface-page, #FDFDFD); }
+  body, body.nd-root { margin: 0; background: var(--nd-surface-card, #FFFFFF); }
   .kb { max-width: 1120px; margin: 0 auto; padding: var(--nd-space-800, 32px) var(--nd-space-400, 16px) var(--nd-space-1200, 48px); display: flex; flex-direction: column; gap: var(--nd-space-800, 32px); }
   .kb h1, .kb h2, .kb h3, .kb p { margin: 0; }
   .mono { font-family: ui-monospace, Menlo, monospace; }
@@ -29,7 +29,7 @@
   .kb-filter .nd-input { font-size: var(--nd-type-size-base, 16px); }
 
   /* ตัวสำรวจ: รายการโฟลเดอร์ (ซ้าย) + รายละเอียด (ขวา) */
-  .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); overflow: hidden; }
+  .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); overflow: hidden; }
   .kb-tree { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-400, 16px); border-right: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); background: var(--nd-surface-page, #FDFDFD); min-width: 0; }
   .kb-tgroup { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
   .kb-tgroup .nd-group-title { margin: 0 0 var(--nd-space-100, 4px); padding-left: var(--nd-space-300, 12px); }
@@ -112,10 +112,7 @@
   </header>
   <div class="kb-bar" aria-hidden="true"></div>
 
-  <section class="kb-sec" aria-labelledby="h-map">
-    <header>
-      <h2 class="nd-title nd-title--page" id="h-map">โฟลเดอร์และสิ่งที่อยู่ข้างใน</h2>
-    </header>
+  <section class="kb-sec" aria-label="โฟลเดอร์และสิ่งที่อยู่ข้างใน">
     <label class="kb-filter nd-field" for="kb-q">
       <span class="nd-field__label">ค้นหาชื่อหน้าในทุกโฟลเดอร์</span>
       <input class="nd-input" id="kb-q" type="search" placeholder="เช่น pharmacy · anc · consent" autocomplete="off">
