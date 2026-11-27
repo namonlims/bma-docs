@@ -27,9 +27,16 @@ for (const r of rows) {
   content[r.p] = buf.toString('utf8');
 }
 const plain = zlib.gzipSync(Buffer.from(JSON.stringify(content)), { level: 9 });
-const salt = crypto.randomBytes(16), iv = crypto.randomBytes(12), iter = 310000;
-const key = crypto.pbkdf2Sync(pass, salt, iter, 32, 'sha256');
+// ใช้ salt เดิมถ้ารหัสผ่านยังเหมือนเดิม → กุญแจที่เบราว์เซอร์จำไว้ยังใช้ได้ ไม่ต้องใส่รหัสใหม่ทุกครั้งที่อัปเดตฉบับบันทึก
+const iter = 310000, iv = crypto.randomBytes(12); let salt = crypto.randomBytes(16);
+const outContent = path.join(dir, "kae-second-brain-content.json");
+try {
+  const old = JSON.parse(fs.readFileSync(outContent, "utf8")); const s = Buffer.from(old.kdf.salt, "base64"); const k = crypto.pbkdf2Sync(pass, s, old.kdf.iter, 32, "sha256");
+  const b = Buffer.from(old.data, "base64"); const d = crypto.createDecipheriv("aes-256-gcm", k, Buffer.from(old.iv, "base64")); d.setAuthTag(b.subarray(-16)); d.update(b.subarray(0, -16)); d.final();
+  if (old.kdf.iter === iter) salt = s;
+} catch (e) { console.log("salt ใหม่ (รหัสผ่านเปลี่ยนหรือยังไม่มีฉบับเดิม) · ต้องใส่รหัสผ่านใหม่ในเบราว์เซอร์"); }
+const key = crypto.pbkdf2Sync(pass, salt, iter, 32, "sha256");
 const c = crypto.createCipheriv('aes-256-gcm', key, iv);
 const enc = Buffer.concat([c.update(plain), c.final(), c.getAuthTag()]); // WebCrypto ต้องการ tag ต่อท้าย
-fs.writeFileSync(path.join(dir, 'kae-second-brain-content.json'), JSON.stringify({ v: 1, generated, commit: { sha, date }, kdf: { name: 'PBKDF2', hash: 'SHA-256', iter, salt: salt.toString('base64') }, iv: iv.toString('base64'), data: enc.toString('base64') }) + '\n');
+fs.writeFileSync(outContent, JSON.stringify({ v: 1, generated, commit: { sha, date }, kdf: { name: 'PBKDF2', hash: 'SHA-256', iter, salt: salt.toString('base64') }, iv: iv.toString('base64'), data: enc.toString('base64') }) + '\n');
 console.log(`${files.length} files · เนื้อหา ${Object.keys(content).length} ไฟล์ (ข้าม ${skipped} ไฟล์ภาพ/ใหญ่) · ${(enc.length / 1e6).toFixed(2)} MB · ${sha.slice(0, 7)}`);
