@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Agent ของทีม PHCIS ไหลต่อกันอย่างไร · 7 agent ใน bma.health/.claude/agents · ตัวละคร Namon จาก namon/namon-agent.js (ผู้ใช้ 27 พ.ย. 69) -->
+<title>PHCIS Agent Flow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: หัว → แท็บประเภทงาน (การไหล) → การ์ด agent → เครื่องมือ/กติกา · คอลัมน์เดียวกว้างสุด 1080 */
+:root{
+  --bg:#F5F8F6; --surface:#FFFFFF; --line:#DCE6E0; --fg:#14231B; --muted:#55685D; --faint:#7B8C82;
+  --brand:#007549; --brand-soft:#E3F3EB; --gate:#B45309; --gate-soft:#FDF1E1; --par:#3E5BA9; --par-soft:#E8EDFA;
+  --ro:#5B6B63; --ro-soft:#EEF2EF;
+  --f-body:"Anuphan",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1713; --surface:#16211B; --line:#2A3A31; --fg:#E6EFEA; --muted:#A3B5AA; --faint:#7F9187;
+  --brand:#3DC48A; --brand-soft:#16352A; --gate:#F0A657; --gate-soft:#3A2A15; --par:#8EA6EE; --par-soft:#1E2742;
+  --ro:#A3B5AA; --ro-soft:#1F2B25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1713; --surface:#16211B; --line:#2A3A31; --fg:#E6EFEA; --muted:#A3B5AA; --faint:#7F9187;
+  --brand:#3DC48A; --brand-soft:#16352A; --gate:#F0A657; --gate-soft:#3A2A15; --par:#8EA6EE; --par-soft:#1E2742;
+  --ro:#A3B5AA; --ro-soft:#1F2B25; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.3}
+h1{font-size:28px;font-weight:700}
+h2{font-size:20px;font-weight:700;color:var(--brand)}
+h3{font-size:16px;font-weight:600}
+p{margin:0}
+.sub{color:var(--muted);max-width:70ch}
+code,.mono{font-family:var(--f-mono);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+section{display:flex;flex-direction:column;gap:16px}
+
+/* tabs */
+.split{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
+.tabs{display:flex;flex-direction:column;gap:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+.tab{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:10px 14px;border-radius:8px;border:0;border-left:3px solid transparent;
+  background:transparent;color:var(--muted);cursor:pointer;text-align:left;line-height:1.4}
+.tab:hover{background:var(--surface);color:var(--fg)}
+.tab[aria-selected="true"]{background:var(--brand-soft);border-left-color:var(--brand);color:var(--brand);font-weight:600}
+@media (max-width:767px){
+  .split{grid-template-columns:minmax(0,1fr)}
+  .tabs{flex-direction:row;position:static;overflow-x:auto;padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .tab{flex:0 0 auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;border-radius:8px 8px 0 0}
+  .tab[aria-selected="true"]{border-bottom-color:var(--brand)}
+}
+.tab:focus-visible,.agent:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.scenario{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px}
+.scenario .when{color:var(--muted);font-size:14px}
+
+/* flow */
+.flow{display:flex;flex-direction:column;align-items:stretch}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.step{flex:1 1 220px;min-width:0}
+.arrow{height:22px;display:flex;justify-content:center;color:var(--faint)}
+.arrow svg{display:block}
+.step{border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:8px;padding:8px 12px;background:var(--surface);
+  display:flex;gap:10px;align-items:center}
+.step .n{font-family:var(--f-mono);font-size:12px;color:var(--faint);align-self:flex-start;padding-top:4px}
+.step .who{font-weight:600}
+.step .what{color:var(--muted);font-size:13.5px}
+.step .out{font-size:12.5px;color:var(--faint)}
+.step.gate{border-left-color:var(--gate);background:var(--gate-soft)}
+.step.gate .who{color:var(--gate)}
+.step.par{border-left-color:var(--par)}
+.step.tool{border-left-color:var(--ro);background:var(--ro-soft)}
+.parlabel{font-size:12px;color:var(--par);font-weight:600;margin:0 0 4px}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;margin-left:4px;vertical-align:1px}
+.chip.ro{background:var(--ro-soft);color:var(--ro)}
+.chip.w{background:var(--brand-soft);color:var(--brand)}
+.chip.h{background:var(--par-soft);color:var(--par)}
+.tips{border-top:1px solid var(--line);padding-top:12px;font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.tips b{color:var(--fg);font-weight:600}
+
+/* agents */
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.agent{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.agent .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.agent .name{font-family:var(--f-mono);font-weight:500;font-size:14px;color:var(--brand)}
+.agent .role{font-weight:600}
+.kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;font-size:13.5px;border-top:1px solid var(--line);padding-top:10px}
+.kv dt{color:var(--faint)}
+.kv dd{margin:0}
+.agent ol{margin:0;padding-left:20px;font-size:13.5px;color:var(--muted)}
+.say{font-size:13px;background:var(--bg);border-radius:6px;padding:6px 10px;font-family:var(--f-mono)}
+
+/* table */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--faint);font-weight:500;font-size:12.5px}
+tr:last-child td{border-bottom:0}
+.gaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.gap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;font-size:13.5px;display:flex;flex-direction:column;gap:4px}
+.gap b{font-weight:600}
+@media (prefers-reduced-motion:no-preference){.scenario{transition:opacity .15s}}
+.hero{display:flex;gap:16px;align-items:center}
+.hero>div{display:flex;flex-direction:column;gap:10px;min-width:0}
+namon-agent{flex:0 0 auto}
+.step .txt{display:flex;flex-direction:column;min-width:0}
+.agent .id{display:flex;gap:12px;align-items:center;min-width:0}
+.agent .ch{font-size:12.5px;color:var(--faint)}
+@media (max-width:767px){.hero namon-agent{width:72px!important;height:72px!important}}
+</style>
+<script type="module" src="namon/namon-agent.js"></script>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <namon-agent agent="namon" pose="idle" size="104" label="Namon หัวหน้าทีม"></namon-agent>
+    <div>
+    <h1>Agent ของทีม PHCIS ไหลต่อกันอย่างไร</h1>
+    <p class="sub">7 agent ใน <code>.claude/agents/</code> · Claude Code (เซสชันหลัก) เป็นคนส่งงานต่อระหว่าง agent และ "คุณ" เป็นคนตัดสินที่ด่านสีส้ม เลือกประเภทงานด้านล่างเพื่อดูลำดับ</p>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--brand)"></i>agent ทำงาน</span>
+      <span><i class="dot" style="background:var(--par)"></i>ทำพร้อมกันได้</span>
+      <span><i class="dot" style="background:var(--gate)"></i>ด่านที่คุณตัดสิน</span>
+      <span><i class="dot" style="background:var(--ro)"></i>คำสั่ง/skill (ไม่ใช่ agent)</span>
+      <span>Namon สีน้ำเงิน = หัวหน้าทีม (Claude Code เซสชันหลัก) · ท่ารอ = รอคุณอนุมัติ</span>
+    </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>การไหลตามประเภทงาน</h2>
+    <div class="split">
+      <div class="tabs" role="tablist" aria-orientation="vertical" id="tabs"></div>
+      <div class="scenario" id="scenario" role="tabpanel"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Agent ทั้ง 7 ตัว · เก่งอะไร · ทำงานอย่างไร</h2>
+    <div class="agents" id="agents"></div>
+  </section>
+
+  <section>
+    <h2>ใครส่งอะไรให้ใคร</h2>
+    <p class="sub">ผลงานของ agent หนึ่งเป็นวัตถุดิบของตัวถัดไป ถ้าส่งไฟล์นี้ต่อทุกครั้ง ตัวถัดไปไม่ต้องค้นซ้ำ</p>
+    <div class="tbl"><table>
+      <thead><tr><th>จาก</th><th>ผลงาน (ไฟล์)</th><th>ส่งต่อให้</th><th>ใช้ทำอะไร</th></tr></thead>
+      <tbody>
+        <tr><td>phcis-meeting</td><td><code>docs/reference/meetings/&lt;วันที่&gt;.md</code> + ตาราง "ขัดกับของเดิม"</td><td>คุณ → phcis-ux-plan</td><td>มติที่ยืนยันแล้วกลายเป็น scope</td></tr>
+        <tr><td>phcis-lookup</td><td>ตาราง TOR · สถานะ · route · มติ (คณะ ครั้ง หน้า)</td><td>phcis-ux-plan · phcis-screen</td><td>จุดเริ่มที่มีที่มาครบ ไม่เดา</td></tr>
+        <tr><td>phcis-ux-plan</td><td><code>docs/agents/plans/&lt;วันที่&gt;-&lt;slug&gt;.md</code> (flow · state · man-day · คำถาม)</td><td>คุณ → phcis-screen</td><td>brief ของหน้าจอแต่ละหน้า</td></tr>
+        <tr><td>phcis-screen</td><td>โค้ดหน้าจอ · ภาพ 4 ความกว้าง · <code>docs/figma-handoff/</code> manifest</td><td>phcis-design-check · phcis-wording · usability-tester</td><td>ตรวจก่อนส่งลูกค้า/Figma</td></tr>
+        <tr><td>phcis-design-check / phcis-wording</td><td>ตารางปัญหา สูง/กลาง/ต่ำ + ทางแก้ ก/ข · ตารางคำเดิม → คำเสนอ</td><td>คุณ → phcis-screen (รอบแก้)</td><td>แก้เฉพาะข้อที่คุณเลือก</td></tr>
+        <tr><td>usability-tester</td><td><code>usability/runs/&lt;study&gt;/&lt;session&gt;/findings.json</code></td><td>คุณ (Usability Studio) → phcis-screen</td><td>แก้จุดที่ผู้ใช้จริงจะติด</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>เพื่อให้ทำงานราบรื่นที่สุด</h2>
+    <div class="gaps">
+      <div class="gap"><b>1 งาน = 1 เซสชัน หลายตัว</b><span>สั่งในเซสชันเดียวตามลำดับ เช่น "ใช้ phcis-lookup … แล้วต่อด้วย phcis-ux-plan" เซสชันหลักจะส่งผลตัวแรกให้ตัวถัดไปเอง ไม่ต้องคัดลอก</span></div>
+      <div class="gap"><b>สั่งพร้อมกันได้เมื่อไม่พึ่งกัน</b><span>design-check + wording อ่านอย่างเดียวทั้งคู่ → รันพร้อมกันได้ · usability-tester เปิด 1 ตัวต่อ 1 บทบาท รันขนานได้หลายบทบาท</span></div>
+      <div class="gap"><b>ด่านส้มอย่าข้าม</b><span>ไม่มี agent ตัวไหน commit · แก้ rule · แก้ decision-log เอง ทุกตัวส่ง ก/ข กลับมา ตอบแบบ "1ก 2ข" แล้วเซสชันหลักทำต่อ</span></div>
+      <div class="gap"><b>งานเล็กไม่ต้องผ่าน plan</b><span>แก้ 1 จุด/คำ → ข้าม ux-plan ไป screen ได้เลย · งานหลายหน้าหรือหมวด TOR → ux-plan ก่อนทุกครั้ง (phcis-screen เองก็เตือนแบบนี้)</span></div>
+      <div class="gap"><b>ตัวที่ใช้ Haiku = ถูกและเร็ว</b><span>phcis-lookup และ phcis-wording ใช้โมเดลเล็ก เรียกบ่อยได้ · phcis-screen ใช้โมเดลหลักเพราะเขียนโค้ดและตรวจภาพ</span></div>
+      <div class="gap"><b>ยังไม่มีในทีม</b><span>Mobile / Kiosk ไม่มี agent สร้างหน้าจอ (phcis-screen ทำเฉพาะเว็บ) · การลง Figma ใช้ skill <code>vibe-to-figma</code> / <code>npm run ds:sync</code> ไม่ใช่ agent</span></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const AG = {
+  lookup:{name:"phcis-lookup",role:"ค้นหา TOR · มติ · หน้าจอ",mode:"ro",model:"Haiku",
+    good:"บอกว่า TOR ข้อไหนอยู่หน้าจอไหน สถานะอะไร มติประชุมว่าไว้อย่างไร (คณะ ครั้ง หน้า) ไฟล์โค้ดและ manifest Figma",
+    steps:["รัน npm run find -- <คำถาม> --json","ผลไม่พอ → ค้นต่อใน docs/reference · meetings · rules · Routes.jsx","ตอบประโยคแรกตรงคำถาม + ตารางพร้อมที่มา","มติขัดกัน → บอกว่าอะไรขัดอะไร + ก/ข"],
+    out:"ตาราง TOR · สถานะ · route · มติ · หมายเหตุ",say:"ใช้ phcis-lookup TOR 2.3.4 อยู่หน้าไหน มติว่าไง"},
+  plan:{name:"phcis-ux-plan",role:"แตก scope · ประเมิน man-day · ทำ flow",mode:"w",model:"หลัก",
+    good:"เปลี่ยน requirement / หมวด TOR / บันทึกประชุม เป็นรายการหน้าจอ · state ทุกแบบ · edge case · man-day · ตาราง flow · คำถามถึงลูกค้า",
+    steps:["รวบรวม: npm run find + rule ของ module + flow-spec + มติ","ขอบเขต: flow → หน้าจอ (ใหม่/แก้) → state → edge case","ประเมิน man-day จากตัวเลขจริงของ screen-agent","ตาราง flow แบบ flow-spec ติดป้าย Fact/Assumption","เขียน docs/agents/plans/ + บันทึก metrics"],
+    out:"ไฟล์แผน + คำถาม ก/ข · ไม่เขียนโค้ด",say:"ใช้ phcis-ux-plan ประเมิน TOR หมวด 1.18"},
+  screen:{name:"phcis-screen",role:"สร้าง/แก้หน้าจอเว็บครบ loop",mode:"w",model:"หลัก",
+    good:"เปลี่ยน brief หรือ TOR 1 ชิ้นเป็นหน้าจอจริง จากชิ้นกลาง + token ตรวจ 4 ความกว้าง เดิน flow ตามบทบาท และออก manifest ส่ง Figma",
+    steps:["เข้าใจ brief: แยก Fact/Assumption · ข้อมูลขาด → หยุดถาม ก/ข","เลือกสูตรหน้า (page-recipes) + ชิ้นกลาง + skill","สร้าง: token ทุกค่า · ลำดับชั้น · คำตามต้นฉบับ","ตรวจเอง: check.mjs 4 ความกว้าง · เดิน flow · token-lint · agent:check","screen:manifest ส่ง Figma/Dev","บันทึก metrics + รายงาน"],
+    out:"หน้าจอ · ภาพ · manifest · รายงาน · ไม่ commit",say:"ใช้ phcis-screen ทำ TOR 2.1.1"},
+  check:{name:"phcis-design-check",role:"วิจารณ์ดีไซน์ก่อนส่งทดสอบ",mode:"ro",model:"หลัก",
+    good:"หาจุดอ่อนตาม hierarchy/alignment · heuristic งานโรงพยาบาล · WCAG 2.2 AA · responsive · ใช้ชิ้นกลางครบไหม",
+    steps:["บริบท: route + บทบาท + มติของหน้านั้น","ถ่ายภาพ 4 ความกว้าง (dev ต้องรันอยู่)","ตรวจตามเกณฑ์ + contrast:check + wording:check","ทุกปัญหาสูง/กลาง เสนอทางแก้ ก/ข พร้อม trade-off"],
+    out:"ตาราง # · ระดับ · ตำแหน่ง · ปัญหา · ทางแก้ ก/ข",say:"ใช้ phcis-design-check ดู /community/gis ที่ iPad"},
+  wording:{name:"phcis-wording",role:"ตรวจคำ · เขียน error/ป้าย · แปล",mode:"ro",model:"Haiku",
+    good:"ให้ทั้งระบบพูดภาษาเดียวกันตามคลังคำ ui-glossary.json · ข้อความ error/แจ้งเตือน/tooltip สั้นเป็นลำดับชั้น · ไม่มีเพศ",
+    steps:["ลำดับที่มา: เอกสารลูกค้า → คลังคำ → rule คำศัพท์ → มติ","รัน wording:check ไฟล์ที่เกี่ยว","จับคู่ pattern ตามจุด (ปุ่ม · ป๊อปอัป · error · toast …)","เสนอคำใหม่พร้อมที่มา ไม่แก้ไฟล์"],
+    out:"ตารางคำเดิม → คำที่เสนอ · pattern · ที่มา",say:"ใช้ phcis-wording ตรวจคำหน้า /opd/screening"},
+  meeting:{name:"phcis-meeting",role:"บทถอดเสียงประชุม → มติ",mode:"w",model:"หลัก",
+    good:"แยกข้อสรุป · ยังต้องหารือ · งานที่ต้องทำ ผูกกับ TOR และหน้าจอ ตัดข้อมูลผู้ป่วยออก (PDPA)",
+    steps:["อ่านต้นฉบับทุกไฟล์ แบ่งตามหัวข้อ/เวลา","ต่อหัวข้อ: ข้อสรุป · ยังต้องหารือ · งาน","ผูก TOR/หน้าจอ/มติเดิมด้วย npm run find","เขียน docs/reference/meetings/ + ตาราง \"ขัดกับของเดิม\""],
+    out:"ไฟล์ความรู้ประชุม + บรรทัด decision-log ที่เสนอ",say:"ใช้ phcis-meeting สรุปไฟล์นี้ (แนบไฟล์)"},
+  ut:{name:"usability-tester",role:"สวมบทผู้ใช้ 1 บทบาท ทดสอบแอปจริง",mode:"h",model:"หลัก",
+    good:"ใช้ระบบแบบที่คนจริงใช้ (ความรู้ · ความอดทน · สายตา) ยอมแพ้จริงเมื่อคนนั้นจะยอมแพ้ ใช้ได้ทั้งเว็บ · Mobile · Kiosk",
+    steps:["อ่าน usability/AI-RUN.md + study.json","drive.mjs start <study>/<session> --persona","ทำทีละโจทย์: think → ดูจอ → tap/type → task-end","เขียน findings.json 1 ปัญหา 1 ข้อ มีภาพจอ"],
+    out:"findings.json → คุณตัดสินใน Usability Studio",say:"ใช้ usability-tester study phcis-web บทบาท P2 รอบ 1"}
+};
+const CH={lookup:"lookup",plan:"plan",screen:"screen",check:"check",wording:"wording",meeting:"meeting",ut:"tester"};
+const CHNAME={lookup:"Namon Lookup · แว่นขยาย",plan:"Namon Plan · เข็มทิศ",screen:"Namon Screen · พู่กัน",check:"Namon Check · คลิปบอร์ด",wording:"Namon Wording · หนังสือ",meeting:"Namon Meeting · ไมค์",ut:"Namon Tester · เมาส์"};
+const av=(agent,pose,size,label)=>`<namon-agent agent="${agent}" pose="${pose}" size="${size}" label="${label}"></namon-agent>`;
+const MODE={ro:["อ่านอย่างเดียว","ro"],w:["เขียนไฟล์ได้","w"],h:["ห้ามอ่าน src","h"]};
+
+const S = [
+ {id:"new",label:"ก · หน้าจอใหม่จาก TOR",when:"ลูกค้าให้ข้อ TOR หรือ brief มา ยังไม่มีหน้าจอ",
+  flow:[
+   [["lookup","หา TOR · มติ · หน้าจอเดิมที่ใกล้เคียง","ตาราง TOR + ที่มา"]],
+   [["plan","แตกหน้าจอ · state · edge case · man-day","ไฟล์แผน + คำถาม ก/ข"]],
+   [["gate","อนุมัติแผน · ตอบคำถาม ก/ข · ส่งคำถามลูกค้า","แผนที่ยืนยันแล้ว"]],
+   [["screen","สร้างทีละหน้าตามแผน ตรวจ 4 ความกว้าง","หน้าจอ + ภาพ + manifest"]],
+   [["check","critique ทั้งหน้า","ตารางปัญหา ก/ข","par"],["wording","ตรวจคำทุกป้าย/ข้อความ","ตารางคำเสนอ","par"]],
+   [["gate","เลือกข้อที่จะแก้","1ก 2ข …"]],
+   [["screen","รอบแก้ตามที่เลือก","หน้าจอฉบับแก้"]],
+   [["ut","ทดสอบบทบาทละ 1 ตัว (ถ้างานใหญ่)","findings.json","par"]],
+   [["tool","commit / push / merge (คุณสั่ง) → vibe-to-figma หรือ ds:sync","PR + Figma"]]
+  ],
+  tips:["<b>ข้ามได้:</b> usability-tester ถ้าเป็นหน้าเล็ก/หน้าย่อย","<b>ส่งต่อ:</b> ให้ phcis-screen อ่านไฟล์แผนใน docs/agents/plans/ แทนเล่า brief ใหม่"]},
+ {id:"meet",label:"ข · หลังประชุม / คอมเมนต์ลูกค้า",when:"มีบทถอดเสียง · minutes · ชีตคอมเมนต์รอบใหม่",
+  flow:[
+   [["meeting","แยกมติ · ยังต้องหารือ · งาน · ขัดกับของเดิม","ไฟล์ meetings + ตารางขัดแย้ง"]],
+   [["gate","ยืนยันมติ · เลือก ก/ข ข้อที่ขัด","มติที่ยืนยัน → rule + decision-log (เซสชันหลักแก้)"]],
+   [["lookup","ต่อข้อ: TOR · หน้าจอ · ไฟล์ที่ต้องแก้","รายการงานพร้อมที่อยู่"]],
+   [["plan","เฉพาะข้อใหญ่/หลายหน้า","แผน + man-day","par"],["screen","ข้อเล็ก แก้ได้เลย","หน้าจอฉบับแก้","par"]],
+   [["check","ตรวจหน้าที่แก้","ตารางปัญหา"]],
+   [["tool","สรุปเป็นรูป (Artifact) · handoff · PR","หน้าสรุปให้ลูกค้า/BA"]]
+  ],
+  tips:["<b>ด่านสำคัญ:</b> phcis-meeting ไม่แก้ rule เอง ต้องให้คุณยืนยันก่อน","<b>ข้อนอกรายการ:</b> สิ่งที่ลูกค้าบอกนอกข้อ → แถวใหม่พร้อมข้อความต้นฉบับ (กติกา working-with-user)"]},
+ {id:"fix",label:"ค · แก้หน้าที่มีอยู่",when:"หน้าจอมีแล้ว แต่ดูไม่ดี / คำไม่ตรง / ล้นจอ",
+  flow:[
+   [["check","หาปัญหา ดีไซน์ · a11y · responsive","ตารางปัญหา","par"],["wording","หาคำที่ขัดคลังคำ","ตารางคำ","par"]],
+   [["gate","เลือกทางแก้แต่ละข้อ","1ก 2ข …"]],
+   [["screen","แก้ + ถ่ายภาพยืนยัน","หน้าจอฉบับแก้"]],
+   [["check","ตรวจซ้ำรอบสุดท้าย (เร็ว)","ผ่าน / เหลือ N ข้อ"]]
+  ],
+  tips:["<b>เร็วที่สุด:</b> design-check กับ wording อ่านอย่างเดียวทั้งคู่ สั่งในข้อความเดียวให้รันพร้อมกัน","<b>แก้จุดเดียว:</b> ส่งภาพ + 1–3 คำให้เซสชันหลักแก้ตรงได้เลย ไม่ต้องผ่าน agent"]},
+ {id:"est",label:"ง · ประเมินงาน / เสนอ man-day",when:"ถามว่าหมวด TOR นี้ต้องทำกี่หน้า ใช้กี่วัน",
+  flow:[
+   [["lookup","สถานะทั้งหมวด (tor-gap-report)","% ต่อหมวด + ข้อที่ยังขาด"]],
+   [["plan","แตก scope · state · man-day · timeline","ไฟล์แผน + คำถามลูกค้า"]],
+   [["gate","ปรับตัวเลข · ส่งคำถามให้ลูกค้า","แผนฉบับส่ง"]]
+  ],
+  tips:["<b>ตัวเลขแม่นขึ้นเรื่อย ๆ:</b> plan ใช้เวลาจริงจาก screen-agent-metrics.md เป็นฐาน — กรอกช่อง \"เวลาทำเอง\" ทุกครั้งที่ทำเสร็จ"]},
+ {id:"ux",label:"จ · ทดสอบ usability ก่อนส่ง",when:"flow ครบแล้ว อยากรู้ว่าผู้ใช้แต่ละบทบาทติดตรงไหน",
+  flow:[
+   [["check","ตรวจปัญหาที่เห็นชัดออกก่อน","ตารางปัญหา"]],
+   [["ut","P1 เช่น เวชระเบียน","findings","par"],["ut","P2 เช่น พยาบาล","findings","par"],["ut","P3 เช่น แพทย์","findings","par"]],
+   [["gate","รวมผลใน Usability Studio · เลือกข้อแก้","รายการแก้"]],
+   [["screen","แก้ตามที่เลือก","หน้าจอฉบับแก้"]]
+  ],
+  tips:["<b>ขนาน:</b> 1 ตัวต่อ 1 บทบาท สั่งพร้อมกันในข้อความเดียว","<b>ไม่ใช้แทน:</b> ตรวจ responsive/a11y ของหน้าเดียว → ใช้ design-check"]},
+ {id:"fig",label:"ฉ · ส่ง Figma / Dev",when:"หน้าจอผ่านแล้ว ต้องลง Figma และส่งเดฟ",
+  flow:[
+   [["check","ตรวจรอบสุดท้าย","ผ่าน"]],
+   [["tool","npm run screen:manifest -- <หน้า> --out docs/figma-handoff","ชิ้นกลาง · ไอคอน · token"]],
+   [["tool","skill vibe-to-figma (หน้าจอ) · npm run ds:sync (token/component)","Figma อัปเดต"]],
+   [["gate","commit · push · merge = เปิด PR รอเดฟ","ลิงก์ PR"]],
+   [["tool","skill handoff → Kae-brain","Glokbot รู้ว่าทำอะไรไป"]]
+  ],
+  tips:["<b>ไม่ใช่ agent:</b> ขั้นนี้เป็น skill/คำสั่ง เซสชันหลักทำเอง","<b>ก่อนส่ง Dev:</b> tokens:pull -- --check + npm run audit ใน mih-design"]}
+];
+
+const arrow='<div class="arrow" aria-hidden="true"><svg width="14" height="22" viewBox="0 0 14 22"><path d="M7 0v17" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 13l5 6 5-6" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></div>';
+let n=0;
+function stepHTML([k,what,out,par]){
+  n++;
+  const num=`<span class="n">${String(n).padStart(2,"0")}</span>`;
+  const txt=(who)=>`<div class="txt"><span class="who">${who}</span><span class="what">${what}</span><span class="out">→ ${out}</span></div>`;
+  if(k==="gate") return `<div class="step gate">${num}${av("namon","waiting",52,"Namon รอคุณอนุมัติ")}${txt("คุณตัดสิน")}</div>`;
+  if(k==="tool") return `<div class="step tool">${num}${av("namon","working",52,"Namon หัวหน้าทีมรันคำสั่ง")}${txt("Namon รันคำสั่ง / skill")}</div>`;
+  const a=AG[k];
+  return `<div class="step ${par?"par":""}">${num}${av(CH[k],"working",52,CHNAME[k])}${txt(a.name)}</div>`;
+}
+function render(id){
+  const s=S.find(x=>x.id===id); n=0;
+  const rows=s.flow.map(r=>{
+    const par=r.length>1;
+    return (par?`<div><p class="parlabel">ทำพร้อมกัน ${r.length} ตัว</p><div class="row">`:'<div class="row">')+r.map(stepHTML).join("")+(par?"</div></div>":"</div>");
+  }).join(arrow);
+  document.getElementById("scenario").innerHTML=`<div><h3>${s.label.slice(4)}</h3><p class="when">ใช้เมื่อ: ${s.when}</p></div><div class="flow">${rows}</div><div class="tips">${s.tips.map(t=>`<span>${t}</span>`).join("")}</div>`;
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
+  try{localStorage.setItem("phcis-flow-tab",id)}catch(e){}
+}
+const tabs=document.getElementById("tabs");
+S.forEach(s=>{const b=document.createElement("button");b.className="tab";b.role="tab";b.dataset.id=s.id;b.textContent=s.label;b.onclick=()=>render(s.id);tabs.appendChild(b)});
+let start="new";try{const v=localStorage.getItem("phcis-flow-tab");if(S.some(s=>s.id===v))start=v}catch(e){}
+render(start);
+
+document.getElementById("agents").innerHTML=Object.entries(AG).map(([k,a])=>`
+ <article class="agent">
+  <div class="top"><div class="id">${av(CH[k],"idle",80,CHNAME[k])}<div style="min-width:0"><div class="name">${a.name}</div><div class="role">${a.role}</div><div class="ch">${CHNAME[k]}</div></div></div>
+   <span><span class="chip ${MODE[a.mode][1]}">${MODE[a.mode][0]}</span><span class="chip ro">${a.model}</span></span></div>
+  <p style="font-size:14px">${a.good}</p>
+  <ol>${a.steps.map(x=>`<li>${x}</li>`).join("")}</ol>
+  <dl class="kv"><dt>ได้อะไร</dt><dd>${a.out}</dd><dt>สั่งว่า</dt><dd class="say">${a.say}</dd></dl>
+ </article>`).join("");
+</script>
+
+</body>
+</html>
