@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kae second brain</title>
 <!-- Kae second brain · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เข้าด้วยบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69)
-     อ่าน repo private namonlims/bma-health-second-brain ตรงจาก GitHub API ด้วย fine-grained token อ่านอย่างเดียว
-     token เก็บใน localStorage ของเบราว์เซอร์เจ้าของเท่านั้น · หน้านี้ไม่มีเนื้อหา second brain ฝังอยู่ (ผู้ใช้ 27 พ.ย. 69 เลือก ก)
-     เปิดหน้า = แสดงรายการไฟล์ทันทีจาก kae-second-brain-tree.json (ชื่อไฟล์เท่านั้น · สร้างด้วย scripts/kae-second-brain-snapshot.mjs) หรือที่ซิงค์ไว้ในเครื่อง
-     ปุ่ม "ซิงค์" ดึงรายการล่าสุดจาก GitHub · กดไฟล์ = อ่านเนื้อหาจริง (ต้องเชื่อมต่อครั้งแรก) (ผู้ใช้ 27 พ.ย. 69 "แสดงข้อมูลก่อนเลย ถ้าจะอัปเดทค่อยซิงค์") -->
+     ฉบับบันทึก (scripts/kae-second-brain-snapshot.mjs): kae-second-brain-tree.json = ชื่อไฟล์ · kae-second-brain-content.json = เนื้อหาทุกไฟล์ข้อความ เข้ารหัส AES-GCM
+     กดไฟล์ = เห็นเนื้อหาทันทีจากฉบับบันทึก · ใส่รหัสผ่านครั้งเดียวต่อเบราว์เซอร์ (เก็บกุญแจใน localStorage) (ผู้ใช้ 28 พ.ย. 69 เลือก ก "เข้ารหัส")
+     ปุ่ม "อัปเดต" = ดึงรายการและเนื้อหาล่าสุดจาก GitHub ด้วย fine-grained token อ่านอย่างเดียว (ขอครั้งแรก) · บอกวันที่อัปเดตล่าสุดเสมอ -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="namon-tokens.css">
@@ -162,7 +161,7 @@
     </div>
     <div class="kb-sync">
       <p class="kb-status" id="kb-status" aria-live="polite">กำลังโหลด…</p>
-      <button type="button" class="nd-btn nd-btn--fill" id="kb-refresh"><span class="kb-spin" aria-hidden="true">↻</span> ซิงค์</button>
+      <button type="button" class="nd-btn nd-btn--fill" id="kb-refresh"><span class="kb-spin" aria-hidden="true">↻</span> อัปเดต</button>
       <button type="button" class="nd-btn kb-btn-ghost" id="kb-logout" hidden>ตัดการเชื่อมต่อ</button>
     </div>
   </header>
@@ -226,7 +225,7 @@
       }, function () { throw { kind: 'net' }; });
   };
   var errText = function (e) {
-    return { auth: 'token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่', access: 'token นี้ไม่มีสิทธิ์อ่าน repo bma-health-second-brain · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only', rate: 'เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง', net: 'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "ซิงค์" อีกครั้ง' }[e && e.kind] || ('GitHub ตอบกลับผิดพลาด' + (e && e.status ? ' (' + e.status + ')' : ''));
+    return { auth: 'token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่', access: 'token นี้ไม่มีสิทธิ์อ่าน repo bma-health-second-brain · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only', rate: 'เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง', net: 'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "อัปเดต" อีกครั้ง', snapnet: 'โหลดฉบับบันทึกไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่', nosnap: 'ไฟล์นี้ไม่มีเนื้อหาในฉบับบันทึก (ภาพหรือไฟล์ใหญ่) · เปิดใน GitHub แทน หรือกด "อัปเดต"' }[e && e.kind] || ('GitHub ตอบกลับผิดพลาด' + (e && e.status ? ' (' + e.status + ')' : ''));
   };
 
   var setBusy = function (on) { var b = $('kb-refresh'); b.classList.toggle('is-busy', on); b.disabled = on; };
@@ -236,8 +235,8 @@
     if (!commit) { $('kb-status').textContent = 'กำลังโหลด…'; return; }
     var c = ' · commit <b class="mono">' + esc(commit.sha.slice(0, 7)) + '</b>';
     $('kb-status').innerHTML = source === 'snapshot'
-      ? 'ข้อมูล ณ <b>' + esc(fmtTime(new Date(commit.date))) + '</b>' + c + '<br>ฉบับบันทึกไว้ · กด "ซิงค์" เพื่อดึงล่าสุด'
-      : 'ซิงค์ล่าสุด <b>' + esc(fmtTime(fetchedAt)) + '</b>' + c + '<br>แก้ล่าสุดใน repo ' + esc(fmtTime(new Date(commit.date)));
+      ? 'อัปเดตล่าสุด <b>' + esc(fmtTime(new Date(commit.date))) + '</b>' + c + '<br>ฉบับบันทึก · กด "อัปเดต" เพื่อดึงข้อมูลล่าสุด'
+      : 'อัปเดตล่าสุด <b>' + esc(fmtTime(fetchedAt)) + '</b>' + c + '<br>แก้ล่าสุดใน repo ' + esc(fmtTime(new Date(commit.date)));
     $('kb-logout').hidden = !token;
   };
 
@@ -252,7 +251,7 @@
     var keep = openFile;
     if (saved && FOLDERS.some(function (f) { return f.id === saved.folder; })) current = saved.folder;
     var f = keep || (saved && saved.file);
-    if (token && f && files.indexOf(f) > -1) { selectFolder(current, { silent: true }); readFile(f, true); }
+    if (f && files.indexOf(f) > -1) { selectFolder(current, { silent: true }); readFile(f, true); }
     else selectFolder(current);
   };
 
@@ -267,7 +266,7 @@
     });
   };
 
-  /* ── ซิงค์: ดึงรายการไฟล์ล่าสุดจาก GitHub ── */
+  /* ── อัปเดต: ดึงรายการไฟล์ล่าสุดจาก GitHub ── */
   var sync = function () {
     if (!token) { showConnect(null, 'sync'); return Promise.resolve(); }
     setBusy(true);
@@ -283,12 +282,12 @@
     }).then(function () { setBusy(false); });
   };
 
-  /* ── เชื่อมต่อ GitHub · ขอเมื่อกดซิงค์หรือเปิดอ่านไฟล์ครั้งแรก ── */
+  /* ── เชื่อมต่อ GitHub · ขอเมื่อกดอัปเดตครั้งแรก ── */
   var showConnect = function (err, intent, thenFile) {
     if (!files.length) { explorer.classList.add('is-full'); tree.classList.add('kb-hide'); }
     if (!files.length || !mobile.matches) { if (panel.parentNode !== explorer) explorer.appendChild(panel); }
     panel.hidden = false;
-    var why = intent === 'file' ? 'อ่านเนื้อหาไฟล์ต้องเชื่อมต่อ GitHub ก่อน · ทำครั้งเดียว' : 'ซิงค์ข้อมูลล่าสุดต้องเชื่อมต่อ GitHub ก่อน · ทำครั้งเดียว';
+    var why = intent === 'file' ? 'อ่านเนื้อหาไฟล์ต้องเชื่อมต่อ GitHub ก่อน · ทำครั้งเดียว' : 'ดึงข้อมูลล่าสุดจาก GitHub ต้องเชื่อมต่อก่อน · ทำครั้งเดียว';
     panel.innerHTML = '<div class="kb-connect">' +
       '<div class="kb-phead"><h3 class="nd-title nd-title--page">เชื่อมต่อ GitHub</h3><p>' + esc(why) + ' · token อ่านอย่างเดียว เก็บในเบราว์เซอร์นี้เท่านั้น</p></div>' +
       (err ? '<p class="nd-notice nd-notice--danger">' + esc(err) + '</p>' : '') +
@@ -300,14 +299,14 @@
       '<li>กด Generate token แล้วคัดลอกมาวางด้านล่าง</li></ol></div>' +
       '<form id="kb-connect-form" autocomplete="off"><label class="nd-field" for="kb-token"><span class="nd-field__label">Token</span><input class="nd-input" id="kb-token" type="password" placeholder="github_pat_…" required></label>' +
       '<button type="submit" class="nd-btn nd-btn--fill">เชื่อมต่อ</button>' + (files.length ? '<button type="button" class="nd-btn" id="kb-connect-cancel">ยกเลิก</button>' : '') + '</form></div>';
-    var cancel = $('kb-connect-cancel'); if (cancel) cancel.addEventListener('click', function () { selectFolder(current); });
+    var cancel = $('kb-connect-cancel'); if (cancel) cancel.addEventListener('click', function () { selectFolder(current, { list: true }); });
     $('kb-connect-form').addEventListener('submit', function (e) {
       e.preventDefault();
       var v = $('kb-token').value.trim(); if (!v) return;
       token = v; try { localStorage.setItem(TOKEN_KEY, v); } catch (er) {}
       setStatus();
       if (intent === 'file' && thenFile) readFile(thenFile, true);
-      else { panel.innerHTML = '<p class="kb-msg">กำลังซิงค์จาก GitHub…</p>'; sync(); }
+      else { panel.innerHTML = '<p class="kb-msg">กำลังอัปเดตจาก GitHub…</p>'; sync(); }
     });
   };
 
@@ -409,24 +408,82 @@
     return { meta: meta, html: wrap.innerHTML };
   };
 
+  /* ── เนื้อหาฉบับบันทึก (เข้ารหัส) · ใส่รหัสผ่านครั้งเดียว เก็บกุญแจในเบราว์เซอร์นี้ ── */
+  var KEY_STORE = 'kb-content-key', snapFile = null, snapText = null;
+  var b64 = function (s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
+  var ub64 = function (buf) { var u = new Uint8Array(buf), s = ''; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); };
+  var getSnapFile = function () {
+    if (!snapFile) snapFile = fetch('kae-second-brain-content.json', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw { kind: 'snapnet' }; return r.json(); }, function () { throw { kind: 'snapnet' }; });
+    snapFile.catch(function () { snapFile = null; });
+    return snapFile;
+  };
+  var storedKey = function (salt) { try { var k = JSON.parse(localStorage.getItem(KEY_STORE) || 'null'); return k && k.salt === salt ? k.raw : null; } catch (e) { return null; } };
+  var decryptWith = function (snap, raw) {
+    return crypto.subtle.importKey('raw', b64(raw), 'AES-GCM', false, ['decrypt'])
+      .then(function (k) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(snap.iv) }, k, b64(snap.data)); })
+      .then(function (buf) { return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text(); })
+      .then(function (t) { snapText = JSON.parse(t); return snapText; });
+  };
+  var deriveKey = function (snap, pass) {
+    return crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveBits'])
+      .then(function (k) { return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: b64(snap.kdf.salt), iterations: snap.kdf.iter }, k, 256); })
+      .then(ub64);
+  };
+  /* ข้อความของไฟล์: หลังกดอัปเดต (มี token) อ่านจาก GitHub · ไม่งั้นอ่านจากฉบับบันทึก */
+  var ghText = function (path) { return gh('/contents/' + path.split('/').map(encodeURIComponent).join('/') + '?ref=' + BRANCH, true); };
+  var getText = function (path) {
+    if (cache[path] != null) return Promise.resolve(cache[path]);
+    if (source === 'live' && token) return ghText(path).then(function (t) { cache[path] = t; return t; });
+    var fromSnap = snapText ? Promise.resolve(snapText) : getSnapFile().then(function (snap) {
+      var raw = storedKey(snap.kdf.salt); if (!raw) throw { kind: 'locked' };
+      return decryptWith(snap, raw).catch(function () { try { localStorage.removeItem(KEY_STORE); } catch (e) {} throw { kind: 'locked' }; });
+    });
+    return fromSnap.then(function (all) {
+      if (all[path] != null) return all[path];
+      if (token) return ghText(path);
+      throw { kind: 'nosnap' };
+    });
+  };
+  var showUnlock = function (err, thenFile) {
+    panel.hidden = false;
+    panel.innerHTML = '<div class="kb-connect">' +
+      '<div class="kb-phead"><h3 class="nd-title nd-title--page">ใส่รหัสผ่านเพื่ออ่านเนื้อหา</h3><p>ใส่ครั้งเดียว เบราว์เซอร์นี้จะจำไว้ · เนื้อหาบนเว็บเข้ารหัสไว้ คนอื่นเปิดไฟล์ได้ก็อ่านไม่ออก</p></div>' +
+      (err ? '<p class="nd-notice nd-notice--danger">' + esc(err) + '</p>' : '') +
+      '<form id="kb-unlock-form" autocomplete="off"><label class="nd-field" for="kb-pass"><span class="nd-field__label">รหัสผ่าน</span><input class="nd-input" id="kb-pass" type="password" required></label>' +
+      '<button type="submit" class="nd-btn nd-btn--fill">ปลดล็อก</button><button type="button" class="nd-btn" id="kb-connect-cancel">ยกเลิก</button></form></div>';
+    $('kb-connect-cancel').addEventListener('click', function () { selectFolder(current, { list: true }); });
+    if (!mobile.matches) $('kb-pass').focus();
+    $('kb-unlock-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = $('kb-pass').value; if (!v) return;
+      var btn = e.target.querySelector('[type=submit]'); btn.disabled = true; btn.textContent = 'กำลังปลดล็อก…';
+      getSnapFile().then(function (snap) {
+        return deriveKey(snap, v).then(function (raw) {
+          return decryptWith(snap, raw).then(function () { try { localStorage.setItem(KEY_STORE, JSON.stringify({ salt: snap.kdf.salt, raw: raw })); } catch (er) {} });
+        }).catch(function (er) { throw er && er.kind ? er : { kind: 'badpass' }; });
+      }).then(function () { readFile(thenFile, true); }, function (er) {
+        showUnlock(er.kind === 'badpass' ? 'รหัสผ่านไม่ถูก ลองอีกครั้ง' : errText(er), thenFile);
+      });
+    });
+  };
+
   var folderOf = function (p) { return (FOLDERS.filter(function (f) { return (byFolder[f.id] || []).indexOf(p) > -1; })[0] || FOLDERS[0]).id; };
   var readFile = function (path, keepFolder) {
     var fid = folderOf(path);
     if (!keepFolder && fid !== current) { selectFolder(fid, { silent: true }); }
-    if (!token) { openFile = null; showConnect(null, 'file', path); return; }
     openFile = path; save();
     var f = FOLDERS.filter(function (x) { return x.id === current; })[0];
     var back = f.single ? '' : '<button type="button" class="nd-btn" id="kb-back">‹ กลับไป ' + esc(f.name) + '</button>';
     var head = '<div class="kb-readbar">' + back + '<a class="nd-btn kb-btn-ghost" href="' + WEB + path.split('/').map(encodeURIComponent).join('/') + '" target="_blank" rel="noopener">เปิดใน GitHub ↗</a></div>' + crumbHtml(path);
     panel.innerHTML = head + '<p class="kb-msg">กำลังโหลด ' + esc(base(path)) + '…</p>';
-    var p = cache[path] ? Promise.resolve(cache[path]) : gh('/contents/' + path.split('/').map(encodeURIComponent).join('/') + '?ref=' + BRANCH, true).then(function (t) { cache[path] = t; return t; });
-    p.then(function (txt) {
+    getText(path).then(function (txt) {
       if (openFile !== path) return;
       if (!isMd(path)) { panel.innerHTML = head + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(base(path)) + '</h3></div></div><pre class="kb-md" style="white-space:pre-wrap"><code>' + esc(txt) + '</code></pre>'; return; }
       var r = renderMd(path, txt);
       panel.innerHTML = head + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(shortName(path)) + '</h3></div></div>' + r.meta + '<article class="kb-md">' + r.html + '</article>';
     }).catch(function (e) {
       if (openFile !== path) return;
+      if (e && e.kind === 'locked') { showUnlock(null, path); return; }
       if (e && (e.kind === 'auth' || e.kind === 'access')) { showConnect(errText(e), 'file', path); return; }
       panel.innerHTML = head + '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
     });
@@ -447,7 +504,7 @@
     tree.querySelectorAll('.kb-titem').forEach(function (b) { var on = b.id === 't-' + id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; b.setAttribute('aria-expanded', String(on)); });
     placePanel();
     if (opts.silent) return;
-    if (f.single && token) { readFile(f.single, true); return; }
+    if (f.single && !opts.list) { readFile(f.single, true); return; }
     renderFolder(f); save();
   };
 
