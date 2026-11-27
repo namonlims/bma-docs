@@ -32,6 +32,7 @@
   .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); overflow: hidden; }
   .kb-tree { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-400, 16px); border-right: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); background: var(--nd-surface-page, #FDFDFD); min-width: 0; }
   .kb-tgroup { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
+  .kb-tgroup + .kb-tgroup { padding-top: var(--nd-space-400, 16px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
   .kb-tgroup .nd-group-title { margin: 0 0 var(--nd-space-100, 4px); padding-left: var(--nd-space-300, 12px); }
   .kb-tgroup ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
   .kb-titem { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--nd-space-300, 12px); align-items: center; min-height: var(--nd-control-h, 44px); padding: var(--nd-space-200, 8px) var(--nd-space-300, 12px); border: 0; border-radius: var(--nd-radius-200, 8px); background: none; color: var(--nd-text-default, #363B3F); font: inherit; text-align: left; cursor: pointer; }
