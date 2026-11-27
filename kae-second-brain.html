@@ -7,7 +7,8 @@
 <!-- Kae second brain · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เข้าด้วยบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69)
      อ่าน repo private namonlims/bma-health-second-brain ตรงจาก GitHub API ด้วย fine-grained token อ่านอย่างเดียว
      token เก็บใน localStorage ของเบราว์เซอร์เจ้าของเท่านั้น · หน้านี้ไม่มีเนื้อหา second brain ฝังอยู่ (ผู้ใช้ 27 พ.ย. 69 เลือก ก)
-     ปุ่ม "อัปเดต" ดึงรายการไฟล์ใหม่ · กดไฟล์ = อ่านเนื้อหาจริงในหน้า -->
+     เปิดหน้า = แสดงรายการไฟล์ทันทีจาก kae-second-brain-tree.json (ชื่อไฟล์เท่านั้น · สร้างด้วย scripts/kae-second-brain-snapshot.mjs) หรือที่ซิงค์ไว้ในเครื่อง
+     ปุ่ม "ซิงค์" ดึงรายการล่าสุดจาก GitHub · กดไฟล์ = อ่านเนื้อหาจริง (ต้องเชื่อมต่อครั้งแรก) (ผู้ใช้ 27 พ.ย. 69 "แสดงข้อมูลก่อนเลย ถ้าจะอัปเดทค่อยซิงค์") -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="namon-tokens.css">
@@ -116,7 +117,7 @@
   .kb-md .kb-img { display: inline-block; padding: 2px var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-neutral, #F4F5F5); font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
 
   /* เชื่อมต่อ GitHub / สถานะว่าง */
-  .kb-connect { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-600, 24px); max-width: 640px; }
+  .kb-connect { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); max-width: 640px; }
   .kb-connect ol { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-150, 6px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-default, #363B3F); }
   .kb-connect a { color: var(--nd-text-brand, #3F5BFA); }
   .kb-connect code { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
@@ -160,8 +161,8 @@
       <h1>Kae second brain</h1>
     </div>
     <div class="kb-sync">
-      <p class="kb-status" id="kb-status" aria-live="polite">ยังไม่ได้เชื่อมต่อ GitHub</p>
-      <button type="button" class="nd-btn nd-btn--fill" id="kb-refresh" hidden><span class="kb-spin" aria-hidden="true">↻</span> อัปเดต</button>
+      <p class="kb-status" id="kb-status" aria-live="polite">กำลังโหลด…</p>
+      <button type="button" class="nd-btn nd-btn--fill" id="kb-refresh"><span class="kb-spin" aria-hidden="true">↻</span> ซิงค์</button>
       <button type="button" class="nd-btn kb-btn-ghost" id="kb-logout" hidden>ตัดการเชื่อมต่อ</button>
     </div>
   </header>
@@ -225,47 +226,71 @@
       }, function () { throw { kind: 'net' }; });
   };
   var errText = function (e) {
-    return { auth: 'token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่', access: 'token นี้ไม่มีสิทธิ์อ่าน repo bma-health-second-brain · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only', rate: 'เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง', net: 'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "อัปเดต" อีกครั้ง' }[e && e.kind] || ('GitHub ตอบกลับผิดพลาด' + (e && e.status ? ' (' + e.status + ')' : ''));
+    return { auth: 'token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่', access: 'token นี้ไม่มีสิทธิ์อ่าน repo bma-health-second-brain · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only', rate: 'เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง', net: 'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "ซิงค์" อีกครั้ง' }[e && e.kind] || ('GitHub ตอบกลับผิดพลาด' + (e && e.status ? ' (' + e.status + ')' : ''));
   };
 
   var setBusy = function (on) { var b = $('kb-refresh'); b.classList.toggle('is-busy', on); b.disabled = on; };
   var fmtTime = function (d) { return d.toLocaleString('th-TH', { day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }); };
+  var source = null, CACHE_KEY = 'kb-tree-cache';
   var setStatus = function () {
-    $('kb-status').innerHTML = commit ? 'ข้อมูลล่าสุด <b>' + esc(fmtTime(fetchedAt)) + '</b> · commit <b class="mono">' + esc(commit.sha.slice(0, 7)) + '</b><br>แก้ล่าสุดใน repo ' + esc(fmtTime(new Date(commit.date))) : 'ยังไม่ได้เชื่อมต่อ GitHub';
+    if (!commit) { $('kb-status').textContent = 'กำลังโหลด…'; return; }
+    var c = ' · commit <b class="mono">' + esc(commit.sha.slice(0, 7)) + '</b>';
+    $('kb-status').innerHTML = source === 'snapshot'
+      ? 'ข้อมูล ณ <b>' + esc(fmtTime(new Date(commit.date))) + '</b>' + c + '<br>ฉบับบันทึกไว้ · กด "ซิงค์" เพื่อดึงล่าสุด'
+      : 'ซิงค์ล่าสุด <b>' + esc(fmtTime(fetchedAt)) + '</b>' + c + '<br>แก้ล่าสุดใน repo ' + esc(fmtTime(new Date(commit.date)));
+    $('kb-logout').hidden = !token;
   };
 
-  /* ── โหลดรายการไฟล์ทั้ง repo (ปุ่ม "อัปเดต" เรียกซ้ำ) ── */
-  var load = function () {
+  /* ── ใส่ข้อมูลรายการไฟล์ (จากฉบับบันทึก หรือจากการซิงค์) ── */
+  var applyData = function (list, c, src, at) {
+    files = list; commit = c; source = src; fetchedAt = at;
+    byFolder = {};
+    FOLDERS.forEach(function (f) { byFolder[f.id] = f.single ? files.filter(function (p) { return p === f.single; }) : f.match ? files.filter(f.match) : []; });
+    explorer.classList.remove('is-full'); tree.classList.remove('kb-hide'); $('kb-filter').hidden = false;
+    setStatus(); renderTree();
+    var saved = null; try { saved = JSON.parse(sessionStorage.getItem('kb-view') || 'null'); } catch (e) {}
+    var keep = openFile;
+    if (saved && FOLDERS.some(function (f) { return f.id === saved.folder; })) current = saved.folder;
+    var f = keep || (saved && saved.file);
+    if (token && f && files.indexOf(f) > -1) { selectFolder(current, { silent: true }); readFile(f, true); }
+    else selectFolder(current);
+  };
+
+  /* เปิดหน้า = แสดงทันทีจากข้อมูลที่ซิงค์ไว้ในเครื่องนี้ (ถ้าใหม่กว่า) หรือฉบับบันทึกที่มากับหน้า */
+  var loadSnapshot = function () {
+    var cached = null; try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) {}
+    return fetch('kae-second-brain-tree.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (snap) {
+      if (cached && cached.commit && (!snap || new Date(cached.commit.date) >= new Date(snap.commit.date))) applyData(cached.files, cached.commit, 'cache', new Date(cached.at));
+      else if (snap) applyData(snap.files, snap.commit, 'snapshot', new Date(snap.generated));
+      else if (token) sync();
+      else showConnect(null, 'sync');
+    });
+  };
+
+  /* ── ซิงค์: ดึงรายการไฟล์ล่าสุดจาก GitHub ── */
+  var sync = function () {
+    if (!token) { showConnect(null, 'sync'); return Promise.resolve(); }
     setBusy(true);
     return Promise.all([gh('/commits/' + BRANCH), gh('/git/trees/' + BRANCH + '?recursive=1')]).then(function (res) {
-      commit = { sha: res[0].sha, date: res[0].commit.committer.date };
-      fetchedAt = new Date(); cache = {};
-      files = res[1].tree.filter(function (t) { return t.type === 'blob'; }).map(function (t) { return t.path; });
-      byFolder = {};
-      FOLDERS.forEach(function (f) { byFolder[f.id] = f.single ? files.filter(function (p) { return p === f.single; }) : f.match ? files.filter(f.match) : []; });
-      setStatus(); showExplorer(); renderTree();
-      var saved = null; try { saved = JSON.parse(sessionStorage.getItem('kb-view') || 'null'); } catch (e) {}
-      if (openFile && files.indexOf(openFile) > -1) { selectFolder(current); readFile(openFile, true); }
-      else if (saved && FOLDERS.some(function (f) { return f.id === saved.folder; })) { selectFolder(saved.folder); if (saved.file && files.indexOf(saved.file) > -1) readFile(saved.file, true); }
-      else selectFolder(current);
+      var c = { sha: res[0].sha, date: res[0].commit.committer.date };
+      var list = res[1].tree.filter(function (t) { return t.type === 'blob'; }).map(function (t) { return t.path; });
+      var at = new Date(); cache = {};
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ commit: c, files: list, at: at.getTime() })); } catch (e) {}
+      applyData(list, c, 'live', at);
     }).catch(function (e) {
-      if (e && e.kind === 'auth' || e && e.kind === 'access') { showConnect(errText(e)); return; }
-      panel.innerHTML = '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
+      if (e && (e.kind === 'auth' || e.kind === 'access')) { showConnect(errText(e), 'sync'); return; }
+      panel.hidden = false; panel.innerHTML = '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
     }).then(function () { setBusy(false); });
   };
 
-  var showExplorer = function () {
-    tree.classList.remove('kb-hide'); $('kb-filter').hidden = false; $('kb-refresh').hidden = false; $('kb-logout').hidden = false;
-  };
-
-  /* ── เชื่อมต่อ GitHub (ครั้งแรก) ── */
-  var showConnect = function (err) {
-    tree.classList.add('kb-hide'); $('kb-filter').hidden = true; $('kb-refresh').hidden = true; $('kb-logout').hidden = true;
-    commit = null; setStatus();
-    if (panel.parentNode !== explorer) explorer.appendChild(panel);
-    explorer.classList.add('is-full'); panel.hidden = false;
+  /* ── เชื่อมต่อ GitHub · ขอเมื่อกดซิงค์หรือเปิดอ่านไฟล์ครั้งแรก ── */
+  var showConnect = function (err, intent, thenFile) {
+    if (!files.length) { explorer.classList.add('is-full'); tree.classList.add('kb-hide'); }
+    if (!files.length || !mobile.matches) { if (panel.parentNode !== explorer) explorer.appendChild(panel); }
+    panel.hidden = false;
+    var why = intent === 'file' ? 'อ่านเนื้อหาไฟล์ต้องเชื่อมต่อ GitHub ก่อน · ทำครั้งเดียว' : 'ซิงค์ข้อมูลล่าสุดต้องเชื่อมต่อ GitHub ก่อน · ทำครั้งเดียว';
     panel.innerHTML = '<div class="kb-connect">' +
-      '<div class="kb-phead"><h3 class="nd-title nd-title--page">เชื่อมต่อ GitHub เพื่ออ่าน second brain</h3><p>ใช้ token อ่านอย่างเดียว วางครั้งเดียว เก็บไว้ในเบราว์เซอร์นี้เท่านั้น</p></div>' +
+      '<div class="kb-phead"><h3 class="nd-title nd-title--page">เชื่อมต่อ GitHub</h3><p>' + esc(why) + ' · token อ่านอย่างเดียว เก็บในเบราว์เซอร์นี้เท่านั้น</p></div>' +
       (err ? '<p class="nd-notice nd-notice--danger">' + esc(err) + '</p>' : '') +
       '<div class="kb-grp"><h4 class="nd-group-title">สร้าง token</h4><ol>' +
       '<li>เปิด <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>' +
@@ -274,14 +299,15 @@
       '<li>Permissions → Repository permissions → <b>Contents: Read-only</b></li>' +
       '<li>กด Generate token แล้วคัดลอกมาวางด้านล่าง</li></ol></div>' +
       '<form id="kb-connect-form" autocomplete="off"><label class="nd-field" for="kb-token"><span class="nd-field__label">Token</span><input class="nd-input" id="kb-token" type="password" placeholder="github_pat_…" required></label>' +
-      '<button type="submit" class="nd-btn nd-btn--fill">เชื่อมต่อ</button></form></div>';
+      '<button type="submit" class="nd-btn nd-btn--fill">เชื่อมต่อ</button>' + (files.length ? '<button type="button" class="nd-btn" id="kb-connect-cancel">ยกเลิก</button>' : '') + '</form></div>';
+    var cancel = $('kb-connect-cancel'); if (cancel) cancel.addEventListener('click', function () { selectFolder(current); });
     $('kb-connect-form').addEventListener('submit', function (e) {
       e.preventDefault();
       var v = $('kb-token').value.trim(); if (!v) return;
       token = v; try { localStorage.setItem(TOKEN_KEY, v); } catch (er) {}
-      explorer.classList.remove('is-full');
-      panel.innerHTML = '<p class="kb-msg">กำลังโหลดรายการไฟล์จาก GitHub…</p>';
-      load();
+      setStatus();
+      if (intent === 'file' && thenFile) readFile(thenFile, true);
+      else { panel.innerHTML = '<p class="kb-msg">กำลังซิงค์จาก GitHub…</p>'; sync(); }
     });
   };
 
@@ -387,6 +413,7 @@
   var readFile = function (path, keepFolder) {
     var fid = folderOf(path);
     if (!keepFolder && fid !== current) { selectFolder(fid, { silent: true }); }
+    if (!token) { openFile = null; showConnect(null, 'file', path); return; }
     openFile = path; save();
     var f = FOLDERS.filter(function (x) { return x.id === current; })[0];
     var back = f.single ? '' : '<button type="button" class="nd-btn" id="kb-back">‹ กลับไป ' + esc(f.name) + '</button>';
@@ -400,7 +427,7 @@
       panel.innerHTML = head + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(shortName(path)) + '</h3></div></div>' + r.meta + '<article class="kb-md">' + r.html + '</article>';
     }).catch(function (e) {
       if (openFile !== path) return;
-      if (e && e.kind === 'auth') { showConnect(errText(e)); return; }
+      if (e && (e.kind === 'auth' || e.kind === 'access')) { showConnect(errText(e), 'file', path); return; }
       panel.innerHTML = head + '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
     });
     if (!mobile.matches) explorer.scrollIntoView({ block: 'nearest' });
@@ -420,7 +447,7 @@
     tree.querySelectorAll('.kb-titem').forEach(function (b) { var on = b.id === 't-' + id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; b.setAttribute('aria-expanded', String(on)); });
     placePanel();
     if (opts.silent) return;
-    if (f.single) { readFile(f.single, true); return; }
+    if (f.single && token) { readFile(f.single, true); return; }
     renderFolder(f); save();
   };
 
@@ -452,14 +479,14 @@
     var f = FOLDERS.filter(function (x) { return x.id === current; })[0];
     if (f.single && term) { selectFolder(current, { silent: true }); renderFolder(f); } else selectFolder(current);
   });
-  $('kb-refresh').addEventListener('click', function () { load(); });
+  $('kb-refresh').addEventListener('click', function () { sync(); });
   $('kb-logout').addEventListener('click', function () {
-    try { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem('kb-view'); } catch (e) {}
-    token = null; files = []; cache = {}; showConnect();
+    try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+    token = null; cache = {}; openFile = null; setStatus(); selectFolder(current);
   });
   (mobile.addEventListener ? mobile.addEventListener.bind(mobile, 'change') : mobile.addListener.bind(mobile))(placePanel);
 
-  if (token) { panel.innerHTML = '<p class="kb-msg">กำลังโหลดรายการไฟล์จาก GitHub…</p>'; load(); } else showConnect();
+  setStatus(); loadSnapshot();
 })();
 </script>
 <script src="docs-frame.js"></script>
