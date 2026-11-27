@@ -4,32 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kae second brain</title>
-<!-- แผนที่ second brain (repo private namonlims/bma-health-second-brain) · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เปิดได้เฉพาะบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69)
-     โครงสร้าง + รายละเอียดรวมเป็นตัวสำรวจเดียว: รายการโฟลเดอร์ซ้าย · รายละเอียดขวา ไม่เด้งไปที่อื่น · มือถือเปิดใต้รายการที่กด (ผู้ใช้ 27 พ.ย. 69 "กดและเด้งไปอีกที่ดูค่อนข้างยาก") -->
+<!-- Kae second brain · ธีม Namon Playground · การ์ดใน index.html มี data-owner = เข้าด้วยบัญชีเจ้าของ (ผู้ใช้ 27 พ.ย. 69)
+     อ่าน repo private namonlims/bma-health-second-brain ตรงจาก GitHub API ด้วย fine-grained token อ่านอย่างเดียว
+     token เก็บใน localStorage ของเบราว์เซอร์เจ้าของเท่านั้น · หน้านี้ไม่มีเนื้อหา second brain ฝังอยู่ (ผู้ใช้ 27 พ.ย. 69 เลือก ก)
+     ปุ่ม "อัปเดต" ดึงรายการไฟล์ใหม่ · กดไฟล์ = อ่านเนื้อหาจริงในหน้า -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="namon-tokens.css">
 <link rel="stylesheet" href="namon-components.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script type="module" src="namon/namon-agent.js"></script>
 <style>
   body, body.nd-root { margin: 0; background: var(--nd-surface-card, #FFFFFF); }
-  .kb { max-width: 1120px; margin: 0 auto; padding: var(--nd-space-800, 32px) var(--nd-space-400, 16px) var(--nd-space-1200, 48px); display: flex; flex-direction: column; gap: var(--nd-space-800, 32px); }
+  .kb { max-width: 1120px; margin: 0 auto; padding: var(--nd-space-800, 32px) var(--nd-space-400, 16px) var(--nd-space-1200, 48px); display: flex; flex-direction: column; gap: var(--nd-space-600, 24px); }
   .kb h1, .kb h2, .kb h3, .kb p { margin: 0; }
   .mono { font-family: ui-monospace, Menlo, monospace; }
-  .kb code { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
 
-  /* หัวหน้า */
-  .kb-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--nd-space-400, 16px); align-items: center; }
-  .kb-head h1 { font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; color: var(--nd-text-default, #363B3F); }
-  .kb-bar { height: 4px; border-radius: var(--nd-radius-full, 9999px); background: linear-gradient(90deg, #5B9DF0 0%, #34C38F 50%, #F06FA3 100%); }
+  /* หัวหน้า: ตัวละคร + ชื่อ · ขวา = สถานะข้อมูล + ปุ่มอัปเดต */
+  .kb-head { display: flex; flex-wrap: wrap; gap: var(--nd-space-400, 16px); align-items: center; justify-content: space-between; }
+  .kb-brand { display: flex; gap: var(--nd-space-400, 16px); align-items: center; min-width: 0; }
+  .kb-brand h1 { font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; color: var(--nd-text-default, #363B3F); }
+  .kb-sync { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: center; justify-content: flex-end; }
+  .kb-status { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); text-align: right; }
+  .kb-status b { font-weight: var(--nd-type-weight-medium, 500); color: var(--nd-text-default, #363B3F); }
+  .kb-btn-ghost { border-color: transparent; color: var(--nd-text-secondary, #636B72); }
+  .kb-spin { display: inline-block; }
+  .is-busy .kb-spin { animation: kb-spin 900ms linear infinite; }
+  @keyframes kb-spin { to { transform: rotate(360deg); } }
+  .kb-rule { height: 4px; border-radius: var(--nd-radius-full, 9999px); background: linear-gradient(90deg, #5B9DF0 0%, #34C38F 50%, #F06FA3 100%); }
 
-  .kb-sec { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); min-width: 0; }
-  .kb-sec > header { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
   .kb-filter { display: flex; flex-direction: column; gap: var(--nd-space-150, 6px); max-width: 420px; }
   .kb-filter .nd-input { font-size: var(--nd-type-size-base, 16px); }
 
-  /* ตัวสำรวจ: รายการโฟลเดอร์ (ซ้าย) + รายละเอียด (ขวา) */
-  .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); overflow: hidden; }
+  /* ตัวสำรวจ */
+  .kb-explorer { display: grid; grid-template-columns: 320px minmax(0, 1fr); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); box-shadow: var(--nd-shadow-card, 0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14)); overflow: hidden; min-height: 480px; }
   .kb-tree { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-400, 16px); border-right: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); background: var(--nd-surface-page, #FDFDFD); min-width: 0; }
   .kb-tgroup { display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); }
   .kb-tgroup + .kb-tgroup { padding-top: var(--nd-space-400, 16px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
@@ -43,246 +52,414 @@
   .kb-titem .t-desc { grid-column: 1; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
   .kb-titem .t-n { grid-row: 1 / span 2; grid-column: 2; font-size: var(--nd-type-size-xs, 12px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-brand, #3F5BFA); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kb-titem[aria-selected="true"] .t-desc, .kb-titem[aria-selected="true"] .t-n { color: var(--nd-text-on-brand, #FFFFFF); }
-  .kb-titem .t-hit { display: none; }
-  .is-filtering .kb-titem .t-hit { display: inline; }
-  .is-filtering .kb-titem .t-count { display: none; }
 
-  .kb-panel { display: flex; flex-direction: column; gap: var(--nd-space-600, 24px); padding: var(--nd-space-600, 24px); min-width: 0; }
-  .kb-crumb { display: flex; flex-wrap: wrap; gap: var(--nd-space-100, 4px); align-items: center; font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
+  .kb-panel { display: flex; flex-direction: column; gap: var(--nd-space-500, 20px); padding: var(--nd-space-600, 24px); min-width: 0; }
+  .kb-crumb { display: flex; flex-wrap: wrap; gap: var(--nd-space-100, 4px); align-items: center; font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); overflow-wrap: anywhere; }
   .kb-crumb b { color: var(--nd-text-brand, #3F5BFA); font-weight: var(--nd-type-weight-medium, 500); }
   .kb-phead { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
-  .kb-ptitle { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: baseline; }
+  .kb-ptitle { display: flex; flex-wrap: wrap; gap: var(--nd-space-300, 12px); align-items: center; }
   .kb-ptitle h3 { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xl, 24px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
   .kb-ptitle .nd-chip { font-weight: var(--nd-type-weight-bold, 700); }
   .kb-phead > p { font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-secondary, #636B72); }
-  .kb-grp { display: flex; flex-direction: column; gap: var(--nd-space-300, 12px); padding-top: var(--nd-space-600, 24px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .kb-grp { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); padding-top: var(--nd-space-500, 20px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
   .kb-grp .nd-group-title { margin: 0; }
-  .kb-tags { display: flex; flex-wrap: wrap; gap: var(--nd-space-150, 6px); }
-  .kb-tags .nd-chip { font-family: ui-monospace, Menlo, monospace; }
-  .kb-tags .nd-chip.is-hit { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); }
-  .kb-rows { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-200, 8px) var(--nd-space-400, 16px); margin: 0; font-size: var(--nd-type-size-sm, 14px); }
-  .kb-rows dt { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); padding-top: 2px; }
-  .kb-rows dd { margin: 0; color: var(--nd-text-default, #363B3F); }
-  .kb-rows dt.is-hit, .kb-rows dt.is-hit + dd { color: var(--nd-text-brand, #3F5BFA); }
+
+  /* รายการไฟล์ */
+  .kb-files { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nd-space-100, 4px) var(--nd-space-300, 12px); }
+  .kb-file { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: var(--nd-space-200, 8px); min-height: var(--nd-control-h, 44px); padding: var(--nd-space-150, 6px) var(--nd-space-300, 12px); border: 0; border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-neutral, #F4F5F5); color: var(--nd-text-default, #363B3F); font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); text-align: left; cursor: pointer; }
+  .kb-file span { min-width: 0; overflow-wrap: anywhere; }
+  .kb-file::after { content: "›"; color: var(--nd-text-tertiary, #6A727A); font-size: var(--nd-type-size-base, 16px); }
+  .kb-file:hover { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); }
+  .kb-file:focus-visible { outline: var(--nd-stroke-200, 2px) solid var(--nd-border-brand, #3F5BFA); outline-offset: 1px; }
+  .kb-file.is-hit { background: var(--nd-surface-brand-quiet, #EEF1FF); color: var(--nd-text-brand, #3F5BFA); }
+
+  /* กลุ่มเดือนของ handoff (เปิดทีละเดือน) */
+  .kb-month { border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .kb-month > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: var(--nd-space-300, 12px); min-height: var(--nd-control-h, 44px); cursor: pointer; font-size: var(--nd-type-size-sm, 14px); font-weight: var(--nd-type-weight-medium, 500); color: var(--nd-text-default, #363B3F); }
+  .kb-month > summary::-webkit-details-marker { display: none; }
+  .kb-month > summary::before { content: "›"; color: var(--nd-text-tertiary, #6A727A); transition: transform var(--nd-motion-fast, 150ms); }
+  .kb-month[open] > summary::before { transform: rotate(90deg); }
+  .kb-month > summary span { flex: 1; }
+  .kb-month > summary small { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-brand, #3F5BFA); font-weight: var(--nd-type-weight-bold, 700); }
+  .kb-month > .kb-files { padding-bottom: var(--nd-space-300, 12px); }
   .kb-bars { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); max-width: 520px; }
   .kb-bar { display: grid; grid-template-columns: 64px minmax(0, 1fr) 40px; gap: var(--nd-space-300, 12px); align-items: center; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
   .kb-bar .track { height: var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-neutral, #F4F5F5); overflow: hidden; }
   .kb-bar .fill { display: block; height: 100%; border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-brand, #3F5BFA); }
   .kb-bar .v { text-align: right; font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); font-variant-numeric: tabular-nums; }
-  .kb-empty { padding: var(--nd-space-600, 24px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-secondary, #636B72); }
 
-  /* วิธีเปิดดู */
-  .kb-ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nd-space-400, 16px); }
-  .kb-way { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); padding: var(--nd-space-400, 16px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-300, 10px); background: var(--nd-surface-card, #FFFFFF); min-width: 0; }
-  .kb-way.is-rec { border-color: var(--nd-border-brand, #3F5BFA); }
-  .kb-way h3 { display: flex; align-items: center; gap: var(--nd-space-200, 8px); font-size: var(--nd-type-size-base, 16px); font-weight: var(--nd-type-weight-bold, 700); color: var(--nd-text-default, #363B3F); }
-  .kb-way ol { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-100, 4px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
-  .kb-way .nd-summary { margin: 0; }
+  /* ตัวอ่านไฟล์ */
+  .kb-readbar { display: flex; flex-wrap: wrap; gap: var(--nd-space-200, 8px); align-items: center; justify-content: space-between; }
+  .kb-rows { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--nd-space-150, 6px) var(--nd-space-400, 16px); margin: 0; font-size: var(--nd-type-size-sm, 14px); }
+  .kb-rows dt { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); padding-top: 2px; }
+  .kb-rows dd { margin: 0; color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; }
+  .kb-md { font-size: var(--nd-type-size-base, 16px); line-height: 1.7; color: var(--nd-text-default, #363B3F); overflow-wrap: anywhere; min-width: 0; }
+  .kb-md > :first-child { margin-top: 0; }
+  .kb-md h1, .kb-md h2, .kb-md h3, .kb-md h4 { line-height: 1.35; margin: var(--nd-space-600, 24px) 0 var(--nd-space-200, 8px); color: var(--nd-text-default, #363B3F); }
+  .kb-md h1 { font-size: var(--nd-type-size-xl, 24px); }
+  .kb-md h2 { font-size: var(--nd-type-size-lg, 18px); padding-bottom: var(--nd-space-150, 6px); border-bottom: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .kb-md h3, .kb-md h4 { font-size: var(--nd-type-size-base, 16px); }
+  .kb-md p, .kb-md ul, .kb-md ol, .kb-md blockquote, .kb-md pre, .kb-md .kb-tbl { margin: 0 0 var(--nd-space-300, 12px); }
+  .kb-md ul, .kb-md ol { padding-left: var(--nd-space-600, 24px); }
+  .kb-md li + li { margin-top: var(--nd-space-100, 4px); }
+  .kb-md a { color: var(--nd-text-brand, #3F5BFA); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .kb-md a.is-missing { color: var(--nd-text-tertiary, #6A727A); text-decoration: none; cursor: default; }
+  .kb-md code { font-family: ui-monospace, Menlo, monospace; font-size: 0.86em; background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
+  .kb-md pre { padding: var(--nd-space-300, 12px); background: var(--nd-surface-neutral, #F4F5F5); border-radius: var(--nd-radius-200, 8px); overflow-x: auto; }
+  .kb-md pre code { padding: 0; background: none; font-size: var(--nd-type-size-xs, 12px); }
+  .kb-md blockquote { padding: var(--nd-space-200, 8px) var(--nd-space-400, 16px); border-left: var(--nd-stroke-200, 2px) solid var(--nd-border-info, #DCE2FF); color: var(--nd-text-secondary, #636B72); }
+  .kb-md .kb-tbl { overflow-x: auto; }
+  .kb-md table { border-collapse: collapse; font-size: var(--nd-type-size-sm, 14px); min-width: 100%; }
+  .kb-md th, .kb-md td { padding: var(--nd-space-150, 6px) var(--nd-space-300, 12px); border-bottom: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); text-align: left; vertical-align: top; }
+  .kb-md th { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); font-weight: var(--nd-type-weight-medium, 500); }
+  .kb-md hr { border: 0; border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); margin: var(--nd-space-600, 24px) 0; }
+  .kb-md .kb-img { display: inline-block; padding: 2px var(--nd-space-200, 8px); border-radius: var(--nd-radius-full, 9999px); background: var(--nd-surface-neutral, #F4F5F5); font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-secondary, #636B72); }
 
-  .kb-notes { display: flex; flex-direction: column; gap: var(--nd-space-200, 8px); }
-  .kb-notes .nd-notice { font-size: var(--nd-type-size-sm, 14px); }
-  .kb-foot { font-size: var(--nd-type-size-xs, 12px); color: var(--nd-text-tertiary, #6A727A); }
-  .kb-hide { display: none !important; }
+  /* เชื่อมต่อ GitHub / สถานะว่าง */
+  .kb-connect { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); padding: var(--nd-space-600, 24px); max-width: 640px; }
+  .kb-connect ol { margin: 0; padding-left: var(--nd-space-500, 20px); display: flex; flex-direction: column; gap: var(--nd-space-150, 6px); font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-default, #363B3F); }
+  .kb-connect a { color: var(--nd-text-brand, #3F5BFA); }
+  .kb-connect code { font-family: ui-monospace, Menlo, monospace; font-size: var(--nd-type-size-xs, 12px); background: var(--nd-surface-neutral, #F4F5F5); padding: 1px var(--nd-space-150, 6px); border-radius: var(--nd-radius-100, 4px); }
+  .kb-connect form { display: flex; flex-wrap: wrap; gap: var(--nd-space-200, 8px); align-items: flex-end; padding-top: var(--nd-space-500, 20px); border-top: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); }
+  .kb-connect .nd-field { flex: 1 1 260px; }
+  .kb-connect .nd-input { font-size: var(--nd-type-size-base, 16px); }
+  .kb-msg { font-size: var(--nd-type-size-sm, 14px); color: var(--nd-text-secondary, #636B72); padding: var(--nd-space-600, 24px); }
+  .kb-msg.is-err { color: var(--nd-text-danger, #C81E1E); }
+  .kb-hide, .kb [hidden] { display: none !important; }
+  .kb-explorer.is-full { grid-template-columns: minmax(0, 1fr); }
 
   @media (max-width: 1023px) {
     .kb-explorer { grid-template-columns: 260px minmax(0, 1fr); }
-    .kb-ways { grid-template-columns: minmax(0, 1fr); }
+    .kb-files { grid-template-columns: minmax(0, 1fr); }
   }
-  /* มือถือ: รายการเดียว · รายละเอียดเปิดใต้โฟลเดอร์ที่กด */
   @media (max-width: 767px) {
-    .kb { padding-top: var(--nd-space-600, 24px); gap: var(--nd-space-600, 24px); }
-    .kb-head namon-agent { display: none; }
-    .kb-head { grid-template-columns: minmax(0, 1fr); }
-    .kb-explorer { grid-template-columns: minmax(0, 1fr); }
+    .kb { padding-top: var(--nd-space-600, 24px); }
+    .kb-brand namon-agent { display: none; }
+    .kb-sync { justify-content: flex-start; }
+    .kb-status { text-align: left; }
+    .kb-explorer { grid-template-columns: minmax(0, 1fr); min-height: 0; }
     .kb-tree { border-right: 0; padding: var(--nd-space-300, 12px); }
     .kb-explorer > .kb-panel { display: none; }
+    .kb-explorer.is-full > .kb-panel { display: flex; }
+    .kb-explorer.is-full > .kb-tree { display: none; }
     .kb-tgroup li > .kb-panel { margin: var(--nd-space-100, 4px) 0 var(--nd-space-300, 12px); padding: var(--nd-space-400, 16px); border: var(--nd-stroke-100, 1px) solid var(--nd-border-quiet, #F4F5F5); border-radius: var(--nd-radius-200, 8px); background: var(--nd-surface-card, #FFFFFF); gap: var(--nd-space-400, 16px); }
     .kb-tgroup li > .kb-panel .kb-ptitle { display: none; }
-    .kb-grp { padding-top: var(--nd-space-400, 16px); }
+    .kb-panel { padding: var(--nd-space-400, 16px); }
     .kb-rows { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .kb-rows dd { margin-bottom: var(--nd-space-300, 12px); }
+    .kb-rows dd { margin-bottom: var(--nd-space-200, 8px); }
   }
+  @media (prefers-reduced-motion: reduce) { .is-busy .kb-spin { animation: none; } .kb-month > summary::before { transition: none; } }
 </style>
 </head>
 <body class="nd-root">
 <main class="kb">
 
   <header class="kb-head">
-    <namon-agent pose="idle" size="72" label="Namon"></namon-agent>
-    <h1>Kae second brain</h1>
-  </header>
-  <div class="kb-bar" aria-hidden="true"></div>
-
-  <section class="kb-sec" aria-label="โฟลเดอร์และสิ่งที่อยู่ข้างใน">
-    <label class="kb-filter nd-field" for="kb-q">
-      <span class="nd-field__label">ค้นหาชื่อหน้าในทุกโฟลเดอร์</span>
-      <input class="nd-input" id="kb-q" type="search" placeholder="เช่น pharmacy · anc · consent" autocomplete="off">
-    </label>
-    <div class="kb-explorer" id="kb-explorer">
-      <nav class="kb-tree" id="kb-tree" aria-label="โฟลเดอร์" role="tablist" aria-orientation="vertical"></nav>
-      <div class="kb-panel" id="kb-panel" role="tabpanel" aria-live="polite"></div>
+    <div class="kb-brand">
+      <namon-agent pose="idle" size="72" label="Namon"></namon-agent>
+      <h1>Kae second brain</h1>
     </div>
-  </section>
+    <div class="kb-sync">
+      <p class="kb-status" id="kb-status" aria-live="polite">ยังไม่ได้เชื่อมต่อ GitHub</p>
+      <button type="button" class="nd-btn nd-btn--fill" id="kb-refresh" hidden><span class="kb-spin" aria-hidden="true">↻</span> อัปเดต</button>
+      <button type="button" class="nd-btn kb-btn-ghost" id="kb-logout" hidden>ตัดการเชื่อมต่อ</button>
+    </div>
+  </header>
+  <div class="kb-rule" aria-hidden="true"></div>
 
-  <p class="kb-foot">นับจาก ~/bma-health-second-brain · commit 89d4f8c · 27 พ.ย. 69</p>
+  <label class="kb-filter nd-field" for="kb-q" id="kb-filter" hidden>
+    <span class="nd-field__label">ค้นหาชื่อไฟล์ในทุกโฟลเดอร์</span>
+    <input class="nd-input" id="kb-q" type="search" placeholder="เช่น pharmacy · anc · consent" autocomplete="off">
+  </label>
+
+  <section class="kb-explorer" id="kb-explorer" aria-label="โฟลเดอร์และไฟล์ใน second brain">
+    <nav class="kb-tree kb-hide" id="kb-tree" aria-label="โฟลเดอร์" role="tablist" aria-orientation="vertical"></nav>
+    <div class="kb-panel" id="kb-panel" role="tabpanel" aria-live="polite"></div>
+  </section>
 </main>
 
 <script>
 (function () {
-  /* ข้อมูลโฟลเดอร์ (นับจากไฟล์จริง 27 พ.ย. 69) · group = หัวกลุ่มในรายการ · blocks = กลุ่มในแผงรายละเอียด */
+  var REPO = 'namonlims/bma-health-second-brain', BRANCH = 'main';
+  var API = 'https://api.github.com/repos/' + REPO;
+  var WEB = 'https://github.com/' + REPO + '/blob/' + BRANCH + '/';
+  var TOKEN_KEY = 'kb-gh-token';
+  var TH_MONTH = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  var isMd = function (p) { return /\.md$/i.test(p); };
+  var base = function (p) { return p.split('/').pop(); };
+  var seg = function (p, i) { return p.split('/')[i]; };
+
+  /* โฟลเดอร์ที่แสดง · match = ไฟล์ไหนอยู่ในโฟลเดอร์นี้ · sub = หัวกลุ่มย่อยในแผงขวา */
   var FOLDERS = [
-    { id: 'index', group: 'ทางเข้า', name: 'index.md', path: 'index.md', n: 'อ่านก่อน', desc: 'สารบัญทุกหน้า',
-      sum: 'สารบัญของทั้งวอลต์ แยกตามหมวด · เปิดไฟล์นี้ก่อนเสมอ',
-      blocks: [
-        { t: 'หัวข้อในไฟล์', chips: ['Sources', 'Entities', 'Concepts', 'Analysis', 'Handoffs', 'Design briefs', 'Standards', 'Stats'] },
-        { t: 'หน้าที่แนะนำให้เปิดก่อน', chips: ['overview', 'dohis-system-synthesis', 'phcis-modules', 'figma-designs'] }
-      ] },
-    { id: 'log', group: 'ทางเข้า', name: 'log.md', path: 'log.md', n: '5,084 บรรทัด', desc: 'ไทม์ไลน์งาน',
-      sum: 'ไทม์ไลน์แบบต่อท้าย อันใหม่อยู่ล่างสุด',
-      blocks: [ { t: 'รายละเอียด', rows: [['รูปแบบ', '## [วันที่] ประเภท | หัวข้อ + bullet สั้น ๆ'], ['ล่าสุด', '27 พ.ย. 69 · handoff · e-document สร้าง/แก้ไขเฉพาะ admin กลาง']] } ] },
-    { id: 'guide', group: 'ทางเข้า', name: 'CLAUDE.md · AGENTS.md', path: 'CLAUDE.md', n: 'คู่มือ', desc: 'กติกาจัดวอลต์',
-      sum: 'คู่มือให้ agent รู้ว่าวอลต์จัดยังไง',
-      blocks: [ { t: 'รายละเอียด', rows: [['CLAUDE.md', 'กติกาวอลต์ · หน้าวิกิเขียนอังกฤษ · log/handoff เขียนไทยได้'], ['AGENTS.md', 'สำเนาให้ agent อื่นอ่าน · workflow agents-md.yml']] } ] },
-
-    { id: 'core', group: 'ความรู้ (wiki/)', name: 'wiki/*.md', path: 'wiki/', n: '5', desc: 'หน้ากลาง',
-      sum: 'หน้ากลางที่ใช้ข้ามทุกโมดูล',
-      blocks: [ { t: 'ไฟล์', rows: [['overview', 'ภาพรวมและแผนที่โครงการ'], ['decisions-log', 'มติแบบ ADR · D-001 → D-101'], ['open-questions', 'คำถามที่ยังค้าง'], ['glossary', 'คำศัพท์และตัวย่อ'], ['figma-designs', 'รายการไฟล์ Figma']] } ] },
-    { id: 'sources', group: 'ความรู้ (wiki/)', name: 'sources/', path: 'wiki/sources/', n: '30', desc: 'เอกสารต้นทาง',
-      sum: 'สรุปเอกสารต้นทาง ตั้งเลข S###',
-      blocks: [
-        { t: 'เอกสารหลัก', chips: ['S002 TOR หลัก HCIS', 'S024 รายงานออกแบบ DOHIS', 'S025 Telemedicine UAT', 'S026 telemed หนองคาย', 'S027 2Q/9Q/8Q', 'S028 veterinary UML', 'S029 school design system', 'S030 OPD flow', 'S031 OPD videos', 'S032 ANC guideline', 'S033 TOR ภาคผนวก', 'S036 field visit ส.ค. 69', 'S039 mental-health spec'] },
-        { t: 'เอกสาร Drive คณะทำงาน · นำเข้า 23 ต.ค. 69', chips: ['S040 คณะ 1 core', 'S041 คณะ 2 family health', 'S042 คณะ 3 special clinics', 'S043 คณะ 4 home visit', 'S044 คณะ 5 school health', 'S045 คณะ 6 dental', 'S046 คณะ 7 pharmacy', 'S047 คณะ 8 finance', 'S048 คณะ 9 prevention rehab', 'S049 คณะ 10 social welfare', 'S050 คณะ 11 reports', 'S051 คณะ 12 mobile app', 'S052 คณะ 13 consent', 'S053 central legal uxui'] },
-        { t: 'เพิ่มทีหลัง', chips: ['S054 triage proposal', 'S055 medical certificate', 'S056 คณะ 3 ประชุม 10 พ.ย. 69'] }
-      ] },
-    { id: 'entities', group: 'ความรู้ (wiki/)', name: 'entities/', path: 'wiki/entities/', n: '54', desc: 'ระบบ · โมดูล · interface',
-      sum: 'หน้าของระบบ โมดูล การเชื่อมต่อภายนอก และมาตรฐานรหัส',
-      blocks: [
-        { t: 'ระบบหลัก', chips: ['dohis', 'hcis', 'phcis', 'his-everapp', 'dohis-exchange-zone', 'dohis-data-lake', 'phcis-modules', 'phcis-design-system', 'bma-kiosk', 'telemedicine', 'schedule-management', 'signin', 'cpoe', 'erp', 'cms', 'crm', 'doh-staff-app', 'hl7-fhir'] },
-        { t: 'modules/ · 22', chips: ['mod-medical-records', 'mod-exam-clinic', 'mod-pharmacy', 'mod-lab', 'mod-radiology', 'mod-cashier', 'mod-referral', 'mod-appointment', 'mod-dental', 'mod-mental-health', 'mod-tb', 'mod-substance-abuse', 'mod-sti-aids', 'mod-anc', 'mod-family-planning', 'mod-immunization', 'mod-special-groups', 'mod-social-rehab', 'mod-community-health', 'mod-school-health', 'mod-central-mis', 'mod-veterinary'] },
-        { t: 'interfaces/ · 9', chips: ['health-link', 'tgix', 'e-referral', 'e-claim', 'nhso', 'pacs', 'thaid', 'epi-net', 'bma-portal'] },
-        { t: 'standards/ · 5', chips: ['icd-10', 'icd-9', 'snomed-ct', 'loinc', 'drug-coding-tmt'] }
-      ] },
-    { id: 'briefs', group: 'ความรู้ (wiki/)', name: 'design-briefs/', path: 'wiki/design-briefs/', n: '22', desc: 'brief รายโมดูล',
-      sum: 'อ่านก่อนออกแบบโมดูลนั้น · TOR ∪ คู่มือเก่า ∪ ของใหม่',
-      blocks: [
-        { t: 'Core flow', chips: ['registration', 'exam-clinic', 'pharmacy', 'lab', 'radiology', 'cashier', 'referral'] },
-        { t: 'คลินิกพิเศษ', chips: ['dental', 'mental-health', 'tb', 'substance-abuse', 'sti-aids', 'anc', 'family-planning', 'immunization', 'special-groups', 'social-rehab'] },
-        { t: 'ชุมชน · โรงเรียน · อื่น ๆ', chips: ['community-health', 'school-health', 'home-visit', 'central-mis', 'veterinary'] }
-      ] },
-    { id: 'concepts', group: 'ความรู้ (wiki/)', name: 'concepts/', path: 'wiki/concepts/', n: '14', desc: 'แนวคิดข้ามโมดูล',
-      sum: 'แนวคิดที่ใช้ร่วมกันหลายโมดูล',
-      blocks: [ { t: 'ไฟล์', chips: ['digital-transformation', 'system-architecture', 'data-security', 'health-information-exchange', 'interoperability', 'consent-management-pdpa', 'patient-referral-flow', 'master-patient-index', 'mental-health-screening-2q9q8q', 'abac', 'medication-reconciliation', 'rng-506', 'read-replica-research-db', 'coding-standards'] } ] },
-    { id: 'analysis', group: 'ความรู้ (wiki/)', name: 'analysis/', path: 'wiki/analysis/', n: '8', desc: 'บทวิเคราะห์ภาพใหญ่',
-      sum: 'บทวิเคราะห์ทั้งระบบ',
-      blocks: [ { t: 'ไฟล์', rows: [['dohis-system-synthesis', 'สรุปทั้งระบบ as-is → to-be'], ['opd-clinical-flow', 'flow OPD หลัก ลงทะเบียน → EMR → CPOE → ยา → การเงิน'], ['dohis-roadmap-phasing', 'roadmap 11 ระบบ · 2024–2028'], ['dohis-ui-screens', 'mockup to-be 55 หน้าจอ'], ['phcis-detailed-requirements', 'requirement รายระบบจาก TOR ภาคผนวก ก'], ['design-build-gap', 'เทียบ spec · Figma · ของที่สร้างจริง'], ['deployment-pipeline', 'งานขึ้น production ยังไง · ตรวจเว็บจริง'], ['veterinary-system-design', 'UML/DB ระบบสัตวแพทย์สาธารณสุข']] } ] },
-
-    { id: 'handoffs', group: 'บันทึกงาน', name: 'handoffs/', path: 'wiki/handoffs/', n: '493', desc: 'สรุปหลังจบงาน',
-      sum: 'สรุปหลังจบงานแต่ละรอบ · ชื่อไฟล์ขึ้นต้นด้วยวันที่ · Glokbot อ่านจากที่นี่',
-      blocks: [
-        { t: 'จำนวนต่อเดือน', bars: [['ก.ย. 69', 35], ['ต.ค. 69', 267], ['พ.ย. 69', 191]] },
-        { t: 'ล่าสุด', chips: ['2026-11-27-edocument-central-admin-only', '2026-11-27-github-actions-minutes-archive-cleanup', '2026-11-27-sitemap-from-mel-plus-clinics', '2026-11-26-consent-idcard-mismatch-error'] },
-        { t: 'ใครเขียน · ใครอ่าน', rows: [['เขียน', 'skill handoff หลังงานที่ push แล้ว'], ['อ่าน', 'Glokbot · เซสชันถัดไป'], ['attachments/', 'ภาพประกอบ handoff']] }
-      ] },
-
-    { id: 'memory', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-memory/', path: 'claude-memory/', n: '440', desc: 'สำรอง memory',
-      sum: 'สำเนา memory ของ Claude บนเครื่องนี้ ให้เซสชัน cloud ใช้',
-      blocks: [ { t: 'รายละเอียด', rows: [['ซิงก์', 'tools/sync-claude-memory.sh push'], ['ข้างใน', 'README.md · bma.health-main/']] } ] },
-    { id: 'skills', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-skills/', path: 'claude-skills/', n: '16 skill', desc: 'submodule',
-      sum: 'submodule ชี้ไป repo namonlims/claude-skills',
-      blocks: [ { t: 'skill ที่สำรอง', chips: ['handoff', 'cc-handoff', 'responsive-web', 'vibe-to-figma', 'figma-layer-rename', 'kiosk-360-face-scan', 'prototype', 'grill-me', 'grill-with-docs', 'improve-codebase-architecture', 'write-a-skill', 'write-beats', 'writing-fragments', 'writing-shape', 'caveman', '_global'] } ] },
-    { id: 'system', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'raw/ · templates/ · tools/', path: 'raw/', n: '7 · 5 · 3', desc: 'ต้นฉบับ · แม่แบบ · สคริปต์',
-      sum: 'ไฟล์ต้นฉบับ แม่แบบหน้า และสคริปต์ดูแลวอลต์',
-      blocks: [ { t: 'รายละเอียด', rows: [['raw/', 'ต้นฉบับห้ามแก้ · ส่วนใหญ่อยู่ใน .gitignore · บนเครื่องมี S038 · S054 · S055'], ['templates/', 'concept · design-brief · entity · module · source'], ['tools/', 'lint.py · sync-claude-memory.sh · responsive-sweep'], ['.github/', 'workflow agents-md.yml']] } ] }
+    { id: 'index', group: 'ทางเข้า', name: 'index.md', desc: 'สารบัญทุกหน้า', sum: 'สารบัญของทั้งวอลต์ แยกตามหมวด · เปิดไฟล์นี้ก่อนเสมอ', single: 'index.md' },
+    { id: 'log', group: 'ทางเข้า', name: 'log.md', desc: 'ไทม์ไลน์งาน', sum: 'ไทม์ไลน์แบบต่อท้าย อันใหม่อยู่ล่างสุด', single: 'log.md' },
+    { id: 'guide', group: 'ทางเข้า', name: 'CLAUDE.md · AGENTS.md', path: '', desc: 'กติกาจัดวอลต์', sum: 'คู่มือให้ agent รู้ว่าวอลต์จัดยังไง', match: function (p) { return p === 'CLAUDE.md' || p === 'AGENTS.md'; } },
+    { id: 'core', group: 'ความรู้ (wiki/)', name: 'wiki/*.md', path: 'wiki', desc: 'หน้ากลาง', sum: 'หน้ากลางที่ใช้ข้ามทุกโมดูล · มติ · คำถามค้าง · คำศัพท์', match: function (p) { return /^wiki\/[^/]+\.md$/.test(p); } },
+    { id: 'sources', group: 'ความรู้ (wiki/)', name: 'sources/', path: 'wiki/sources', desc: 'เอกสารต้นทาง', sum: 'สรุปเอกสารต้นทาง ตั้งเลข S###', match: function (p) { return isMd(p) && p.indexOf('wiki/sources/') === 0; } },
+    { id: 'entities', group: 'ความรู้ (wiki/)', name: 'entities/', path: 'wiki/entities', desc: 'ระบบ · โมดูล · interface', sum: 'หน้าของระบบ โมดูล การเชื่อมต่อภายนอก และมาตรฐานรหัส', match: function (p) { return isMd(p) && p.indexOf('wiki/entities/') === 0; }, sub: function (p) { return p.split('/').length > 3 ? seg(p, 2) + '/' : 'ระบบหลัก'; } },
+    { id: 'briefs', group: 'ความรู้ (wiki/)', name: 'design-briefs/', path: 'wiki/design-briefs', desc: 'brief รายโมดูล', sum: 'อ่านก่อนออกแบบโมดูลนั้น · TOR ∪ คู่มือเก่า ∪ ของใหม่', match: function (p) { return isMd(p) && p.indexOf('wiki/design-briefs/') === 0; } },
+    { id: 'concepts', group: 'ความรู้ (wiki/)', name: 'concepts/', path: 'wiki/concepts', desc: 'แนวคิดข้ามโมดูล', sum: 'แนวคิดที่ใช้ร่วมกันหลายโมดูล', match: function (p) { return isMd(p) && p.indexOf('wiki/concepts/') === 0; } },
+    { id: 'analysis', group: 'ความรู้ (wiki/)', name: 'analysis/', path: 'wiki/analysis', desc: 'บทวิเคราะห์ภาพใหญ่', sum: 'บทวิเคราะห์ทั้งระบบ', match: function (p) { return isMd(p) && p.indexOf('wiki/analysis/') === 0; } },
+    { id: 'handoffs', group: 'บันทึกงาน', name: 'handoffs/', path: 'wiki/handoffs', desc: 'สรุปหลังจบงาน', sum: 'สรุปหลังจบงานแต่ละรอบ · Glokbot อ่านจากที่นี่', months: true, match: function (p) { return isMd(p) && /^wiki\/handoffs\/[^/]+$/.test(p); } },
+    { id: 'memory', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-memory/', path: 'claude-memory', desc: 'สำรอง memory', sum: 'สำเนา memory ของ Claude บนเครื่อง ให้เซสชัน cloud ใช้', match: function (p) { return isMd(p) && p.indexOf('claude-memory/') === 0; }, sub: function (p) { return p.split('/').length > 2 ? seg(p, 1) + '/' : 'ไฟล์'; } },
+    { id: 'skills', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'claude-skills/', path: 'claude-skills', desc: 'submodule', sum: 'submodule ชี้ไปอีก repo · token นี้อ่านได้แค่ second brain', submodule: 'https://github.com/namonlims/claude-skills' },
+    { id: 'system', group: 'สำรองของ Claude · ไฟล์ระบบ', name: 'raw/ · templates/ · tools/', path: '', desc: 'ต้นฉบับ · แม่แบบ · สคริปต์', sum: 'ไฟล์ต้นฉบับ แม่แบบหน้า สคริปต์ และไฟล์ตั้งค่าวอลต์', match: function (p) { return /^(raw|templates|tools|scripts|requests|\.github)\//.test(p); }, sub: function (p) { return seg(p, 0) + '/'; } }
   ];
 
+  var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-  var tree = document.getElementById('kb-tree'), panel = document.getElementById('kb-panel'), explorer = document.getElementById('kb-explorer'), q = document.getElementById('kb-q');
+  var tree = $('kb-tree'), panel = $('kb-panel'), explorer = $('kb-explorer'), q = $('kb-q');
   var mobile = matchMedia('(max-width: 767px)');
-  var current = 'index', term = '';
+  var token = null, files = [], byFolder = {}, cache = {}, current = 'index', openFile = null, term = '', commit = null, fetchedAt = null;
+  try { token = localStorage.getItem(TOKEN_KEY); } catch (e) {}
 
-  var hit = function (text) { return term && String(text).toLowerCase().indexOf(term) > -1; };
-  var countHits = function (f) {
-    var n = 0;
-    f.blocks.forEach(function (b) {
-      (b.chips || []).forEach(function (c) { if (hit(c)) n++; });
-      (b.rows || []).forEach(function (r) { if (hit(r[0]) || hit(r[1])) n++; });
-    });
-    if (!n && (hit(f.name) || hit(f.sum))) n = 1;
-    return n;
+  /* ── GitHub API ── */
+  var gh = function (path, raw) {
+    return fetch(API + path, { cache: 'no-store', headers: { Authorization: 'Bearer ' + token, Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } })
+      .then(function (r) {
+        if (r.status === 401) throw { kind: 'auth' };
+        if (r.status === 403 && r.headers.get('x-ratelimit-remaining') === '0') throw { kind: 'rate' };
+        if (r.status === 404 || r.status === 403) throw { kind: 'access' };
+        if (!r.ok) throw { kind: 'http', status: r.status };
+        return raw ? r.text() : r.json();
+      }, function () { throw { kind: 'net' }; });
+  };
+  var errText = function (e) {
+    return { auth: 'token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่', access: 'token นี้ไม่มีสิทธิ์อ่าน repo bma-health-second-brain · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only', rate: 'เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง', net: 'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "อัปเดต" อีกครั้ง' }[e && e.kind] || ('GitHub ตอบกลับผิดพลาด' + (e && e.status ? ' (' + e.status + ')' : ''));
   };
 
+  var setBusy = function (on) { var b = $('kb-refresh'); b.classList.toggle('is-busy', on); b.disabled = on; };
+  var fmtTime = function (d) { return d.toLocaleString('th-TH', { day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }); };
+  var setStatus = function () {
+    $('kb-status').innerHTML = commit ? 'ข้อมูลล่าสุด <b>' + esc(fmtTime(fetchedAt)) + '</b> · commit <b class="mono">' + esc(commit.sha.slice(0, 7)) + '</b><br>แก้ล่าสุดใน repo ' + esc(fmtTime(new Date(commit.date))) : 'ยังไม่ได้เชื่อมต่อ GitHub';
+  };
+
+  /* ── โหลดรายการไฟล์ทั้ง repo (ปุ่ม "อัปเดต" เรียกซ้ำ) ── */
+  var load = function () {
+    setBusy(true);
+    return Promise.all([gh('/commits/' + BRANCH), gh('/git/trees/' + BRANCH + '?recursive=1')]).then(function (res) {
+      commit = { sha: res[0].sha, date: res[0].commit.committer.date };
+      fetchedAt = new Date(); cache = {};
+      files = res[1].tree.filter(function (t) { return t.type === 'blob'; }).map(function (t) { return t.path; });
+      byFolder = {};
+      FOLDERS.forEach(function (f) { byFolder[f.id] = f.single ? files.filter(function (p) { return p === f.single; }) : f.match ? files.filter(f.match) : []; });
+      setStatus(); showExplorer(); renderTree();
+      var saved = null; try { saved = JSON.parse(sessionStorage.getItem('kb-view') || 'null'); } catch (e) {}
+      if (openFile && files.indexOf(openFile) > -1) { selectFolder(current); readFile(openFile, true); }
+      else if (saved && FOLDERS.some(function (f) { return f.id === saved.folder; })) { selectFolder(saved.folder); if (saved.file && files.indexOf(saved.file) > -1) readFile(saved.file, true); }
+      else selectFolder(current);
+    }).catch(function (e) {
+      if (e && e.kind === 'auth' || e && e.kind === 'access') { showConnect(errText(e)); return; }
+      panel.innerHTML = '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
+    }).then(function () { setBusy(false); });
+  };
+
+  var showExplorer = function () {
+    tree.classList.remove('kb-hide'); $('kb-filter').hidden = false; $('kb-refresh').hidden = false; $('kb-logout').hidden = false;
+  };
+
+  /* ── เชื่อมต่อ GitHub (ครั้งแรก) ── */
+  var showConnect = function (err) {
+    tree.classList.add('kb-hide'); $('kb-filter').hidden = true; $('kb-refresh').hidden = true; $('kb-logout').hidden = true;
+    commit = null; setStatus();
+    if (panel.parentNode !== explorer) explorer.appendChild(panel);
+    explorer.classList.add('is-full'); panel.hidden = false;
+    panel.innerHTML = '<div class="kb-connect">' +
+      '<div class="kb-phead"><h3 class="nd-title nd-title--page">เชื่อมต่อ GitHub เพื่ออ่าน second brain</h3><p>ใช้ token อ่านอย่างเดียว วางครั้งเดียว เก็บไว้ในเบราว์เซอร์นี้เท่านั้น</p></div>' +
+      (err ? '<p class="nd-notice nd-notice--danger">' + esc(err) + '</p>' : '') +
+      '<div class="kb-grp"><h4 class="nd-group-title">สร้าง token</h4><ol>' +
+      '<li>เปิด <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>' +
+      '<li>Token name: <code>kae-second-brain-reader</code> · Expiration ตามสะดวก</li>' +
+      '<li>Repository access: <b>Only select repositories</b> → <code>bma-health-second-brain</code></li>' +
+      '<li>Permissions → Repository permissions → <b>Contents: Read-only</b></li>' +
+      '<li>กด Generate token แล้วคัดลอกมาวางด้านล่าง</li></ol></div>' +
+      '<form id="kb-connect-form" autocomplete="off"><label class="nd-field" for="kb-token"><span class="nd-field__label">Token</span><input class="nd-input" id="kb-token" type="password" placeholder="github_pat_…" required></label>' +
+      '<button type="submit" class="nd-btn nd-btn--fill">เชื่อมต่อ</button></form></div>';
+    $('kb-connect-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = $('kb-token').value.trim(); if (!v) return;
+      token = v; try { localStorage.setItem(TOKEN_KEY, v); } catch (er) {}
+      explorer.classList.remove('is-full');
+      panel.innerHTML = '<p class="kb-msg">กำลังโหลดรายการไฟล์จาก GitHub…</p>';
+      load();
+    });
+  };
+
+  /* ── รายการโฟลเดอร์ (ซ้าย) ── */
   var renderTree = function () {
     var groups = [], by = {};
     FOLDERS.forEach(function (f) { if (!by[f.group]) { by[f.group] = []; groups.push(f.group); } by[f.group].push(f); });
     tree.innerHTML = groups.map(function (g) {
       return '<div class="kb-tgroup"><h3 class="nd-group-title">' + esc(g) + '</h3><ul>' + by[g].map(function (f) {
         return '<li data-id="' + f.id + '"><button type="button" class="kb-titem" role="tab" id="t-' + f.id + '" aria-controls="kb-panel" aria-selected="false">' +
-          '<span class="t-name">' + esc(f.name) + '</span><span class="t-desc">' + esc(f.desc) + '</span>' +
-          '<span class="t-n"><span class="t-count">' + esc(f.n) + '</span><span class="t-hit"></span></span></button></li>';
+          '<span class="t-name">' + esc(f.name) + '</span><span class="t-desc">' + esc(f.desc) + '</span><span class="t-n"></span></button></li>';
       }).join('') + '</ul></div>';
     }).join('');
+    updateCounts();
   };
-
-  var renderPanel = function (f) {
-    var crumb = ['bma-health-second-brain'].concat(f.path.replace(/\/$/, '').split('/'));
-    var html = '<div class="kb-crumb">' + crumb.map(function (c, i) { return i === crumb.length - 1 ? '<b>' + esc(c) + '</b>' : esc(c) + ' /'; }).join(' ') + '</div>' +
-      '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(f.name) + '</h3><span class="nd-chip nd-chip--brand">' + esc(f.n) + '</span></div><p>' + esc(f.sum) + '</p></div>';
-    f.blocks.forEach(function (b) {
-      html += '<div class="kb-grp"><h4 class="nd-group-title">' + esc(b.t) + '</h4>';
-      if (b.chips) html += '<div class="kb-tags">' + b.chips.map(function (c) { return '<span class="nd-chip' + (hit(c) ? ' is-hit' : '') + '">' + esc(c) + '</span>'; }).join('') + '</div>';
-      if (b.rows) html += '<dl class="kb-rows">' + b.rows.map(function (r) { return '<dt' + (hit(r[0]) || hit(r[1]) ? ' class="is-hit"' : '') + '>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>';
-      if (b.bars) { var max = Math.max.apply(null, b.bars.map(function (x) { return x[1]; })); html += '<div class="kb-bars">' + b.bars.map(function (x) { return '<div class="kb-bar"><span>' + esc(x[0]) + '</span><span class="track"><span class="fill" style="width:' + (x[1] / max * 100).toFixed(1) + '%"></span></span><span class="v">' + x[1] + '</span></div>'; }).join('') + '</div>'; }
-      html += '</div>';
-    });
-    panel.innerHTML = html;
-    panel.setAttribute('aria-labelledby', 't-' + f.id);
-  };
-
-  /* มือถือ: แผงไปอยู่ใต้รายการที่เลือก · จอใหญ่: แผงอยู่ขวา */
-  var placePanel = function () {
-    if (mobile.matches) { var li = tree.querySelector('li[data-id="' + current + '"]'); if (li) li.appendChild(panel); }
-    else if (panel.parentNode !== explorer) explorer.appendChild(panel);
-  };
-
-  var select = function (id, opts) {
-    var f = FOLDERS.filter(function (x) { return x.id === id; })[0]; if (!f) return;
-    /* มือถือ: กดโฟลเดอร์ที่เปิดอยู่ซ้ำ = พับ (เปิดทีละอัน) */
-    if (mobile.matches && opts && opts.user && id === current && !panel.hidden) { panel.hidden = true; tree.querySelector('#t-' + id).setAttribute('aria-expanded', 'false'); return; }
-    current = id; panel.hidden = false;
-    tree.querySelectorAll('.kb-titem').forEach(function (b) { var on = b.id === 't-' + id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; b.setAttribute('aria-expanded', String(on)); });
-    renderPanel(f); placePanel();
-    try { sessionStorage.setItem('kb-folder', id); } catch (e) {}
-  };
-
-  var applyFilter = function () {
-    term = q.value.trim().toLowerCase();
-    explorer.classList.toggle('is-filtering', !!term);
-    var first = null, any = false;
+  var matches = function (p) { return !term || p.toLowerCase().indexOf(term) > -1; };
+  var updateCounts = function () {
+    var any = false;
     FOLDERS.forEach(function (f) {
-      var n = term ? countHits(f) : 1, li = tree.querySelector('li[data-id="' + f.id + '"]');
-      li.classList.toggle('kb-hide', !n);
-      li.querySelector('.t-hit').textContent = n ? 'พบ ' + n : '';
-      if (n) { any = true; if (!first) first = f.id; }
+      var li = tree.querySelector('li[data-id="' + f.id + '"]'); if (!li) return;
+      var all = byFolder[f.id] || [], n = term ? all.filter(matches).length : all.length;
+      var label = f.submodule ? 'submodule' : f.single ? (f.id === 'index' ? 'อ่านก่อน' : 'ไฟล์เดียว') : String(n);
+      li.querySelector('.t-n').textContent = term ? (n ? 'พบ ' + n : '') : label;
+      li.classList.toggle('kb-hide', !!term && !n);
+      if (!term || n) any = true;
     });
     tree.querySelectorAll('.kb-tgroup').forEach(function (g) { g.classList.toggle('kb-hide', !g.querySelector('li:not(.kb-hide)')); });
-    if (!any) { panel.hidden = false; explorer.appendChild(panel); panel.innerHTML = '<p class="kb-empty">ไม่พบหน้าที่ตรงกับ "' + esc(q.value.trim()) + '" ลองคำอื่น เช่น pharmacy หรือ anc</p>'; return; }
-    var curLi = tree.querySelector('li[data-id="' + current + '"]');
-    select(term && curLi.classList.contains('kb-hide') ? first : current);
+    return any;
   };
 
-  renderTree();
-  tree.addEventListener('click', function (e) { var b = e.target.closest('.kb-titem'); if (b) select(b.id.slice(2), { user: true }); });
+  /* ── แผงขวา: รายการไฟล์ของโฟลเดอร์ ── */
+  var shortName = function (p) { return base(p).replace(/\.md$/i, ''); };
+  var fileBtn = function (p) { return '<li><button type="button" class="kb-file' + (term && matches(p) ? ' is-hit' : '') + '" data-path="' + esc(p) + '" title="' + esc(p) + '"><span>' + esc(shortName(p)) + '</span></button></li>'; };
+  var crumbHtml = function (path) {
+    var parts = ['bma-health-second-brain'].concat(path ? path.split('/') : []);
+    return '<div class="kb-crumb">' + parts.map(function (c, i) { return i === parts.length - 1 ? '<b>' + esc(c) + '</b>' : esc(c) + ' /'; }).join(' ') + '</div>';
+  };
+  var monthLabel = function (ym) { var y = +ym.slice(0, 4), m = +ym.slice(5, 7); return (TH_MONTH[m - 1] || ym) + ' ' + String(y + 543).slice(-2); };
+
+  var renderFolder = function (f) {
+    var list = (byFolder[f.id] || []).filter(matches), all = byFolder[f.id] || [];
+    var html = crumbHtml(f.path) + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(f.name) + '</h3><span class="nd-chip nd-chip--brand">' + (f.submodule ? 'submodule' : all.length + ' ไฟล์') + '</span></div><p>' + esc(f.sum) + '</p></div>';
+    if (f.submodule) {
+      html += '<div class="kb-grp"><p class="nd-summary">token นี้อ่านได้แค่ second brain · skill อยู่ใน repo แยก</p><p><a class="nd-btn" href="' + f.submodule + '" target="_blank" rel="noopener">เปิด claude-skills ใน GitHub ↗</a></p></div>';
+    } else if (f.months) {
+      var groups = {}, order = [];
+      list.slice().sort().reverse().forEach(function (p) { var ym = (base(p).match(/^(\d{4}-\d{2})/) || [, 'อื่น ๆ'])[1]; if (!groups[ym]) { groups[ym] = []; order.push(ym); } groups[ym].push(p); });
+      var counts = {}; all.forEach(function (p) { var ym = (base(p).match(/^(\d{4}-\d{2})/) || [, ''])[1]; if (ym) counts[ym] = (counts[ym] || 0) + 1; });
+      var yms = Object.keys(counts).sort(), max = Math.max.apply(null, yms.map(function (k) { return counts[k]; }).concat(1));
+      if (!term) html += '<div class="kb-grp"><h4 class="nd-group-title">จำนวนต่อเดือน</h4><div class="kb-bars">' + yms.map(function (k) { return '<div class="kb-bar"><span>' + esc(monthLabel(k)) + '</span><span class="track"><span class="fill" style="width:' + (counts[k] / max * 100).toFixed(1) + '%"></span></span><span class="v">' + counts[k] + '</span></div>'; }).join('') + '</div></div>';
+      html += '<div class="kb-grp"><h4 class="nd-group-title">รายการ · ใหม่สุดก่อน</h4>' + order.map(function (ym, i) {
+        return '<details class="kb-month"' + (i === 0 ? ' open' : '') + '><summary><span>' + esc(ym.length === 7 ? monthLabel(ym) : ym) + '</span><small>' + groups[ym].length + '</small></summary><ul class="kb-files">' + groups[ym].map(fileBtn).join('') + '</ul></details>';
+      }).join('') + '</div>';
+    } else {
+      var subs = {}, sorder = [];
+      list.slice().sort().forEach(function (p) { var s = f.sub ? f.sub(p) : 'ไฟล์'; if (!subs[s]) { subs[s] = []; sorder.push(s); } subs[s].push(p); });
+      if (f.sub) sorder.sort(function (a, b) { return a === 'ระบบหลัก' || a === 'ไฟล์' ? -1 : b === 'ระบบหลัก' || b === 'ไฟล์' ? 1 : a.localeCompare(b); });
+      html += sorder.map(function (s) { return '<div class="kb-grp"><h4 class="nd-group-title">' + esc(s) + ' · ' + subs[s].length + '</h4><ul class="kb-files">' + subs[s].map(fileBtn).join('') + '</ul></div>'; }).join('');
+    }
+    if (!list.length && !f.submodule) html += '<p class="kb-msg">ไม่มีไฟล์ที่ตรงกับคำค้น</p>';
+    panel.innerHTML = html;
+  };
+
+  /* ── ตัวอ่านไฟล์ ── */
+  var splitFront = function (txt) {
+    var m = txt.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/); if (!m) return { meta: [], body: txt };
+    var meta = []; m[1].split(/\r?\n/).forEach(function (l) { var k = l.match(/^([A-Za-z0-9_-]+):\s*(.*)$/); if (k) meta.push([k[1], k[2]]); else if (meta.length && l.trim()) meta[meta.length - 1][1] += ' ' + l.trim(); });
+    return { meta: meta, body: txt.slice(m[0].length) };
+  };
+  var findWiki = function (name) {
+    var n = name.trim().toLowerCase().replace(/\.md$/, '');
+    return files.filter(function (p) { return isMd(p) && shortName(p).toLowerCase() === n; })[0] || null;
+  };
+  var resolveRel = function (from, href) {
+    var parts = from.split('/'); parts.pop();
+    href.split('/').forEach(function (s) { if (s === '..') parts.pop(); else if (s && s !== '.') parts.push(s); });
+    return parts.join('/');
+  };
+  var renderMd = function (path, txt) {
+    var fm = splitFront(txt);
+    var body = fm.body.replace(/!?\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g, function (all, target, label) {
+      if (all.charAt(0) === '!') return '<span class="kb-img">ไฟล์แนบ: ' + esc(target) + '</span>';
+      var hit = findWiki(target);
+      return '<a data-wiki="' + esc(hit || '') + '"' + (hit ? '' : ' class="is-missing" title="ยังไม่มีหน้านี้"') + '>' + esc(label || target) + '</a>';
+    });
+    var html = DOMPurify.sanitize(marked.parse(body, { gfm: true, breaks: false }));
+    var wrap = document.createElement('div'); wrap.innerHTML = html;
+    wrap.querySelectorAll('table').forEach(function (t) { var d = document.createElement('div'); d.className = 'kb-tbl'; t.parentNode.insertBefore(d, t); d.appendChild(t); });
+    wrap.querySelectorAll('img').forEach(function (im) { var s = document.createElement('span'); s.className = 'kb-img'; s.textContent = 'ภาพ: ' + (im.getAttribute('alt') || base(im.getAttribute('src') || '')); im.replaceWith(s); });
+    wrap.querySelectorAll('a[href]').forEach(function (a) {
+      var h = a.getAttribute('href');
+      if (/^https?:/i.test(h)) { a.target = '_blank'; a.rel = 'noopener'; return; }
+      if (h.charAt(0) === '#') return;
+      var p = resolveRel(path, decodeURIComponent(h.split('#')[0]));
+      if (files.indexOf(p) > -1) { a.setAttribute('data-wiki', p); a.removeAttribute('href'); }
+      else { a.href = WEB + p; a.target = '_blank'; a.rel = 'noopener'; }
+    });
+    var meta = fm.meta.length ? '<dl class="kb-rows">' + fm.meta.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd>'; }).join('') + '</dl>' : '';
+    return { meta: meta, html: wrap.innerHTML };
+  };
+
+  var folderOf = function (p) { return (FOLDERS.filter(function (f) { return (byFolder[f.id] || []).indexOf(p) > -1; })[0] || FOLDERS[0]).id; };
+  var readFile = function (path, keepFolder) {
+    var fid = folderOf(path);
+    if (!keepFolder && fid !== current) { selectFolder(fid, { silent: true }); }
+    openFile = path; save();
+    var f = FOLDERS.filter(function (x) { return x.id === current; })[0];
+    var back = f.single ? '' : '<button type="button" class="nd-btn" id="kb-back">‹ กลับไป ' + esc(f.name) + '</button>';
+    var head = '<div class="kb-readbar">' + back + '<a class="nd-btn kb-btn-ghost" href="' + WEB + path.split('/').map(encodeURIComponent).join('/') + '" target="_blank" rel="noopener">เปิดใน GitHub ↗</a></div>' + crumbHtml(path);
+    panel.innerHTML = head + '<p class="kb-msg">กำลังโหลด ' + esc(base(path)) + '…</p>';
+    var p = cache[path] ? Promise.resolve(cache[path]) : gh('/contents/' + path.split('/').map(encodeURIComponent).join('/') + '?ref=' + BRANCH, true).then(function (t) { cache[path] = t; return t; });
+    p.then(function (txt) {
+      if (openFile !== path) return;
+      if (!isMd(path)) { panel.innerHTML = head + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(base(path)) + '</h3></div></div><pre class="kb-md" style="white-space:pre-wrap"><code>' + esc(txt) + '</code></pre>'; return; }
+      var r = renderMd(path, txt);
+      panel.innerHTML = head + '<div class="kb-phead"><div class="kb-ptitle"><h3>' + esc(shortName(path)) + '</h3></div></div>' + r.meta + '<article class="kb-md">' + r.html + '</article>';
+    }).catch(function (e) {
+      if (openFile !== path) return;
+      if (e && e.kind === 'auth') { showConnect(errText(e)); return; }
+      panel.innerHTML = head + '<p class="kb-msg is-err">' + esc(errText(e)) + '</p>';
+    });
+    if (!mobile.matches) explorer.scrollIntoView({ block: 'nearest' });
+  };
+
+  /* ── เลือกโฟลเดอร์ ── */
+  var placePanel = function () {
+    if (mobile.matches && !explorer.classList.contains('is-full')) { var li = tree.querySelector('li[data-id="' + current + '"]'); if (li) li.appendChild(panel); }
+    else if (panel.parentNode !== explorer) explorer.appendChild(panel);
+  };
+  var save = function () { try { sessionStorage.setItem('kb-view', JSON.stringify({ folder: current, file: openFile })); } catch (e) {} };
+  var selectFolder = function (id, opts) {
+    var f = FOLDERS.filter(function (x) { return x.id === id; })[0]; if (!f) return;
+    opts = opts || {};
+    if (mobile.matches && opts.user && id === current && !panel.hidden && !openFile) { panel.hidden = true; tree.querySelector('#t-' + id).setAttribute('aria-expanded', 'false'); return; }
+    current = id; panel.hidden = false; openFile = null;
+    tree.querySelectorAll('.kb-titem').forEach(function (b) { var on = b.id === 't-' + id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; b.setAttribute('aria-expanded', String(on)); });
+    placePanel();
+    if (opts.silent) return;
+    if (f.single) { readFile(f.single, true); return; }
+    renderFolder(f); save();
+  };
+
+  /* ── เหตุการณ์ ── */
+  tree.addEventListener('click', function (e) { var b = e.target.closest('.kb-titem'); if (b) selectFolder(b.id.slice(2), { user: true }); });
   tree.addEventListener('keydown', function (e) {
-    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(e.key) < 0) return;
-    var items = [].slice.call(tree.querySelectorAll('li:not(.kb-hide) .kb-titem')), i = items.indexOf(document.activeElement); if (i < 0) return;
+    if (!e.target.classList.contains('kb-titem') || ['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(e.key) < 0) return;
+    var items = [].slice.call(tree.querySelectorAll('li:not(.kb-hide) > .kb-titem')), i = items.indexOf(e.target); if (i < 0) return;
     e.preventDefault();
     var n = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
-    items[n].focus(); select(items[n].id.slice(2));
+    items[n].focus(); selectFolder(items[n].id.slice(2));
   });
-  q.addEventListener('input', applyFilter);
+  panel.addEventListener('click', function (e) {
+    var fb = e.target.closest('.kb-file'); if (fb) { readFile(fb.getAttribute('data-path'), true); return; }
+    var w = e.target.closest('a[data-wiki]'); if (w) { e.preventDefault(); var p = w.getAttribute('data-wiki'); if (p) readFile(p); return; }
+    if (e.target.closest('#kb-back')) { selectFolder(current); }
+  });
+  /* เดือนของ handoff เปิดทีละเดือน */
+  panel.addEventListener('toggle', function (e) {
+    var d = e.target; if (!d.classList || !d.classList.contains('kb-month') || !d.open || term) return;
+    panel.querySelectorAll('.kb-month[open]').forEach(function (o) { if (o !== d) o.open = false; });
+  }, true);
+  q.addEventListener('input', function () {
+    term = q.value.trim().toLowerCase();
+    var any = updateCounts();
+    if (!any) { if (panel.parentNode !== explorer) explorer.appendChild(panel); panel.hidden = false; panel.innerHTML = '<p class="kb-msg">ไม่พบไฟล์ที่ชื่อมี "' + esc(q.value.trim()) + '" ลองคำอื่น เช่น pharmacy หรือ anc</p>'; return; }
+    var li = tree.querySelector('li[data-id="' + current + '"]');
+    if (term && li.classList.contains('kb-hide')) current = tree.querySelector('li:not(.kb-hide)').getAttribute('data-id');
+    var f = FOLDERS.filter(function (x) { return x.id === current; })[0];
+    if (f.single && term) { selectFolder(current, { silent: true }); renderFolder(f); } else selectFolder(current);
+  });
+  $('kb-refresh').addEventListener('click', function () { load(); });
+  $('kb-logout').addEventListener('click', function () {
+    try { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem('kb-view'); } catch (e) {}
+    token = null; files = []; cache = {}; showConnect();
+  });
   (mobile.addEventListener ? mobile.addEventListener.bind(mobile, 'change') : mobile.addListener.bind(mobile))(placePanel);
-  var saved = null; try { saved = sessionStorage.getItem('kb-folder'); } catch (e) {}
-  select(saved && FOLDERS.some(function (f) { return f.id === saved; }) ? saved : 'index');
+
+  if (token) { panel.innerHTML = '<p class="kb-msg">กำลังโหลดรายการไฟล์จาก GitHub…</p>'; load(); } else showConnect();
 })();
 </script>
 <script src="docs-frame.js"></script>
