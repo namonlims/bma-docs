@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>กลุ่มงานและคลินิก · PHCIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-doc-theme.css">
+<style>
+  * { box-sizing: border-box; }
+  html { scrollbar-gutter: stable; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--brand-p50, #F4FBF8);
+    color: var(--text-content-default, #363B3F);
+    font-family: var(--type-family-body, 'Sarabun', system-ui, sans-serif);
+    font-size: var(--type-size-sm, 14px);
+    font-weight: var(--type-weight-regular, 400);
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--dim-space-600, 24px);
+    padding: var(--dim-space-600, 24px);
+    padding-bottom: var(--dim-space-1200, 48px);
+  }
+  h1, h2, h3 {
+    margin: 0;
+    font-family: var(--type-family-heading-content, 'Sarabun', system-ui, sans-serif);
+    font-weight: var(--type-weight-bold, 700);
+    color: var(--text-brandPrimary-default, #007549);
+  }
+  h1 { font-size: var(--type-size-xl, 20px); }
+  h2 { font-size: var(--type-size-base, 16px); }
+  h3 { font-size: var(--type-size-sm, 14px); color: var(--text-content-default, #363B3F); }
+  .lede { margin: var(--dim-space-100, 4px) 0 0; color: var(--text-content-secondary, #636B72); max-width: 960px; }
+  .meta { margin-top: var(--dim-space-200, 8px); color: var(--text-content-tertiary, #858C92); font-size: var(--type-size-xs, 12px); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--dim-space-400, 16px); }
+  .card {
+    background: var(--surface-card-100, #FFFFFF);
+    border-radius: var(--dim-radius-500, 16px);
+    box-shadow: var(--shadow-card);
+  }
+  .stat { padding: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .stat-num { font-size: var(--type-size-2xl, 24px); font-weight: var(--type-weight-bold, 700); color: var(--text-content-default, #363B3F); }
+  .stat-label { font-weight: var(--type-weight-medium, 500); }
+  .stat-sub { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+
+  .section { padding: var(--dim-space-600, 24px); display: flex; flex-direction: column; gap: var(--dim-space-400, 16px); }
+  .section-head { display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .section-sub { margin: 0; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border-table-default, #D1F0E3); border-radius: var(--dim-radius-300, 12px); }
+  table { width: 100%; border-collapse: collapse; min-width: 1080px; }
+  th, td { text-align: left; vertical-align: top; padding: var(--dim-space-300, 12px); border-bottom: 1px solid var(--border-table-default, #D1F0E3); }
+  th + th, td + td { border-left: 1px solid var(--border-brandPrimary-tertiary, #A3E1C7); }
+  th {
+    background: var(--surface-table-header, #F4FBF8);
+    color: var(--text-table-title, #005C3A);
+    font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+    position: sticky; top: 0;
+  }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover td { background: var(--surface-brandPrimary-quaternary, #F4FBF8); }
+  td.group { background: var(--surface-neutral-tertiary, #F5F7F9); font-weight: var(--type-weight-bold, 700); color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .name { font-weight: var(--type-weight-medium, 500); white-space: nowrap; }
+  .sub { display: block; font-size: var(--type-size-xs, 12px); color: var(--text-content-tertiary, #858C92); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); word-break: break-all; }
+  .label-q { font-weight: var(--type-weight-medium, 500); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: var(--dim-space-100, 4px);
+    padding: 2px var(--dim-space-200, 8px);
+    border-radius: var(--dim-radius-full, 9999px);
+    font-size: var(--type-size-xs, 12px); font-weight: var(--type-weight-medium, 500);
+    white-space: nowrap;
+  }
+  .b-green  { background: var(--surface-colorfulbadge-green, #D1F0E3);  color: var(--text-colorfulbadge-green, #00663F); }
+  .b-orange { background: var(--surface-colorfulbadge-orange, #FFEDD5); color: var(--text-colorfulbadge-orange, #C2410C); }
+  .b-red    { background: var(--surface-colorfulbadge-red, #FEE2E2);    color: var(--text-colorfulbadge-red, #B91C1C); }
+  .b-grey   { background: var(--surface-colorfulbadge-grey, #F5F7F9);   color: var(--text-colorfulbadge-grey, #4D5358); }
+  .b-purple { background: var(--surface-colorfulbadge-purple, #F3E8FF); color: var(--text-colorfulbadge-purple, #7E22CE); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: var(--dim-space-200, 8px) var(--dim-space-400, 16px); font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .issues { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+  .issues li { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-300, 12px); padding: var(--dim-space-300, 12px) 0; border-top: 1px solid var(--border-neutral-quaternary, #EEF0F2); }
+  .issues li:first-child { border-top: 0; }
+  .issue-no { font-weight: var(--type-weight-bold, 700); color: var(--text-brandPrimary-default, #007549); min-width: 24px; }
+  .issue-title { font-weight: var(--type-weight-medium, 500); }
+  .issue-body { display: block; color: var(--text-content-secondary, #636B72); font-size: var(--type-size-xs, 12px); }
+  .note { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); }
+  .roles { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--dim-space-100, 4px) var(--dim-space-200, 8px); font-size: var(--type-size-xs, 12px); min-width: 260px; }
+  .rl { white-space: nowrap; color: var(--text-content-secondary, #636B72); }
+  .rv { color: var(--text-content-default, #363B3F); }
+  @media (max-width: 1023px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 767px) {
+    .page { padding: var(--dim-space-400, 16px); gap: var(--dim-space-400, 16px); }
+    .section { padding: var(--dim-space-400, 16px); }
+    .stats { grid-template-columns: 1fr; }
+    .name { white-space: normal; }
+  }
+  td code { word-break: normal; white-space: nowrap; }
+  .clist { margin: 0; padding-left: var(--dim-space-400, 16px); display: flex; flex-direction: column; gap: var(--dim-space-100, 4px); }
+  .srccell { font-size: var(--type-size-xs, 12px); color: var(--text-content-secondary, #636B72); min-width: 220px; }
+  @media (min-width: 1024px) { .stats3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .single table { min-width: 560px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <h1>กลุ่มงานและคลินิกในงาน</h1>
+    <p class="lede">งานไหนมีคลินิกอะไร · หน้ารวมของงาน · บทบาทรวมกับบทบาทแยกคลินิก · คลังที่ใช้ · ที่มาของการจัดกลุ่ม</p>
+    <p class="meta">อัปเดต 26 พ.ย. 2569 · อ่านจากโค้ด bma.health (staffRoleViews · centerWarehouseClinics) + decision-log · ชื่อตรงตามหน้าจอ</p>
+  </header>
+
+  <section class="stats stats3" aria-label="สรุปตัวเลข">
+    <div class="card stat"><span class="stat-num">6</span><span class="stat-label">กลุ่มงาน</span><span class="stat-sub">5 กลุ่มมีหน้ารวม · ฟื้นฟู/กายภาพจัดกลุ่มเฉพาะคลัง</span></div>
+    <div class="card stat"><span class="stat-num">18</span><span class="stat-label">คลินิก/งานย่อยในกลุ่ม</span><span class="stat-sub">3 · 3 · 4 · 3 · 3 · 2</span></div>
+    <div class="card stat"><span class="stat-num">6</span><span class="stat-label">คลินิกเดี่ยว</span><span class="stat-sub">ไม่อยู่ในกลุ่มงาน</span></div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head">
+      <h2>1. กลุ่มงาน</h2>
+      <p class="section-sub">หน้ารวม = worklist รวมทุกคลินิกในงาน กดแถวเปิดแฟ้มของคลินิกนั้น · บทบาทรวมเห็นทุกคลินิก บทบาทแยกเห็นเฉพาะคลินิกตัวเอง · ตารางเลื่อนซ้าย-ขวาได้</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>งาน</th><th>คลินิก / งานย่อย · หน้า</th><th>หน้ารวม</th><th>บทบาทรวม</th><th>บทบาทแยกคลินิก</th><th>คลัง</th><th>ที่มา</th></tr></thead>
+        <tbody><tr>
+<td><span class="name">งานกลุ่มโรคเฉพาะ</span><span class="sub">3 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>คลินิกโรคเบาหวาน (DM)<span class="sub"><code>/clinic/diabetes</code></span></li><li>คลินิกโรคความดันโลหิตสูง (HT)<span class="sub"><code>/clinic/hypertension</code></span></li><li>คลินิกโรคหอบหืดและปอดอุดกั้นเรื้อรัง (Asthma/COPD)<span class="sub"><code>/clinic/asthma-copd</code></span></li></ul></td>
+<td><code>/clinic/specific-disease</code></td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">อายุรแพทย์ (งานกลุ่มโรคเฉพาะ)</span><span class="rl">พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (งานกลุ่มโรคเฉพาะ)</span><span class="rl">พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (งานกลุ่มโรคเฉพาะ)</span></div></td>
+<td>แพทย์ · พยาบาล แยกรายคลินิก 3 คลินิก</td>
+<td>คลังงานกลุ่มโรคเฉพาะ</td>
+<td class="srccell">ผู้ใช้ 25 พ.ย. 69 (หน้ารวม + บทบาทรวม แบบงาน HIV)</td>
+</tr><tr>
+<td><span class="name">งาน HIV และโรคติดต่อทางเพศสัมพันธ์</span><span class="sub">3 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>คลินิกรักปลอดภัย (STIs)<span class="sub"><code>/clinic/hiv-sti/safe-love</code></span></li><li>คลินิก Family and Friend (ARV)<span class="sub"><code>/clinic/hiv-sti/family-friends</code></span></li><li>คลินิกเพศหลากหลาย (BKK Pride Clinic)<span class="sub"><code>/clinic/hiv-sti/bkk-pride</code></span></li></ul></td>
+<td><code>/clinic/hiv-sti</code></td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">อายุรแพทย์โรคติดเชื้อ (งาน HIV และโรคติดต่อทางเพศสัมพันธ์)</span><span class="rl">พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (งาน HIV …)</span><span class="rl">พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (งาน HIV …)</span></div></td>
+<td>แพทย์ แยกรายคลินิก 3 คลินิก</td>
+<td>คลังงาน HIV และโรคติดต่อทางเพศสัมพันธ์</td>
+<td class="srccell">ผู้ใช้ 25 พ.ย. 69 (ชื่อในวงเล็บบทบาทแทน "คลินิกรักปลอดภัย")</td>
+</tr><tr>
+<td><span class="name">งานบำบัดสารเสพติด</span><span class="sub">4 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>คลินิกโปรแกรมก้าวใหม่</li><li>คลินิกโปรแกรมเมทาโดน (เมทาโดน/BNX)</li><li>คลินิกโปรแกรมบุหรี่</li><li>คลินิกโปรแกรมแอลกอฮอล์</li></ul></td>
+<td><code>/clinic/addiction</code> (กรองตามโปรแกรม)</td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">แพทย์เวชศาสตร์การเสพติด (งานบำบัดสารเสพติด)</span><span class="rl">พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (งานบำบัดสารเสพติด)</span><span class="rl">พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (งานบำบัดสารเสพติด)</span></div></td>
+<td>แพทย์ · พยาบาลคัดกรอง · พยาบาลหลังตรวจ แยกราย 4 คลินิกโปรแกรม (เห็นเฉพาะคิวโปรแกรมของตัวเอง)</td>
+<td>คลังงานบำบัดสารเสพติด</td>
+<td class="srccell">4 โปรแกรม: มติ คทง.9 ครั้งที่ 5 (9 ต.ค. 69) วาระ 2 ข้อ 2.1 · บทบาทแยก: ผู้ใช้ 26 พ.ย. 69</td>
+</tr><tr>
+<td><span class="name">งานสุขภาพจิต</span><span class="sub">3 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>งานพัฒนาการ<span class="sub"><code>/clinic/mental-health/development</code></span></li><li>งานสุขภาพจิตสาธารณสุข<span class="sub"><code>/clinic/mental-health/general</code></span></li><li>คลินิกสุขภาพจิต<span class="sub"><code>/clinic/mental-health</code></span></li></ul></td>
+<td><code>/clinic/mental-health/all</code></td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">จิตแพทย์ (งานสุขภาพจิต)</span><span class="rl">พยาบาล</span><span class="rv">พยาบาลคัดกรอง · พยาบาลหลังตรวจ (งานสุขภาพจิต)</span><span class="rl">สหวิชาชีพ</span><span class="rv">นักสังคมสงเคราะห์ · นักจิตวิทยา (งานสุขภาพจิต)</span></div></td>
+<td>5 บทบาท × 3 งาน · "จิตแพทย์ (งานพัฒนาการ)" แสดงเป็น "แพทย์พัฒนาการ"</td>
+<td>คลังงานสุขภาพจิต (3 คลังย่อย)</td>
+<td class="srccell">3 งาน: เอกสารลูกค้า "งานพัฒนาการ ระบบส่งเสริมป้องกัน" (18 ก.ย. 69) หน้า 1 · ชื่อ "สาธารณสุข": คทง.9 ครั้งที่ 6 (15 ต.ค. 69) หน้า 15 · คลินิกกับสาธารณสุขแยกข้อมูล: ผู้ใช้ 26 พ.ย. 69</td>
+</tr><tr>
+<td><span class="name">งานส่งเสริมสุขภาพ</span><span class="sub">3 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>คลินิกฝากครรภ์ (ANC)<span class="sub"><code>/treat/anc/queue</code></span></li><li>คลินิกวางแผนครอบครัว<span class="sub"><code>/clinic/family-planning</code></span></li><li>คลินิกสุขภาพเด็กดี<span class="sub"><code>/clinic/immunization</code></span></li></ul></td>
+<td><code>/clinic/health-promotion</code></td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">ไม่มีบทบาทรวม</span><span class="rl">พยาบาลคัดกรอง</span><span class="rv">พยาบาลคัดกรอง (งานส่งเสริมสุขภาพ)</span><span class="rl">พยาบาลหลังตรวจ</span><span class="rv">พยาบาลหลังตรวจ (งานส่งเสริมสุขภาพ)</span></div></td>
+<td>แพทย์แยก: สูติแพทย์ (ฝากครรภ์) · นรีแพทย์ (วางแผนครอบครัว) · กุมารแพทย์ (สุขภาพเด็กดี)</td>
+<td>คลังงานส่งเสริมสุขภาพ · เด็กดีอยู่คลังวัคซีน</td>
+<td class="srccell">3 คลินิก: คทง.2 ครั้งที่ 4 ข้อ 1.1 · ผู้ใช้ยืนยัน 25–26 พ.ย. 69</td>
+</tr><tr>
+<td><span class="name">งานเวชศาสตร์ฟื้นฟูและกายภาพบำบัด</span><span class="sub">2 คลินิก/งาน</span></td>
+<td><ul class="clist"><li>คลินิกเวชศาสตร์ฟื้นฟู<span class="sub"><code>/clinic/rehab</code></span></li><li>คลินิกกายภาพบำบัด<span class="sub"><code>/clinic/physio</code></span></li></ul></td>
+<td>ไม่มีหน้ารวม</td>
+<td><div class="roles"><span class="rl">แพทย์</span><span class="rv">แพทย์เวชศาสตร์ฟื้นฟู (คลินิกเวชศาสตร์ฟื้นฟู)</span><span class="rl">สหวิชาชีพ</span><span class="rv">นักกายภาพบำบัด</span></div></td>
+<td>แยกตามคลินิกอยู่แล้ว</td>
+<td>คลังงานเวชศาสตร์ฟื้นฟูและกายภาพบำบัด</td>
+<td class="srccell">จัดกลุ่มเฉพาะคลังศูนย์ · ยังไม่มีเอกสารสั่งให้รวมหน้า</td>
+</tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card section single">
+    <div class="section-head">
+      <h2>2. คลินิกเดี่ยว</h2>
+      <p class="section-sub">ไม่อยู่ในกลุ่มงาน · บทบาทและคลังของคลินิกเอง</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>คลินิก</th><th>หน้า</th><th>คลัง</th></tr></thead>
+        <tbody><tr><td><span class="name">คลินิกวัณโรค</span></td><td><code>/clinic/tb</code></td><td>คลังวัณโรค</td></tr><tr><td><span class="name">คลินิกจักษุ</span></td><td><code>/clinic/eye</code></td><td>คลังจักษุ</td></tr><tr><td><span class="name">คลินิกแพทย์แผนไทย</span></td><td><code>/clinic/thai-medicine</code></td><td>คลังแพทย์แผนไทย</td></tr><tr><td><span class="name">คลินิกตรวจสุขภาพ</span></td><td><code>/checkup/targets</code></td><td>คลังตรวจสุขภาพ</td></tr><tr><td><span class="name">คลินิกทันตกรรม</span></td><td><code>/clinic/dental</code></td><td>คลังคลินิกทันตกรรม</td></tr><tr><td><span class="name">คลินิกสังคมสงเคราะห์</span></td><td>—</td><td>คลังคลินิกสังคมสงเคราะห์</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card section">
+    <div class="section-head"><h2>3. ข้อควรรู้</h2></div>
+    <ul class="issues">
+      <li><span class="issue-no">1</span><span><span class="issue-title">ชื่อ "งานสุขภาพจิต" = ชื่อรวม 3 งาน</span><span class="issue-body">คงไว้ตามเอกสารลูกค้า 18 ก.ย. 69 หน้า 1 · คำ "งานสุขภาพจิตทั่วไป" ที่เหลือบนจอคงไว้จนคณะ 9 ยืนยัน (ผู้ใช้ 26 พ.ย. 69)</span></span></li>
+      <li><span class="issue-no">2</span><span><span class="issue-title">คลินิกสุขภาพจิต กับ งานสุขภาพจิตสาธารณสุข แยกข้อมูล</span><span class="issue-body">แต่ละหน้าเห็นเฉพาะคิวของงานตัวเอง · ใน mock แยกด้วยเลขที่สุขภาพจิต: มี = คลินิก · ไม่มี = งานสาธารณสุข</span></span></li>
+      <li><span class="issue-no">3</span><span><span class="issue-title">งานส่งเสริมสุขภาพ: แพทย์ไม่มีบทบาทรวม</span><span class="issue-body">รวมเฉพาะพยาบาลคัดกรองและพยาบาลหลังตรวจ · คลังเด็กดีอยู่กลุ่มคลังวัคซีน</span></span></li>
+      <li><span class="issue-no">4</span><span><span class="issue-title">ตั้งค่าตู้ Kiosk งานส่งเสริมสุขภาพ</span><span class="issue-body">3 ตัวเลือก: คลินิกฝากครรภ์ · คลินิกวางแผนครอบครัว · คลินิกสุขภาพเด็กดี</span></span></li>
+    </ul>
+  </section>
+
+  <p class="note">ที่มา: โค้ด bma.health ณ 26 พ.ย. 2569 (ยังไม่ commit) + docs/decision-log.md · คอลัมน์ "ที่มา" แยกว่าข้อไหนมาจากมติ/เอกสารลูกค้า และข้อไหนเป็นคำสั่งผู้ใช้</p>
+</main>
+</body>
+</html>
