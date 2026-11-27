@@ -1,0 +1,58 @@
+{
+ "generated": "2026-11-27T17:15:38.823Z",
+ "commit": {
+  "sha": "ea0518887a5fc7c072afe948dd49a60a9812e60d",
+  "date": "2026-11-25T12:48:44+07:00"
+ },
+ "agents": [
+  {
+   "file": ".claude/agents/phcis-design-check.md",
+   "name": "phcis-design-check",
+   "description": "Design Quick Check (แบบ \"Design Critique & Trade-off\" ของ Arise) — รับ route หรือภาพหน้าจอ + บริบท/คำถาม แล้ววิจารณ์ตาม hierarchy/alignment ของ design.md §0.1 · heuristic (Nielsen + บริบทโรงพยาบาล) · WCAG 2.2 AA · responsive 4 ความกว้าง · ใช้ชิ้นกลางครบไหม เสนอทางแก้พร้อม trade-off ก่อนส่งทดสอบจริง ใช้เมื่อสั่ง \"ช่วยดูหน่อย\", \"critique\", \"เช็คดีไซน์\", \"หน้านี้มีปัญหาตรงไหน\", \"ใช้ phcis-design-check\" ไม่แก้โค้ด",
+   "tools": "Read, Grep, Glob, Bash",
+   "model": ""
+  },
+  {
+   "file": ".claude/agents/phcis-lookup.md",
+   "name": "phcis-lookup",
+   "description": "ผู้ช่วยค้นหา PHCIS (อ่านอย่างเดียว) — ตอบว่า TOR ข้อไหนอยู่หน้าจอไหน · สถานะ · มติประชุม (คณะ · ครั้ง · หน้า) · เอกสารอ้างอิง · decision-log · rule ที่เกี่ยว · ไฟล์โค้ดและ manifest Figma ของหน้านั้น ใช้เมื่อถาม \"TOR … อยู่ไหน\", \"หน้า … ทำ TOR ข้อไหน\", \"มติว่าไง\", \"เอกสารไหนพูดถึง …\", \"ค้นหา …\", \"ใช้ phcis-lookup\" ไม่แก้ไฟล์",
+   "tools": "Read, Grep, Glob, Bash",
+   "model": "haiku"
+  },
+  {
+   "file": ".claude/agents/phcis-meeting.md",
+   "name": "phcis-meeting",
+   "description": "Meeting → Decision Agent (แบบ \"Dexter\" ของ Arise ฉบับย่อ) — รับบทถอดเสียง / สรุปประชุม / ไฟล์ minutes แล้วแยก ข้อสรุป · ข้อที่ยังต้องหารือ · งานที่ต้องทำ · ผูกกับข้อ TOR และหน้าจอ · เขียนเป็นไฟล์ความรู้ `docs/reference/meetings/` + เสนอบรรทัด decision-log / rule ที่ต้องแก้ ใช้เมื่อสั่ง \"สรุปประชุม\", \"เก็บบทสนทนานี้\", \"มติจากประชุมนี้\", \"ใช้ phcis-meeting\"",
+   "tools": "Read, Grep, Glob, Bash, Write",
+   "model": ""
+  },
+  {
+   "file": ".claude/agents/phcis-screen.md",
+   "name": "phcis-screen",
+   "description": "PHCIS Screen Agent — รับ brief หรือข้อ TOR ของหน้าจอเว็บ PHCIS (bma.health) แล้วสร้าง/แก้หน้าจอจาก shared components + design token ครบ loop — หา flow → ประกอบหน้าจอ → ตรวจ 4 ความกว้าง → screen manifest สำหรับ Figma → รายงาน Fact/Assumption + บันทึกตัวเลขวัดผล ใช้เมื่อผู้ใช้หรือทีมสั่ง \"สร้างหน้าจอ\", \"ทำหน้า…ตาม brief/TOR\", \"ใช้ phcis-screen\" ไม่ใช้กับ bma.mobile / bma.kiosk และไม่ใช้กับงานที่ไม่ใช่หน้าจอ",
+   "tools": "",
+   "model": ""
+  },
+  {
+   "file": ".claude/agents/phcis-ux-plan.md",
+   "name": "phcis-ux-plan",
+   "description": "UX Plan Agent (แบบ \"UX Workstation\" ของ Arise) — รับ requirement / ข้อหรือหมวด TOR / บันทึกประชุม แล้วออก ① ขอบเขต (flow · หน้าจอ · state · edge/error case) ② ประเมิน man-day + timeline ③ ตาราง user flow ตามรูปแบบ flow-spec ④ Fact/Assumption ⑤ คำถามที่ต้องถามลูกค้า ใช้เมื่อสั่ง \"ประเมินงาน\", \"แตก scope\", \"ทำ flow\", \"หา edge case\", \"TOR หมวด … ต้องทำกี่หน้า\", \"ใช้ phcis-ux-plan\" ไม่เขียนโค้ด",
+   "tools": "Read, Grep, Glob, Bash, Write",
+   "model": ""
+  },
+  {
+   "file": ".claude/agents/phcis-wording.md",
+   "name": "phcis-wording",
+   "description": "PHCIS Wording Agent (แบบ \"Wizzy\" UX Writer ของ Arise) — ตรวจและเสนอคำบนหน้าจอให้ตรงคลังคำ PHCIS (`docs/agents/ui-glossary.json`) · rule คำศัพท์ · ข้อความจากเอกสารต้นฉบับ · ปรับข้อความ error / แจ้งเตือน / ป้ายปุ่ม / tooltip ให้สั้นและเป็นลำดับชั้น · แปลไทย↔อังกฤษจากคำในคลังเท่านั้น ใช้เมื่อสั่ง \"ตรวจคำ\", \"ใช้คำไหนดี\", \"เขียนข้อความ error\", \"แปลป้าย\", \"ใช้ phcis-wording\" ไม่แก้โค้ดเอง",
+   "tools": "Read, Grep, Glob, Bash",
+   "model": "haiku"
+  },
+  {
+   "file": ".claude/agents/usability-tester.md",
+   "name": "usability-tester",
+   "description": "Usability Tester — AI ที่สวมบทผู้ใช้ 1 บทบาท (persona) ทำโจทย์ usability ในแอปจริงผ่าน usability/drive.mjs แล้วเขียน findings.json ให้คนตัดสินใจใน Usability Studio ใช้ได้กับ PHCIS เว็บ · Mobile · Kiosk (ตามชุดทดสอบใน usability/studies) ใช้เมื่อผู้ใช้สั่ง \"รัน AI usability\", \"ให้ AI ทดสอบ usability\", \"ใช้ usability-tester\" — เปิด 1 ตัวต่อ 1 บทบาท ไม่แก้โค้ด ไม่ใช้ตรวจ responsive / a11y ของหน้าเดียว (ใช้ skill ux-assessment)",
+   "tools": "",
+   "model": ""
+  }
+ ]
+}

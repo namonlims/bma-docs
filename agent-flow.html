@@ -3,33 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- Agent ของทีม PHCIS ไหลต่อกันอย่างไร · 7 agent ใน bma.health/.claude/agents · ตัวละคร Namon จาก namon/namon-agent.js (ผู้ใช้ 27 พ.ย. 69) -->
+<!-- Agent ของทีม PHCIS ไหลต่อกันอย่างไร · 7 agent ใน bma.health/.claude/agents · ตัวละคร Namon จาก namon/namon-agent.js (ผู้ใช้ 27 พ.ย. 69)
+     28 พ.ย. 69: เจ้าของเปิดได้คนเดียว (data-owner ใน index.html) · ธีม Namon Playground พื้นขาว · ปุ่ม "ซิงค์" อ่าน .claude/agents จาก GitHub ด้วย token อ่านอย่างเดียว
+     ฉบับบันทึก agent-flow-agents.json สร้างด้วย node scripts/agent-flow-snapshot.mjs -->
 <title>PHCIS Agent Flow</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="namon-tokens.css">
+<link rel="stylesheet" href="namon-components.css">
 <style>
-/* Layout: หัว → แท็บประเภทงาน (การไหล) → การ์ด agent → เครื่องมือ/กติกา · คอลัมน์เดียวกว้างสุด 1080 */
+/* Layout: หัว (ปุ่มซิงค์) → แท็บประเภทงาน (การไหล) → การ์ด agent → เครื่องมือ/กติกา · คอลัมน์เดียวกว้างสุด 1080
+   ธีม Namon Playground: ทุกสีชี้ token --nd-* (namon-tokens.css มีโหมดมืดในตัว) · พื้นหลังขาว (ผู้ใช้ 28 พ.ย. 69) */
 :root{
-  --bg:#F5F8F6; --surface:#FFFFFF; --line:#DCE6E0; --fg:#14231B; --muted:#55685D; --faint:#7B8C82;
-  --brand:#007549; --brand-soft:#E3F3EB; --gate:#B45309; --gate-soft:#FDF1E1; --par:#3E5BA9; --par-soft:#E8EDFA;
-  --ro:#5B6B63; --ro-soft:#EEF2EF;
-  --f-body:"Anuphan",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
-  --r:10px;
+  --bg:var(--nd-surface-neutral,#F4F5F5); --surface:var(--nd-surface-card,#FFFFFF); --line:var(--nd-border-info,#DCE2FF);
+  --fg:var(--nd-text-default,#363B3F); --muted:var(--nd-text-secondary,#636B72); --faint:var(--nd-text-tertiary,#6A727A);
+  --brand:var(--nd-text-brand,#3F5BFA); --brand-soft:var(--nd-surface-brand-quiet,#EEF1FF);
+  --gate:var(--nd-text-warning,#C2410C); --gate-soft:var(--nd-surface-warning,#FFF9F0);
+  --par:var(--nd-text-accent,#BE2F6B); --par-soft:var(--nd-surface-accent,#FFF1F6);
+  --ro:var(--nd-text-tertiary,#6A727A); --ro-soft:var(--nd-surface-neutral,#F4F5F5);
+  --f-body:var(--nd-type-family-body,'Sarabun',system-ui,sans-serif); --f-head:var(--nd-type-family-heading,'Poppins','Sarabun',system-ui,sans-serif);
+  --f-mono:ui-monospace,Menlo,monospace;
+  --r:var(--nd-radius-300,10px);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1713; --surface:#16211B; --line:#2A3A31; --fg:#E6EFEA; --muted:#A3B5AA; --faint:#7F9187;
-  --brand:#3DC48A; --brand-soft:#16352A; --gate:#F0A657; --gate-soft:#3A2A15; --par:#8EA6EE; --par-soft:#1E2742;
-  --ro:#A3B5AA; --ro-soft:#1F2B25; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0F1713; --surface:#16211B; --line:#2A3A31; --fg:#E6EFEA; --muted:#A3B5AA; --faint:#7F9187;
-  --brand:#3DC48A; --brand-soft:#16352A; --gate:#F0A657; --gate-soft:#3A2A15; --par:#8EA6EE; --par-soft:#1E2742;
-  --ro:#A3B5AA; --ro-soft:#1F2B25; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;
+[hidden]{display:none!important}
+body,body.nd-root{margin:0;background:var(--nd-surface-card,#FFFFFF);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
 .wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
 h1,h2,h3{margin:0;text-wrap:balance;line-height:1.3}
-h1{font-size:28px;font-weight:700}
-h2{font-size:20px;font-weight:700;color:var(--brand)}
+h1{font-family:var(--f-head);font-size:clamp(24px,4vw,30px);font-weight:800;color:var(--nd-navy-700,#203050)}
+h2{font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--brand)}
 h3{font-size:16px;font-weight:600}
 p{margin:0}
 .sub{color:var(--muted);max-width:70ch}
@@ -44,7 +47,7 @@ section{display:flex;flex-direction:column;gap:16px}
 .tabs{display:flex;flex-direction:column;gap:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
 .tab{font:inherit;font-size:14px;font-weight:500;min-height:44px;padding:10px 14px;border-radius:8px;border:0;border-left:3px solid transparent;
   background:transparent;color:var(--muted);cursor:pointer;text-align:left;line-height:1.4}
-.tab:hover{background:var(--surface);color:var(--fg)}
+.tab:hover{background:var(--brand-soft);color:var(--fg)}
 .tab[aria-selected="true"]{background:var(--brand-soft);border-left-color:var(--brand);color:var(--brand);font-weight:600}
 @media (max-width:767px){
   .split{grid-template-columns:minmax(0,1fr)}
@@ -53,7 +56,7 @@ section{display:flex;flex-direction:column;gap:16px}
   .tab[aria-selected="true"]{border-bottom-color:var(--brand)}
 }
 .tab:focus-visible,.agent:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-.scenario{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px}
+.scenario{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--nd-shadow-card,0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14));padding:20px;display:flex;flex-direction:column;gap:16px}
 .scenario .when{color:var(--muted);font-size:14px}
 
 /* flow */
@@ -82,7 +85,7 @@ section{display:flex;flex-direction:column;gap:16px}
 
 /* agents */
 .agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.agent{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.agent{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--nd-shadow-card,0 1px 4px rgb(63 91 250 / 0.10), 0 1px 8px rgb(63 91 250 / 0.14));padding:16px;display:flex;flex-direction:column;gap:10px}
 .agent .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
 .agent .name{font-family:var(--f-mono);font-weight:500;font-size:14px;color:var(--brand)}
 .agent .role{font-weight:600}
@@ -109,17 +112,38 @@ namon-agent{flex:0 0 auto}
 .agent .id{display:flex;gap:12px;align-items:center;min-width:0}
 .agent .ch{font-size:12.5px;color:var(--faint)}
 @media (max-width:767px){.hero namon-agent{width:72px!important;height:72px!important}}
+/* หัวหน้า: ตัวละคร + ชื่อ · ขวา = สถานะข้อมูล + ปุ่มซิงค์ (แบบเดียวกับ Kae second brain) */
+.head{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
+.head .hero{flex:1 1 520px;min-width:0}
+.syncbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-end}
+.syncbar .st{font-size:var(--nd-type-size-xs,12px);color:var(--muted);text-align:right;margin:0}
+.syncbar .st b{font-weight:var(--nd-type-weight-medium,500);color:var(--fg)}
+.btn-ghost{border-color:transparent;color:var(--muted)}
+.spin{display:inline-block}
+.is-busy .spin{animation:spin 900ms linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.is-busy .spin{animation:none}}
+.rule{height:4px;border-radius:var(--nd-radius-full,9999px);background:linear-gradient(90deg,#5B9DF0 0%,#34C38F 50%,#F06FA3 100%)}
+.connect{display:flex;flex-direction:column;gap:12px;max-width:640px}
+.connect ol{margin:0;padding-left:20px;font-size:14px;color:var(--muted)}
+.connect form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.connect .nd-field{flex:1 1 280px}
+.connect .nd-input{font-size:var(--nd-type-size-base,16px)}
+.chip.new{background:var(--nd-surface-success,#EEFAF4);color:var(--nd-text-success,#0F7A52)}
+.chip.gone{background:var(--nd-surface-danger,#FEF2F2);color:var(--nd-text-danger,#C81E1E)}
+@media (max-width:767px){.syncbar{justify-content:flex-start}.syncbar .st{text-align:left}}
 </style>
 <script type="module" src="namon/namon-agent.js"></script>
 
 </head>
-<body>
+<body class="nd-root">
 <div class="wrap">
+  <div class="head">
   <header class="hero">
     <namon-agent agent="namon" pose="idle" size="104" label="Namon หัวหน้าทีม"></namon-agent>
     <div>
     <h1>Agent ของทีม PHCIS ไหลต่อกันอย่างไร</h1>
-    <p class="sub">7 agent ใน <code>.claude/agents/</code> · Claude Code (เซสชันหลัก) เป็นคนส่งงานต่อระหว่าง agent และ "คุณ" เป็นคนตัดสินที่ด่านสีส้ม เลือกประเภทงานด้านล่างเพื่อดูลำดับ</p>
+    <p class="sub"><span id="af-n">7</span> agent ใน <code>.claude/agents/</code> · Claude Code (เซสชันหลัก) เป็นคนส่งงานต่อระหว่าง agent และ "คุณ" เป็นคนตัดสินที่ด่านสีส้ม เลือกประเภทงานด้านล่างเพื่อดูลำดับ</p>
     <div class="legend">
       <span><i class="dot" style="background:var(--brand)"></i>agent ทำงาน</span>
       <span><i class="dot" style="background:var(--par)"></i>ทำพร้อมกันได้</span>
@@ -129,6 +153,14 @@ namon-agent{flex:0 0 auto}
     </div>
     </div>
   </header>
+  <div class="syncbar">
+    <p class="st" id="af-status" aria-live="polite">กำลังโหลด…</p>
+    <button type="button" class="nd-btn nd-btn--fill" id="af-sync"><span class="spin" aria-hidden="true">↻</span> ซิงค์</button>
+    <button type="button" class="nd-btn btn-ghost" id="af-logout" hidden>ตัดการเชื่อมต่อ</button>
+  </div>
+  </div>
+  <div class="rule" aria-hidden="true"></div>
+  <section class="connect nd-card" id="af-connect" hidden></section>
 
   <section>
     <h2>การไหลตามประเภทงาน</h2>
@@ -139,7 +171,7 @@ namon-agent{flex:0 0 auto}
   </section>
 
   <section>
-    <h2>Agent ทั้ง 7 ตัว · เก่งอะไร · ทำงานอย่างไร</h2>
+    <h2>Agent ทั้ง <span id="af-n2">7</span> ตัว · เก่งอะไร · ทำงานอย่างไร</h2>
     <div class="agents" id="agents"></div>
   </section>
 
@@ -292,15 +324,93 @@ S.forEach(s=>{const b=document.createElement("button");b.className="tab";b.role=
 let start="new";try{const v=localStorage.getItem("phcis-flow-tab");if(S.some(s=>s.id===v))start=v}catch(e){}
 render(start);
 
-document.getElementById("agents").innerHTML=Object.entries(AG).map(([k,a])=>`
- <article class="agent">
+/* ── การ์ด agent: ข้อความในหน้า (AG) + ข้อมูลจริงจาก repo (ชื่อ · เครื่องมือ · โมเดล) ── */
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MODEL=m=>!m||m==="inherit"?"หลัก":m[0].toUpperCase()+m.slice(1);
+const modeOf=t=>!t||/Write|Edit/.test(t)?"w":"ro";
+function renderAgents(data){
+  const byName={};(data&&data.agents||[]).forEach(a=>byName[a.name]=a);
+  const known=Object.entries(AG).map(([k,a])=>{
+    const r=byName[a.name];delete byName[a.name];
+    const model=r?MODEL(r.model):a.model, gone=data&&!r;
+    return `<article class="agent">
   <div class="top"><div class="id">${av(CH[k],"idle",80,CHNAME[k])}<div style="min-width:0"><div class="name">${a.name}</div><div class="role">${a.role}</div><div class="ch">${CHNAME[k]}</div></div></div>
-   <span><span class="chip ${MODE[a.mode][1]}">${MODE[a.mode][0]}</span><span class="chip ro">${a.model}</span></span></div>
+   <span><span class="chip ${MODE[a.mode][1]}">${MODE[a.mode][0]}</span><span class="chip ro">${esc(model)}</span>${gone?'<span class="chip gone">ไม่มีใน repo แล้ว</span>':""}</span></div>
   <p style="font-size:14px">${a.good}</p>
   <ol>${a.steps.map(x=>`<li>${x}</li>`).join("")}</ol>
-  <dl class="kv"><dt>ได้อะไร</dt><dd>${a.out}</dd><dt>สั่งว่า</dt><dd class="say">${a.say}</dd></dl>
- </article>`).join("");
+  <dl class="kv"><dt>ได้อะไร</dt><dd>${a.out}</dd><dt>สั่งว่า</dt><dd class="say">${a.say}</dd>${r?`<dt>เครื่องมือ</dt><dd>${esc(r.tools||"ทุกเครื่องมือ")}</dd>`:""}</dl>
+ </article>`;});
+  const extra=Object.values(byName).map(r=>{const m=modeOf(r.tools);return `<article class="agent">
+  <div class="top"><div class="id">${av("namon","idle",80,"Namon")}<div style="min-width:0"><div class="name">${esc(r.name)}</div><div class="ch">ยังไม่มีตัวละครและลำดับในแผนผัง</div></div></div>
+   <span><span class="chip ${MODE[m][1]}">${MODE[m][0]}</span><span class="chip ro">${esc(MODEL(r.model))}</span><span class="chip new">ใหม่ใน repo</span></span></div>
+  <p style="font-size:14px">${esc(r.description)}</p>
+  <dl class="kv"><dt>เครื่องมือ</dt><dd>${esc(r.tools||"ทุกเครื่องมือ")}</dd><dt>ไฟล์</dt><dd class="say">${esc(r.file)}</dd></dl>
+ </article>`;});
+  document.getElementById("agents").innerHTML=known.join("")+extra.join("");
+  const cnt=data?data.agents.length:Object.keys(AG).length;
+  document.getElementById("af-n").textContent=cnt;document.getElementById("af-n2").textContent=cnt;
+}
+renderAgents(null);
+
+/* ── ซิงค์จาก GitHub: namonlims/bma.health · .claude/agents บน main · token อ่านอย่างเดียว เก็บในเบราว์เซอร์นี้เท่านั้น ── */
+(function(){
+  const REPO="namonlims/bma.health",BRANCH="main",DIR=".claude/agents",API="https://api.github.com/repos/"+REPO;
+  const TOKEN_KEY="af-gh-token",DATA_KEY="af-agents";
+  const $=id=>document.getElementById(id);
+  const TH=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  const fmt=d=>d.getDate()+" "+TH[d.getMonth()]+" "+String((d.getFullYear()+543)%100).padStart(2,"0")+" · "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  let token=null,data=null;
+  try{token=localStorage.getItem(TOKEN_KEY)}catch(e){}
+  const gh=(path,raw)=>fetch(API+path,{cache:"no-store",headers:{Authorization:"Bearer "+token,Accept:raw?"application/vnd.github.raw+json":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"}})
+    .then(r=>{if(r.ok)return raw?r.text():r.json();const e=new Error(r.status);e.status=r.status;
+      e.kind=r.status===401?"auth":(r.status===403&&r.headers.get("x-ratelimit-remaining")==="0")?"rate":(r.status===403||r.status===404)?"access":"http";throw e},
+      e=>{if(e.kind)throw e;const x=new Error("net");x.kind="net";throw x});
+  const errText=e=>({auth:"token ใช้ไม่ได้หรือหมดอายุ · ตัดการเชื่อมต่อแล้ววาง token ใหม่",access:"token นี้ไม่มีสิทธิ์อ่าน repo bma.health · ตอนสร้างต้องเลือก repo นี้และ Contents: Read-only",rate:"เรียก GitHub ครบโควตาชั่วโมงนี้แล้ว ลองใหม่ภายหลัง",net:'ต่อ GitHub ไม่ได้ ตรวจอินเทอร์เน็ตแล้วกด "ซิงค์" อีกครั้ง'})[e&&e.kind]||("GitHub ตอบกลับผิดพลาด"+(e&&e.status?" ("+e.status+")":""));
+  const fm=t=>{const m=t.match(/^---\r?\n([\s\S]*?)\r?\n---/),o={};if(m)m[1].split(/\r?\n/).forEach(l=>{const i=l.indexOf(":");if(i>0)o[l.slice(0,i).trim()]=l.slice(i+1).trim()});return o};
+  function status(msg){
+    const st=$("af-status");$("af-logout").hidden=!token;
+    if(msg){st.textContent=msg;return}
+    if(!data){st.textContent="ยังไม่มีข้อมูล · กด \"ซิงค์\"";return}
+    const c=new Date(data.commit.date);
+    st.innerHTML=(data.fetchedAt?"ซิงค์ล่าสุด <b>"+fmt(new Date(data.fetchedAt))+"</b>":"ฉบับบันทึก · กด \"ซิงค์\" เพื่อดึงล่าสุด")+"<br>agent แก้ล่าสุดใน repo "+fmt(c)+" · "+data.commit.sha.slice(0,7);
+  }
+  function use(d){data=d;renderAgents(d);status()}
+  function showConnect(err){
+    const box=$("af-connect");box.hidden=false;
+    box.innerHTML='<div><h3 class="nd-title nd-title--page">เชื่อมต่อ GitHub</h3><p class="nd-summary">ซิงค์ต้องอ่าน repo bma.health · ทำครั้งเดียว · token อ่านอย่างเดียว เก็บในเบราว์เซอร์นี้เท่านั้น</p></div>'+
+      (err?'<p class="nd-notice nd-notice--danger" role="alert">'+esc(err)+'</p>':'')+
+      '<div><h4 class="nd-group-title">สร้าง token</h4><ol><li>เปิด <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>'+
+      '<li>Repository access → Only select repositories → <b>namonlims/bma.health</b></li><li>Permissions → Contents: <b>Read-only</b></li><li>กด Generate token แล้วคัดลอกมาวางด้านล่าง</li></ol></div>'+
+      '<form id="af-form" autocomplete="off"><label class="nd-field" for="af-token"><span class="nd-field__label">Token</span><input class="nd-input" id="af-token" type="password" placeholder="github_pat_…" required></label>'+
+      '<button class="nd-btn nd-btn--fill" type="submit">เชื่อมต่อและซิงค์</button><button class="nd-btn btn-ghost" type="button" id="af-cancel">ยกเลิก</button></form>';
+    $("af-form").onsubmit=ev=>{ev.preventDefault();const v=$("af-token").value.trim();if(!v)return;token=v;try{localStorage.setItem(TOKEN_KEY,v)}catch(e){}box.hidden=true;sync()};
+    $("af-cancel").onclick=()=>{box.hidden=true};
+    $("af-token").focus();
+  }
+  function sync(){
+    if(!token){showConnect(null);return}
+    const btn=$("af-sync");btn.classList.add("is-busy");btn.disabled=true;status("กำลังซิงค์จาก GitHub…");
+    Promise.all([gh("/commits?sha="+BRANCH+"&path="+DIR+"&per_page=1"),gh("/contents/"+DIR+"?ref="+BRANCH)])
+      .then(([cm,list])=>{
+        const files=list.filter(f=>f.type==="file"&&/\.md$/.test(f.name));
+        return Promise.all(files.map(f=>gh("/contents/"+f.path+"?ref="+BRANCH,true).then(t=>{const o=fm(t);return{file:f.path,name:o.name||f.name.replace(/\.md$/,""),description:o.description||"",tools:o.tools||"",model:o.model||""}})))
+          .then(agents=>({commit:{sha:cm[0].sha,date:cm[0].commit.committer.date},fetchedAt:new Date().toISOString(),agents}));
+      })
+      .then(d=>{try{localStorage.setItem(DATA_KEY,JSON.stringify(d))}catch(e){}use(d)})
+      .catch(e=>{if(e&&(e.kind==="auth"||e.kind==="access")){showConnect(errText(e));status()}else status(errText(e))})
+      .finally(()=>{btn.classList.remove("is-busy");btn.disabled=false});
+  }
+  $("af-sync").onclick=sync;
+  $("af-logout").onclick=()=>{token=null;try{localStorage.removeItem(TOKEN_KEY)}catch(e){}status()};
+  /* เปิดหน้า = ข้อมูลที่ซิงค์ไว้ในเครื่องนี้ (ถ้าใหม่กว่า) หรือฉบับบันทึกที่มากับหน้า */
+  let local=null;try{local=JSON.parse(localStorage.getItem(DATA_KEY)||"null")}catch(e){}
+  fetch("agent-flow-agents.json",{cache:"no-cache"}).then(r=>r.ok?r.json():null).catch(()=>null).then(snap=>{
+    const pick=local&&(!snap||new Date(local.commit.date)>=new Date(snap.commit.date))?local:snap;
+    if(pick)use(pick);else status();
+  });
+})();
 </script>
 
+<script src="docs-frame.js"></script>
 </body>
 </html>
