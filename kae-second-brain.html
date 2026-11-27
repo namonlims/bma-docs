@@ -21,9 +21,6 @@
   /* หัวหน้า */
   .kb-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--nd-space-400, 16px); align-items: center; }
   .kb-head h1 { font-family: var(--nd-type-family-heading, 'Poppins', 'Sarabun', system-ui, sans-serif); font-weight: 800; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; color: var(--nd-text-default, #363B3F); }
-  .kb-head .nd-summary { font-size: var(--nd-type-size-sm, 14px); }
-  .kb-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--nd-space-200, 8px); }
-  .kb-meta .nd-chip b { font-weight: var(--nd-type-weight-medium, 500); color: var(--nd-text-default, #363B3F); }
   .kb-bar { height: 4px; border-radius: var(--nd-radius-full, 9999px); background: linear-gradient(90deg, #5B9DF0 0%, #34C38F 50%, #F06FA3 100%); }
 
   .kb-sec { display: flex; flex-direction: column; gap: var(--nd-space-400, 16px); min-width: 0; }
@@ -111,23 +108,13 @@
 
   <header class="kb-head">
     <namon-agent pose="idle" size="72" label="Namon"></namon-agent>
-    <div>
-      <h1>Kae second brain</h1>
-      <p class="nd-summary">โฟลเดอร์ใน second brain เก็บอะไร มีกี่ไฟล์ และเปิดดูทางไหน · นับจากไฟล์จริง 27 พ.ย. 69</p>
-    </div>
-    <div class="kb-meta">
-      <span class="nd-chip nd-chip--brand">Private · ใช้คนเดียว</span>
-      <span class="nd-chip">repo <b class="mono">namonlims/bma-health-second-brain</b></span>
-      <span class="nd-chip">ในเครื่อง <b class="mono">~/bma-health-second-brain</b></span>
-      <span class="nd-chip">branch <b class="mono">main</b> · commit <b class="mono">89d4f8c</b></span>
-    </div>
+    <h1>Kae second brain</h1>
   </header>
   <div class="kb-bar" aria-hidden="true"></div>
 
   <section class="kb-sec" aria-labelledby="h-map">
     <header>
       <h2 class="nd-title nd-title--page" id="h-map">โฟลเดอร์และสิ่งที่อยู่ข้างใน</h2>
-      <p class="nd-summary">กดชื่อโฟลเดอร์ทางซ้าย รายละเอียดขึ้นทางขวาทันที · ตัวเลข = จำนวนไฟล์ .md</p>
     </header>
     <label class="kb-filter nd-field" for="kb-q">
       <span class="nd-field__label">ค้นหาชื่อหน้าในทุกโฟลเดอร์</span>
